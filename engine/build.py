@@ -8,6 +8,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
 from style import CSS
 import order as O
 import mockpay as MP
+import hull as HULL
 import tools as T
 import copy_blocks as CB
 
@@ -106,12 +107,17 @@ def hero(h1, sub, trust=None, right="", badge=None):
     t = trust or ["$19 a pair, free shipping", "Ships next business day",
                   "7-year marine vinyl", "Free re-cut if the install goes wrong"]
     bd = '<div class=badge>%s</div>' % badge if badge else ""
-    return ('<section class=hero><div class="w herogrid"><div>%s<h1>%s</h1>'
-            '<p class=sub>%s</p><div class=trust>%s</div>'
-            '<div class=btnrow><a class="btn lg" href="/design/">Start your order</a>'
+    # Three grid areas, not two columns. On a phone that puts the wizard
+    # directly under the headline instead of below a screenful of copy;
+    # on desktop the copy stacks in the left column beside it.
+    return ('<section class=hero><div class="w herogrid">'
+            '<div class=heroA>%s<h1>%s</h1></div>'
+            '<div class=heroF>%s</div>'
+            '<div class=heroB><p class=sub>%s</p><div class=trust>%s</div>'
+            '<div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a>'
             '<a class="btn ghost" href="/pricing/">See all prices</a></div></div>'
-            '<div>%s</div></div></section>'
-            % (bd, h1, sub, "".join("<span>%s</span>" % x for x in t), right))
+            '</div></section>'
+            % (bd, h1, right, sub, "".join("<span>%s</span>" % x for x in t)))
 
 def faq_block(items, heading="Questions people actually ask"):
     if not items: return ""
@@ -268,7 +274,7 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
         parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
-ORDER_JS = O.color_js() + O.JS
+ORDER_JS = HULL.JS + O.color_js() + O.JS
 
 # =================================================================== PAGES
 def why_grid(limit=6):

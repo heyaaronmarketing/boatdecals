@@ -30,6 +30,8 @@ overwritten.
 | `engine/content.py` | All page data: products, states, boat types, tools, guides, pricing. Search volumes recorded inline (DataForSEO, 2026-10-22). |
 | `engine/build.py` | Static generator + all long-form body copy. |
 | `engine/order.py` | The five-step order wizard + client price JS + Stripe mount. |
+| `engine/hull.py` | The boat preview SVG + its renderer. |
+| `engine/mockpay.py` | Sandbox card form (see Payment modes). |
 | `engine/tools.py` | Name generator, HIN decoder (96 MIC codes), layout checker. |
 | `engine/copy_blocks.py` | Reusable prose. **The 33 CFR 173.27 block is verbatim-verified — do not loosely paraphrase it.** |
 | `engine/style.py` | CSS. Palette/type carried over from Piney Woods Soft Wash. |
@@ -59,9 +61,34 @@ so the panel never jumps. Anti-fatigue rules, all load-bearing:
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
 
-The preview flips its hull colour from the vinyl's lightness flag (`COLORS[2]`):
-light vinyl renders on a dark hull, dark vinyl on a light one. That is both an
-honest preview and the federal contrast rule taught visually.
+### The preview (`engine/hull.py`)
+
+A hull in side profile, not a colour swatch — because a swatch cannot answer the
+two questions people actually have: *will this read against my hull?* and *where
+does it go?*
+
+- Registration numbers render on the **forward half**, with the validation decal
+  placed aft of them
+- A boat name renders on the **transom**
+- "Both" shows both, which is the clearest possible argument for the $44 bundle
+- The hull **and the water** flip dark when the vinyl is light (`COLORS[2]`), so
+  light vinyl is always shown on a dark hull. That is 33 CFR 173.27's contrast
+  rule demonstrated rather than described.
+
+Step 1's three options carry the same hull as a thumbnail, so the picture is the
+explanation and the prose could go.
+
+⚠️ **The steps are `<section>` elements.** The global `section{padding:42px 0}`
+(56px at ≥900px) was silently adding **112px to every step** — `.step{padding:0}`
+is load-bearing, don't remove it.
+
+### Hero layout
+
+`.herogrid` uses three named areas (`a` headline, `f` form, `b` supporting copy),
+not two columns. On a phone that puts the wizard directly under the headline
+instead of below a screenful of copy; on desktop the copy stacks in the left
+column beside it, with `grid-template-rows:auto 1fr` so row 1 hugs the headline
+rather than stretching.
 
 ## Payment modes
 

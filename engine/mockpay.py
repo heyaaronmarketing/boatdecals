@@ -19,8 +19,8 @@ able to mistake this for a live checkout - including Aaron's brother.
 HTML = """
 <div class=testbar>
   <b>Test mode</b>
-  <span>No real payment is taken and no card is stored. Any card number works
-  &mdash; try <code>4242 4242 4242 4242</code>.</span>
+  <span>Any card works &mdash; try <code>4242 4242 4242 4242</code>. Nothing is
+  charged and no card is stored.</span>
 </div>
 <div class=sfield>
   <label for=cc_num>Card number</label>
@@ -50,20 +50,20 @@ HTML = """
   </div>
 </div>
 <div class=scerr id=cc_err role=alert></div>
-<p class=spowered>Sandbox checkout &middot; swap in Stripe keys to go live</p>
+
 """
 
 CSS = """
-.testbar{display:flex;flex-wrap:wrap;gap:3px 9px;align-items:baseline;
+.testbar{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;
 background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid #d08700;
-border-radius:0 9px 9px 0;padding:10px 13px;margin-bottom:13px;font-size:13.4px}
-.testbar b{color:#8a5a00;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
-.testbar span{color:#6b5526;line-height:1.5}
+border-radius:0 8px 8px 0;padding:7px 10px;margin-bottom:9px;font-size:12.2px}
+.testbar b{color:#8a5a00;font-size:11.6px;text-transform:uppercase;letter-spacing:.05em}
+.testbar span{color:#6b5526;line-height:1.45}
 .testbar code{background:#fdf0d4;border-radius:4px;padding:1px 5px;font-size:12.8px;
 font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
-.sfield{margin-bottom:11px;flex:1 1 0;min-width:0}
-.sfield label{display:block;font-size:13.2px;font-weight:600;color:#30313d;margin-bottom:5px}
-.srow{display:flex;gap:9px}
+.sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
+.sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
+.srow{display:flex;gap:7px}
 .sinput{position:relative;display:flex;align-items:center;background:#fff;
 border:1px solid #e6e6e9;border-radius:8px;
 box-shadow:0 1px 1px rgba(0,0,0,.03),0 3px 6px rgba(0,0,0,.02);
@@ -72,7 +72,7 @@ transition:border-color .12s,box-shadow .12s}
 .sinput.bad{border-color:#df1b41}
 .sinput.bad:focus-within{box-shadow:0 0 0 3px rgba(223,27,65,.16)}
 .sinput input{width:100%;border:0;background:none;font:inherit;font-size:16px;
-padding:11px 12px;color:#30313d;min-height:44px;letter-spacing:.01em}
+padding:9px 11px;color:#30313d;min-height:40px;letter-spacing:.01em}
 .sinput input:focus{outline:0}
 .sinput input::placeholder{color:#a3a3ad}
 .brands{display:flex;gap:4px;padding-right:9px;flex:0 0 auto}
@@ -81,9 +81,8 @@ color:#8b8b96;background:#f2f2f5;border:1px solid #e3e3e8;border-radius:3px;
 padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s}
 .brands.on i{opacity:.18}
 .brands.on i.lit{opacity:1;background:#1a1f36;color:#fff;border-color:#1a1f36}
-.scerr{color:#df1b41;font-size:13.3px;font-weight:600;min-height:1px;margin-top:-3px}
-.spowered{font-size:11.8px;color:var(--mut);text-align:center;margin:9px 0 0;
-letter-spacing:.02em}
+.scerr{color:#df1b41;font-size:12.4px;font-weight:600;min-height:1px;margin-top:-3px}
+
 .paying .sinput{opacity:.6;pointer-events:none}
 """
 

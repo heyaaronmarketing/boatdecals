@@ -20,18 +20,29 @@ Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
 from content import (PRICE, FONTS, COLORS, POPULAR_COLORS, STATES, UPGRADES)
+import hull as H
 
 HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better"),
            (5, 8, "5&quot;", "bold"), (6, 13, "6&quot;", "big transom")]
 
+# (label, base, caption, price, flag, key) - caption is one short line; the
+# thumbnail carries the explanation.
 KINDS = [
-    ("Registration numbers", 19, "Legal 3&quot; block numbers &mdash; a pair, "
-     "pre-spaced for both sides.", "$19", "", "numbers"),
-    ("Boat name", 29, "Any font, cut from one sheet with application tape "
-     "over the top.", "from $29", "", "name"),
-    ("Both", 44, "Bow numbers and a transom name, one envelope.",
-     "from $44", "Save $4", "both"),
+    ("Registration numbers", 19, "On the bow, both sides", "$19", "", "numbers"),
+    ("Boat name", 29, "On the transom", "from $29", "", "name"),
+    ("Both", 44, "Bow and transom", "from $44", "Save $4", "both"),
 ]
+
+def _thumb(key):
+    """Miniature of the hull showing where this option's lettering sits."""
+    body = ('<path d="M3 11 C15 8 46 7 105 8 L104 25 C104 29 101 31 97 31 '
+            'L24 31 C15 31 8 23 4 15 Z" fill="#dfeaf1" stroke="#b9ccd8" stroke-width="1"/>')
+    num = '<rect x="16" y="16" width="34" height="7" rx="1.5" fill="#15516f"/>'
+    nm  = '<rect x="66" y="16" width="30" height="7" rx="1.5" fill="#15516f"/>'
+    nm2 = '<rect x="44" y="16" width="52" height="8" rx="1.5" fill="#15516f"/>'
+    inner = {"numbers": num, "name": nm2, "both": num + nm}[key]
+    return ('<svg class=kthumb viewBox="0 0 110 36" aria-hidden="true">%s%s</svg>'
+            % (body, inner))
 
 
 def _colors(prefix):
@@ -63,10 +74,10 @@ def form():
         for h, add, lbl, note in HEIGHTS)
     kinds = "".join(
         '<label class=kind><input type=radio name=kind value="%s" data-base="%d"%s>'
-        '<span class=kindbox>%s<b>%s</b><em>%s</em><i>%s</i></span></label>'
+        '<span class=kindbox>%s%s<b>%s</b><em>%s</em><i>%s</i></span></label>'
         % (lbl, base, " checked" if key == "numbers" else "",
            '<span class=flag>%s</span>' % flag if flag else "",
-           lbl, blurb, price)
+           _thumb(key), lbl, blurb, price)
         for lbl, base, blurb, price, flag, key in KINDS)
     ups = "".join(
         '<label class=mcard><input type=checkbox name=upgrade value="%s" data-add="%d">'
@@ -78,7 +89,7 @@ def form():
         for lbl, amt, blurb, flag, note in UPGRADES)
     pop, rest = _colors("color")
 
-    return """
+    return ("""
 <div id=order class="panel wiz">
   <div class=wizhead>
     <div class=wizbar><i id=wizfill></i></div>
@@ -89,11 +100,9 @@ def form():
     </div>
   </div>
 
-  <div class=prevwrap id=prevwrap hidden>
-    <div class=prev id=prevstage aria-live=polite>
-      <div class=prevtxt id=prevtxt>IA 3717 ZW</div>
-    </div>
-    <div class=prevlbl id=prevlbl>3" Block &middot; Black &middot; one pair, pre-spaced</div>
+  <div class=prevwrap id=prevwrap>
+    <div class=prev id=prev aria-live=polite>__HULL__</div>
+    <div class=prevlbl id=prevlbl></div>
   </div>
 
   <div class=wizbody>
@@ -101,17 +110,16 @@ def form():
   <!-- 1 ------------------------------------------------------------- -->
   <section class="step on" data-step="1">
     <h2>What do you need?</h2>
-    <p class=sublede>Pick one. You can change it later.</p>
+    
     <div class=kinds>""" + kinds + """</div>
-    <p class=tinylink>Something else &mdash; motor decals, carpet logos, striping?
-      <a href="/contact/">Tell us what you need</a> and we will quote it.</p>
+    <p class=tinylink>Motor decals, carpet logos or striping?
+      <a href="/contact/">Ask us</a>.</p>
   </section>
 
   <!-- 2 ------------------------------------------------------------- -->
   <section class=step data-step="2">
     <h2 id=s2h>What should it say?</h2>
-    <p class=sublede id=s2sub>Copy it straight off your registration card,
-      spaces and all.</p>
+    <p class=sublede id=s2sub>Copy it off your registration card, spaces and all.</p>
     <div id=numwrap>
       <label for=f_text>Registration number</label>
       <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
@@ -121,8 +129,8 @@ def form():
       <label for=f_name2>Boat name</label>
       <input type=text id=f_name2 name=boatname value="" placeholder="Second Wind"
              autocomplete=off maxlength=40 spellcheck=false>
-      <div class=hint>Stuck? Our <a href="/tools/boat-name-generator/"
-        target="_blank" rel="noopener">name generator</a> has a thousand ideas.</div>
+      <div class=hint>Stuck? <a href="/tools/boat-name-generator/" target="_blank"
+        rel="noopener">1,000 name ideas</a>.</div>
     </div>
     <div id=statewrap style="margin-top:14px">
       <label for=f_state>Your state</label>
@@ -130,8 +138,7 @@ def form():
         <option value="">Select your state&hellip;</option>""" + states + """
         <option value="Other">Other / not listed</option>
         <option value="USCG documented">USCG documented vessel</option></select>
-      <div class=hint id=statehint>So we can check your prefix and spacing
-        against your state&rsquo;s rule before it cuts.</div>
+      <div class=hint id=statehint>We check your prefix and spacing before it cuts.</div>
     </div>
     <div class=err id=e2 role=alert></div>
   </section>
@@ -139,7 +146,7 @@ def form():
   <!-- 3 ------------------------------------------------------------- -->
   <section class=step data-step="3">
     <h2>How should it look?</h2>
-    <p class=sublede>The preview updates as you go.</p>
+    
     <fieldset><legend>Colour</legend>
       <div class=swrow>""" + pop + """</div>
       <details class=morecol><summary>14 more colours</summary>
@@ -151,18 +158,17 @@ def form():
     <fieldset style="margin-bottom:2px"><legend>Font</legend>
       <select id=f_font name=font data-block='""" + fonts_block + """'
               data-all='""" + fonts_all + """'>""" + fonts_block + """</select>
-      <div class=hint id=fonthint>Registration numbers must be plain vertical
-        block characters, so script fonts are not offered.</div>
+      <div class=hint id=fonthint>Numbers must be block characters by law, so
+        script is not offered.</div>
     </fieldset>
   </section>
 
   <!-- 4 ------------------------------------------------------------- -->
   <section class=step data-step="4">
-    <h2>Anything else while we have the plotter on?</h2>
-    <p class=sublede>Shipping is already paid, so these add nothing to send.</p>
+    <h2>Anything else?</h2>
+    <p class=sublede>Shipping is already paid &mdash; these add nothing to send.</p>
     <div class=mgrid>""" + ups + """</div>
-    <p class=tinylink>Nothing here is required &mdash;
-      <a href="#" id=skipups>skip straight to checkout</a>.</p>
+    <p class=tinylink><a href="#" id=skipups>Skip &mdash; none of these</a></p>
   </section>
 
   <!-- 5 ------------------------------------------------------------- -->
@@ -173,7 +179,7 @@ def form():
       <div><label for=f_email>Email</label>
         <input type=email id=f_email name=email autocomplete=email
                placeholder="you@example.com" inputmode=email>
-        <div class=hint>Your proof and receipt go here.</div></div>
+        <div class=hint>Proof and receipt go here.</div></div>
       <div><label for=f_name>Name</label>
         <input type=text id=f_name name=name autocomplete=name placeholder="Jane Rivera">
       </div>
@@ -194,8 +200,8 @@ def form():
           placeholder="Dark blue hull. Rivets across the panel."></textarea></div>
     </details>
     <div class=err id=e5 role=alert></div>
-    <p class=guar>Proof before we cut &middot; free re-cut if the install goes wrong
-      &middot; full refund if you do not like the proof</p>
+    <p class=guar>Proof before we cut &middot; free re-cut &middot; full refund if
+      you do not like the proof</p>
   </section>
 
   </div>
@@ -204,7 +210,7 @@ def form():
     <button type=button class="btn lg" id=next>Continue</button>
     <p class=foothint id=foothint>Free shipping &middot; ships next business day</p>
   </div>
-</div>"""
+</div>""").replace("__HULL__", H.SVG)
 
 
 def color_js():
@@ -240,28 +246,21 @@ JS = r"""
 
   var SCRIPTY=/script|vibes|lobster|old english/i;
   function renderPreview(){
-    var pv=$('prevtxt'), stage=$('prevstage'), lbl=$('prevlbl');
-    if(!pv) return;
+    var lbl=$('prevlbl'); if(!lbl || !window.BNS_HULL) return;
     var c=val('color'), cname=c?c.value:'Black';
-    var meta=COL[cname]||['#111111',0], hex=meta[0], light=meta[1];
-    var t=(isNum()? ($('f_text').value||'') : ($('f_name2').value||'')).trim();
-    if(!t) t = isNum()? 'IA 3717 ZW' : 'Second Wind';
+    var meta=COL[cname]||['#111111',0];
     var h=val('height'), hv=h?h.value:'3';
     var fn=$('f_font').value||'Block';
-
-    pv.textContent=t;
-    pv.style.color=hex;
-    // Light vinyl needs a dark hull behind it and dark vinyl needs a light one,
-    // or the preview is a lie - and this is the contrast rule, shown not told.
-    stage.style.background = light ? '#1b2a33' : '#e9f0f4';
-    stage.style.borderColor = light ? '#0e1b22' : '#cfdde6';
-    var script=SCRIPTY.test(fn);
-    pv.style.fontFamily = script ? 'Georgia,"Times New Roman",serif'
-                                 : '"Arial Black",Impact,Haettenschweiler,sans-serif';
-    pv.style.fontStyle  = script ? 'italic' : 'normal';
-    pv.style.letterSpacing = script ? '.01em' : '.06em';
-    lbl.textContent = hv+'" '+fn+' · '+cname+' · '+
-      (isNum()?'one pair, pre-spaced':'one decal, pre-spaced');
+    window.BNS_HULL.render({
+      hex: meta[0], light: !!meta[1], font: fn,
+      showNum: isNum(), showName: hasName(),
+      number: ($('f_text').value||'').trim(),
+      name: ($('f_name2').value||'').trim()
+    });
+    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn.replace(/ \(.*\)/,''))+
+      ' &middot; <b>'+esc(cname)+'</b> &middot; '+
+      (isNum() ? (hasName()? 'pair + name, pre-spaced' : 'one pair, pre-spaced')
+               : 'one decal, pre-spaced');
   }
 
   function syncFonts(){
@@ -303,15 +302,24 @@ JS = r"""
     if(isNum() && $('f_text').value.trim()) txt.push($('f_text').value.trim());
     if(hasName() && $('f_name2').value.trim()) txt.push($('f_name2').value.trim());
     var c=val('color');
-    $('summary').innerHTML =
+    // One glance: what it says, how it looks, what it costs. Line items are a
+    // click away rather than four more rows of height in the hero.
+    var box=$('summary');
+    var open=box.classList.contains('open');
+    box.innerHTML =
       '<div class=sumline><span>'+esc(txt.join('  ·  ')||'Your lettering')+'</span>'+
-      '<span class=summeta>'+esc((val('height')||{value:'3'}).value)+'" · '+
-      esc(c?c.value:'Black')+' · '+esc($('f_font').value)+'</span></div>'+
-      rows.map(function(r){
+      '<span class=summeta>'+esc((val('height')||{value:'3'}).value)+'&quot; · '+
+      esc(c?c.value:'Black')+' · '+esc($('f_font').value)+' · free shipping</span></div>'+
+      '<div class=sumitems>'+rows.map(function(r){
         return '<div class=sumrow><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>';
-      }).join('')+
-      '<div class=sumrow><span>Shipping</span><b class=free>Free</b></div>'+
-      '<div class="sumrow sumtot"><span>Total</span><b>$'+price()+'</b></div>';
+      }).join('')+'</div>'+
+      '<div class="sumrow sumtot"><span>'+
+        '<button type=button class=sumtoggle id=sumtog>'+
+        (open?'Hide':'Show')+' '+rows.length+' item'+(rows.length===1?'':'s')+
+        '</button></span><b>$'+price()+'</b></div>';
+    if(open) box.classList.add('open');
+    $('sumtog').addEventListener('click',function(){
+      box.classList.toggle('open'); summary(); });
   }
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -333,7 +341,7 @@ JS = r"""
     foothint.textContent = cur===MAX
       ? 'Free shipping · proof before we cut · full refund if you do not like it'
       : 'Free shipping · ships next business day';
-    document.getElementById('prevwrap').hidden = (cur===1 || cur===5);
+    document.getElementById('prevwrap').hidden = (cur===5);
     if(cur===2) syncStep2();
     if(cur===5){ summary(); initPay(); }
     render();
