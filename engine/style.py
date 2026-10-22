@@ -210,3 +210,19 @@ box-shadow:0 -6px 20px -10px rgba(0,0,0,.3)}
 body.has-sticky{padding-bottom:76px}
 @media(min-width:900px){body.has-sticky{padding-bottom:0}}
 """
+
+CSS += """
+.hcall{font-weight:800;font-size:15px;color:var(--nav);text-decoration:none;
+white-space:nowrap;display:none}
+@media(min-width:1020px){.hcall{display:inline;margin-left:auto}
+  .hcall+.hbtn{margin-left:14px}}
+.nap{border-top:1px solid rgba(255,255,255,.17);padding:18px 0 4px;margin-bottom:4px;
+font-size:14.6px;line-height:1.65;color:#c5dce8}
+.nap strong{color:#fff;font-size:15.5px}
+.localgrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.localgrid span{background:#fff;border:1px solid var(--line);border-radius:999px;
+padding:6px 13px;font-size:14px;font-weight:600}
+.mapwrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;
+background:var(--soft);margin-bottom:18px}
+.mapwrap iframe{display:block;width:100%;height:300px;border:0}
+"""

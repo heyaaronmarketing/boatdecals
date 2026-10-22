@@ -142,6 +142,7 @@ transactional path, not a traffic play.
 
 | Tier | States | Why |
 |---|---|---|
+| **0 — home** | **IA 340k** | Home state. Researched to the bottom: `IA 3717 ZW` format, registers via **county recorder** not the DNR, validation decal **4 inches toward the stern, in line with the number**, and no other numbers permitted on the bow. This is the depth template every other state page should eventually reach. |
 | **1 — built** | FL 1.7M, MI 1.7M, NY 1.3M, CA 1.3M, SC 1.1M, WI 1.1M, MN 1.0M, TX 922k, PA 842k, NC 799k, GA 783k, VA 595k, OH 573k, IL 566k, MO 561k | Largest fleets, all measurable volume |
 | **2 — built** | WA 560k, TN 476k, LA 446k, AL 419k, IN 523k | Good fleet, thinner volume |
 | **3 — hold** | Remaining 30 + DC | Build only once Tier 1 indexes and ranks |
@@ -159,10 +160,26 @@ This was impossible when the plan was rank-and-rent. It is live now:
 - A real shop, a real address and a real person is **E-E-A-T the entire
   competitive set lacks** — alphabetsigns, signs.com and vinyldisorder are faceless.
 
-🚩 **Blocked on you:** the site currently ships with **no phone, no address, no
-city** (`content.py: SITE`). That is deliberate — the build renders nothing rather
-than fake NAP. Send me his real details and I will wire NAP, LocalBusiness schema
-and a GBP-ready citation set.
+✅ **Done 2026-10-22.** Real NAP is live site-wide:
+**Boat Number Shop, 475 River Forest Road, Evansdale, IA 50707 · (319) 239-3793 ·
+Mon–Fri 8–5 CT.**
+
+- `LocalBusiness` + `OnlineStore` on one `@id`, with PostalAddress, GeoCoordinates
+  (city-level — GBP's pin becomes authoritative once claimed), opening hours, and
+  `areaServed` = US + Black Hawk County
+- Tappable phone in the topbar, header, footer and on `/contact/`
+- One local page: `/boat-lettering-waterloo-cedar-falls/` — **deliberately one page,
+  not a town grid.** Local volume is a handful a month; this exists to anchor the GBP
+  and serve walk-ins, not to chase traffic
+- `/registration-numbers/iowa/` added as the home state, and it is the deepest state
+  page on the site (see below)
+
+⚠️ **NAP must match the GBP and every citation character-for-character.** It is
+written once in `content.py: SITE` — change it there, never in a template.
+
+⚠️ **This looks like a residential address.** Google Business Profile lets a
+home-based business hide the street address and show a service area instead. Worth
+deciding with your brother *before* claiming the GBP — it is awkward to change after.
 
 ---
 
@@ -289,6 +306,8 @@ actual material and postage costs before launch.**
 ## 8. Before this takes a real order
 
 **Blocking**
+- [ ] **Decide the GBP address posture** — street address public, or hidden with a
+      service area? The address looks residential. Decide before claiming
 - [ ] Register **boatnumbershop.com**, add to Cloudflare, route the `boatdecals` Worker
 - [ ] **Confirm pricing and COGS with your brother** — $19 and the whole ladder are my
       recommendation from market data, not his numbers
@@ -297,10 +316,10 @@ actual material and postage costs before launch.**
 - [ ] Verify boatnumbershop.com in Resend, switch `ORDER_FROM` off `onboarding@resend.dev`
 - [ ] Payment: the flow is proof-then-payment-link today. Decide Stripe Checkout vs
       manual invoice before volume
-- [ ] Real NAP (phone, address, city) → unlocks LocalBusiness schema + GBP
 
 **High value, not blocking**
-- [ ] GBP listing — `local_pack` is live on "boat lettering"
+- [ ] **Claim the GBP** — `local_pack` is live on "boat lettering", NAP and schema are ready
+- [ ] Local citations with the exact NAP string (chamber, BBB, Apple/Bing Maps, Nextdoor)
 - [ ] GSC + Bing + IndexNow
 - [ ] Shoot the install video — the highest-leverage asset on this list
 - [ ] Real product photography (no stock, no AI-generated "customers")

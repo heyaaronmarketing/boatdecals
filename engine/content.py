@@ -15,13 +15,34 @@ SITE = {
     "tagline": "Boat registration numbers, $19 a pair. Shipped next business day.",
     "email": "orders@boatnumbershop.com",
     "hours": "Mon-Fri 8-5 CT",
-    # Phone + address intentionally blank until the shop confirms them.
-    # build.py renders NOTHING rather than a placeholder - never fake NAP.
-    "phone_display": "",
-    "phone_tel": "",
-    "city": "",
-    "state": "",
+    # Real NAP, supplied 2026-10-22. Must match the Google Business Profile and
+    # every citation character-for-character - NAP consistency is the whole game
+    # in local pack ranking.
+    "phone_display": "(319) 239-3793",
+    "phone_tel": "+13192393793",
+    "street": "475 River Forest Road",
+    "city": "Evansdale",
+    "region": "IA",
+    "region_name": "Iowa",
+    "postal": "50707",
+    "county": "Black Hawk County",
+    "metro": "the Cedar Valley",
+    # City-centre coordinates (Evansdale, IA per Wikipedia). Deliberately
+    # city-level, not a rooftop pin - once the GBP is claimed, Google's own
+    # pin is authoritative and this is only a hint.
+    "lat": 42.4583,
+    "lng": -92.2608,
 }
+
+# Towns inside a sensible drive of the shop. Used for ONE local page, not a
+# town grid - local volume here is tiny and a grid would be a doorway farm.
+LOCAL_TOWNS = ["Evansdale", "Waterloo", "Cedar Falls", "Waverly", "Independence",
+               "La Porte City", "Hudson", "Denver", "Janesville", "Dunkerton",
+               "Jesup", "Gilbertville", "Raymond", "Elk Run Heights"]
+
+LOCAL_WATERS = ["the Cedar River", "George Wyth Lake", "Big Woods Lake",
+                "Casey's Lake", "Meyers Lake", "the Wapsipinicon River",
+                "Hickory Hills Lake", "Island Park"]
 
 # ---------------------------------------------------------------- the offer
 PRICE = {
@@ -193,6 +214,18 @@ GUIDES = [
 # fleet = registered vessels. vol = "{state} boat registration numbers".
 # vern = local vernacular that outranks the generic phrasing.
 STATES = [
+    dict(slug="iowa", name="Iowa", ab="IA", fleet=340000, vol=20,
+         agency="Iowa DNR", tier=1, home=True,
+         register_at="your county recorder's office (Iowa registers boats through "
+                     "the county, not directly through the DNR)",
+         fmt="IA 3717 ZW &mdash; the IA prefix, four digits, then two letters",
+         decal="Iowa is specific about this: the validation decal goes on each side "
+               "<strong>toward the stern of the registration number, 4 inches from it "
+               "and in line with it</strong>. Not above, not below, not touching.",
+         note="This is our home state &mdash; the shop is in Evansdale, in Black Hawk "
+              "County. Iowa also says plainly that <strong>no other numbers may be "
+              "displayed on either side of the bow</strong>, so strip any old set off "
+              "before the new one goes on."),
     dict(slug="florida", name="Florida", ab="FL", fleet=1700000, vol=140,
          agency="Florida Department of Highway Safety and Motor Vehicles", tier=1),
     dict(slug="michigan", name="Michigan", ab="MI", fleet=1700000, vol=140,
