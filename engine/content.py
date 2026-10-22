@@ -60,12 +60,24 @@ PRICE = {
 }
 
 UPGRADES = [
-    ("Premium 8-year cast vinyl", 8, "3M/Oracal cast instead of calendared. Worth it on a boat that lives outside."),
-    ("Add your boat name", PRICE["name_from"], "Priced by size. Most transom names land $29-79."),
-    ("Hailing port line", PRICE["hailing"], "Required under the name on USCG documented vessels."),
-    ("Rush - cut and shipped same day", PRICE["rush"], "Order before 1pm CT on a business day."),
-    ("Reflective or metallic finish", 10, "Shows up under a spotlight. Legal in every state."),
-    ("Install kit - squeegee + solution", PRICE["kit"], "Makes the wet method foolproof."),
+    ("Premium 8-year cast vinyl", 8,
+     "Cast film instead of calendared - holds colour about three years longer.",
+     "Most popular", "Worth it if the boat lives outside or you picked a dark colour."),
+    ("Spare set - a second pair at half price", 9,
+     "A whole second pair in the envelope for when one gets dock-rashed.",
+     "Best value", "Cheaper now than reordering later, and shipping is already paid."),
+    ("Install kit - squeegee + solution + tape", PRICE["kit"],
+     "The felt squeegee and application fluid that make the wet method foolproof.",
+     "", "A bare set ships with a basic squeegee. This is the proper kit."),
+    ("Rush - cut and shipped today", PRICE["rush"],
+     "Jumps the queue. Order before 1pm CT on a business day.",
+     "", "Only worth it if you are launching this weekend."),
+    ("Hailing port line", PRICE["hailing"],
+     "The port and state under your boat name, cut to match.",
+     "", "Required on a USCG documented vessel. Traditional on everything else."),
+    ("Reflective finish", 10,
+     "Glass-bead film that lights up under a spotlight at night.",
+     "", "Legal in every state. Popular on working and patrol boats."),
 ]
 
 # ---------------------------------------------------------------- products
@@ -277,12 +289,18 @@ FONTS = ["Block (legal for numbers)", "Arial Black", "Helvetica Bold", "Impact",
          "Brush Script", "Edwardian Script", "Lobster", "Great Vibes",
          "Old English", "Stencil", "Varsity Block", "Hobo", "Cooper Black"]
 
-COLORS = [("White","#ffffff"),("Black","#111111"),("Navy","#12243f"),("Royal Blue","#1b4fa8"),
-          ("Light Blue","#5fc4f5"),("Teal","#0d7f7f"),("Forest","#15512c"),("Lime","#7ac70c"),
-          ("Yellow","#f5d000"),("Orange","#f07c00"),("Red","#c8102e"),("Burgundy","#6d1026"),
-          ("Purple","#5b2a86"),("Pink","#e8669e"),("Brown","#5a3a22"),("Tan","#c9a979"),
-          ("Grey","#8b949c"),("Silver Metallic","#c6ccd1"),("Gold Metallic","#c9a227"),
-          ("Chrome","#dfe6ea"),("Reflective White","#f2f4f5"),("Reflective Red","#d02b3f")]
+# (name, hex, is_light) - is_light drives which hull colour the preview sits on.
+COLORS = [("White","#ffffff",1),("Black","#111111",0),("Navy","#12243f",0),
+          ("Royal Blue","#1b4fa8",0),("Light Blue","#5fc4f5",1),("Teal","#0d7f7f",0),
+          ("Forest","#15512c",0),("Lime","#7ac70c",1),("Yellow","#f5d000",1),
+          ("Orange","#f07c00",1),("Red","#c8102e",0),("Burgundy","#6d1026",0),
+          ("Purple","#5b2a86",0),("Pink","#e8669e",1),("Brown","#5a3a22",0),
+          ("Tan","#c9a979",1),("Grey","#8b949c",1),("Silver Metallic","#c6ccd1",1),
+          ("Gold Metallic","#c9a227",1),("Chrome","#dfe6ea",1),
+          ("Reflective White","#f2f4f5",1),("Reflective Red","#d02b3f",0)]
+# The eight people actually pick. Shown first so step 3 is one glance, not a scroll.
+POPULAR_COLORS = ["Black","White","Navy","Red","Royal Blue","Silver Metallic",
+                  "Gold Metallic","Chrome"]
 
 # PAA harvested live from Google on 2026-10-22. These are the questions the
 # answer engines are already answering for someone else.

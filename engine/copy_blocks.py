@@ -67,8 +67,8 @@ WHY_US = [
   "The spacing is already legal and already right. You apply the whole set in one "
   "pass instead of placing loose characters and hoping."),
  ("A proof before anything is cut",
-  "You see exactly what you are getting, by email, and nothing is charged until you "
-  "say go."),
+  "You see exactly what you are getting, by email. Do not like it? We redraw it, or "
+  "refund you in full."),
  ("Free re-cut if the install goes wrong",
   "Tear a letter, crease the sheet, change your mind on the colour mid-job &mdash; "
   "tell us and we cut it again. Vinyl is cheap; arguing is expensive."),
@@ -80,7 +80,8 @@ numbers, or whatever you have picked for a name.</li>
 <li><strong>Pick height, font and colour.</strong> The form locks script fonts out of
 registration numbers, because the law requires block characters.</li>
 <li><strong>We email you a proof.</strong> Usually within a few hours during the
-working day. Nothing is cut and nothing is charged yet.</li>
+working day. Nothing is cut yet, and you can still change anything &mdash; or
+cancel for a full refund.</li>
 <li><strong>You approve, we cut and ship.</strong> Next business day, free, pre-spaced
 with application tape over the top.</li>
 </ol>"""

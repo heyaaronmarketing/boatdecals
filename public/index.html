@@ -231,217 +231,525 @@ padding:6px 13px;font-size:14px;font-weight:600}
 .mapwrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;
 background:var(--soft);margin-bottom:18px}
 .mapwrap iframe{display:block;width:100%;height:300px;border:0}
+
+.wiz{padding:0;overflow:hidden}
+.wizhead{padding:15px 20px 0}
+.wizbar{height:5px;border-radius:99px;background:var(--line);overflow:hidden}
+.wizbar i{display:block;height:100%;width:20%;background:var(--cta);
+border-radius:99px;transition:width .28s cubic-bezier(.4,0,.2,1)}
+.wizmeta{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:13.5px;
+font-weight:700;color:var(--mut)}
+.wizback{background:none;border:0;font:inherit;font-weight:700;color:var(--nav2);
+cursor:pointer;padding:3px 0}
+.wizback:hover{text-decoration:underline}
+.wiztot{margin-left:auto;font-weight:600}
+.wiztot b{font-size:19px;color:var(--nav);margin-left:4px}
+.wizbody{padding:4px 20px 0;min-height:430px}
+@media(min-width:620px){.wizbody{min-height:468px}}
+.step{display:none;animation:stepin .22s ease both}
+.step.on{display:block}
+@keyframes stepin{from{opacity:0;transform:translateX(9px)}to{opacity:1;transform:none}}
+.step h2{font-size:21px;margin:14px 0 3px}
+.sublede{font-size:14.8px;color:var(--mut);margin-bottom:15px}
+.wizfoot{padding:14px 20px 18px;border-top:1px solid var(--line);margin-top:14px;
+background:var(--soft)}
+.wizfoot .btn{width:100%}
+.paybtn{background:var(--nav);}
+.paybtn:hover{background:var(--nav2)}
+.foothint{font-size:12.8px;color:var(--mut);text-align:center;margin:9px 0 0}
+.err{color:#b0202f;font-weight:700;font-size:14.3px;margin-top:11px;min-height:1px}
+.err a{color:#b0202f}
+.tinylink{font-size:13.4px;color:var(--mut);margin-top:14px}
+
+/* preview */
+.prevwrap{padding:12px 20px 0}
+.prev{border:1px solid #cfdde6;border-radius:12px;padding:20px 16px;text-align:center;
+overflow-x:auto;transition:background .22s,border-color .22s;background:#e9f0f4}
+.prevtxt{font-weight:900;font-size:30px;letter-spacing:.06em;white-space:nowrap;
+line-height:1.3;font-family:"Arial Black",Impact,sans-serif;transition:color .18s}
+@media(min-width:620px){.prevtxt{font-size:36px}}
+.prevlbl{font-size:12.6px;color:var(--mut);margin-top:7px;font-weight:650;text-align:center}
+
+/* step 1 cards */
+.kinds{display:grid;gap:10px}
+.kind input{position:absolute;opacity:0;width:1px;height:1px}
+.kindbox{display:block;position:relative;border:1.5px solid var(--line);border-radius:12px;
+padding:13px 15px;cursor:pointer;background:#fff;transition:border-color .12s,background .12s}
+.kind input:checked+.kindbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.kind input:focus-visible+.kindbox{outline:2px solid var(--sea);outline-offset:2px}
+.kindbox b{display:block;font-size:17px;font-weight:800;margin-bottom:3px}
+.kindbox em{display:block;font-style:normal;font-size:13.6px;color:var(--mut);line-height:1.42}
+.kindbox i{display:block;font-style:normal;font-size:15px;font-weight:800;
+color:var(--cta);margin-top:5px}
+.flag{position:absolute;top:-9px;right:13px;background:var(--cta);color:#fff;
+font-size:11.5px;font-weight:800;letter-spacing:.03em;padding:3px 9px;border-radius:99px;
+text-transform:uppercase}
+
+/* colour swatches */
+.swrow{display:flex;flex-wrap:wrap;gap:7px}
+.csw{position:relative;cursor:pointer}
+.csw input{position:absolute;opacity:0;width:1px;height:1px}
+.csw>span{display:block;width:38px;height:38px;border-radius:9px;
+border:1.5px solid rgba(0,0,0,.2);transition:transform .12s,box-shadow .12s}
+.csw em{display:none}
+.csw input:checked+span{box-shadow:0 0 0 2.5px var(--nav2),inset 0 0 0 1.5px #fff;
+transform:scale(1.06)}
+.csw input:focus-visible+span{outline:2px solid var(--sea);outline-offset:3px}
+.morecol{margin-top:10px}
+.morecol summary{font-size:13.8px;font-weight:700;color:var(--nav2);cursor:pointer}
+
+/* step 4 merchandising */
+.mgrid{display:grid;gap:8px}
+@media(min-width:560px){.mgrid{grid-template-columns:1fr 1fr}}
+.mcard input{position:absolute;opacity:0;width:1px;height:1px}
+.mbox{display:block;position:relative;border:1.5px solid var(--line);border-radius:11px;
+padding:11px 40px 11px 13px;cursor:pointer;background:#fff;height:100%;
+transition:border-color .12s,background .12s}
+.mcard input:checked+.mbox{border-color:var(--cta);background:#f1f9f4}
+.mcard input:focus-visible+.mbox{outline:2px solid var(--sea);outline-offset:2px}
+.mbox b{display:block;font-size:14.9px;font-weight:800;line-height:1.25}
+.mbox em{display:block;font-style:normal;font-size:13.2px;color:var(--mut);
+line-height:1.4;margin-top:3px}
+.mbox i{display:none}
+.mamt{position:absolute;top:11px;right:13px;font-weight:800;font-size:14.5px;color:var(--nav)}
+.mtick{position:absolute;bottom:11px;right:13px;width:22px;height:22px;border-radius:50%;
+background:var(--cta);color:#fff;font-size:13px;font-weight:800;display:none;
+place-items:center;line-height:1}
+.mcard input:checked+.mbox .mtick{display:grid}
+.mcard input:checked+.mbox .mamt{color:var(--cta)}
+
+/* step 5 summary + pay */
+.sumbox{background:var(--soft);border:1px solid var(--line);border-radius:12px;
+padding:14px 16px;margin-bottom:16px}
+.sumline{display:flex;flex-direction:column;gap:2px;padding-bottom:10px;
+margin-bottom:9px;border-bottom:1px solid var(--line)}
+.sumline>span:first-child{font-weight:800;font-size:16.5px}
+.summeta{font-size:13px;color:var(--mut);font-weight:600}
+.sumrow{display:flex;justify-content:space-between;gap:12px;font-size:14.6px;padding:3px 0}
+.sumrow b{font-weight:700}
+.free{color:var(--ok)}
+.sumtot{border-top:1px solid var(--line);margin-top:8px;padding-top:9px;font-size:17px}
+.sumtot b{font-size:20px;color:var(--nav)}
+.payel{border:1.5px solid var(--line);border-radius:10px;padding:13px;background:#fff;
+min-height:46px}
+.paysoft{display:block;background:var(--soft);border-radius:8px;padding:12px 13px;font-size:14.2px}
+.paysoft b{display:block;margin-bottom:3px}
+.paysoft span{color:var(--mut);line-height:1.5}
+.extra{margin-top:15px}
+.extra summary{font-size:14px;font-weight:700;color:var(--nav2);cursor:pointer}
+.guar{font-size:12.8px;color:var(--mut);text-align:center;margin:14px 0 0;line-height:1.6}
+.okbox{padding:34px 24px 30px;text-align:center}
+.okbox h2{font-size:23px;margin-bottom:9px}
+.okbox p{margin:0 auto 12px;max-width:44ch}
+.oktick{width:54px;height:54px;border-radius:50%;background:var(--cta);color:#fff;
+font-size:28px;font-weight:800;display:grid;place-items:center;margin:0 auto 16px}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"WebSite","@id":"https://boatnumbershop.com/#site","url":"https://boatnumbershop.com/","name":"Boat Number Shop","publisher":{"@id":"https://boatnumbershop.com/#org"}},{"@type":"Product","@id":"https://boatnumbershop.com/#product","name":"Registration numbers - Boat Number Shop","description":"Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day.","brand":{"@type":"Brand","name":"Boat Number Shop"},"category":"Marine vinyl decals","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","availability":"https://schema.org/InStock","url":"https://boatnumbershop.com/design/","priceValidUntil":"2026-12-31","shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":"0","currency":"USD"},"shippingDestination":{"@type":"DefinedRegion","addressCountry":"US"}}}},{"@type":"FAQPage","@id":"https://boatnumbershop.com/#faq","mainEntity":[{"@type":"Question","name":"How much do boat registration numbers cost?","acceptedAnswer":{"@type":"Answer","text":"Ours are $19 a pair with free shipping, cut and shipped the next business day. Online prices across the market run about $10 to $25 a pair. Cheap sets are usually calendared vinyl with a 3-4 year life, cut as loose characters you space yourself."}},{"@type":"Question","name":"Do boat registration numbers have to be a certain colour?","acceptedAnswer":{"@type":"Answer","text":"Not a specific colour - but federal rule 33 CFR 173.27 requires the characters to contrast with the background and be distinctly visible and legible. White numbers on a white hull fail. Dark hull, light numbers; light hull, dark numbers."}},{"@type":"Question","name":"How tall do boat registration numbers have to be?","acceptedAnswer":{"@type":"Answer","text":"Not less than 3 inches in height, in plain vertical block characters. That is the federal minimum and it applies in every state. Taller is always legal."}},{"@type":"Question","name":"Where do the numbers go on the boat?","acceptedAnswer":{"@type":"Answer","text":"On each side of the forward half of the vessel, reading left to right, so they are visible from the water. The validation decal placement varies by state - usually within a few inches of the number."}},{"@type":"Question","name":"Where can I get boat decals made?","acceptedAnswer":{"@type":"Answer","text":"Here. You pick the characters, font and colour, we cut them from marine vinyl, pre-space them on one sheet with application tape, and ship next business day."}},{"@type":"Question","name":"What kind of vinyl is best for boat decals?","acceptedAnswer":{"@type":"Answer","text":"Cast vinyl for anything that lives outside - it conforms to curves and holds colour 7+ years. High-tack is mandatory on plastic: kayaks, PWC hulls and pontoon rails. Calendared vinyl is cheaper and shorter-lived."}},{"@type":"Question","name":"What is the difference between vinyl stickers and vinyl decals?","acceptedAnswer":{"@type":"Answer","text":"A sticker is printed on a vinyl square and you see the background. A decal is cut from coloured vinyl, so only the letter shape sticks to the hull and there is no visible edge or square. Everything we make is cut vinyl."}},{"@type":"Question","name":"Can I apply these myself?","acceptedAnswer":{"@type":"Answer","text":"Yes - they arrive as one pre-spaced sheet under application tape, so the spacing is already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the tape. If it goes wrong we re-cut it free."}}]}]}</script>
 </head><body>
 <a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; free shipping &middot; ships next business day</span><span>Cut in Evansdale, IA &middot; <a href="tel:+13192393793" data-call style="color:#fff">(319) 239-3793</a></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M4 22c2.4 0 2.4-2.3 4.8-2.3S11.2 22 13.6 22s2.4-2.3 4.8-2.3S20.8 22 23.2 22s2.4-2.3 4.8-2.3" stroke="#5fc4f5" stroke-width="2.1" fill="none" stroke-linecap="round"/><path d="M4 27c2.4 0 2.4-2.3 4.8-2.3S11.2 27 13.6 27s2.4-2.3 4.8-2.3S20.8 27 23.2 27s2.4-2.3 4.8-2.3" stroke="#2f8fc4" stroke-width="2.1" fill="none" stroke-linecap="round"/><text x="16" y="15.5" font-family="Arial Black,Arial" font-size="12" font-weight="900" fill="#5fc4f5" text-anchor="middle">19</text></svg><span>Boat Number<br>Shop</span></a><nav><a href="/boat-registration-numbers/">Registration numbers</a><a href="/boat-lettering/">Boat lettering</a><a href="/boat-name-decals/">Boat names</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By state</a><a href="/tools/boat-name-generator/">Name ideas</a><a href="/guides/">Guides</a></nav><a class=hcall href="tel:+13192393793" data-call>(319) 239-3793</a><a class=hbtn href="/design/">Start your order</a></div></header><main id=main><section class=hero><div class="w herogrid"><div><div class=badge>Everyone else hides the price. Ours is right here.</div><h1>Boat Registration Numbers, $19 a Pair</h1><p class=sub>Legal 3-inch block numbers for both sides of your hull, cut from 7-year marine vinyl, pre-spaced on one sheet, and shipped free the next business day. Boat names and custom decals too.</p><div class=trust><span>$19 a pair, free shipping</span><span>Ships next business day</span><span>7-year marine vinyl</span><span>Free re-cut if the install goes wrong</span></div><div class=btnrow><a class="btn lg" href="/design/">Start your order</a><a class="btn ghost" href="/pricing/">See all prices</a></div></div><div>
-<form id=order class=panel novalidate>
-  <h2 style="font-size:22px">Build your order</h2>
-  <p class=hint style="margin:-2px 0 16px">No account, no checkout maze. You get a
-  proof by email before anything is cut.</p>
-
-  <div class=prev aria-live=polite>
-    <div class=prevtxt id=prevtxt>TX 1234 AB</div>
-    <div class=prevlbl id=prevlbl>3&quot; block characters &middot; one pair, pre-spaced</div>
-  </div>
-
-  <div class=total>
-    <span class=n id=total>$19</span>
-    <span class=lbl>your price</span>
-    <span class=ship>Free shipping<br>Ships next business day</span>
-  </div>
-
-  <fieldset>
-    <legend>What do you need?</legend>
-    <div class=opts>
-      <label class=opt><input type=radio name=kind value="Registration numbers" data-base="19" checked>
-        <span>Registration numbers<em>$19 a pair</em></span></label>
-      <label class=opt><input type=radio name=kind value="Boat name" data-base="29">
-        <span>Boat name<em>from $29</em></span></label>
-      <label class=opt><input type=radio name=kind value="Numbers + name" data-base="44">
-        <span>Both<em>from $44, save $4</em></span></label>
-      <label class=opt><input type=radio name=kind value="Something else" data-base="22">
-        <span>Something else<em>decals, motor, carpet</em></span></label>
-    </div>
-  </fieldset>
-
-  <div class=fieldrow>
-    <div>
-      <label for=f_text>Exactly what should it say?</label>
-      <input type=text id=f_text name=text value="TX 1234 AB" autocomplete=off
-             placeholder="TX 1234 AB" maxlength=40 required>
-      <div class=hint id=texthint>Copy it straight off your registration card.</div>
+<div id=order class="panel wiz">
+  <div class=wizhead>
+    <div class=wizbar><i id=wizfill></i></div>
+    <div class=wizmeta>
+      <button type=button class=wizback id=back hidden>&larr; Back</button>
+      <span id=stepnum>Step 1 of 5</span>
+      <span class=wiztot>Total <b id=total>$19</b></span>
     </div>
   </div>
 
-  <div class="fieldrow two" style="margin-top:13px">
-    <div>
+  <div class=prevwrap id=prevwrap hidden>
+    <div class=prev id=prevstage aria-live=polite>
+      <div class=prevtxt id=prevtxt>IA 3717 ZW</div>
+    </div>
+    <div class=prevlbl id=prevlbl>3" Block &middot; Black &middot; one pair, pre-spaced</div>
+  </div>
+
+  <div class=wizbody>
+
+  <!-- 1 ------------------------------------------------------------- -->
+  <section class="step on" data-step="1">
+    <h2>What do you need?</h2>
+    <p class=sublede>Pick one. You can change it later.</p>
+    <div class=kinds><label class=kind><input type=radio name=kind value="Registration numbers" data-base="19" checked><span class=kindbox><b>Registration numbers</b><em>Legal 3&quot; block numbers &mdash; a pair, pre-spaced for both sides.</em><i>$19</i></span></label><label class=kind><input type=radio name=kind value="Boat name" data-base="29"><span class=kindbox><b>Boat name</b><em>Any font, cut from one sheet with application tape over the top.</em><i>from $29</i></span></label><label class=kind><input type=radio name=kind value="Both" data-base="44"><span class=kindbox><span class=flag>Save $4</span><b>Both</b><em>Bow numbers and a transom name, one envelope.</em><i>from $44</i></span></label></div>
+    <p class=tinylink>Something else &mdash; motor decals, carpet logos, striping?
+      <a href="/contact/">Tell us what you need</a> and we will quote it.</p>
+  </section>
+
+  <!-- 2 ------------------------------------------------------------- -->
+  <section class=step data-step="2">
+    <h2 id=s2h>What should it say?</h2>
+    <p class=sublede id=s2sub>Copy it straight off your registration card,
+      spaces and all.</p>
+    <div id=numwrap>
+      <label for=f_text>Registration number</label>
+      <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
+             autocomplete=off maxlength=40 autocapitalize=characters spellcheck=false>
+    </div>
+    <div id=namewrap hidden style="margin-top:14px">
+      <label for=f_name2>Boat name</label>
+      <input type=text id=f_name2 name=boatname value="" placeholder="Second Wind"
+             autocomplete=off maxlength=40 spellcheck=false>
+      <div class=hint>Stuck? Our <a href="/tools/boat-name-generator/"
+        target="_blank" rel="noopener">name generator</a> has a thousand ideas.</div>
+    </div>
+    <div id=statewrap style="margin-top:14px">
       <label for=f_state>Your state</label>
-      <select id=f_state name=state><option value="">Select&hellip;</option><option value="Iowa">Iowa</option><option value="Florida">Florida</option><option value="Michigan">Michigan</option><option value="New York">New York</option><option value="California">California</option><option value="South Carolina">South Carolina</option><option value="Wisconsin">Wisconsin</option><option value="Minnesota">Minnesota</option><option value="Texas">Texas</option><option value="Pennsylvania">Pennsylvania</option><option value="North Carolina">North Carolina</option><option value="Georgia">Georgia</option><option value="Virginia">Virginia</option><option value="Ohio">Ohio</option><option value="Illinois">Illinois</option><option value="Missouri">Missouri</option><option value="Washington">Washington</option><option value="Louisiana">Louisiana</option><option value="Alabama">Alabama</option><option value="Tennessee">Tennessee</option><option value="Indiana">Indiana</option>
+      <select id=f_state name=state>
+        <option value="">Select your state&hellip;</option><option value="Iowa">Iowa</option><option value="Florida">Florida</option><option value="Michigan">Michigan</option><option value="New York">New York</option><option value="California">California</option><option value="South Carolina">South Carolina</option><option value="Wisconsin">Wisconsin</option><option value="Minnesota">Minnesota</option><option value="Texas">Texas</option><option value="Pennsylvania">Pennsylvania</option><option value="North Carolina">North Carolina</option><option value="Georgia">Georgia</option><option value="Virginia">Virginia</option><option value="Ohio">Ohio</option><option value="Illinois">Illinois</option><option value="Missouri">Missouri</option><option value="Washington">Washington</option><option value="Louisiana">Louisiana</option><option value="Alabama">Alabama</option><option value="Tennessee">Tennessee</option><option value="Indiana">Indiana</option>
         <option value="Other">Other / not listed</option>
         <option value="USCG documented">USCG documented vessel</option></select>
+      <div class=hint id=statehint>So we can check your prefix and spacing
+        against your state&rsquo;s rule before it cuts.</div>
     </div>
-    <div>
-      <label for=f_color>Colour</label>
-      <select id=f_color name=color><option value="White">White</option><option value="Black">Black</option><option value="Navy">Navy</option><option value="Royal Blue">Royal Blue</option><option value="Light Blue">Light Blue</option><option value="Teal">Teal</option><option value="Forest">Forest</option><option value="Lime">Lime</option><option value="Yellow">Yellow</option><option value="Orange">Orange</option><option value="Red">Red</option><option value="Burgundy">Burgundy</option><option value="Purple">Purple</option><option value="Pink">Pink</option><option value="Brown">Brown</option><option value="Tan">Tan</option><option value="Grey">Grey</option><option value="Silver Metallic">Silver Metallic</option><option value="Gold Metallic">Gold Metallic</option><option value="Chrome">Chrome</option><option value="Reflective White">Reflective White</option><option value="Reflective Red">Reflective Red</option></select>
+    <div class=err id=e2 role=alert></div>
+  </section>
+
+  <!-- 3 ------------------------------------------------------------- -->
+  <section class=step data-step="3">
+    <h2>How should it look?</h2>
+    <p class=sublede>The preview updates as you go.</p>
+    <fieldset><legend>Colour</legend>
+      <div class=swrow><label class=csw title="White"><input type=radio name="color" value="White" data-hex="#ffffff" data-light="1"><span style="background:#ffffff"></span><em>White</em></label><label class=csw title="Black"><input type=radio name="color" value="Black" data-hex="#111111" data-light="0" checked><span style="background:#111111"></span><em>Black</em></label><label class=csw title="Navy"><input type=radio name="color" value="Navy" data-hex="#12243f" data-light="0"><span style="background:#12243f"></span><em>Navy</em></label><label class=csw title="Royal Blue"><input type=radio name="color" value="Royal Blue" data-hex="#1b4fa8" data-light="0"><span style="background:#1b4fa8"></span><em>Royal Blue</em></label><label class=csw title="Red"><input type=radio name="color" value="Red" data-hex="#c8102e" data-light="0"><span style="background:#c8102e"></span><em>Red</em></label><label class=csw title="Silver Metallic"><input type=radio name="color" value="Silver Metallic" data-hex="#c6ccd1" data-light="1"><span style="background:#c6ccd1"></span><em>Silver Metallic</em></label><label class=csw title="Gold Metallic"><input type=radio name="color" value="Gold Metallic" data-hex="#c9a227" data-light="1"><span style="background:#c9a227"></span><em>Gold Metallic</em></label><label class=csw title="Chrome"><input type=radio name="color" value="Chrome" data-hex="#dfe6ea" data-light="1"><span style="background:#dfe6ea"></span><em>Chrome</em></label></div>
+      <details class=morecol><summary>14 more colours</summary>
+        <div class=swrow style="margin-top:9px"><label class=csw title="Light Blue"><input type=radio name="color" value="Light Blue" data-hex="#5fc4f5" data-light="1"><span style="background:#5fc4f5"></span><em>Light Blue</em></label><label class=csw title="Teal"><input type=radio name="color" value="Teal" data-hex="#0d7f7f" data-light="0"><span style="background:#0d7f7f"></span><em>Teal</em></label><label class=csw title="Forest"><input type=radio name="color" value="Forest" data-hex="#15512c" data-light="0"><span style="background:#15512c"></span><em>Forest</em></label><label class=csw title="Lime"><input type=radio name="color" value="Lime" data-hex="#7ac70c" data-light="1"><span style="background:#7ac70c"></span><em>Lime</em></label><label class=csw title="Yellow"><input type=radio name="color" value="Yellow" data-hex="#f5d000" data-light="1"><span style="background:#f5d000"></span><em>Yellow</em></label><label class=csw title="Orange"><input type=radio name="color" value="Orange" data-hex="#f07c00" data-light="1"><span style="background:#f07c00"></span><em>Orange</em></label><label class=csw title="Burgundy"><input type=radio name="color" value="Burgundy" data-hex="#6d1026" data-light="0"><span style="background:#6d1026"></span><em>Burgundy</em></label><label class=csw title="Purple"><input type=radio name="color" value="Purple" data-hex="#5b2a86" data-light="0"><span style="background:#5b2a86"></span><em>Purple</em></label><label class=csw title="Pink"><input type=radio name="color" value="Pink" data-hex="#e8669e" data-light="1"><span style="background:#e8669e"></span><em>Pink</em></label><label class=csw title="Brown"><input type=radio name="color" value="Brown" data-hex="#5a3a22" data-light="0"><span style="background:#5a3a22"></span><em>Brown</em></label><label class=csw title="Tan"><input type=radio name="color" value="Tan" data-hex="#c9a979" data-light="1"><span style="background:#c9a979"></span><em>Tan</em></label><label class=csw title="Grey"><input type=radio name="color" value="Grey" data-hex="#8b949c" data-light="1"><span style="background:#8b949c"></span><em>Grey</em></label><label class=csw title="Reflective White"><input type=radio name="color" value="Reflective White" data-hex="#f2f4f5" data-light="1"><span style="background:#f2f4f5"></span><em>Reflective White</em></label><label class=csw title="Reflective Red"><input type=radio name="color" value="Reflective Red" data-hex="#d02b3f" data-light="0"><span style="background:#d02b3f"></span><em>Reflective Red</em></label></div></details>
+    </fieldset>
+    <fieldset><legend>Character height</legend>
+      <div class=opts><label class=opt><input type=radio name=height value="3" data-add="0" checked><span>3&quot;<em>legal minimum</em></span></label><label class=opt><input type=radio name=height value="4" data-add="4"><span>4&quot;<em>reads better &middot; +$4</em></span></label><label class=opt><input type=radio name=height value="5" data-add="8"><span>5&quot;<em>bold &middot; +$8</em></span></label><label class=opt><input type=radio name=height value="6" data-add="13"><span>6&quot;<em>big transom &middot; +$13</em></span></label></div>
+    </fieldset>
+    <fieldset style="margin-bottom:2px"><legend>Font</legend>
+      <select id=f_font name=font data-block='<option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option>'
+              data-all='<option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Brush Script">Brush Script</option><option value="Edwardian Script">Edwardian Script</option><option value="Lobster">Lobster</option><option value="Great Vibes">Great Vibes</option><option value="Old English">Old English</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option>'><option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option></select>
+      <div class=hint id=fonthint>Registration numbers must be plain vertical
+        block characters, so script fonts are not offered.</div>
+    </fieldset>
+  </section>
+
+  <!-- 4 ------------------------------------------------------------- -->
+  <section class=step data-step="4">
+    <h2>Anything else while we have the plotter on?</h2>
+    <p class=sublede>Shipping is already paid, so these add nothing to send.</p>
+    <div class=mgrid><label class=mcard><input type=checkbox name=upgrade value="Premium 8-year cast vinyl" data-add="8"><span class=mbox><span class=flag>Most popular</span><b>Premium 8-year cast vinyl</b><em>Cast film instead of calendared - holds colour about three years longer.</em><i>Worth it if the boat lives outside or you picked a dark colour.</i><span class=mamt>+$8</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Spare set - a second pair at half price" data-add="9"><span class=mbox><span class=flag>Best value</span><b>Spare set</b><em>A whole second pair in the envelope for when one gets dock-rashed.</em><i>Cheaper now than reordering later, and shipping is already paid.</i><span class=mamt>+$9</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Install kit - squeegee + solution + tape" data-add="6"><span class=mbox><b>Install kit</b><em>The felt squeegee and application fluid that make the wet method foolproof.</em><i>A bare set ships with a basic squeegee. This is the proper kit.</i><span class=mamt>+$6</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Rush - cut and shipped today" data-add="12"><span class=mbox><b>Rush</b><em>Jumps the queue. Order before 1pm CT on a business day.</em><i>Only worth it if you are launching this weekend.</i><span class=mamt>+$12</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Hailing port line" data-add="15"><span class=mbox><b>Hailing port line</b><em>The port and state under your boat name, cut to match.</em><i>Required on a USCG documented vessel. Traditional on everything else.</i><span class=mamt>+$15</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Reflective finish" data-add="10"><span class=mbox><b>Reflective finish</b><em>Glass-bead film that lights up under a spotlight at night.</em><i>Legal in every state. Popular on working and patrol boats.</i><span class=mamt>+$10</span><span class=mtick aria-hidden="true">&#10003;</span></span></label></div>
+    <p class=tinylink>Nothing here is required &mdash;
+      <a href="#" id=skipups>skip straight to checkout</a>.</p>
+  </section>
+
+  <!-- 5 ------------------------------------------------------------- -->
+  <section class=step data-step="5">
+    <h2>Checkout</h2>
+    <div class=sumbox id=summary></div>
+    <div class="fieldrow two">
+      <div><label for=f_email>Email</label>
+        <input type=email id=f_email name=email autocomplete=email
+               placeholder="you@example.com" inputmode=email>
+        <div class=hint>Your proof and receipt go here.</div></div>
+      <div><label for=f_name>Name</label>
+        <input type=text id=f_name name=name autocomplete=name placeholder="Jane Rivera">
+      </div>
     </div>
-  </div>
-
-  <fieldset style="margin-top:16px">
-    <legend>Character height</legend>
-    <div class=opts><label class=opt><input type=radio name=height value="3" data-add="0" checked><span>3&quot; - the legal minimum<em>included</em></span></label><label class=opt><input type=radio name=height value="4" data-add="4"><span>4&quot;<em>+$4</em></span></label><label class=opt><input type=radio name=height value="5" data-add="8"><span>5&quot;<em>+$8</em></span></label><label class=opt><input type=radio name=height value="6" data-add="13"><span>6&quot;<em>+$13</em></span></label></div>
-    <div class=hint>Federal rule is a 3&quot; minimum. Taller is always legal.</div>
-  </fieldset>
-
-  <div class=fieldrow>
-    <div>
-      <label for=f_font>Font</label>
-      <select id=f_font name=font><option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Brush Script">Brush Script</option><option value="Edwardian Script">Edwardian Script</option><option value="Lobster">Lobster</option><option value="Great Vibes">Great Vibes</option><option value="Old English">Old English</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option></select>
-      <div class=hint id=fonthint>Registration numbers must be plain vertical block
-      characters, so script fonts are locked out for numbers.</div>
+    <div id=paywrap style="margin-top:15px">
+      <label>Card</label>
+      <div id=payelement class=payel></div>
+      <div class=hint id=payhint>Secured by Stripe. We never see your card number.</div>
     </div>
+    <details class=extra><summary>Add a phone, boat details or a note</summary>
+      <div class="fieldrow two" style="margin-top:11px">
+        <div><label for=f_phone>Phone</label>
+          <input type=tel id=f_phone name=phone autocomplete=tel></div>
+        <div><label for=f_boat>Boat make &amp; model</label>
+          <input type=text id=f_boat name=boat placeholder="2004 Tracker Pro 170"></div>
+      </div>
+      <div style="margin-top:11px"><label for=f_notes>Notes</label>
+        <textarea id=f_notes name=notes rows=2
+          placeholder="Dark blue hull. Rivets across the panel."></textarea></div>
+    </details>
+    <div class=err id=e5 role=alert></div>
+    <p class=guar>Proof before we cut &middot; free re-cut if the install goes wrong
+      &middot; full refund if you do not like the proof</p>
+  </section>
+
   </div>
 
-  <fieldset style="margin-top:17px">
-    <legend>Add anything?</legend>
-    <div class=checks><label class=chk><input type=checkbox name=upgrade value="Premium 8-year cast vinyl" data-add="8"><span><b>Premium 8-year cast vinyl</b><em>3M/Oracal cast instead of calendared. Worth it on a boat that lives outside.</em></span><span class=amt>+$8</span></label><label class=chk><input type=checkbox name=upgrade value="Add your boat name" data-add="29"><span><b>Add your boat name</b><em>Priced by size. Most transom names land $29-79.</em></span><span class=amt>+$29</span></label><label class=chk><input type=checkbox name=upgrade value="Hailing port line" data-add="15"><span><b>Hailing port line</b><em>Required under the name on USCG documented vessels.</em></span><span class=amt>+$15</span></label><label class=chk><input type=checkbox name=upgrade value="Rush - cut and shipped same day" data-add="12"><span><b>Rush - cut and shipped same day</b><em>Order before 1pm CT on a business day.</em></span><span class=amt>+$12</span></label><label class=chk><input type=checkbox name=upgrade value="Reflective or metallic finish" data-add="10"><span><b>Reflective or metallic finish</b><em>Shows up under a spotlight. Legal in every state.</em></span><span class=amt>+$10</span></label><label class=chk><input type=checkbox name=upgrade value="Install kit - squeegee + solution" data-add="6"><span><b>Install kit - squeegee + solution</b><em>Makes the wet method foolproof.</em></span><span class=amt>+$6</span></label></div>
-  </fieldset>
-
-  <div class="fieldrow two">
-    <div><label for=f_name>Your name</label>
-      <input type=text id=f_name name=name autocomplete=name required></div>
-    <div><label for=f_email>Email (your proof goes here)</label>
-      <input type=email id=f_email name=email autocomplete=email required></div>
+  <div class=wizfoot>
+    <button type=button class="btn lg" id=next>Continue</button>
+    <p class=foothint id=foothint>Free shipping &middot; ships next business day</p>
   </div>
-  <div class="fieldrow two" style="margin-top:13px">
-    <div><label for=f_phone>Phone (optional)</label>
-      <input type=tel id=f_phone name=phone autocomplete=tel></div>
-    <div><label for=f_boat>Boat make &amp; model (optional)</label>
-      <input type=text id=f_boat name=boat placeholder="2004 Tracker Pro 170"></div>
-  </div>
-  <div class=fieldrow style="margin-top:13px">
-    <div><label for=f_notes>Anything we should know?</label>
-      <textarea id=f_notes name=notes rows=3 placeholder="Hull is dark blue - I want white. Rivets across the panel."></textarea></div>
-  </div>
-
-  <button type=submit class="btn lg" style="margin-top:18px" id=sub>
-    Send my order &middot; <span id=btot>$19</span></button>
-  <p class=hint style="margin-top:11px">We reply with a proof and a payment link.
-  Nothing is cut and nothing is charged until you approve the proof.</p>
-  <div id=msg role=status aria-live=polite style="margin-top:12px"></div>
-</form></div></div></section><section class=soft><div class=w><h2>The offer, plainly</h2><div class=proof><div><b>$19</b><span>a pair, registration numbers, shipping included</span></div><div><b>Next day</b><span>cut and shipped, or same day for $12</span></div><div><b>7 years</b><span>marine vinyl warranty on colour and adhesion</span></div><div><b>Free re-cut</b><span>if the install goes wrong, we make it again</span></div></div></div></section><section><div class=w><h2>Why buy here instead of the cheap set</h2><p class=lede>There are $11 sets on marketplaces. Here is honestly what separates them from this.</p><div class="grid"><div class=card><h3>$19 a pair, published</h3><p>Every competitor makes you build a design before showing a price. Ours is on the page and it includes shipping.</p></div><div class=card><h3>Cut and shipped next business day</h3><p>Order before 1pm CT and it goes out the same day for $12. Otherwise next business day, free.</p></div><div class=card><h3>7-year marine vinyl</h3><p>Cast vinyl rated seven years outdoors, not the 3-year calendared stock the cheap sets use. High-tack on plastic hulls at no extra charge.</p></div><div class=card><h3>Pre-spaced on one sheet</h3><p>The spacing is already legal and already right. You apply the whole set in one pass instead of placing loose characters and hoping.</p></div><div class=card><h3>A proof before anything is cut</h3><p>You see exactly what you are getting, by email, and nothing is charged until you say go.</p></div><div class=card><h3>Free re-cut if the install goes wrong</h3><p>Tear a letter, crease the sheet, change your mind on the colour mid-job &mdash; tell us and we cut it again. Vinyl is cheap; arguing is expensive.</p></div></div></div></section><section><div class=w><h2>What we cut</h2><p class=lede>Everything is cut from sheet vinyl, pre-spaced, and shipped flat with application tape over the top.</p><div class=grid><a class=card href="/boat-registration-numbers/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></span><h3>Registration numbers</h3><p>Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.</p><div class=price>$19 <small>a pair</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19L12 5l8 14M7.5 14h9" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Boat lettering</h3><p>Names, home ports, hull stripes, transom text. You pick the font and the colour, we cut it and pre-space it.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-name-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17c3 0 3-2 6-2s3 2 6 2 3-2 6-2" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/><path d="M6 11h12M8 7h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><h3>Boat names</h3><p>One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.6" stroke="currentColor" stroke-width="1.9" fill="none"/><path d="M9 12.4l2.2 2.2L15.4 10" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Boat decals</h3><p>Logos, graphics, flags, fish, bubble-free cut vinyl. Send artwork or describe it and we will draw it.</p><div class=price>$22 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/motor-and-brand-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v5l3 4v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5l3-4z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M10 15h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>Motor decals</h3><p>Faded cowling decals and hull brand graphics, re-cut to the original dimensions. Mercury, Yamaha, Johnson, Evinrude, Ranger, Tracker, Lund, Skeeter and more.</p><div class=price>$22 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-carpet-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 9.5h10M7 12.5h10M7 15.5h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><h3>Carpet decals</h3><p>High-tack vinyl made for marine carpet, not hull gelcoat. Bass boat logos, brand marks, custom text.</p><div class=price>$24 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/hailing-port-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M6 11h12M8.5 7.5h7" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></span><h3>Hailing port</h3><p>Federal rules want the name and hailing port in 4-inch characters on a documented vessel. We cut both as one pre-spaced set.</p><div class=price>$15 <small></small></div><div class=go>See details &rarr;</div></a><a class=card href="/domed-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0116 0z" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><h3>Domed &amp; chrome</h3><p>Each letter poured with a clear polyurethane dome so it reads as 3D in sunlight. Chrome, gold and colour-matched.</p><div class=price>$59 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-striping/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M3 13h18M3 17h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><h3>Striping</h3><p>Hull stripes cut to the width, length and colour you need, in single or multi-colour runs.</p><div class=price>$32 <small>to start</small></div><div class=go>See details &rarr;</div></a></div></div></section><section class=soft><div class=w><h2>Free tools, no email required</h2><p class=lede>Decode a hull number, generate a boat name, or check your registration layout against the federal rule before you spend anything.</p><div class=grid><a class=card href="/tools/boat-name-generator/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Name generator</h3><p>Free boat name generator. Spin clever, classic and funny boat names, then see your pick rendered in real marine fonts before you order.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/funny-boat-names/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Funny names</h3><p>400 funny boat names sorted by how they land - puns, retirement jokes, money jokes and the ones that get groans at the ramp.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/hull-number-decoder/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>HIN decoder</h3><p>Free boat HIN decoder. Paste a 12-character hull identification number to read the manufacturer code, serial, model year and build date.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/registration-number-layout-checker/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Layout checker</h3><p>Check your boat registration number against the federal 3-inch, block-character, contrast and spacing rules before you order.</p><div class=go>Open the tool &rarr;</div></a></div></div></section><section><div class=w><h2>Your state&rsquo;s numbers</h2><p class=lede>The 3-inch block rule is federal and applies everywhere. What changes by state is the prefix, who issues it, and where the validation decal sits.</p><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MI</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WI</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a></div><p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p></div></section><section class=soft><div class=w><h2>How it works</h2><ol class=steps>
+</div></div></div></section><section class=soft><div class=w><h2>The offer, plainly</h2><div class=proof><div><b>$19</b><span>a pair, registration numbers, shipping included</span></div><div><b>Next day</b><span>cut and shipped, or same day for $12</span></div><div><b>7 years</b><span>marine vinyl warranty on colour and adhesion</span></div><div><b>Free re-cut</b><span>if the install goes wrong, we make it again</span></div></div></div></section><section><div class=w><h2>Why buy here instead of the cheap set</h2><p class=lede>There are $11 sets on marketplaces. Here is honestly what separates them from this.</p><div class="grid"><div class=card><h3>$19 a pair, published</h3><p>Every competitor makes you build a design before showing a price. Ours is on the page and it includes shipping.</p></div><div class=card><h3>Cut and shipped next business day</h3><p>Order before 1pm CT and it goes out the same day for $12. Otherwise next business day, free.</p></div><div class=card><h3>7-year marine vinyl</h3><p>Cast vinyl rated seven years outdoors, not the 3-year calendared stock the cheap sets use. High-tack on plastic hulls at no extra charge.</p></div><div class=card><h3>Pre-spaced on one sheet</h3><p>The spacing is already legal and already right. You apply the whole set in one pass instead of placing loose characters and hoping.</p></div><div class=card><h3>A proof before anything is cut</h3><p>You see exactly what you are getting, by email. Do not like it? We redraw it, or refund you in full.</p></div><div class=card><h3>Free re-cut if the install goes wrong</h3><p>Tear a letter, crease the sheet, change your mind on the colour mid-job &mdash; tell us and we cut it again. Vinyl is cheap; arguing is expensive.</p></div></div></div></section><section><div class=w><h2>What we cut</h2><p class=lede>Everything is cut from sheet vinyl, pre-spaced, and shipped flat with application tape over the top.</p><div class=grid><a class=card href="/boat-registration-numbers/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></span><h3>Registration numbers</h3><p>Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.</p><div class=price>$19 <small>a pair</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19L12 5l8 14M7.5 14h9" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Boat lettering</h3><p>Names, home ports, hull stripes, transom text. You pick the font and the colour, we cut it and pre-space it.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-name-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17c3 0 3-2 6-2s3 2 6 2 3-2 6-2" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/><path d="M6 11h12M8 7h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><h3>Boat names</h3><p>One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.6" stroke="currentColor" stroke-width="1.9" fill="none"/><path d="M9 12.4l2.2 2.2L15.4 10" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Boat decals</h3><p>Logos, graphics, flags, fish, bubble-free cut vinyl. Send artwork or describe it and we will draw it.</p><div class=price>$22 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/motor-and-brand-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v5l3 4v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5l3-4z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M10 15h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>Motor decals</h3><p>Faded cowling decals and hull brand graphics, re-cut to the original dimensions. Mercury, Yamaha, Johnson, Evinrude, Ranger, Tracker, Lund, Skeeter and more.</p><div class=price>$22 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-carpet-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 9.5h10M7 12.5h10M7 15.5h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><h3>Carpet decals</h3><p>High-tack vinyl made for marine carpet, not hull gelcoat. Bass boat logos, brand marks, custom text.</p><div class=price>$24 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/hailing-port-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M6 11h12M8.5 7.5h7" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></span><h3>Hailing port</h3><p>Federal rules want the name and hailing port in 4-inch characters on a documented vessel. We cut both as one pre-spaced set.</p><div class=price>$15 <small></small></div><div class=go>See details &rarr;</div></a><a class=card href="/domed-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0116 0z" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><h3>Domed &amp; chrome</h3><p>Each letter poured with a clear polyurethane dome so it reads as 3D in sunlight. Chrome, gold and colour-matched.</p><div class=price>$59 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-striping/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M3 13h18M3 17h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><h3>Striping</h3><p>Hull stripes cut to the width, length and colour you need, in single or multi-colour runs.</p><div class=price>$32 <small>to start</small></div><div class=go>See details &rarr;</div></a></div></div></section><section class=soft><div class=w><h2>Free tools, no email required</h2><p class=lede>Decode a hull number, generate a boat name, or check your registration layout against the federal rule before you spend anything.</p><div class=grid><a class=card href="/tools/boat-name-generator/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Name generator</h3><p>Free boat name generator. Spin clever, classic and funny boat names, then see your pick rendered in real marine fonts before you order.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/funny-boat-names/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Funny names</h3><p>400 funny boat names sorted by how they land - puns, retirement jokes, money jokes and the ones that get groans at the ramp.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/hull-number-decoder/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>HIN decoder</h3><p>Free boat HIN decoder. Paste a 12-character hull identification number to read the manufacturer code, serial, model year and build date.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/registration-number-layout-checker/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Layout checker</h3><p>Check your boat registration number against the federal 3-inch, block-character, contrast and spacing rules before you order.</p><div class=go>Open the tool &rarr;</div></a></div></div></section><section><div class=w><h2>Your state&rsquo;s numbers</h2><p class=lede>The 3-inch block rule is federal and applies everywhere. What changes by state is the prefix, who issues it, and where the validation decal sits.</p><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MI</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WI</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a></div><p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p></div></section><section class=soft><div class=w><h2>How it works</h2><ol class=steps>
 <li><strong>Type what it should say.</strong> Straight off your registration card for
 numbers, or whatever you have picked for a name.</li>
 <li><strong>Pick height, font and colour.</strong> The form locks script fonts out of
 registration numbers, because the law requires block characters.</li>
 <li><strong>We email you a proof.</strong> Usually within a few hours during the
-working day. Nothing is cut and nothing is charged yet.</li>
+working day. Nothing is cut yet, and you can still change anything &mdash; or
+cancel for a full refund.</li>
 <li><strong>You approve, we cut and ship.</strong> Next business day, free, pre-spaced
 with application tape over the top.</li>
-</ol><a class="btn lg" href="/design/">Start your order</a></div></section><section class=soft><div class=w><h2>Questions people actually ask</h2><div class=faq style="margin-top:18px"><details><summary>How much do boat registration numbers cost?</summary><div class=ans><p>Ours are $19 a pair with free shipping, cut and shipped the next business day. Online prices across the market run about $10 to $25 a pair. Cheap sets are usually calendared vinyl with a 3-4 year life, cut as loose characters you space yourself.</p></div></details><details><summary>Do boat registration numbers have to be a certain colour?</summary><div class=ans><p>Not a specific colour - but federal rule 33 CFR 173.27 requires the characters to contrast with the background and be distinctly visible and legible. White numbers on a white hull fail. Dark hull, light numbers; light hull, dark numbers.</p></div></details><details><summary>How tall do boat registration numbers have to be?</summary><div class=ans><p>Not less than 3 inches in height, in plain vertical block characters. That is the federal minimum and it applies in every state. Taller is always legal.</p></div></details><details><summary>Where do the numbers go on the boat?</summary><div class=ans><p>On each side of the forward half of the vessel, reading left to right, so they are visible from the water. The validation decal placement varies by state - usually within a few inches of the number.</p></div></details><details><summary>Where can I get boat decals made?</summary><div class=ans><p>Here. You pick the characters, font and colour, we cut them from marine vinyl, pre-space them on one sheet with application tape, and ship next business day.</p></div></details><details><summary>What kind of vinyl is best for boat decals?</summary><div class=ans><p>Cast vinyl for anything that lives outside - it conforms to curves and holds colour 7+ years. High-tack is mandatory on plastic: kayaks, PWC hulls and pontoon rails. Calendared vinyl is cheaper and shorter-lived.</p></div></details><details><summary>What is the difference between vinyl stickers and vinyl decals?</summary><div class=ans><p>A sticker is printed on a vinyl square and you see the background. A decal is cut from coloured vinyl, so only the letter shape sticks to the hull and there is no visible edge or square. Everything we make is cut vinyl.</p></div></details><details><summary>Can I apply these myself?</summary><div class=ans><p>Yes - they arrive as one pre-spaced sheet under application tape, so the spacing is already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the tape. If it goes wrong we re-cut it free.</p></div></details></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat lettering</a></li><li><a href="/boat-name-decals/">Boat names</a></li><li><a href="/boat-decals/">Boat decals</a></li><li><a href="/motor-and-brand-decals/">Motor decals</a></li><li><a href="/boat-carpet-decals/">Carpet decals</a></li><li><a href="/hailing-port-decals/">Hailing port</a></li><li><a href="/domed-lettering/">Domed &amp; chrome</a></li><li><a href="/boat-striping/">Striping</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/about/">About us</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Boat Number Shop</strong><br><a href="https://www.google.com/maps/search/?api=1&amp;query=475+River+Forest+Road+Evansdale+IA+50707" rel="noopener">475 River Forest Road, Evansdale, IA 50707</a><br><a href="tel:+13192393793" data-call>(319) 239-3793</a> &middot; <a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a><br>Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Boat Number Shop. Vinyl cut and shipped in Evansdale, USA.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><div class=sticky><span class=sp>$19<em>Registration numbers</em></span><a class=btn href="/design/">Start your order</a></div><script>document.body.classList.add("has-sticky");</script><script>window.BNS_COL={"White":"#ffffff","Black":"#111111","Navy":"#12243f","Royal Blue":"#1b4fa8","Light Blue":"#5fc4f5","Teal":"#0d7f7f","Forest":"#15512c","Lime":"#7ac70c","Yellow":"#f5d000","Orange":"#f07c00","Red":"#c8102e","Burgundy":"#6d1026","Purple":"#5b2a86","Pink":"#e8669e","Brown":"#5a3a22","Tan":"#c9a979","Grey":"#8b949c","Silver Metallic":"#c6ccd1","Gold Metallic":"#c9a227","Chrome":"#dfe6ea","Reflective White":"#f2f4f5","Reflective Red":"#d02b3f"};
+</ol><a class="btn lg" href="/design/">Start your order</a></div></section><section class=soft><div class=w><h2>Questions people actually ask</h2><div class=faq style="margin-top:18px"><details><summary>How much do boat registration numbers cost?</summary><div class=ans><p>Ours are $19 a pair with free shipping, cut and shipped the next business day. Online prices across the market run about $10 to $25 a pair. Cheap sets are usually calendared vinyl with a 3-4 year life, cut as loose characters you space yourself.</p></div></details><details><summary>Do boat registration numbers have to be a certain colour?</summary><div class=ans><p>Not a specific colour - but federal rule 33 CFR 173.27 requires the characters to contrast with the background and be distinctly visible and legible. White numbers on a white hull fail. Dark hull, light numbers; light hull, dark numbers.</p></div></details><details><summary>How tall do boat registration numbers have to be?</summary><div class=ans><p>Not less than 3 inches in height, in plain vertical block characters. That is the federal minimum and it applies in every state. Taller is always legal.</p></div></details><details><summary>Where do the numbers go on the boat?</summary><div class=ans><p>On each side of the forward half of the vessel, reading left to right, so they are visible from the water. The validation decal placement varies by state - usually within a few inches of the number.</p></div></details><details><summary>Where can I get boat decals made?</summary><div class=ans><p>Here. You pick the characters, font and colour, we cut them from marine vinyl, pre-space them on one sheet with application tape, and ship next business day.</p></div></details><details><summary>What kind of vinyl is best for boat decals?</summary><div class=ans><p>Cast vinyl for anything that lives outside - it conforms to curves and holds colour 7+ years. High-tack is mandatory on plastic: kayaks, PWC hulls and pontoon rails. Calendared vinyl is cheaper and shorter-lived.</p></div></details><details><summary>What is the difference between vinyl stickers and vinyl decals?</summary><div class=ans><p>A sticker is printed on a vinyl square and you see the background. A decal is cut from coloured vinyl, so only the letter shape sticks to the hull and there is no visible edge or square. Everything we make is cut vinyl.</p></div></details><details><summary>Can I apply these myself?</summary><div class=ans><p>Yes - they arrive as one pre-spaced sheet under application tape, so the spacing is already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the tape. If it goes wrong we re-cut it free.</p></div></details></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat lettering</a></li><li><a href="/boat-name-decals/">Boat names</a></li><li><a href="/boat-decals/">Boat decals</a></li><li><a href="/motor-and-brand-decals/">Motor decals</a></li><li><a href="/boat-carpet-decals/">Carpet decals</a></li><li><a href="/hailing-port-decals/">Hailing port</a></li><li><a href="/domed-lettering/">Domed &amp; chrome</a></li><li><a href="/boat-striping/">Striping</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/about/">About us</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Boat Number Shop</strong><br><a href="https://www.google.com/maps/search/?api=1&amp;query=475+River+Forest+Road+Evansdale+IA+50707" rel="noopener">475 River Forest Road, Evansdale, IA 50707</a><br><a href="tel:+13192393793" data-call>(319) 239-3793</a> &middot; <a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a><br>Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Boat Number Shop. Vinyl cut and shipped in Evansdale, USA.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><div class=sticky><span class=sp>$19<em>Registration numbers</em></span><a class=btn href="/design/">Start your order</a></div><script>document.body.classList.add("has-sticky");</script><script>window.BNS_STRIPE_PK="";</script><script>window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};
 (function(){
-  var f=document.getElementById('order'); if(!f) return;
-  var SCRIPT=/script|vibes|edwardian|brush|lobster|old english|hobo/i;
-  var tot=document.getElementById('total'), btot=document.getElementById('btot');
-  var pv=document.getElementById('prevtxt'), pl=document.getElementById('prevlbl');
-  var fontSel=document.getElementById('f_font'), fontHint=document.getElementById('fonthint');
-  var textHint=document.getElementById('texthint'), txt=document.getElementById('f_text');
+  var W=document.getElementById('order'); if(!W) return;
   var COL=window.BNS_COL||{};
-  function kind(){var r=f.querySelector('[name=kind]:checked');return r?r:null;}
-  function isNum(){var k=kind();return k && k.value.indexOf('Registration')===0;}
+  var steps=[].slice.call(W.querySelectorAll('.step'));
+  var cur=1, MAX=steps.length;
+  var $=function(id){return document.getElementById(id);};
+  var nextBtn=$('next'), backBtn=$('back'), fill=$('wizfill'),
+      stepnum=$('stepnum'), tot=$('total'), foothint=$('foothint');
+  var stripe=null, elements=null, clientSecret=null, mounted=false, paying=false;
+
+  function kind(){var r=W.querySelector('[name=kind]:checked');return r?r.value:'Registration numbers';}
+  function isNum(){return kind()!=='Boat name';}
+  function hasName(){return kind()!=='Registration numbers';}
+  function val(n){var el=W.querySelector('[name='+n+']:checked');return el||null;}
 
   function price(){
-    var k=kind(), n=k?parseFloat(k.dataset.base):19;
-    var h=f.querySelector('[name=height]:checked'); if(h) n+=parseFloat(h.dataset.add||0);
-    var ups=f.querySelectorAll('[name=upgrade]:checked');
-    for(var i=0;i<ups.length;i++){
-      // "Add your boat name" is already in the base when they picked Both
-      if(k && k.value==='Numbers + name' && /boat name/i.test(ups[i].value)) continue;
-      n+=parseFloat(ups[i].dataset.add||0);
-    }
+    var k=W.querySelector('[name=kind]:checked');
+    var n=k?parseFloat(k.dataset.base):19;
+    var h=val('height'); if(h) n+=parseFloat(h.dataset.add||0);
+    var ups=W.querySelectorAll('[name=upgrade]:checked');
+    for(var i=0;i<ups.length;i++) n+=parseFloat(ups[i].dataset.add||0);
     return Math.round(n);
   }
-  function render(){
-    var p='$'+price();
-    tot.textContent=p; btot.textContent=p;
-    var t=(txt.value||'').trim()||'YOUR BOAT';
-    var h=f.querySelector('[name=height]:checked');
-    var hv=h?h.value:'3';
-    var fn=fontSel.value||'Block';
-    var cl=document.getElementById('f_color');
-    var cname=cl?cl.value:'White';
-    pv.textContent=t;
-    pv.style.fontFamily = SCRIPT.test(fn) ? 'Georgia,"Times New Roman",serif'
-                                          : '"Arial Black",Impact,sans-serif';
-    pv.style.fontStyle  = SCRIPT.test(fn) ? 'italic' : 'normal';
-    pv.style.color      = COL[cname] || '#12242e';
-    pv.style.textShadow = (cname.indexOf('White')===0||cname==='Chrome'||cname==='Reflective White')
-                          ? '0 0 1px #6b7c86,0 1px 2px rgba(0,0,0,.35)' : 'none';
-    var unit = isNum() ? 'one pair, pre-spaced' : 'one decal, pre-spaced';
-    pl.textContent = hv+'" '+fn.replace(/ \(.*\)/,'')+' · '+cname+' · '+unit;
 
-    // Registration numbers are legally required to be block characters.
-    var lock=isNum();
-    for(var i=0;i<fontSel.options.length;i++){
-      var o=fontSel.options[i];
-      o.disabled = lock && SCRIPT.test(o.value);
-    }
-    if(lock && SCRIPT.test(fontSel.value)) fontSel.selectedIndex=0;
-    fontHint.textContent = lock
-      ? 'Registration numbers must be plain vertical block characters, so script fonts are locked out.'
-      : 'Any font works on a name or a decal. Script reads beautifully on a transom.';
-    textHint.textContent = lock
-      ? 'Copy it straight off your registration card, spaces and all.'
-      : 'Capitalisation matters - we cut it exactly as typed.';
+  var SCRIPTY=/script|vibes|lobster|old english/i;
+  function renderPreview(){
+    var pv=$('prevtxt'), stage=$('prevstage'), lbl=$('prevlbl');
+    if(!pv) return;
+    var c=val('color'), cname=c?c.value:'Black';
+    var meta=COL[cname]||['#111111',0], hex=meta[0], light=meta[1];
+    var t=(isNum()? ($('f_text').value||'') : ($('f_name2').value||'')).trim();
+    if(!t) t = isNum()? 'IA 3717 ZW' : 'Second Wind';
+    var h=val('height'), hv=h?h.value:'3';
+    var fn=$('f_font').value||'Block';
+
+    pv.textContent=t;
+    pv.style.color=hex;
+    // Light vinyl needs a dark hull behind it and dark vinyl needs a light one,
+    // or the preview is a lie - and this is the contrast rule, shown not told.
+    stage.style.background = light ? '#1b2a33' : '#e9f0f4';
+    stage.style.borderColor = light ? '#0e1b22' : '#cfdde6';
+    var script=SCRIPTY.test(fn);
+    pv.style.fontFamily = script ? 'Georgia,"Times New Roman",serif'
+                                 : '"Arial Black",Impact,Haettenschweiler,sans-serif';
+    pv.style.fontStyle  = script ? 'italic' : 'normal';
+    pv.style.letterSpacing = script ? '.01em' : '.06em';
+    lbl.textContent = hv+'" '+fn+' · '+cname+' · '+
+      (isNum()?'one pair, pre-spaced':'one decal, pre-spaced');
   }
 
-  f.addEventListener('input',render);
-  f.addEventListener('change',render);
-
-  f.addEventListener('submit',function(ev){
-    ev.preventDefault();
-    var msg=document.getElementById('msg'), sub=document.getElementById('sub');
-    var need=['f_text','f_name','f_email'];
-    for(var i=0;i<need.length;i++){
-      var el=document.getElementById(need[i]);
-      if(!el.value.trim()){ el.focus();
-        msg.innerHTML='<span class=bad>Fill in your '+
-          (need[i]==='f_text'?'lettering':need[i]==='f_name'?'name':'email')+' first.</span>';
-        return; }
+  function syncFonts(){
+    var sel=$('f_font'), lock=isNum() && kind()!=='Both';
+    var want = lock ? sel.dataset.block : sel.dataset.all;
+    if(sel.dataset.state !== (lock?'b':'a')){
+      var keep=sel.value;
+      sel.innerHTML=want; sel.dataset.state=(lock?'b':'a');
+      var ok=[].slice.call(sel.options).some(function(o){return o.value===keep;});
+      sel.value = ok ? keep : sel.options[0].value;
     }
-    var em=document.getElementById('f_email').value;
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
-      msg.innerHTML='<span class=bad>That email does not look right.</span>';
-      document.getElementById('f_email').focus(); return; }
+    $('fonthint').textContent = lock
+      ? 'Registration numbers must be plain vertical block characters, so script fonts are not offered.'
+      : 'Script reads beautifully on a transom. Any registration numbers in this order stay block.';
+  }
 
-    var d={}, fd=new FormData(f), ups=[];
-    fd.forEach(function(v,k){ if(k==='upgrade'){ups.push(v);} else {d[k]=v;} });
-    d.upgrades=ups.join(', ');
-    d.quoted_total=price();
-    d.page=location.pathname;
+  function syncStep2(){
+    var num=isNum(), nm=hasName();
+    $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
+    $('statewrap').hidden=!num;
+    $('s2h').textContent = num&&nm ? 'What should they say?'
+                         : num ? 'What is your registration number?'
+                               : 'What is the boat called?';
+    $('s2sub').textContent = num
+      ? 'Copy it straight off your registration card, spaces and all.'
+      : 'We cut it exactly as typed, so capitals matter.';
+  }
 
-    sub.disabled=true; sub.textContent='Sending…';
-    msg.textContent='';
-    fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify(d)})
-      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
-      .then(function(res){
-        if(!res.ok) throw new Error(res.j && res.j.error || 'failed');
-        f.innerHTML='<h2 style="font-size:23px">Got it — order '+
-          (res.j.ref||'received')+'</h2>'+
-          '<p>We are drawing your proof now. It lands in <strong>'+
-          em.replace(/</g,'&lt;')+'</strong> shortly, with a payment link.</p>'+
-          '<p class=hint>Nothing gets cut and nothing gets charged until you '+
-          'reply <em>approved</em>. If the proof is wrong, say so and we redraw it free.</p>';
-        f.scrollIntoView({block:'center'});
+  function summary(){
+    var rows=[], k=kind();
+    var kb=W.querySelector('[name=kind]:checked');
+    rows.push([k, '$'+(kb?kb.dataset.base:19)]);
+    var h=val('height');
+    if(h && +h.dataset.add>0) rows.push([h.value+'" characters','+$'+h.dataset.add]);
+    var ups=W.querySelectorAll('[name=upgrade]:checked');
+    for(var i=0;i<ups.length;i++)
+      rows.push([ups[i].value.split(' - ')[0],'+$'+ups[i].dataset.add]);
+    var txt=[];
+    if(isNum() && $('f_text').value.trim()) txt.push($('f_text').value.trim());
+    if(hasName() && $('f_name2').value.trim()) txt.push($('f_name2').value.trim());
+    var c=val('color');
+    $('summary').innerHTML =
+      '<div class=sumline><span>'+esc(txt.join('  ·  ')||'Your lettering')+'</span>'+
+      '<span class=summeta>'+esc((val('height')||{value:'3'}).value)+'" · '+
+      esc(c?c.value:'Black')+' · '+esc($('f_font').value)+'</span></div>'+
+      rows.map(function(r){
+        return '<div class=sumrow><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>';
+      }).join('')+
+      '<div class=sumrow><span>Shipping</span><b class=free>Free</b></div>'+
+      '<div class="sumrow sumtot"><span>Total</span><b>$'+price()+'</b></div>';
+  }
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  function render(){
+    tot.textContent='$'+price();
+    syncFonts(); renderPreview();
+    if(cur===5) summary();
+  }
+
+  function show(n){
+    cur=Math.max(1,Math.min(MAX,n));
+    steps.forEach(function(s){ s.classList.toggle('on', +s.dataset.step===cur); });
+    fill.style.width=(cur/MAX*100)+'%';
+    stepnum.textContent='Step '+cur+' of '+MAX;
+    backBtn.hidden = cur===1;
+    nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
+    nextBtn.classList.toggle('paybtn', cur===MAX);
+    foothint.textContent = cur===MAX
+      ? 'Free shipping · proof before we cut · full refund if you do not like it'
+      : 'Free shipping · ships next business day';
+    document.getElementById('prevwrap').hidden = (cur===1 || cur===5);
+    if(cur===2) syncStep2();
+    if(cur===5){ summary(); initPay(); }
+    render();
+    var top=W.getBoundingClientRect().top+window.scrollY-80;
+    if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
+    var f=W.querySelector('.step.on input[type=text],.step.on input[type=email]');
+    if(f && cur!==1 && window.matchMedia('(min-width:900px)').matches) f.focus();
+  }
+
+  function validate(){
+    if(cur===2){
+      var bad=[];
+      if(isNum() && !$('f_text').value.trim()) bad.push('your registration number');
+      if(hasName() && !$('f_name2').value.trim()) bad.push('your boat name');
+      if(bad.length){ $('e2').textContent='We need '+bad.join(' and ')+' to cut it.';
+        return false; }
+      $('e2').textContent=''; return true;
+    }
+    if(cur===5){
+      var em=$('f_email').value.trim();
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
+        $('e5').textContent='We need a valid email to send your proof.';
+        $('f_email').focus(); return false; }
+      if(!$('f_name').value.trim()){
+        $('e5').textContent='We need a name for the order.';
+        $('f_name').focus(); return false; }
+      $('e5').textContent=''; return true;
+    }
+    return true;
+  }
+
+  function payload(){
+    var ups=[];
+    W.querySelectorAll('[name=upgrade]:checked').forEach(function(u){ups.push(u.value);});
+    return {kind:kind(), text:$('f_text').value.trim(),
+            boatname:$('f_name2').value.trim(), state:$('f_state').value,
+            height:(val('height')||{value:'3'}).value, font:$('f_font').value,
+            color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),
+            name:$('f_name').value.trim(), email:$('f_email').value.trim(),
+            phone:$('f_phone').value.trim(), boat:$('f_boat').value.trim(),
+            notes:$('f_notes').value.trim(), quoted_total:price(),
+            page:location.pathname};
+  }
+
+  // ---- payment ---------------------------------------------------------
+  function initPay(){
+    if(mounted || !window.BNS_STRIPE_PK || !window.Stripe) return;
+    mounted=true;
+    fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({amount:price()})})
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(!j.clientSecret) throw new Error('no secret');
+        clientSecret=j.clientSecret;
+        stripe=window.Stripe(window.BNS_STRIPE_PK);
+        elements=stripe.elements({clientSecret:clientSecret,
+          appearance:{theme:'stripe',variables:{colorPrimary:'#1d7a48',
+            colorText:'#12242e',borderRadius:'10px',fontSizeBase:'16px'}}});
+        elements.create('payment',{layout:'tabs'}).mount('#payelement');
       })
-      .catch(function(){
-        sub.disabled=false; sub.textContent='Send my order';
-        msg.innerHTML='<span class=bad>That did not go through. '+
-          'Email <a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a> '+
-          'and we will pick it up by hand.</span>';
+      .catch(function(){ mounted=false; degrade(); });
+  }
+  function degrade(){
+    // No Stripe keys yet, or the intent failed. Do NOT render a fake card field -
+    // collect the order and promise a payment link instead.
+    var w=$('paywrap');
+    if(w.dataset.degraded) return;
+    w.dataset.degraded='1';
+    $('payelement').innerHTML='<div class=paysoft><b>Card payment is being switched on.</b>'+
+      '<span>Send the order now and we will email your proof with a secure payment '+
+      'link. Nothing is cut until you approve the proof.</span></div>';
+    $('payhint').textContent='';
+    nextBtn.textContent='Send my order';
+  }
+
+  function finish(extra){
+    var d=payload(); if(extra) for(var k in extra) d[k]=extra[k];
+    return fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(d)}).then(function(r){return r.json();});
+  }
+
+  function done(j,paid){
+    W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
+      '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
+      '<p>'+(paid?'Thanks. ':'')+'We are drawing your proof now. It lands in <strong>'+
+      esc($('f_email')?$('f_email').value:'your inbox')+'</strong> shortly'+
+      (paid?'.':', with a secure payment link.')+'</p>'+
+      '<p class=hint>Nothing gets cut until you reply <em>approved</em>. If the proof '+
+      'is wrong we redraw it free'+(paid?', or refund you in full':'')+'.</p>'+
+      '<a class="btn lg" href="/">Back to the shop</a></div>';
+    W.scrollIntoView({block:'center'});
+  }
+
+  // ---- wiring ----------------------------------------------------------
+  nextBtn.addEventListener('click',function(){
+    if(!validate()) return;
+    if(cur<MAX){ show(cur+1); return; }
+    if(paying) return;
+    paying=true; nextBtn.disabled=true; nextBtn.textContent='Working…';
+
+    if(stripe && clientSecret){
+      finish({payment:'stripe'}).then(function(j){
+        return stripe.confirmPayment({elements:elements, redirect:'if_required',
+          confirmParams:{receipt_email:$('f_email').value.trim()}})
+          .then(function(res){
+            if(res.error){ throw new Error(res.error.message||'Card declined.'); }
+            return fetch('/api/order',{method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify(Object.assign(payload(),
+                {paid:1, ref:j.ref, payment:'stripe-confirmed'}))})
+              .then(function(){ done(j,true); });
+          });
+      }).catch(function(err){
+        paying=false; nextBtn.disabled=false; nextBtn.textContent='Pay $'+price();
+        $('e5').textContent=(err&&err.message)||'That card did not go through.';
       });
+    } else {
+      finish({payment:'proof-then-link'}).then(function(j){
+        if(!j.ok) throw new Error();
+        done(j,false);
+      }).catch(function(){
+        paying=false; nextBtn.disabled=false; nextBtn.textContent='Send my order';
+        $('e5').innerHTML='That did not go through. Email '+
+          '<a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a>'+
+          ' and we will pick it up by hand.';
+      });
+    }
   });
-  render();
+  backBtn.addEventListener('click',function(){ show(cur-1); });
+
+  // Step 1 auto-advances: one tap, no Continue. Biggest single fatigue win.
+  W.querySelectorAll('[name=kind]').forEach(function(r){
+    r.addEventListener('change',function(){ render(); setTimeout(function(){show(2);},140); });
+  });
+  var skip=$('skipups');
+  if(skip) skip.addEventListener('click',function(ev){ev.preventDefault();show(5);});
+
+  W.addEventListener('input',render);
+  W.addEventListener('change',render);
+  W.addEventListener('keydown',function(ev){
+    if(ev.key==='Enter' && ev.target.tagName==='INPUT'){ ev.preventDefault(); nextBtn.click(); }
+  });
+
+  // If Stripe.js never loads (blocked, offline), degrade rather than hang.
+  setTimeout(function(){ if(cur===5 && !mounted) degrade(); },4000);
+  show(1);
 })();
 </script>

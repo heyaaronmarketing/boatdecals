@@ -10,30 +10,32 @@
 const BASE = {
   "Registration numbers": 19,
   "Boat name": 29,
+  "Both": 44,
+  // kept so older cached pages still price correctly
   "Numbers + name": 44,
   "Something else": 22,
 };
 const HEIGHT_ADD = { "3": 0, "4": 4, "5": 8, "6": 13 };
 const UPGRADE_ADD = {
   "Premium 8-year cast vinyl": 8,
-  "Add your boat name": 29,
+  "Spare set - a second pair at half price": 9,
+  "Install kit - squeegee + solution + tape": 6,
+  "Rush - cut and shipped today": 12,
   "Hailing port line": 15,
-  "Rush - cut and shipped same day": 12,
-  "Reflective or metallic finish": 10,
-  "Install kit - squeegee + solution": 6,
+  "Reflective finish": 10,
 };
+const BASE_MIN = 19, BASE_MAX = 200;
 
 function priceOf(d) {
   let n = BASE[d.kind] ?? 19;
   n += HEIGHT_ADD[String(d.height || "3")] ?? 0;
-  const ups = String(d.upgrades || "")
-    .split(",").map(s => s.trim()).filter(Boolean);
-  for (const u of ups) {
-    // "Add your boat name" is already inside the base for the combined option.
-    if (d.kind === "Numbers + name" && /boat name/i.test(u)) continue;
-    n += UPGRADE_ADD[u] ?? 0;
-  }
-  return Math.round(n);
+  // Pipe-delimited: an upgrade label may legitimately contain a comma, and
+  // splitting on "," silently dropped those line items (and undercharged).
+  const raw = String(d.upgrades || "");
+  const ups = (raw.includes("|") ? raw.split("|") : raw.split(","))
+    .map(s => s.trim()).filter(Boolean);
+  for (const u of ups) n += UPGRADE_ADD[u] ?? 0;
+  return Math.min(BASE_MAX, Math.max(BASE_MIN, Math.round(n)));
 }
 
 const str = (v, max) => String(v == null ? "" : v).slice(0, max).trim();
@@ -56,6 +58,9 @@ async function handleOrder(request, env) {
     ref: ref(),
     kind: str(d.kind, 40) || "Registration numbers",
     text: str(d.text, 60),
+    boatname: str(d.boatname, 60),
+    payment: str(d.payment, 40),
+    paid: d.paid ? 1 : 0,
     state: str(d.state, 40),
     height: str(d.height, 4) || "3",
     font: str(d.font, 50),
@@ -73,22 +78,34 @@ async function handleOrder(request, env) {
     ts: new Date().toISOString(),
   };
 
-  if (!o.text || !o.name || !EMAIL.test(o.email)) {
+  // "Both" and "Boat name" carry the lettering in boatname, not text.
+  if ((!o.text && !o.boatname) || !o.name || !EMAIL.test(o.email)) {
     return json({ error: "missing lettering, name or a valid email" }, 422);
   }
+  // A confirmation POST re-uses the reference the first POST handed back, so the
+  // two halves of a card order stay one row rather than two.
+  const reuse = str(d.ref, 24);
+  if (reuse) o.ref = reuse;
   o.total = priceOf(o);
   // A mismatch means the client is stale or tampered with. Log it, trust ours.
   o.mismatch = o.quoted && o.quoted !== o.total ? 1 : 0;
 
   if (env.DB) {
     try {
-      await env.DB.prepare(
-        `INSERT INTO orders (ref,kind,text,state,height,font,color,upgrades,
-           name,email,phone,boat,notes,page,total,quoted,mismatch,ua,country,ts)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
-      ).bind(o.ref, o.kind, o.text, o.state, o.height, o.font, o.color, o.upgrades,
-             o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total, o.quoted,
-             o.mismatch, o.ua, o.country, o.ts).run();
+      if (reuse && o.paid) {
+        await env.DB.prepare(
+          `UPDATE orders SET paid=1, payment=?, status='paid' WHERE ref=?`
+        ).bind(o.payment, o.ref).run();
+      } else {
+        await env.DB.prepare(
+          `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,
+             name,email,phone,boat,notes,page,total,quoted,mismatch,paid,payment,
+             ua,country,ts)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(o.ref, o.kind, o.text, o.boatname, o.state, o.height, o.font, o.color,
+               o.upgrades, o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total,
+               o.quoted, o.mismatch, o.paid, o.payment, o.ua, o.country, o.ts).run();
+      }
     } catch (err) {
       console.error("d1 insert failed", err && err.message);
       // Keep going - an unsaved row is recoverable from the email, a lost
@@ -96,9 +113,13 @@ async function handleOrder(request, env) {
     }
   }
 
+  // The confirmation POST would otherwise send a duplicate shop email.
+  if (reuse && o.paid) return json({ ok: true, ref: o.ref, total: o.total, paid: 1 });
+
   if (env.RESEND_API_KEY && env.ORDER_TO) {
     const rows = [
-      ["Reference", o.ref], ["Product", o.kind], ["Lettering", o.text],
+      ["Reference", o.ref], ["Product", o.kind],
+      ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
       ["State", o.state], ["Height", o.height + '"'], ["Font", o.font],
       ["Colour", o.color], ["Upgrades", o.upgrades || "none"],
       ["Price", "$" + o.total], ["Customer", o.name], ["Email", o.email],
@@ -140,6 +161,41 @@ const json = (o, status = 200) => new Response(JSON.stringify(o), {
                      "cache-control": "no-store" },
 });
 
+/**
+ * Creates a Stripe PaymentIntent for the amount WE calculate, never the amount
+ * the browser sends - the posted figure is only used to detect a stale page.
+ */
+async function handleCheckout(request, env) {
+  if (!env.STRIPE_SECRET_KEY) return json({ error: "stripe not configured" }, 503);
+  let d;
+  try { d = await request.json(); } catch { return json({ error: "bad request" }, 400); }
+
+  const amount = priceOf(d.order || d);
+  const body = new URLSearchParams({
+    amount: String(amount * 100),
+    currency: "usd",
+    "automatic_payment_methods[enabled]": "true",
+    description: `Boat Number Shop - ${d.kind || "custom lettering"}`,
+  });
+  try {
+    const r = await fetch("https://api.stripe.com/v1/payment_intents", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
+                 "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+    const pi = await r.json();
+    if (!r.ok) {
+      console.error("stripe intent failed", pi && pi.error && pi.error.message);
+      return json({ error: "payment setup failed" }, 502);
+    }
+    return json({ clientSecret: pi.client_secret, amount });
+  } catch (err) {
+    console.error("stripe unreachable", err && err.message);
+    return json({ error: "payment setup failed" }, 502);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -148,8 +204,13 @@ export default {
       if (request.method !== "POST") return json({ error: "POST only" }, 405);
       return handleOrder(request, env);
     }
+    if (url.pathname === "/api/checkout") {
+      if (request.method !== "POST") return json({ error: "POST only" }, 405);
+      return handleCheckout(request, env);
+    }
     if (url.pathname === "/api/health") {
-      return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY });
+      return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
+                    stripe: !!env.STRIPE_SECRET_KEY });
     }
 
     const res = await env.ASSETS.fetch(request);

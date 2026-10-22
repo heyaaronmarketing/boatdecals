@@ -9,3 +9,8 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 CREATE INDEX IF NOT EXISTS idx_orders_ts  ON orders(ts);
 CREATE INDEX IF NOT EXISTS idx_orders_ref ON orders(ref);
+
+-- Added with the Stripe checkout flow.
+ALTER TABLE orders ADD COLUMN boatname TEXT;
+ALTER TABLE orders ADD COLUMN paid INTEGER DEFAULT 0;
+ALTER TABLE orders ADD COLUMN payment TEXT;

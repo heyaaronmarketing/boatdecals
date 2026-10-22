@@ -251,7 +251,13 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
     parts.append(footer())
     parts.append(sticky(sticky_label or "Registration numbers", sticky_price))
     parts.append('<script>document.body.classList.add("has-sticky");</script>')
-    if js: parts.append('<script>' + js + '</script>')
+    if js:
+        if "BNS_STRIPE_PK" in js:
+            pk = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+            parts.append('<script>window.BNS_STRIPE_PK=%s;</script>' % json.dumps(pk))
+            if pk:
+                parts.append('<script src="https://js.stripe.com/v3/"></script>')
+        parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
 ORDER_JS = O.color_js() + O.JS
@@ -348,7 +354,7 @@ def build_design():
             '</div></div></div></section>')
     write("/design/", shell("Start Your Order - Boat Lettering &amp; Numbers",
           "Build your boat registration numbers or custom lettering order. Live pricing, "
-          "free proof by email, nothing charged until you approve.",
+          "live pricing, a free proof by email, and a full refund if you do not like it.",
           "/design/", sch, main, trail=trail, js=ORDER_JS), "0.9")
 
 # -------------------------------------------------------------- /pricing/
@@ -358,8 +364,9 @@ def build_pricing():
                    '<td><strong>$%d</strong> %s</td></tr>'
                    % (p["slug"], p["nav"], p["blurb"], p["price"], p["unit"])
                    for p in PRODUCTS)
-    ups = "".join('<tr><td><strong>%s</strong></td><td>%s</td><td>+$%d</td></tr>'
-                  % (lbl, note, amt) for lbl, amt, note in UPGRADES)
+    ups = "".join('<tr><td><strong>%s</strong></td><td>%s %s</td><td>+$%d</td></tr>'
+                  % (lbl, blurb, note, amt)
+                  for lbl, amt, blurb, flag, note in UPGRADES)
     vt = "".join('<tr><td><strong>%s</strong></td><td>%s</td><td>%s</td><td>%s</td></tr>'
                  % r for r in CB.VINYL_TABLE)
     faqs = [
@@ -374,8 +381,9 @@ def build_pricing():
        "only thing that matters to you, the marketplace sets are genuinely cheaper and "
        "we would rather say so."),
       ("When do I pay?",
-       "After you approve the proof. We send a payment link with it. Nothing is cut and "
-       "no card is charged before you reply."),
+       "By card at checkout. We then send your proof, and nothing is cut until you "
+       "approve it &mdash; if you do not like the proof we redraw it free or refund "
+       "you in full."),
       ("Do you do trade or volume pricing?",
        "Yes - marinas, dealers and fleet operators. Email " + SITE["email"] +
        " with roughly how many sets a month and we will put numbers together."),
@@ -604,7 +612,7 @@ def build_product(p):
     body = PROD_BODY.get(p["slug"], "")
     sw = '<div class=swatches>' + "".join(
         '<span class=sw><i style="background:%s"></i>%s</span>' % (h, n)
-        for n, h in COLORS) + '</div>'
+        for n, h, _light in COLORS) + "</div>"
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"), "Free shipping",
                    "Ships next business day", "7-year vinyl"],
@@ -699,8 +707,8 @@ def build_state(s):
       + '<h2>Ordering for a %s boat</h2>'
         '<p>Type the number as it appears on your card, pick a colour that contrasts with '
         'your hull, and leave the height at 3 inches unless you want it bolder. You will '
-        'get a proof by email showing the exact layout before anything is cut. Nothing is '
-        'charged until you approve it.</p>' % nm
+        'get a proof by email showing the exact layout before anything is cut, and a '
+        'full refund if you do not like what you see.</p>' % nm
       + '</div><a class="btn lg" href="/design/">Order %s numbers &middot; $19</a></div></section>' % ab
       + '<section class=soft><div class=w><h2>Other states</h2>' + state_wheel(current=s["slug"])
       + '</div></section>')
@@ -1406,7 +1414,8 @@ def build_local():
        "rather we did it, call and ask; it depends on the week."),
       ("How much is it?",
        "$19 a pair for registration numbers, the same price locally as online. Names "
-       "from $29. Nothing is charged until you approve the proof."),
+       "from $29. You pay at checkout, we send a proof, and nothing is cut until "
+       "you approve it."),
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     gmap = ("https://www.google.com/maps?q=%s&output=embed"
@@ -1510,8 +1519,8 @@ def build_about():
       "<li>We will not cut brand decals in quantity or for a boat that is not that brand. "
       "Restoration, yes. Counterfeiting, no.</li></ul>"
       "<h2>The guarantee, in plain terms</h2>"
-      "<p>You get a proof by email before anything is cut, and nothing is charged until "
-      "you approve it. If the install goes wrong &mdash; torn character, creased sheet, "
+      "<p>You get a proof by email before anything is cut, and a full refund if you do "
+      "not like it. If the install goes wrong &mdash; torn character, creased sheet, "
       "crooked set &mdash; tell us and we cut it again free. The film itself carries the "
       "manufacturer&rsquo;s outdoor warranty on colour and adhesion.</p>"
       "<h2>Where we are</h2>"
@@ -1569,8 +1578,8 @@ def build_contact():
       "queue and get proofed the next working morning.</p>"
       "<h2>Ordering</h2>"
       "<p>You do not need to email to order. The <a href=\"/design/\">order form</a> "
-      "gives you a live price and sends everything we need. Nothing is charged until you "
-      "approve the proof we send back.</p>"
+      "takes about a minute and prices itself as you go. We send a proof before "
+      "anything is cut.</p>"
       "<h2>Sending artwork</h2>"
       "<p>Vector files cut directly &mdash; AI, EPS, SVG or PDF. A clean PNG or even a "
       "photo of the faded original works; we redraw it as vector at no charge. Email it "
@@ -1667,9 +1676,8 @@ def build_shipping():
       "All 50 states and DC. We do not ship internationally.</p>"
       "<h2>Returns on custom work</h2>"
       "<p>Custom-cut vinyl with your registration number on it cannot be resold, so it is "
-      "not returnable once cut. That is precisely why we send a proof and charge nothing "
-      "until you approve it &mdash; the approval step exists to make returns "
-      "unnecessary.</p>"
+      "not returnable once cut. That is why we send a proof first. <strong>Up until you "
+      "approve that proof you can cancel for a full refund, no reason needed.</strong></p>"
       "<p>Three things we do fix:</p>"
       "<ul><li><strong>It does not match the proof you approved.</strong> Our error. We "
       "remake it free, at the front of the queue.</li>"
@@ -1707,9 +1715,9 @@ def build_legal():
       "Terms of service", "The short version of how ordering works.",
       "<p><em>Last updated " + TODAY + ".</em></p>"
       "<h2>Orders and proofs</h2>"
-      "<p>Submitting the order form is a request, not a purchase. We send a proof; your "
-      "approval of that proof is what creates the order. Nothing is cut and no payment is "
-      "taken before approval.</p>"
+      "<p>Payment is taken at checkout. We then send a proof, and <strong>nothing is cut "
+      "until you approve it</strong>. If the proof is wrong we redraw it free; if you no "
+      "longer want it at that point we refund you in full.</p>"
       "<h2>Accuracy of what you type</h2>"
       "<p>We cut exactly what is on the approved proof. Check your registration number "
       "character by character against your card &mdash; the proof exists for that reason. "
