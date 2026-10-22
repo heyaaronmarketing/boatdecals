@@ -1,0 +1,25 @@
+{
+  "name": "boatdecals",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": true
+  },
+  "vars": {
+    "SITE_URL": "https://boatnumbershop.com",
+    "ORDER_FROM": "onboarding@resend.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "boatnumbershop",
+      "database_id": "43724d47-a4c3-4528-8bca-109b54052179"
+    }
+  ],
+  "observability": { "enabled": true },
+  "workers_dev": true
+}

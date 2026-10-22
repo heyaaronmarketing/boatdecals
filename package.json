@@ -1,0 +1,9 @@
+{
+  "name": "boatnumbershop",
+  "private": true,
+  "scripts": {
+    "build": "python3 engine/build.py",
+    "deploy": "npx wrangler deploy",
+    "dev": "npx wrangler dev"
+  }
+}
