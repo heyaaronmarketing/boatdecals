@@ -342,3 +342,11 @@ min-height:46px}
 .oktick{width:54px;height:54px;border-radius:50%;background:var(--cta);color:#fff;
 font-size:28px;font-weight:800;display:grid;place-items:center;margin:0 auto 16px}
 """
+
+
+# ---- sandbox card form ---------------------------------------------
+import mockpay as _MP
+CSS += _MP.CSS
+CSS += """
+.payel.sandbox{border:0;padding:0;background:none}
+"""

@@ -14,3 +14,9 @@ CREATE INDEX IF NOT EXISTS idx_orders_ref ON orders(ref);
 ALTER TABLE orders ADD COLUMN boatname TEXT;
 ALTER TABLE orders ADD COLUMN paid INTEGER DEFAULT 0;
 ALTER TABLE orders ADD COLUMN payment TEXT;
+
+-- Sandbox checkout. card_last4/card_brand only; a full PAN is refused at the
+-- API boundary and has no column here by design.
+ALTER TABLE orders ADD COLUMN test_mode INTEGER DEFAULT 0;
+ALTER TABLE orders ADD COLUMN card_brand TEXT;
+ALTER TABLE orders ADD COLUMN card_last4 TEXT;

@@ -41,6 +41,27 @@ function priceOf(d) {
 const str = (v, max) => String(v == null ? "" : v).slice(0, max).trim();
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
 
+/**
+ * Defence in depth against a PAN ever reaching storage.
+ *
+ * The sandbox card form is built to send only {brand, last4}, but a future edit
+ * there must not be able to quietly start leaking a full number. Any posted
+ * value carrying a 13-19 digit run is rejected outright, and the whole request
+ * is refused rather than silently scrubbed - a silent scrub would hide the
+ * regression that caused it.
+ */
+const PAN = /(?:\d[ -]?){13,19}/;
+function carriesCardNumber(d) {
+  for (const [k, v] of Object.entries(d || {})) {
+    if (typeof v !== "string" && typeof v !== "number") continue;
+    // The lettering field is legitimately short; notes are free text. Neither
+    // should ever contain a card-length digit run.
+    if (k === "card_last4" || k === "quoted_total") continue;
+    if (PAN.test(String(v))) return k;
+  }
+  return null;
+}
+
 function ref() {
   // Short, human-readable, says it on the phone without spelling.
   const a = "BNS";
@@ -54,6 +75,12 @@ async function handleOrder(request, env) {
   try { d = await request.json(); }
   catch { return json({ error: "bad request" }, 400); }
 
+  const leak = carriesCardNumber(d);
+  if (leak) {
+    console.error("refused: card-number-shaped value in field", leak);
+    return json({ error: "card details must never be sent to this endpoint" }, 400);
+  }
+
   const o = {
     ref: ref(),
     kind: str(d.kind, 40) || "Registration numbers",
@@ -61,6 +88,10 @@ async function handleOrder(request, env) {
     boatname: str(d.boatname, 60),
     payment: str(d.payment, 40),
     paid: d.paid ? 1 : 0,
+    test_mode: d.test_mode ? 1 : 0,
+    // last4 and brand only - there is no field here for a full number by design.
+    card_brand: str(d.card_brand, 20),
+    card_last4: str(d.card_last4, 4).replace(/\D/g, ""),
     state: str(d.state, 40),
     height: str(d.height, 4) || "3",
     font: str(d.font, 50),
@@ -94,17 +125,23 @@ async function handleOrder(request, env) {
     try {
       if (reuse && o.paid) {
         await env.DB.prepare(
-          `UPDATE orders SET paid=1, payment=?, status='paid' WHERE ref=?`
-        ).bind(o.payment, o.ref).run();
+          `UPDATE orders SET paid=1, payment=?, status=? WHERE ref=?`
+        ).bind(o.payment, o.test_mode ? "test" : "paid", o.ref).run();
       } else {
         await env.DB.prepare(
           `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,
              name,email,phone,boat,notes,page,total,quoted,mismatch,paid,payment,
-             ua,country,ts)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+             ua,country,ts
+           ,test_mode,card_brand,card_last4,status)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         ).bind(o.ref, o.kind, o.text, o.boatname, o.state, o.height, o.font, o.color,
                o.upgrades, o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total,
-               o.quoted, o.mismatch, o.paid, o.payment, o.ua, o.country, o.ts).run();
+               o.quoted, o.mismatch, o.paid, o.payment, o.ua, o.country, o.ts,
+               o.test_mode, o.card_brand, o.card_last4,
+               // `paid` stays the real-money flag, so SUM(total) WHERE paid=1 is
+               // correct with no test-exclusion needed. Sandbox orders are never
+               // paid=1; `status` is what makes them visible in the queue.
+               o.test_mode ? "test" : (o.paid ? "paid" : "new")).run();
       }
     } catch (err) {
       console.error("d1 insert failed", err && err.message);
@@ -122,12 +159,22 @@ async function handleOrder(request, env) {
       ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
       ["State", o.state], ["Height", o.height + '"'], ["Font", o.font],
       ["Colour", o.color], ["Upgrades", o.upgrades || "none"],
-      ["Price", "$" + o.total], ["Customer", o.name], ["Email", o.email],
+      ["Price", "$" + o.total],
+      ["Payment", o.test_mode
+        ? `TEST MODE - no money taken (${o.card_brand || "card"} ending ${o.card_last4 || "----"})`
+        : (o.paid ? `Paid (${o.card_brand} ending ${o.card_last4})` : "Payment link to send")],
+      ["Customer", o.name], ["Email", o.email],
       ["Phone", o.phone || "-"], ["Boat", o.boat || "-"],
       ["Notes", o.notes || "-"], ["From page", o.page],
     ];
     const body =
-      `<h2>New order ${o.ref} - $${o.total}</h2>` +
+      (o.test_mode
+        ? `<p style="background:#fff7e6;border-left:4px solid #d08700;padding:10px 13px;
+             font:14px system-ui;margin:0 0 14px"><strong>TEST ORDER.</strong> This came
+             from the sandbox checkout. No payment was taken and no card was stored.
+             Do not cut it.</p>`
+        : "") +
+      `<h2>${o.test_mode ? "[TEST] " : ""}New order ${o.ref} - $${o.total}</h2>` +
       (o.mismatch ? `<p style="color:#b0202f"><strong>Price mismatch:</strong> browser
         quoted $${o.quoted}, server says $${o.total}. Check before you invoice.</p>` : "") +
       `<table cellpadding="6" style="border-collapse:collapse;font:14px system-ui">` +
@@ -143,7 +190,7 @@ async function handleOrder(request, env) {
         body: JSON.stringify({
           from: env.ORDER_FROM || "orders@boatnumbershop.com",
           to: [env.ORDER_TO], reply_to: o.email,
-          subject: `Order ${o.ref} - ${o.kind} - $${o.total}`,
+          subject: `${o.test_mode ? "[TEST] " : ""}Order ${o.ref} - ${o.kind} - $${o.total}`,
           html: body,
         }),
       });
@@ -210,7 +257,8 @@ export default {
     }
     if (url.pathname === "/api/health") {
       return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
-                    stripe: !!env.STRIPE_SECRET_KEY });
+                    stripe: !!env.STRIPE_SECRET_KEY,
+                    pay_mode: env.STRIPE_SECRET_KEY ? "stripe" : "sandbox" });
     }
 
     const res = await env.ASSETS.fetch(request);

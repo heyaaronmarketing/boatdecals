@@ -63,7 +63,44 @@ The preview flips its hull colour from the vinyl's lightness flag (`COLORS[2]`):
 light vinyl renders on a dark hull, dark vinyl on a light one. That is both an
 honest preview and the federal contrast rule taught visually.
 
-## Stripe
+## Payment modes
+
+Resolved at build time, highest wins:
+
+| Mode | When | Behaviour |
+|---|---|---|
+| `stripe` | `STRIPE_PUBLISHABLE_KEY` is set at build time | Real Stripe Payment Element |
+| `sandbox` | **current default** | Fake card form, accepts any number, no network call |
+| `link` | `PAY_MODE=link` | Collects the order, promises an emailed payment link |
+
+### Sandbox mode (`engine/mockpay.py`)
+
+Looks and behaves like Stripe's Payment Element — card formatting (4-4-4-4, and
+4-6-5 for Amex), brand detection, `MM / YY` auto-slash, Stripe's own error
+wording — and talks to nobody.
+
+**The hard rule: a full card number never leaves the browser and is never
+stored.** `collect()` validates shape only (deliberately *not* Luhn, so any test
+number works) and returns `{brand, last4}`. The PAN and CVC go out of scope and
+are never returned, logged, or posted.
+
+Three layers enforce it, and `verify.py` gates all three:
+
+1. `collect()` returns brand + last4 only
+2. The worker's `carriesCardNumber()` **refuses the whole request** with a 400 if
+   any posted field contains a 13–19 digit run — it rejects rather than silently
+   scrubbing, because a silent scrub would hide the regression that caused it
+3. There is no column for a full number in `schema.sql`
+
+A permanent **TEST MODE** banner sits above the field, the shop email is subject
+-prefixed `[TEST]` with a "do not cut it" warning, and rows land with
+`test_mode=1, status='test', paid=0` — so `SUM(total) WHERE paid=1` is real
+revenue with no test exclusion needed.
+
+To go live, set both keys and rebuild (the publishable key is read at build time,
+so a redeploy alone will not switch modes).
+
+### Stripe
 
 `/api/checkout` creates a PaymentIntent for the amount **the worker** calculates.
 Set `STRIPE_SECRET_KEY` (worker secret) and `STRIPE_PUBLISHABLE_KEY` (build-time
@@ -74,8 +111,9 @@ echo "sk_live_..." | npx wrangler secret put STRIPE_SECRET_KEY
 STRIPE_PUBLISHABLE_KEY=pk_live_... python3 engine/build.py && npx wrangler deploy
 ```
 
-Until both are set the checkout step **degrades honestly** — it does not render a
-fake card field. It collects the order and promises an emailed payment link.
+Until both are set the site runs in `sandbox` mode (above). Setting
+`PAY_MODE=link` instead skips the fake card field entirely and collects the order
+against an emailed payment link.
 
 ## Bindings & secrets
 

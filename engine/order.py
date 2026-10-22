@@ -179,7 +179,6 @@ def form():
       </div>
     </div>
     <div id=paywrap style="margin-top:15px">
-      <label>Card</label>
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card number.</div>
     </div>
@@ -222,7 +221,8 @@ JS = r"""
   var $=function(id){return document.getElementById(id);};
   var nextBtn=$('next'), backBtn=$('back'), fill=$('wizfill'),
       stepnum=$('stepnum'), tot=$('total'), foothint=$('foothint');
-  var stripe=null, elements=null, clientSecret=null, mounted=false, paying=false;
+  var stripe=null, elements=null, clientSecret=null, mounted=false,
+      paying=false, sandbox=false;
 
   function kind(){var r=W.querySelector('[name=kind]:checked');return r?r.value:'Registration numbers';}
   function isNum(){return kind()!=='Boat name';}
@@ -380,7 +380,11 @@ JS = r"""
 
   // ---- payment ---------------------------------------------------------
   function initPay(){
-    if(mounted || !window.BNS_STRIPE_PK || !window.Stripe) return;
+    if(mounted) return;
+    if(!window.BNS_STRIPE_PK || !window.Stripe){
+      if(window.BNS_PAY_MODE==='sandbox'){ mounted=true; mountSandbox(); }
+      return;
+    }
     mounted=true;
     fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({amount:price()})})
@@ -396,6 +400,14 @@ JS = r"""
       })
       .catch(function(){ mounted=false; degrade(); });
   }
+  function mountSandbox(){
+    $('payelement').classList.add('sandbox');
+    $('payelement').innerHTML=window.BNS_MOCKPAY_HTML;
+    $('payhint').textContent='';
+    window.BNS_MOCKPAY.wire();
+    sandbox=true;
+  }
+
   function degrade(){
     // No Stripe keys yet, or the intent failed. Do NOT render a fake card field -
     // collect the order and promise a payment link instead.
@@ -415,8 +427,11 @@ JS = r"""
       body:JSON.stringify(d)}).then(function(r){return r.json();});
   }
 
-  function done(j,paid){
+  function done(j,paid,test){
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
+      (test?'<div class=testbar style="text-align:left"><b>Test mode</b>'+
+            '<span>No payment was taken and no card was stored. This order is '+
+            'flagged as a test.</span></div>':'')+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
       '<p>'+(paid?'Thanks. ':'')+'We are drawing your proof now. It lands in <strong>'+
       esc($('f_email')?$('f_email').value:'your inbox')+'</strong> shortly'+
@@ -433,6 +448,28 @@ JS = r"""
     if(cur<MAX){ show(cur+1); return; }
     if(paying) return;
     paying=true; nextBtn.disabled=true; nextBtn.textContent='Working…';
+
+    if(sandbox){
+      var card=window.BNS_MOCKPAY.collect();
+      if(!card){ paying=false; nextBtn.disabled=false;
+                 nextBtn.textContent='Pay $'+price(); return; }
+      W.classList.add('paying');
+      // Deliberate pause so the demo feels like a real authorisation.
+      setTimeout(function(){
+        finish({payment:'sandbox', test_mode:1,
+                card_brand:card.brand, card_last4:card.last4})
+          .then(function(j){
+            if(!j.ok) throw new Error(j.error||'failed');
+            done(j,true,true);
+          })
+          .catch(function(){
+            W.classList.remove('paying');
+            paying=false; nextBtn.disabled=false; nextBtn.textContent='Pay $'+price();
+            window.BNS_MOCKPAY.fail('Could not save the test order. Try again.');
+          });
+      }, 900);
+      return;
+    }
 
     if(stripe && clientSecret){
       finish({payment:'stripe'}).then(function(j){

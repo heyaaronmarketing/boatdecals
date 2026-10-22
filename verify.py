@@ -70,6 +70,20 @@ if "upgrades:ups.join(' | ')" not in (ROOT / "engine" / "order.py").read_text():
 if '"Registration numbers": %d' % PRICE["numbers"] not in wjs:
     fails.append("worker BASE disagrees with content.PRICE")
 
+# Sandbox checkout invariants. The card form must never hand a full number to
+# the payload, and the worker must refuse one if a future edit ever does.
+mp = (ROOT / "engine" / "mockpay.py").read_text()
+if "return {brand: brandOf(d)[1] || 'Card', last4: d.slice(-4)}" not in mp:
+    fails.append("mockpay collect() no longer returns brand+last4 only - "
+                 "check it is not leaking a full card number")
+for banned in ("pan:", "number:", "cvc:", "card_number"):
+    if banned in mp.split("function collect()")[-1]:
+        fails.append("mockpay collect() appears to return %r" % banned)
+if "carriesCardNumber" not in wjs or "const PAN" not in wjs:
+    fails.append("worker lost its card-number refusal guard")
+if '.testbar' not in design or 'Test mode' not in design:
+    fails.append("sandbox checkout is live without a visible TEST MODE banner")
+
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))
 if fails:

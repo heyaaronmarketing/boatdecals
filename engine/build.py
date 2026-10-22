@@ -7,6 +7,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      STATES, FONTS, COLORS, FAQ_HOME, LOCAL_TOWNS, LOCAL_WATERS)
 from style import CSS
 import order as O
+import mockpay as MP
 import tools as T
 import copy_blocks as CB
 
@@ -253,10 +254,17 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
     parts.append('<script>document.body.classList.add("has-sticky");</script>')
     if js:
         if "BNS_STRIPE_PK" in js:
+            # Precedence: a real publishable key wins; otherwise PAY_MODE decides
+            # between the sandbox card form and the emailed-payment-link fallback.
             pk = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
-            parts.append('<script>window.BNS_STRIPE_PK=%s;</script>' % json.dumps(pk))
+            mode = os.environ.get("PAY_MODE", "sandbox" if not pk else "stripe")
+            parts.append('<script>window.BNS_STRIPE_PK=%s;window.BNS_PAY_MODE=%s;'
+                         'window.BNS_MOCKPAY_HTML=%s;</script>'
+                         % (json.dumps(pk), json.dumps(mode), json.dumps(MP.HTML)))
             if pk:
                 parts.append('<script src="https://js.stripe.com/v3/"></script>')
+            elif mode == "sandbox":
+                parts.append('<script>' + MP.JS + '</script>')
         parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
