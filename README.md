@@ -81,6 +81,17 @@ whose **viewBox is recomputed from the rendered bounding box** on every change
 (`fit()`), so the glyphs fill the panel edge to edge regardless of length or
 font. "Both" stacks two lines and fits them together.
 
+Step 2 carries no visible heading or sub-line — the step counter, the field
+labels and the "Pick a font" legend say it all. The `<h2>` is still in the
+markup as `.vh` (visually hidden) so screen readers keep the step structure.
+
+⚠️ **If you remove an element, remove every `$('id')` that writes to it.**
+Deleting step 2's sub-line while leaving its setter made `syncStep2()` throw a
+TypeError on every render — and because the visible half of the function ran
+first, the only symptom was that the scroll-into-view and autofocus after it
+silently stopped working. `verify.py` now cross-checks every id the wizard's JS
+writes against the ids present in the markup.
+
 The SVG height is **fixed at 94px on purpose** — a min/max pair let the box
 resize as the text grew, which made the whole panel jitter while someone was
 typing.

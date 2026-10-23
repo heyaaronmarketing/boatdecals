@@ -303,12 +303,17 @@ cursor:pointer;padding:3px 0}
 .wizback:hover{text-decoration:underline}
 .wiztot{margin-left:auto;font-weight:600}
 .wiztot b{font-size:17.5px;color:var(--nav);margin-left:3px}
-.wizbody{padding:2px 16px 0;min-height:186px}
-@media(min-width:620px){.wizbody{min-height:196px}}
+.wizbody{padding:12px 16px 0;min-height:176px}
+@media(min-width:620px){.wizbody{min-height:186px}}
 .step{display:none;padding:0;animation:stepin .22s ease both}
 .step.on{display:block}
 @keyframes stepin{from{opacity:0;transform:translateX(9px)}to{opacity:1;transform:none}}
-.step h2{font-size:17.5px;margin:9px 0 3px}
+.step h2{font-size:17.5px;margin:0 0 3px}
+/* Visually hidden but still announced - step 2's heading is redundant on
+   screen next to the step counter and the field labels, but a screen reader
+   still wants the structure. */
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .sublede{font-size:13.6px;color:var(--mut);margin-bottom:11px}
 .wizfoot{padding:11px 16px 13px;border-top:1px solid var(--line);margin-top:10px;
 background:var(--soft)}
@@ -522,8 +527,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
 
   <!-- 2 ------------------------------------------------------------- -->
   <section class=step data-step="2">
-    <h2 id=s2h>What should it say?</h2>
-    <p class=sublede id=s2sub>Copy it off your registration card, spaces and all.</p>
+    <h2 class=vh id=s2h>What should it say?</h2>
     <div id=numwrap>
       <label for=f_text>Registration number</label>
       <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
@@ -892,9 +896,6 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     $('s2h').textContent = num&&nm ? 'What should they say?'
                          : num ? 'What is your registration number?'
                                : 'What is the boat called?';
-    $('s2sub').textContent = num
-      ? 'Copy it straight off your registration card, spaces and all.'
-      : 'We cut it exactly as typed, so capitals matter.';
   }
 
   function summary(){
@@ -953,8 +954,15 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
     if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
-    var f=W.querySelector('.step.on input[type=text],.step.on input[type=email]');
-    if(f && cur!==1 && window.matchMedia('(min-width:900px)').matches) f.focus();
+    // The first text input in DOM order may be the one we just hid (step 2
+    // keeps both the number and name fields in the markup), and focusing a
+    // display:none element silently does nothing.
+    var cands=W.querySelectorAll('.step.on input[type=text],.step.on input[type=email]');
+    for(var fi=0; fi<cands.length; fi++){
+      if(cands[fi].offsetParent === null) continue;
+      if(cur!==1 && window.matchMedia('(min-width:900px)').matches) cands[fi].focus();
+      break;
+    }
   }
 
   function validate(){

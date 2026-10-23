@@ -127,8 +127,7 @@ def form():
 
   <!-- 2 ------------------------------------------------------------- -->
   <section class=step data-step="2">
-    <h2 id=s2h>What should it say?</h2>
-    <p class=sublede id=s2sub>Copy it off your registration card, spaces and all.</p>
+    <h2 class=vh id=s2h>What should it say?</h2>
     <div id=numwrap>
       <label for=f_text>Registration number</label>
       <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
@@ -323,9 +322,6 @@ JS = r"""
     $('s2h').textContent = num&&nm ? 'What should they say?'
                          : num ? 'What is your registration number?'
                                : 'What is the boat called?';
-    $('s2sub').textContent = num
-      ? 'Copy it straight off your registration card, spaces and all.'
-      : 'We cut it exactly as typed, so capitals matter.';
   }
 
   function summary(){
@@ -384,8 +380,15 @@ JS = r"""
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
     if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
-    var f=W.querySelector('.step.on input[type=text],.step.on input[type=email]');
-    if(f && cur!==1 && window.matchMedia('(min-width:900px)').matches) f.focus();
+    // The first text input in DOM order may be the one we just hid (step 2
+    // keeps both the number and name fields in the markup), and focusing a
+    // display:none element silently does nothing.
+    var cands=W.querySelectorAll('.step.on input[type=text],.step.on input[type=email]');
+    for(var fi=0; fi<cands.length; fi++){
+      if(cands[fi].offsetParent === null) continue;
+      if(cur!==1 && window.matchMedia('(min-width:900px)').matches) cands[fi].focus();
+      break;
+    }
   }
 
   function validate(){

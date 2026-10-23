@@ -81,6 +81,19 @@ for banned in ("pan:", "number:", "cvc:", "card_number"):
         fails.append("mockpay collect() appears to return %r" % banned)
 if "carriesCardNumber" not in wjs or "const PAN" not in wjs:
     fails.append("worker lost its card-number refusal guard")
+# Every element id the wizard's JS writes to must exist in the markup. A
+# removed element leaves a silent TypeError that kills everything after it in
+# the same function - which is exactly how the step-2 scroll and autofocus
+# broke without any visible symptom.
+import re as _re
+order_js = (ROOT / "engine" / "order.py").read_text()
+js_ids = set(_re.findall(r"\$\('([A-Za-z0-9_]+)'\)", order_js))
+markup_ids = set(_re.findall(r"id=([A-Za-z0-9_]+)", order_js))
+markup_ids |= set(_re.findall(r'id="([A-Za-z0-9_]+)"', design))
+missing = sorted(i for i in js_ids - markup_ids if i not in {"order"})
+if missing:
+    fails.append("order.py JS writes to ids with no element: %s" % missing)
+
 # The wizard renders inside .hero{color:#fff}; anything in it that does not
 # set its own colour inherits white and disappears.
 if "color:var(--ink);box-shadow" not in design:
