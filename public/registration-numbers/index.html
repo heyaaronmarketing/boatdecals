@@ -297,19 +297,19 @@ cursor:pointer;padding:3px 0}
 .wizback:hover{text-decoration:underline}
 .wiztot{margin-left:auto;font-weight:600}
 .wiztot b{font-size:17.5px;color:var(--nav);margin-left:3px}
-.wizbody{padding:2px 16px 0;min-height:244px}
-@media(min-width:620px){.wizbody{min-height:258px}}
+.wizbody{padding:2px 16px 0;min-height:186px}
+@media(min-width:620px){.wizbody{min-height:196px}}
 .step{display:none;padding:0;animation:stepin .22s ease both}
 .step.on{display:block}
 @keyframes stepin{from{opacity:0;transform:translateX(9px)}to{opacity:1;transform:none}}
 .step h2{font-size:17.5px;margin:9px 0 3px}
 .sublede{font-size:13.6px;color:var(--mut);margin-bottom:11px}
-.wizfoot{padding:9px 16px 11px;border-top:1px solid var(--line);margin-top:9px;
+.wizfoot{padding:11px 16px 13px;border-top:1px solid var(--line);margin-top:10px;
 background:var(--soft)}
 .wizfoot .btn{width:100%}
 .paybtn{background:var(--nav);}
 .paybtn:hover{background:var(--nav2)}
-.foothint{font-size:11.8px;color:var(--mut);text-align:center;margin:7px 0 0}
+
 .err{color:#b0202f;font-weight:700;font-size:14.3px;margin-top:11px;min-height:1px}
 .err a{color:#b0202f}
 .tinylink{font-size:12.6px;color:var(--mut);margin-top:10px}
@@ -330,9 +330,12 @@ line-height:1.3;font-family:"Arial Black",Impact,sans-serif;transition:color .18
 .kindbox{display:block;position:relative;border:1.5px solid var(--line);border-radius:11px;
 padding:7px 8px 8px;cursor:pointer;background:#fff;height:100%;text-align:center;
 transition:border-color .12s,background .12s}
-.kthumb{display:block;width:100%;height:auto;max-width:78px;margin:0 auto 3px}
-@media(max-width:439px){.kindbox{text-align:left;display:flex;align-items:center;gap:11px}
-  .kthumb{width:74px;margin:0;flex:0 0 auto}}
+.kicon{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;
+background:var(--selbg);color:var(--nav);margin:0 auto 7px}
+.kicon svg{width:23px;height:23px;display:block}
+.kind input:checked+.kindbox .kicon{background:var(--nav);color:#fff}
+@media(max-width:439px){.kindbox{text-align:left;display:flex;align-items:center;gap:12px}
+  .kicon{margin:0;flex:0 0 auto}}
 .kind input:checked+.kindbox{border-color:var(--nav2);background:var(--selbg);
 box-shadow:inset 0 0 0 1px var(--nav2)}
 .kind input:focus-visible+.kindbox{outline:2px solid var(--sea);outline-offset:2px}
@@ -408,18 +411,13 @@ min-height:46px}
 font-size:28px;font-weight:800;display:grid;place-items:center;margin:0 auto 16px}
 
 .prevwrap{padding:7px 16px 0}
-.prev{border-radius:10px;padding:3px 6px 0;overflow:hidden;
-background:linear-gradient(#eaf3f8,#dceaf2);transition:background .22s}
-.prev.night{background:linear-gradient(#20323d,#16242c)}
-#hullsvg{display:block;width:100%;height:auto;max-height:84px}
-#t_num,#t_name,#t_decal,#hullbody,#hullrail,#hullscreen,#hullwater,#hullwave
-{transition:fill .2s,stroke .2s}
-/* Night is not just the hull - the water has to come with it or the boat
-   looks like it is floating on a light strip. */
-.prev.night #hullwater{fill:#24404f}
-.prev.night #hullwave{stroke:#375d70}
+.prev{border-radius:10px;padding:10px 12px;overflow:hidden;background:#e9f0f4;
+border:1px solid #cfdde6;transition:background .22s,border-color .22s}
+.prev.night{background:#1b2a33;border-color:#0e1b22}
+#prevsvg{display:block;width:100%;height:94px}
+#p_num,#p_name{transition:fill .2s}
 .prevlbl{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;font-size:11.2px;
-color:var(--mut);margin-top:4px;font-weight:650;text-align:center}
+color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
 .prevlbl b{color:var(--ink);font-weight:800}
 
 .testbar{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;
@@ -470,43 +468,15 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
 
   <div class=prevwrap id=prevwrap>
     <div class=prev id=prev aria-live=polite>
-<svg id=hullsvg viewBox="0 0 340 128" role="img" aria-labelledby="hulltitle"
+<svg id=prevsvg viewBox="0 0 300 64" role="img" aria-labelledby="prevtitle"
      preserveAspectRatio="xMidYMid meet">
-  <title id=hulltitle>Preview of your lettering on a boat</title>
-  <defs>
-    <clipPath id="hullclip">
-      <path d="M10 34 C46 25 140 21 318 24 L316 76 C315 88 306 95 293 95
-               L74 95 C46 95 24 70 12 46 Z"/>
-    </clipPath>
-  </defs>
-
-  <!-- water -->
-  <path id=hullwater d="M0 96 C40 92 70 100 110 97 C150 94 185 101 226 98
-           C266 95 300 101 340 97 L340 128 L0 128 Z" fill="#cfe0ea" opacity=".85"/>
-  <path id=hullwave d="M0 104 C44 100 76 108 118 105 C158 102 196 109 238 106
-           C276 103 306 109 340 105" fill="none" stroke="#a9c7d8" stroke-width="1.6"/>
-
-  <!-- hull -->
-  <path id=hullbody d="M10 34 C46 25 140 21 318 24 L316 76 C315 88 306 95 293 95
-           L74 95 C46 95 24 70 12 46 Z" fill="#e9f0f4" stroke="#b9ccd8" stroke-width="1.5"/>
-  <!-- rub rail, and a windscreen so it reads as a boat at a glance -->
-  <path id=hullrail d="M11 38 C48 29 140 25 317 28" fill="none"
-        stroke="#b9ccd8" stroke-width="2.4" stroke-linecap="round"/>
-  <path id=hullscreen d="M243 24 L262 7 L286 7 L288 24 Z" fill="#b9ccd8" opacity=".55"/>
-
-  <g clip-path="url(#hullclip)">
-    <!-- forward half: registration numbers + validation decal -->
-    <g id=g_num>
-      <text id=t_num x="104" y="66" text-anchor="middle"
-            font-family="Arial Black, Impact, sans-serif" font-weight="900"
-            font-size="19" letter-spacing="1.1" fill="#111">IA 3717 ZW</text>
-      <rect id=t_decal x="170" y="55" width="15" height="13" rx="2.5" fill="#111" opacity=".55"/>
-    </g>
-    <!-- stern: the boat name on the transom -->
-    <text id=t_name x="258" y="68" text-anchor="middle"
-          font-family="Arial Black, Impact, sans-serif" font-weight="900"
-          font-size="15" fill="#111">Second Wind</text>
-  </g>
+  <title id=prevtitle>Preview of your lettering</title>
+  <text id=p_num x="150" y="40" text-anchor="middle"
+        font-family="Arial Black, Impact, sans-serif" font-weight="900"
+        font-size="34" letter-spacing="1.5" fill="#111">IA 3717 ZW</text>
+  <text id=p_name x="150" y="40" text-anchor="middle"
+        font-family="Arial Black, Impact, sans-serif" font-weight="900"
+        font-size="34" fill="#111">Second Wind</text>
 </svg>
 </div>
     <div class=prevlbl id=prevlbl></div>
@@ -518,9 +488,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
   <section class="step on" data-step="1">
     <h2>What do you need?</h2>
     
-    <div class=kinds><label class=kind><input type=radio name=kind value="Registration numbers" data-base="19" checked><span class=kindbox><svg class=kthumb viewBox="0 0 110 36" aria-hidden="true"><path d="M3 11 C15 8 46 7 105 8 L104 25 C104 29 101 31 97 31 L24 31 C15 31 8 23 4 15 Z" fill="#dfeaf1" stroke="#b9ccd8" stroke-width="1"/><rect x="16" y="16" width="34" height="7" rx="1.5" fill="#15516f"/></svg><b>Registration numbers</b><em>On the bow, both sides</em><i>$19</i></span></label><label class=kind><input type=radio name=kind value="Boat name" data-base="29"><span class=kindbox><svg class=kthumb viewBox="0 0 110 36" aria-hidden="true"><path d="M3 11 C15 8 46 7 105 8 L104 25 C104 29 101 31 97 31 L24 31 C15 31 8 23 4 15 Z" fill="#dfeaf1" stroke="#b9ccd8" stroke-width="1"/><rect x="44" y="16" width="52" height="8" rx="1.5" fill="#15516f"/></svg><b>Boat name</b><em>On the transom</em><i>from $29</i></span></label><label class=kind><input type=radio name=kind value="Both" data-base="44"><span class=kindbox><span class=flag>Save $4</span><svg class=kthumb viewBox="0 0 110 36" aria-hidden="true"><path d="M3 11 C15 8 46 7 105 8 L104 25 C104 29 101 31 97 31 L24 31 C15 31 8 23 4 15 Z" fill="#dfeaf1" stroke="#b9ccd8" stroke-width="1"/><rect x="16" y="16" width="34" height="7" rx="1.5" fill="#15516f"/><rect x="66" y="16" width="30" height="7" rx="1.5" fill="#15516f"/></svg><b>Both</b><em>Bow and transom</em><i>from $44</i></span></label></div>
-    <p class=tinylink>Motor decals, carpet logos or striping?
-      <a href="/contact/">Ask us</a>.</p>
+    <div class=kinds><label class=kind><input type=radio name=kind value="Registration numbers" data-base="19" checked><span class=kindbox><span class=kicon><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 3.5L7 20.5M17.2 3.5L15 20.5M4 8.8h15.4M3.2 15.2h15.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" fill="none"/></svg></span><b>Registration numbers</b><em>On the bow, both sides</em><i>$19</i></span></label><label class=kind><input type=radio name=kind value="Boat name" data-base="29"><span class=kindbox><span class=kicon><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5L12 4.5l8 15M7.6 14.4h8.8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span><b>Boat name</b><em>On the transom</em><i>from $29</i></span></label><label class=kind><input type=radio name=kind value="Both" data-base="44"><span class=kindbox><span class=flag>Save $4</span><span class=kicon><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="4.6" width="16.8" height="6" rx="1.8" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="3.6" y="13.4" width="16.8" height="6" rx="1.8" stroke="currentColor" stroke-width="1.8" fill="none"/></svg></span><b>Both</b><em>Bow and transom</em><i>from $44</i></span></label></div>
   </section>
 
   <!-- 2 ------------------------------------------------------------- -->
@@ -615,7 +583,6 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
 
   <div class=wizfoot>
     <button type=button class="btn lg" id=next>Continue</button>
-    <p class=foothint id=foothint>Free shipping &middot; ships next business day</p>
   </div>
 </div></div><div class=heroB><p class=sub>The 3-inch block rule is federal and the same everywhere. What changes is your prefix, who issues the number, and where the validation decal goes. $19 a pair, every state.</p><div class=trust><span>All 50 states</span><span>$19 a pair</span><span>Free shipping</span><span>Legal 3-inch block</span></div><div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a><a class="btn ghost" href="/pricing/">See all prices</a></div></div></div></section><section><div class=w><h2>Pick your state</h2><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MI</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WI</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a><a href="/registration-numbers/indiana/">Indiana <i>IN</i></a></div><h2 style="margin-top:34px">Prefix, fleet size and who issues it</h2><p class=lede>Registered-vessel counts are a useful sanity check: the bigger the fleet, the longer the queue at your local shop in April.</p><div class=tw><table><thead><tr><th>State</th><th>Prefix</th><th>Registered vessels</th><th>Issuing agency</th></tr></thead><tbody><tr><td><a href="/registration-numbers/florida/"><strong>Florida</strong></a></td><td><strong>FL</strong></td><td>1,700,000</td><td>Florida Department of Highway Safety and Motor Vehicles</td></tr><tr><td><a href="/registration-numbers/michigan/"><strong>Michigan</strong></a></td><td><strong>MI</strong></td><td>1,700,000</td><td>Michigan Secretary of State</td></tr><tr><td><a href="/registration-numbers/new-york/"><strong>New York</strong></a></td><td><strong>NY</strong></td><td>1,300,000</td><td>New York State DMV</td></tr><tr><td><a href="/registration-numbers/california/"><strong>California</strong></a></td><td><strong>CF</strong></td><td>1,300,000</td><td>California DMV</td></tr><tr><td><a href="/registration-numbers/south-carolina/"><strong>South Carolina</strong></a></td><td><strong>SC</strong></td><td>1,100,000</td><td>South Carolina Department of Natural Resources</td></tr><tr><td><a href="/registration-numbers/wisconsin/"><strong>Wisconsin</strong></a></td><td><strong>WI</strong></td><td>1,100,000</td><td>Wisconsin DNR</td></tr><tr><td><a href="/registration-numbers/minnesota/"><strong>Minnesota</strong></a></td><td><strong>MN</strong></td><td>1,000,000</td><td>Minnesota DNR</td></tr><tr><td><a href="/registration-numbers/texas/"><strong>Texas</strong></a></td><td><strong>TX</strong></td><td>922,000</td><td>Texas Parks and Wildlife Department</td></tr><tr><td><a href="/registration-numbers/pennsylvania/"><strong>Pennsylvania</strong></a></td><td><strong>PA</strong></td><td>842,000</td><td>Pennsylvania Fish and Boat Commission</td></tr><tr><td><a href="/registration-numbers/north-carolina/"><strong>North Carolina</strong></a></td><td><strong>NC</strong></td><td>799,000</td><td>NC Wildlife Resources Commission</td></tr><tr><td><a href="/registration-numbers/georgia/"><strong>Georgia</strong></a></td><td><strong>GA</strong></td><td>783,000</td><td>Georgia DNR Wildlife Resources Division</td></tr><tr><td><a href="/registration-numbers/virginia/"><strong>Virginia</strong></a></td><td><strong>VA</strong></td><td>595,000</td><td>Virginia Department of Wildlife Resources</td></tr><tr><td><a href="/registration-numbers/ohio/"><strong>Ohio</strong></a></td><td><strong>OH</strong></td><td>573,000</td><td>Ohio DNR Division of Parks and Watercraft</td></tr><tr><td><a href="/registration-numbers/illinois/"><strong>Illinois</strong></a></td><td><strong>IL</strong></td><td>566,000</td><td>Illinois DNR</td></tr><tr><td><a href="/registration-numbers/missouri/"><strong>Missouri</strong></a></td><td><strong>MO</strong></td><td>561,000</td><td>Missouri State Highway Patrol</td></tr><tr><td><a href="/registration-numbers/washington/"><strong>Washington</strong></a></td><td><strong>WN</strong></td><td>560,000</td><td>Washington State Department of Licensing</td></tr><tr><td><a href="/registration-numbers/indiana/"><strong>Indiana</strong></a></td><td><strong>IN</strong></td><td>523,000</td><td>Indiana Bureau of Motor Vehicles</td></tr><tr><td><a href="/registration-numbers/tennessee/"><strong>Tennessee</strong></a></td><td><strong>TN</strong></td><td>476,000</td><td>Tennessee Wildlife Resources Agency</td></tr><tr><td><a href="/registration-numbers/louisiana/"><strong>Louisiana</strong></a></td><td><strong>LA</strong></td><td>446,000</td><td>Louisiana Department of Wildlife and Fisheries</td></tr><tr><td><a href="/registration-numbers/alabama/"><strong>Alabama</strong></a></td><td><strong>AL</strong></td><td>419,000</td><td>Alabama Law Enforcement Agency, Marine Patrol</td></tr><tr><td><a href="/registration-numbers/iowa/"><strong>Iowa</strong></a></td><td><strong>IA</strong></td><td>340,000</td><td>Iowa DNR</td></tr></tbody></table></div><div class=prose><div class=rule>
 <p><strong>The federal rule, in full.</strong> Under 33 CFR 173.27, a registration

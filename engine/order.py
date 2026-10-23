@@ -20,7 +20,7 @@ Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
 from content import (PRICE, FONTS, COLORS, POPULAR_COLORS, STATES, UPGRADES)
-import hull as H
+import preview as PV
 
 HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better"),
            (5, 8, "5&quot;", "bold"), (6, 13, "6&quot;", "big transom")]
@@ -33,16 +33,23 @@ KINDS = [
     ("Both", 44, "Bow and transom", "from $44", "Save $4", "both"),
 ]
 
+_KICON = {
+    # hash = numbers
+    "numbers": '<path d="M9.2 3.5L7 20.5M17.2 3.5L15 20.5M4 8.8h15.4M3.2 15.2h15.4" '
+               'stroke="currentColor" stroke-width="1.9" stroke-linecap="round" fill="none"/>',
+    # a letterform = a name
+    "name": '<path d="M4 19.5L12 4.5l8 15M7.6 14.4h8.8" stroke="currentColor" '
+            'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    # two plates = both
+    "both": '<rect x="3.6" y="4.6" width="16.8" height="6" rx="1.8" stroke="currentColor" '
+            'stroke-width="1.8" fill="none"/>'
+            '<rect x="3.6" y="13.4" width="16.8" height="6" rx="1.8" stroke="currentColor" '
+            'stroke-width="1.8" fill="none"/>',
+}
+
 def _thumb(key):
-    """Miniature of the hull showing where this option's lettering sits."""
-    body = ('<path d="M3 11 C15 8 46 7 105 8 L104 25 C104 29 101 31 97 31 '
-            'L24 31 C15 31 8 23 4 15 Z" fill="#dfeaf1" stroke="#b9ccd8" stroke-width="1"/>')
-    num = '<rect x="16" y="16" width="34" height="7" rx="1.5" fill="#15516f"/>'
-    nm  = '<rect x="66" y="16" width="30" height="7" rx="1.5" fill="#15516f"/>'
-    nm2 = '<rect x="44" y="16" width="52" height="8" rx="1.5" fill="#15516f"/>'
-    inner = {"numbers": num, "name": nm2, "both": num + nm}[key]
-    return ('<svg class=kthumb viewBox="0 0 110 36" aria-hidden="true">%s%s</svg>'
-            % (body, inner))
+    return ('<span class=kicon><svg viewBox="0 0 24 24" aria-hidden="true">%s</svg></span>'
+            % _KICON[key])
 
 
 def _colors(prefix):
@@ -112,8 +119,6 @@ def form():
     <h2>What do you need?</h2>
     
     <div class=kinds>""" + kinds + """</div>
-    <p class=tinylink>Motor decals, carpet logos or striping?
-      <a href="/contact/">Ask us</a>.</p>
   </section>
 
   <!-- 2 ------------------------------------------------------------- -->
@@ -208,9 +213,8 @@ def form():
 
   <div class=wizfoot>
     <button type=button class="btn lg" id=next>Continue</button>
-    <p class=foothint id=foothint>Free shipping &middot; ships next business day</p>
   </div>
-</div>""").replace("__HULL__", H.SVG)
+</div>""").replace("__HULL__", PV.SVG)
 
 
 def color_js():
@@ -226,7 +230,7 @@ JS = r"""
   var cur=1, MAX=steps.length;
   var $=function(id){return document.getElementById(id);};
   var nextBtn=$('next'), backBtn=$('back'), fill=$('wizfill'),
-      stepnum=$('stepnum'), tot=$('total'), foothint=$('foothint');
+      stepnum=$('stepnum'), tot=$('total');
   var stripe=null, elements=null, clientSecret=null, mounted=false,
       paying=false, sandbox=false;
 
@@ -246,12 +250,12 @@ JS = r"""
 
   var SCRIPTY=/script|vibes|lobster|old english/i;
   function renderPreview(){
-    var lbl=$('prevlbl'); if(!lbl || !window.BNS_HULL) return;
+    var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
     var meta=COL[cname]||['#111111',0];
     var h=val('height'), hv=h?h.value:'3';
     var fn=$('f_font').value||'Block';
-    window.BNS_HULL.render({
+    window.BNS_PREVIEW.render({
       hex: meta[0], light: !!meta[1], font: fn,
       showNum: isNum(), showName: hasName(),
       number: ($('f_text').value||'').trim(),
@@ -338,9 +342,6 @@ JS = r"""
     backBtn.hidden = cur===1;
     nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
     nextBtn.classList.toggle('paybtn', cur===MAX);
-    foothint.textContent = cur===MAX
-      ? 'Free shipping · proof before we cut · full refund if you do not like it'
-      : 'Free shipping · ships next business day';
     document.getElementById('prevwrap').hidden = (cur===5);
     if(cur===2) syncStep2();
     if(cur===5){ summary(); initPay(); }

@@ -61,44 +61,27 @@ so the panel never jumps. Anti-fatigue rules, all load-bearing:
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
 
-### The preview (`engine/hull.py`)
+### The preview (`engine/preview.py`)
 
-A hull in side profile, not a colour swatch — because a swatch cannot answer the
-two questions people actually have: *will this read against my hull?* and *where
-does it go?*
+Just the letters, as large as the box allows. The text is drawn into an SVG
+whose **viewBox is recomputed from the rendered bounding box** on every change
+(`fit()`), so the glyphs fill the panel edge to edge regardless of length or
+font. "Both" stacks two lines and fits them together.
 
-- Registration numbers render on the **forward half**, with the validation decal
-  placed aft of them
-- A boat name renders on the **transom**
-- "Both" shows both, which is the clearest possible argument for the $44 bundle
-- The hull **and the water** flip dark when the vinyl is light (`COLORS[2]`), so
-  light vinyl is always shown on a dark hull. That is 33 CFR 173.27's contrast
-  rule demonstrated rather than described.
+The SVG height is **fixed at 94px on purpose** — a min/max pair let the box
+resize as the text grew, which made the whole panel jitter while someone was
+typing.
 
-Step 1's three options carry the same hull as a thumbnail, so the picture is the
-explanation and the prose could go.
+The panel flips dark when the vinyl is light (`COLORS[2]`), so white, chrome and
+gold are always shown against something they can be seen on. That is 33 CFR
+173.27's contrast requirement, demonstrated rather than described.
+
+Step 1's three options use line icons (`_KICON` in `engine/order.py`): a hash
+for numbers, a letterform for names, two stacked plates for both.
 
 ⚠️ **The steps are `<section>` elements.** The global `section{padding:42px 0}`
 (56px at ≥900px) was silently adding **112px to every step** — `.step{padding:0}`
 is load-bearing, don't remove it.
-
-### Header nav
-
-Labels are customer vocabulary ("Boat Numbers"), not page titles — the hrefs
-still point at the canonical slugs. Edit `NAV_MAIN` / `NAV_ABOUT` in
-`engine/build.py`; nothing else needs touching.
-
-The About group opens on `:hover` **and** `:focus-within`, so mouse, keyboard
-and touch all work with no JavaScript — and "About" stays a real link to
-`/about/` rather than a button you cannot follow. The invisible `::after` strip
-below it stops the menu closing as the pointer travels into the panel.
-
-Below 900px the links collapse behind a toggle (the only part needing JS) and
-the About group renders inline as a labelled section rather than a flyout. The
-footer carries every link, so a JS failure leaves nothing unreachable.
-
-The phone number is deliberately **not** in the header row — it's in the topbar,
-the footer and on `/contact/`.
 
 ### Hero layout
 

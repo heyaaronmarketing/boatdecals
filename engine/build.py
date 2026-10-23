@@ -8,7 +8,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
 from style import CSS
 import order as O
 import mockpay as MP
-import hull as HULL
+import preview as PV
 import tools as T
 import copy_blocks as CB
 
@@ -312,7 +312,7 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
         parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
-ORDER_JS = HULL.JS + O.color_js() + O.JS
+ORDER_JS = PV.JS + O.color_js() + O.JS
 
 # =================================================================== PAGES
 def why_grid(limit=6):

@@ -50,7 +50,7 @@ for label, vals in (("title", titles), ("description", descs)):
 # The wizard is the only conversion path; if it loses a step, nothing converts.
 design = (OUT / "design" / "index.html").read_text()
 for need in ("data-step=\"1\"", "data-step=\"5\"", "id=payelement", "BNS_COL=",
-             "id=hullsvg", "id=t_num", "name=kind"):
+             "id=prevsvg", "id=p_num", "name=kind"):
     if need not in design: fails.append("order wizard missing %s" % need)
 
 # Prices are duplicated between the generator and the worker on purpose; they

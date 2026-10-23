@@ -294,19 +294,19 @@ cursor:pointer;padding:3px 0}
 .wizback:hover{text-decoration:underline}
 .wiztot{margin-left:auto;font-weight:600}
 .wiztot b{font-size:17.5px;color:var(--nav);margin-left:3px}
-.wizbody{padding:2px 16px 0;min-height:244px}
-@media(min-width:620px){.wizbody{min-height:258px}}
+.wizbody{padding:2px 16px 0;min-height:186px}
+@media(min-width:620px){.wizbody{min-height:196px}}
 .step{display:none;padding:0;animation:stepin .22s ease both}
 .step.on{display:block}
 @keyframes stepin{from{opacity:0;transform:translateX(9px)}to{opacity:1;transform:none}}
 .step h2{font-size:17.5px;margin:9px 0 3px}
 .sublede{font-size:13.6px;color:var(--mut);margin-bottom:11px}
-.wizfoot{padding:9px 16px 11px;border-top:1px solid var(--line);margin-top:9px;
+.wizfoot{padding:11px 16px 13px;border-top:1px solid var(--line);margin-top:10px;
 background:var(--soft)}
 .wizfoot .btn{width:100%}
 .paybtn{background:var(--nav);}
 .paybtn:hover{background:var(--nav2)}
-.foothint{font-size:11.8px;color:var(--mut);text-align:center;margin:7px 0 0}
+
 .err{color:#b0202f;font-weight:700;font-size:14.3px;margin-top:11px;min-height:1px}
 .err a{color:#b0202f}
 .tinylink{font-size:12.6px;color:var(--mut);margin-top:10px}
@@ -327,9 +327,12 @@ line-height:1.3;font-family:"Arial Black",Impact,sans-serif;transition:color .18
 .kindbox{display:block;position:relative;border:1.5px solid var(--line);border-radius:11px;
 padding:7px 8px 8px;cursor:pointer;background:#fff;height:100%;text-align:center;
 transition:border-color .12s,background .12s}
-.kthumb{display:block;width:100%;height:auto;max-width:78px;margin:0 auto 3px}
-@media(max-width:439px){.kindbox{text-align:left;display:flex;align-items:center;gap:11px}
-  .kthumb{width:74px;margin:0;flex:0 0 auto}}
+.kicon{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;
+background:var(--selbg);color:var(--nav);margin:0 auto 7px}
+.kicon svg{width:23px;height:23px;display:block}
+.kind input:checked+.kindbox .kicon{background:var(--nav);color:#fff}
+@media(max-width:439px){.kindbox{text-align:left;display:flex;align-items:center;gap:12px}
+  .kicon{margin:0;flex:0 0 auto}}
 .kind input:checked+.kindbox{border-color:var(--nav2);background:var(--selbg);
 box-shadow:inset 0 0 0 1px var(--nav2)}
 .kind input:focus-visible+.kindbox{outline:2px solid var(--sea);outline-offset:2px}
@@ -408,8 +411,8 @@ font-size:28px;font-weight:800;display:grid;place-items:center;margin:0 auto 16p
 
 # ---- sandbox card form ---------------------------------------------
 import mockpay as _MP
-import hull as _H
-CSS += _H.CSS
+import preview as _PV
+CSS += _PV.CSS
 CSS += _MP.CSS
 CSS += """
 .payel.sandbox{border:0;padding:0;background:none}
