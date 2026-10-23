@@ -114,6 +114,49 @@ it really will not fit where a short one does.
 The panel height is a constant (`BASE_H`), never a CSS `min/max` pair: a
 min/max let the box resize as the text grew, which made it jitter while typing.
 
+### Registration number validation (tier 1)
+
+`engine/validate.py` emits the client validator; `worker/index.js: checkNumber`
+mirrors it. Four checks, in the order a typo actually happens: prefix is a real
+vessel prefix → shape is plausible → characters are issuable → groups are
+separated.
+
+⚠️ **It warns. It never blocks.** The prefix table is secondary-sourced, states
+issue sequentially so old hulls carry retired formats, and this is only tier 1
+of the rules. An order refused by an incomplete validator is a lost sale; an
+order flagged for the proof is a thirty-second check by someone who knows.
+
+#### The prefix table
+
+`content.py: VESSEL_PREFIX` — set by the USCG in 1958, five years before the
+Post Office picked its own codes, so **11 states disagree** with the postal
+abbreviation. Two of them collide, which is the whole reason this is a table
+and not a postal lookup:
+
+| Prefix | Is actually |
+|---|---|
+| `MS` | **Massachusetts** (not Mississippi) |
+| `MI` | **Mississippi** (not Michigan) |
+| `MC` | **Michigan** |
+
+`POSTAL_MISTAKE` holds the 9 postal codes that are *not* themselves valid
+prefixes, so we can say exactly what the customer meant. **MI and MS are
+deliberately excluded** — both are valid prefixes, so "did you mean" there
+would be wrong as often as right.
+
+`verify.py` fails the build if `PREFIX_STATE` drifts between `content.py` and
+the worker.
+
+#### Gotchas that already bit
+
+- **Maine is an exception to the letter-count rule, so it must be checked
+  *instead of* it**, not before. A valid `ME 12ABC` has three trailing letters
+  and the generic rule flagged it.
+- The validator's CSS classes are `vok`/`vnote`/`vwarn` — `ok` and `note` are
+  already global classes and the message picked up the big amber callout box.
+- State pages use `POSTAL_TO_VESSEL` (all 11), not `POSTAL_MISTAKE` (9). On
+  Michigan's own page there's nothing ambiguous about "yours is MC, not MI".
+
 ### Visitor state detection
 
 `/api/geo` returns `{region, code}` from Cloudflare's own `request.cf`, and the

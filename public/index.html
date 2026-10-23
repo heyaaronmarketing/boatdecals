@@ -338,6 +338,11 @@ background:var(--soft)}
 .paybtn{background:var(--nav);}
 .paybtn:hover{background:var(--nav2)}
 
+.vcheck{font-size:12.4px;line-height:1.45;margin-top:5px;min-height:1px}
+.vcheck:empty{display:none}
+.vcheck.vok{color:var(--ok);font-weight:650}
+.vcheck.vnote{color:#8a5a00;font-weight:600}
+.vcheck.vwarn{color:#b0202f;font-weight:700}
 .err{color:#b0202f;font-weight:700;font-size:14.3px;margin-top:11px;min-height:1px}
 .err a{color:#b0202f}
 .tinylink{font-size:12.6px;color:var(--mut);margin-top:10px}
@@ -542,6 +547,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
       <label for=f_text>Registration number</label>
       <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
              autocomplete=off maxlength=40 autocapitalize=characters spellcheck=false>
+      <div class=vcheck id=vcheck role=status aria-live=polite></div>
     </div>
     <div id=namewrap hidden style="margin-top:14px">
       <label for=f_name2>Boat name</label>
@@ -599,7 +605,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
   <div class=wizfoot>
     <button type=button class="btn lg" id=next>Continue</button>
   </div>
-</div></div><div class=heroB><p class=sub>Legal 3-inch block numbers for both sides of your hull, cut from 7-year marine vinyl, pre-spaced on one sheet, and shipped free the next business day. Boat names and custom lettering too.</p><div class=trust><span>$19 for Two Sets</span><span>Next Day Shipping</span><span>Marine Vinyl</span><span>100% Compliant</span></div><div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a><a class="btn ghost" href="/pricing/">See all prices</a></div></div></div></section><section class=soft><div class=w><h2>The offer, plainly</h2><div class=proof><div><b>$19 for Two Sets</b><span>One for each side of the hull, pre-spaced on a single sheet. Shipping included.</span></div><div><b>Next Day Shipping</b><span>Cut and in the post the next business day, or the same day for $12.</span></div><div><b>Marine Vinyl</b><span>7-year cast film built for sun, salt and spray &mdash; not 3-year craft stock.</span></div><div><b>100% Compliant</b><span>3-inch block characters spaced to 33 CFR 173.27. Legal in all 50 states.</span></div></div></div></section><section><div class=w><h2>Why buy here instead of the cheap set</h2><p class=lede>There are $11 sets on marketplaces. Here is honestly what separates them from this.</p><div class="grid"><div class=card><h3>$19 a pair, published</h3><p>Every competitor makes you build a design before showing a price. Ours is on the page and it includes shipping.</p></div><div class=card><h3>Cut and shipped next business day</h3><p>Order before 1pm CT and it goes out the same day for $12. Otherwise next business day, free.</p></div><div class=card><h3>7-year marine vinyl</h3><p>Cast vinyl rated seven years outdoors, not the 3-year calendared stock the cheap sets use. High-tack on plastic hulls at no extra charge.</p></div><div class=card><h3>Pre-spaced on one sheet</h3><p>The spacing is already legal and already right. You apply the whole set in one pass instead of placing loose characters and hoping.</p></div><div class=card><h3>A proof before anything is cut</h3><p>You see exactly what you are getting, by email. Do not like it? We redraw it, or refund you in full.</p></div><div class=card><h3>Free re-cut if the install goes wrong</h3><p>Tear a letter, crease the sheet, change your mind on the colour mid-job &mdash; tell us and we cut it again. Vinyl is cheap; arguing is expensive.</p></div></div></div></section><section><div class=w><h2>What we cut</h2><p class=lede>Everything is cut from sheet vinyl, pre-spaced, and shipped flat with application tape over the top.</p><div class=grid><a class=card href="/boat-registration-numbers/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></span><h3>Registration numbers</h3><p>Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.</p><div class=price>$19 <small>a pair</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19L12 5l8 14M7.5 14h9" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Boat lettering</h3><p>Boat names, transom text and custom lettering. You pick the font and the colour, we cut it and pre-space it.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-name-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17c3 0 3-2 6-2s3 2 6 2 3-2 6-2" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/><path d="M6 11h12M8 7h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><h3>Boat names</h3><p>One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a></div></div></section><section class=soft><div class=w><h2>Free tools, no email required</h2><p class=lede>Decode a hull number, generate a boat name, or check your registration layout against the federal rule before you spend anything.</p><div class=grid><a class=card href="/tools/boat-name-generator/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Name generator</h3><p>Free boat name generator. Spin clever, classic and funny boat names, then see your pick rendered in real marine fonts before you order.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/funny-boat-names/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Funny names</h3><p>400 funny boat names sorted by how they land - puns, retirement jokes, money jokes and the ones that get groans at the ramp.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/hull-number-decoder/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>HIN decoder</h3><p>Free boat HIN decoder. Paste a 12-character hull identification number to read the manufacturer code, serial, model year and build date.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/registration-number-layout-checker/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Layout checker</h3><p>Check your boat registration number against the federal 3-inch, block-character, contrast and spacing rules before you order.</p><div class=go>Open the tool &rarr;</div></a></div></div></section><section><div class=w><h2>Your state&rsquo;s numbers</h2><p class=lede>The 3-inch block rule is federal and applies everywhere. What changes by state is the prefix, who issues it, and where the validation decal sits.</p><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MI</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WI</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a></div><p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p></div></section><section class=soft><div class=w><h2>How it works</h2><ol class=steps>
+</div></div><div class=heroB><p class=sub>Legal 3-inch block numbers for both sides of your hull, cut from 7-year marine vinyl, pre-spaced on one sheet, and shipped free the next business day. Boat names and custom lettering too.</p><div class=trust><span>$19 for Two Sets</span><span>Next Day Shipping</span><span>Marine Vinyl</span><span>100% Compliant</span></div><div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a><a class="btn ghost" href="/pricing/">See all prices</a></div></div></div></section><section class=soft><div class=w><h2>The offer, plainly</h2><div class=proof><div><b>$19 for Two Sets</b><span>One for each side of the hull, pre-spaced on a single sheet. Shipping included.</span></div><div><b>Next Day Shipping</b><span>Cut and in the post the next business day, or the same day for $12.</span></div><div><b>Marine Vinyl</b><span>7-year cast film built for sun, salt and spray &mdash; not 3-year craft stock.</span></div><div><b>100% Compliant</b><span>3-inch block characters spaced to 33 CFR 173.27. Legal in all 50 states.</span></div></div></div></section><section><div class=w><h2>Why buy here instead of the cheap set</h2><p class=lede>There are $11 sets on marketplaces. Here is honestly what separates them from this.</p><div class="grid"><div class=card><h3>$19 a pair, published</h3><p>Every competitor makes you build a design before showing a price. Ours is on the page and it includes shipping.</p></div><div class=card><h3>Cut and shipped next business day</h3><p>Order before 1pm CT and it goes out the same day for $12. Otherwise next business day, free.</p></div><div class=card><h3>7-year marine vinyl</h3><p>Cast vinyl rated seven years outdoors, not the 3-year calendared stock the cheap sets use. High-tack on plastic hulls at no extra charge.</p></div><div class=card><h3>Pre-spaced on one sheet</h3><p>The spacing is already legal and already right. You apply the whole set in one pass instead of placing loose characters and hoping.</p></div><div class=card><h3>A proof before anything is cut</h3><p>You see exactly what you are getting, by email. Do not like it? We redraw it, or refund you in full.</p></div><div class=card><h3>Free re-cut if the install goes wrong</h3><p>Tear a letter, crease the sheet, change your mind on the colour mid-job &mdash; tell us and we cut it again. Vinyl is cheap; arguing is expensive.</p></div></div></div></section><section><div class=w><h2>What we cut</h2><p class=lede>Everything is cut from sheet vinyl, pre-spaced, and shipped flat with application tape over the top.</p><div class=grid><a class=card href="/boat-registration-numbers/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></span><h3>Registration numbers</h3><p>Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.</p><div class=price>$19 <small>a pair</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19L12 5l8 14M7.5 14h9" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Boat lettering</h3><p>Boat names, transom text and custom lettering. You pick the font and the colour, we cut it and pre-space it.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a><a class=card href="/boat-name-decals/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17c3 0 3-2 6-2s3 2 6 2 3-2 6-2" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/><path d="M6 11h12M8 7h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span><h3>Boat names</h3><p>One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.</p><div class=price>$29 <small>to start</small></div><div class=go>See details &rarr;</div></a></div></div></section><section class=soft><div class=w><h2>Free tools, no email required</h2><p class=lede>Decode a hull number, generate a boat name, or check your registration layout against the federal rule before you spend anything.</p><div class=grid><a class=card href="/tools/boat-name-generator/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Name generator</h3><p>Free boat name generator. Spin clever, classic and funny boat names, then see your pick rendered in real marine fonts before you order.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/funny-boat-names/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Funny names</h3><p>400 funny boat names sorted by how they land - puns, retirement jokes, money jokes and the ones that get groans at the ramp.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/hull-number-decoder/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>HIN decoder</h3><p>Free boat HIN decoder. Paste a 12-character hull identification number to read the manufacturer code, serial, model year and build date.</p><div class=go>Open the tool &rarr;</div></a><a class=card href="/tools/registration-number-layout-checker/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 01-5.8 5.8L4 15v5h5l4.7-4.7a4.5 4.5 0 015.8-5.8l-3.3 3.3-2.4-2.4z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg></span><h3>Layout checker</h3><p>Check your boat registration number against the federal 3-inch, block-character, contrast and spacing rules before you order.</p><div class=go>Open the tool &rarr;</div></a></div></div></section><section><div class=w><h2>Your state&rsquo;s numbers</h2><p class=lede>The 3-inch block rule is federal and applies everywhere. What changes by state is the prefix, who issues it, and where the validation decal sits.</p><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MC</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WS</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a></div><p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p></div></section><section class=soft><div class=w><h2>How it works</h2><ol class=steps>
 <li><strong>Type what it should say.</strong> Straight off your registration card for
 numbers, or whatever you have picked for a name.</li>
 <li><strong>Pick height, font and colour.</strong> The form locks script fonts out of
@@ -805,7 +811,102 @@ window.BNS_PREVIEW = (function(){
 
   return {render: render};
 })();
-window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};window.BNS_PREFIX={"IA":"Iowa","FL":"Florida","MI":"Michigan","NY":"New York","CF":"California","SC":"South Carolina","WI":"Wisconsin","MN":"Minnesota","TX":"Texas","PA":"Pennsylvania","NC":"North Carolina","GA":"Georgia","VA":"Virginia","OH":"Ohio","IL":"Illinois","MO":"Missouri","WN":"Washington","LA":"Louisiana","AL":"Alabama","TN":"Tennessee","IN":"Indiana"};window.BNS_FONTCSS={"Block":"'Archivo Black', 'Arial Black', sans-serif","Condensed":"'Oswald', 'Arial Narrow', sans-serif","Heavy Impact":"'Anton', Impact, sans-serif","Modern":"'Montserrat', Helvetica, sans-serif","Stencil":"'Black Ops One', Impact, sans-serif","Classic Serif":"'Playfair Display', Georgia, serif","Slab":"'Alfa Slab One', Georgia, serif","Nautical":"'Bungee', Impact, sans-serif","Brush Script":"'Pacifico', cursive","Formal Script":"'Great Vibes', cursive"};
+window.BNS_PREFIX_STATE={"AK":"Alaska","AL":"Alabama","AR":"Arkansas","AS":"American Samoa","AZ":"Arizona","CF":"California","CL":"Colorado","CM":"Northern Mariana Islands","CT":"Connecticut","DC":"District of Columbia","DL":"Delaware","FL":"Florida","GA":"Georgia","GU":"Guam","HA":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KA":"Kansas","KY":"Kentucky","LA":"Louisiana","MC":"Michigan","MD":"Maryland","ME":"Maine","MI":"Mississippi","MN":"Minnesota","MO":"Missouri","MS":"Massachusetts","MT":"Montana","NB":"Nebraska","NC":"North Carolina","ND":"North Dakota","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VI":"US Virgin Islands","VT":"Vermont","WN":"Washington","WS":"Wisconsin","WV":"West Virginia","WY":"Wyoming"};window.BNS_NOLETTERS={"CF":"IOQ"};window.BNS_POSTAL_MISTAKE={"CA":["California","CF"],"CO":["Colorado","CL"],"DE":["Delaware","DL"],"HI":["Hawaii","HA"],"KS":["Kansas","KA"],"MA":["Massachusetts","MS"],"NE":["Nebraska","NB"],"WA":["Washington","WN"],"WI":["Wisconsin","WS"]};
+window.BNS_VALIDATE = (function(){
+  var STATE = window.BNS_PREFIX_STATE || {};
+  var NOLET = window.BNS_NOLETTERS || {};
+  var OOPS  = window.BNS_POSTAL_MISTAKE || {};
+
+  function clean(v){ return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+
+  /**
+   * Returns {level, msg, fixed} - level is 'vok' | 'vnote' | 'vwarn'.
+   * Prefixed because 'ok' and 'note' are already global CSS classes.
+   * `fixed` is a correctly spaced version when we can derive one.
+   * Nothing here ever prevents an order.
+   */
+  function check(raw){
+    var compact = clean(raw);
+    if(compact.length < 3) return {level:'vok'};
+
+    var prefix = compact.slice(0,2);
+    var rest = compact.slice(2);
+    var state = STATE[prefix];
+
+    // 1. prefix
+    if(!state){
+      // The common case by far: they typed the postal code. Say exactly what
+      // they meant rather than making them go and look it up.
+      var oops = OOPS[prefix];
+      if(oops){
+        var g = rest.match(/^(\d{1,4})([A-Z]{0,3})$/);
+        var corrected = g
+          ? oops[1]+' '+g[1]+(g[2] ? ' '+g[2] : '')
+          : oops[1]+' '+rest;
+        return {level:'vwarn', fixed: corrected,
+          msg:'<strong>'+oops[0]+'</strong> boat numbers start with '
+              +'<strong>'+oops[1]+'</strong>, not '+prefix+' &mdash; the vessel '
+              +'prefixes were set before the postal codes. Check your card.'};
+      }
+      return {level:'vwarn',
+        msg:'<strong>'+prefix+'</strong> is not a vessel prefix we recognise. '
+            +'Check it against your registration card &mdash; a few states '
+            +'differ from the postal code.'};
+    }
+
+    // 2. shape
+    var m = rest.match(/^(\d{1,4})([A-Z]{0,3})$/);
+    if(!m){
+      return {level:'vwarn',
+        msg:'That does not read as <strong>'+prefix+' &lt;numbers&gt; '
+            +'&lt;letters&gt;</strong>. Copy it off the card exactly &mdash; '
+            +'we cut what you type.'};
+    }
+    var digits = m[1], letters = m[2];
+
+    var shapeOk;
+    if(prefix === 'ME'){
+      shapeOk = /^\d{2}[A-Z]{3}$/.test(rest) || /^\d{4}[A-Z]$/.test(rest);
+      if(!shapeOk){
+        return {level:'vnote',
+          msg:'Maine numbers usually run <strong>ME 12ABC</strong> or '
+              +'<strong>ME 1234A</strong>. We will cut it as typed &mdash; '
+              +'just worth a second look.'};
+      }
+    } else if(letters.length > 2){
+      return {level:'vnote',
+        msg:'Most states end in one or two letters. We will cut it as typed, '
+            +'but check the card.'};
+    }
+
+    // 3. characters a state will not issue
+    var banned = NOLET[prefix];
+    if(banned){
+      for(var i=0;i<banned.length;i++){
+        if(letters.indexOf(banned[i]) > -1){
+          return {level:'vnote',
+            msg:state+' does not issue the letters <strong>'+banned.split('').join(', ')
+                +'</strong> in a number. Worth checking that is not a '
+                +'0 or a 1.'};
+        }
+      }
+    }
+
+    // 4. spacing - offer the corrected string rather than scolding
+    var fixed = prefix + ' ' + digits + (letters ? ' ' + letters : '');
+    var typedGroups = String(raw||'').trim().split(/[\s-]+/).filter(Boolean).length;
+    if(typedGroups < 2){
+      return {level:'vnote', fixed: fixed,
+        msg:'The rule wants a gap between the groups. We will cut it as '
+            +'<strong>'+fixed+'</strong>.'};
+    }
+
+    return {level:'vok', state:state, fixed:fixed};
+  }
+
+  return {check: check, clean: clean};
+})();
+window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};window.BNS_PREFIX={"IA":"Iowa","FL":"Florida","MC":"Michigan","NY":"New York","CF":"California","SC":"South Carolina","WS":"Wisconsin","MN":"Minnesota","TX":"Texas","PA":"Pennsylvania","NC":"North Carolina","GA":"Georgia","VA":"Virginia","OH":"Ohio","IL":"Illinois","MO":"Missouri","WN":"Washington","LA":"Louisiana","AL":"Alabama","TN":"Tennessee","IN":"Indiana"};window.BNS_FONTCSS={"Block":"'Archivo Black', 'Arial Black', sans-serif","Condensed":"'Oswald', 'Arial Narrow', sans-serif","Heavy Impact":"'Anton', Impact, sans-serif","Modern":"'Montserrat', Helvetica, sans-serif","Stencil":"'Black Ops One', Impact, sans-serif","Classic Serif":"'Playfair Display', Georgia, serif","Slab":"'Alfa Slab One', Georgia, serif","Nautical":"'Bungee', Impact, sans-serif","Brush Script":"'Pacifico', cursive","Formal Script":"'Great Vibes', cursive"};
 (function(){
   var W=document.getElementById('order'); if(!W) return;
   var COL=window.BNS_COL||{};
@@ -853,7 +954,9 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
 
   function stateFromPrefix(){
     var m=($('f_text').value||'').trim().toUpperCase().match(/^([A-Z]{2})/);
-    return (m && (window.BNS_PREFIX||{})[m[1]]) || '';
+    // VESSEL prefixes, not postal codes: MS is Massachusetts, MI is
+    // Mississippi, MC is Michigan. A postal lookup gets two of those wrong.
+    return (m && (window.BNS_PREFIX_STATE||{})[m[1]]) || '';
   }
   function isNum(){return kind()!=='Boat name';}
   function hasName(){return kind()!=='Registration numbers';}
@@ -868,6 +971,14 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     return Math.round(n);
   }
 
+  /** What we would actually cut: the corrected spacing, not the raw typing. */
+  function numberForPreview(){
+    var raw=($('f_text').value||'').trim();
+    if(!raw || !window.BNS_VALIDATE) return raw;
+    var v=window.BNS_VALIDATE.check(raw);
+    return v.fixed || raw;
+  }
+
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
@@ -879,7 +990,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
-      number: ($('f_text').value||'').trim(), placeholder: PLACEHOLDER,
+      number: numberForPreview(), placeholder: PLACEHOLDER,
       name: ($('f_name2').value||'').trim()
     });
     lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
@@ -930,6 +1041,20 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     for(var j=0;j<d.length;j++) d[j].textContent=demo;
   }
 
+  /** Tier-1 check on the registration number. Advisory only. */
+  function runValidate(){
+    var box=$('vcheck'); if(!box || !window.BNS_VALIDATE) return;
+    if(!isNum() || !$('f_text').value.trim()){ box.className='vcheck'; box.innerHTML=''; return; }
+    var v=window.BNS_VALIDATE.check($('f_text').value);
+    if(v.level==='vok'){
+      box.className='vcheck vok';
+      box.innerHTML = v.state ? 'Reads as a <strong>'+esc(v.state)+'</strong> number.' : '';
+      return;
+    }
+    box.className='vcheck '+v.level;
+    box.innerHTML=v.msg;
+  }
+
   function syncStep2(){
     var num=isNum(), nm=hasName();
     $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
@@ -976,7 +1101,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   function render(){
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
-    if(cur===2) syncStep2();
+    if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX) summary();
   }
 
@@ -989,7 +1114,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
     nextBtn.classList.toggle('paybtn', cur===MAX);
     document.getElementById('prevwrap').hidden = (cur===MAX);
-    if(cur===2) syncStep2();
+    if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX){ summary(); initPay(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;

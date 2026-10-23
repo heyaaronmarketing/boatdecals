@@ -71,6 +71,18 @@ for lbl, amt, _b, _f, _n in UPGRADES:
         fails.append("upgrade label contains the join delimiter: %s" % lbl)
 if "upgrades:ups.join(' | ')" not in (ROOT / "engine" / "order.py").read_text():
     fails.append("client upgrade delimiter changed without updating the worker")
+from content import PREFIX_STATE as _PS
+import re as _r
+_m = _r.search(r'const PREFIX_STATE = \{(.*?)\};', wjs, _r.S)
+if not _m:
+    fails.append("worker lost its PREFIX_STATE table")
+else:
+    _worker = dict(_r.findall(r'(\w{2}):"([^"]+)"', _m.group(1)))
+    if _worker != _PS:
+        _d = set(_PS.items()) ^ set(_worker.items())
+        fails.append("PREFIX_STATE drifted between content.py and the worker: %s"
+                     % sorted(_d)[:6])
+
 if '"Registration numbers": %d' % PRICE["numbers"] not in wjs:
     fails.append("worker BASE disagrees with content.PRICE")
 

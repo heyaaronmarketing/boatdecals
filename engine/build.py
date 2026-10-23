@@ -5,11 +5,13 @@ import json, os, pathlib, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
-                     LOCAL_TOWNS, LOCAL_WATERS, google_fonts_href)
+                     LOCAL_TOWNS, LOCAL_WATERS, google_fonts_href,
+                     VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL)
 from style import CSS
 import order as O
 import mockpay as MP
 import preview as PV
+import validate as VAL
 import tools as T
 import copy_blocks as CB
 
@@ -337,7 +339,7 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
         parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
-ORDER_JS = PV.JS + O.color_js() + O.JS
+ORDER_JS = PV.JS + VAL.data_js() + VAL.JS + O.color_js() + O.JS
 
 # =================================================================== PAGES
 def why_grid(limit=6):
@@ -659,6 +661,18 @@ def build_state(s):
                 product_node(PRODUCTS[0], path))
     note = '<div class=note><p><b>%s specifics.</b> %s</p></div>' % (nm, s["note"]) \
            if s.get("note") else ""
+    # Prefix traps: say it loudly on the page for the state it affects.
+    # Uses POSTAL_TO_VESSEL, not the validator's POSTAL_MISTAKE - the validator
+    # excludes MI and MS because typing them is ambiguous, but on Michigan's own
+    # page there is nothing ambiguous about saying "yours is MC, not MI".
+    postal = {v: k for k, v in POSTAL_TO_VESSEL.items()}.get(ab)
+    if postal:
+        note += ('<div class=note><p><b>Watch the prefix.</b> %s boat numbers start '
+                 'with <strong>%s</strong>, not %s. The vessel prefixes were set by '
+                 'the Coast Guard in 1958, five years before the Post Office picked '
+                 'its own two-letter codes, and the two never got reconciled. Our '
+                 'order form checks it for you.</p></div>'
+                 % (nm, ab, postal))
     vb = ""
     if vern:
         vb = ('<p>Worth knowing: locally these are almost never called '
@@ -1042,7 +1056,7 @@ def build_tool_layout():
        "six-character number at 3 inches finishes about 13-15 inches wide. The tool above "
        "calculates it for your exact number."),
     ]
-    tool_shell(t, body, T.LAYOUT_JS, faqs)
+    tool_shell(t, body, VAL.data_js() + VAL.JS + T.LAYOUT_JS, faqs)
 
 def build_tools_hub():
     path = "/tools/"

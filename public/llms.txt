@@ -76,11 +76,11 @@ and a state.
 
 - [Iowa (IA)](https://boatnumbershop.com/registration-numbers/iowa/): prefix IA, issued by Iowa DNR
 - [Florida (FL)](https://boatnumbershop.com/registration-numbers/florida/): prefix FL, issued by Florida Department of Highway Safety and Motor Vehicles
-- [Michigan (MI)](https://boatnumbershop.com/registration-numbers/michigan/): prefix MI, issued by Michigan Secretary of State
+- [Michigan (MC)](https://boatnumbershop.com/registration-numbers/michigan/): prefix MC, issued by Michigan Secretary of State
 - [New York (NY)](https://boatnumbershop.com/registration-numbers/new-york/): prefix NY, issued by New York State DMV
 - [California (CF)](https://boatnumbershop.com/registration-numbers/california/): prefix CF, issued by California DMV
 - [South Carolina (SC)](https://boatnumbershop.com/registration-numbers/south-carolina/): prefix SC, issued by South Carolina Department of Natural Resources
-- [Wisconsin (WI)](https://boatnumbershop.com/registration-numbers/wisconsin/): prefix WI, issued by Wisconsin DNR
+- [Wisconsin (WS)](https://boatnumbershop.com/registration-numbers/wisconsin/): prefix WS, issued by Wisconsin DNR
 - [Minnesota (MN)](https://boatnumbershop.com/registration-numbers/minnesota/): prefix MN, issued by Minnesota DNR
 - [Texas (TX)](https://boatnumbershop.com/registration-numbers/texas/): prefix TX, issued by Texas Parks and Wildlife Department
 - [Pennsylvania (PA)](https://boatnumbershop.com/registration-numbers/pennsylvania/): prefix PA, issued by Pennsylvania Fish and Boat Commission

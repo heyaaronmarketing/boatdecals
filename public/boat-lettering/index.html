@@ -338,6 +338,11 @@ background:var(--soft)}
 .paybtn{background:var(--nav);}
 .paybtn:hover{background:var(--nav2)}
 
+.vcheck{font-size:12.4px;line-height:1.45;margin-top:5px;min-height:1px}
+.vcheck:empty{display:none}
+.vcheck.vok{color:var(--ok);font-weight:650}
+.vcheck.vnote{color:#8a5a00;font-weight:600}
+.vcheck.vwarn{color:#b0202f;font-weight:700}
 .err{color:#b0202f;font-weight:700;font-size:14.3px;margin-top:11px;min-height:1px}
 .err a{color:#b0202f}
 .tinylink{font-size:12.6px;color:var(--mut);margin-top:10px}
@@ -542,6 +547,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
       <label for=f_text>Registration number</label>
       <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
              autocomplete=off maxlength=40 autocapitalize=characters spellcheck=false>
+      <div class=vcheck id=vcheck role=status aria-live=polite></div>
     </div>
     <div id=namewrap hidden style="margin-top:14px">
       <label for=f_name2>Boat name</label>
@@ -805,7 +811,102 @@ window.BNS_PREVIEW = (function(){
 
   return {render: render};
 })();
-window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};window.BNS_PREFIX={"IA":"Iowa","FL":"Florida","MI":"Michigan","NY":"New York","CF":"California","SC":"South Carolina","WI":"Wisconsin","MN":"Minnesota","TX":"Texas","PA":"Pennsylvania","NC":"North Carolina","GA":"Georgia","VA":"Virginia","OH":"Ohio","IL":"Illinois","MO":"Missouri","WN":"Washington","LA":"Louisiana","AL":"Alabama","TN":"Tennessee","IN":"Indiana"};window.BNS_FONTCSS={"Block":"'Archivo Black', 'Arial Black', sans-serif","Condensed":"'Oswald', 'Arial Narrow', sans-serif","Heavy Impact":"'Anton', Impact, sans-serif","Modern":"'Montserrat', Helvetica, sans-serif","Stencil":"'Black Ops One', Impact, sans-serif","Classic Serif":"'Playfair Display', Georgia, serif","Slab":"'Alfa Slab One', Georgia, serif","Nautical":"'Bungee', Impact, sans-serif","Brush Script":"'Pacifico', cursive","Formal Script":"'Great Vibes', cursive"};
+window.BNS_PREFIX_STATE={"AK":"Alaska","AL":"Alabama","AR":"Arkansas","AS":"American Samoa","AZ":"Arizona","CF":"California","CL":"Colorado","CM":"Northern Mariana Islands","CT":"Connecticut","DC":"District of Columbia","DL":"Delaware","FL":"Florida","GA":"Georgia","GU":"Guam","HA":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KA":"Kansas","KY":"Kentucky","LA":"Louisiana","MC":"Michigan","MD":"Maryland","ME":"Maine","MI":"Mississippi","MN":"Minnesota","MO":"Missouri","MS":"Massachusetts","MT":"Montana","NB":"Nebraska","NC":"North Carolina","ND":"North Dakota","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VI":"US Virgin Islands","VT":"Vermont","WN":"Washington","WS":"Wisconsin","WV":"West Virginia","WY":"Wyoming"};window.BNS_NOLETTERS={"CF":"IOQ"};window.BNS_POSTAL_MISTAKE={"CA":["California","CF"],"CO":["Colorado","CL"],"DE":["Delaware","DL"],"HI":["Hawaii","HA"],"KS":["Kansas","KA"],"MA":["Massachusetts","MS"],"NE":["Nebraska","NB"],"WA":["Washington","WN"],"WI":["Wisconsin","WS"]};
+window.BNS_VALIDATE = (function(){
+  var STATE = window.BNS_PREFIX_STATE || {};
+  var NOLET = window.BNS_NOLETTERS || {};
+  var OOPS  = window.BNS_POSTAL_MISTAKE || {};
+
+  function clean(v){ return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+
+  /**
+   * Returns {level, msg, fixed} - level is 'vok' | 'vnote' | 'vwarn'.
+   * Prefixed because 'ok' and 'note' are already global CSS classes.
+   * `fixed` is a correctly spaced version when we can derive one.
+   * Nothing here ever prevents an order.
+   */
+  function check(raw){
+    var compact = clean(raw);
+    if(compact.length < 3) return {level:'vok'};
+
+    var prefix = compact.slice(0,2);
+    var rest = compact.slice(2);
+    var state = STATE[prefix];
+
+    // 1. prefix
+    if(!state){
+      // The common case by far: they typed the postal code. Say exactly what
+      // they meant rather than making them go and look it up.
+      var oops = OOPS[prefix];
+      if(oops){
+        var g = rest.match(/^(\d{1,4})([A-Z]{0,3})$/);
+        var corrected = g
+          ? oops[1]+' '+g[1]+(g[2] ? ' '+g[2] : '')
+          : oops[1]+' '+rest;
+        return {level:'vwarn', fixed: corrected,
+          msg:'<strong>'+oops[0]+'</strong> boat numbers start with '
+              +'<strong>'+oops[1]+'</strong>, not '+prefix+' &mdash; the vessel '
+              +'prefixes were set before the postal codes. Check your card.'};
+      }
+      return {level:'vwarn',
+        msg:'<strong>'+prefix+'</strong> is not a vessel prefix we recognise. '
+            +'Check it against your registration card &mdash; a few states '
+            +'differ from the postal code.'};
+    }
+
+    // 2. shape
+    var m = rest.match(/^(\d{1,4})([A-Z]{0,3})$/);
+    if(!m){
+      return {level:'vwarn',
+        msg:'That does not read as <strong>'+prefix+' &lt;numbers&gt; '
+            +'&lt;letters&gt;</strong>. Copy it off the card exactly &mdash; '
+            +'we cut what you type.'};
+    }
+    var digits = m[1], letters = m[2];
+
+    var shapeOk;
+    if(prefix === 'ME'){
+      shapeOk = /^\d{2}[A-Z]{3}$/.test(rest) || /^\d{4}[A-Z]$/.test(rest);
+      if(!shapeOk){
+        return {level:'vnote',
+          msg:'Maine numbers usually run <strong>ME 12ABC</strong> or '
+              +'<strong>ME 1234A</strong>. We will cut it as typed &mdash; '
+              +'just worth a second look.'};
+      }
+    } else if(letters.length > 2){
+      return {level:'vnote',
+        msg:'Most states end in one or two letters. We will cut it as typed, '
+            +'but check the card.'};
+    }
+
+    // 3. characters a state will not issue
+    var banned = NOLET[prefix];
+    if(banned){
+      for(var i=0;i<banned.length;i++){
+        if(letters.indexOf(banned[i]) > -1){
+          return {level:'vnote',
+            msg:state+' does not issue the letters <strong>'+banned.split('').join(', ')
+                +'</strong> in a number. Worth checking that is not a '
+                +'0 or a 1.'};
+        }
+      }
+    }
+
+    // 4. spacing - offer the corrected string rather than scolding
+    var fixed = prefix + ' ' + digits + (letters ? ' ' + letters : '');
+    var typedGroups = String(raw||'').trim().split(/[\s-]+/).filter(Boolean).length;
+    if(typedGroups < 2){
+      return {level:'vnote', fixed: fixed,
+        msg:'The rule wants a gap between the groups. We will cut it as '
+            +'<strong>'+fixed+'</strong>.'};
+    }
+
+    return {level:'vok', state:state, fixed:fixed};
+  }
+
+  return {check: check, clean: clean};
+})();
+window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};window.BNS_PREFIX={"IA":"Iowa","FL":"Florida","MC":"Michigan","NY":"New York","CF":"California","SC":"South Carolina","WS":"Wisconsin","MN":"Minnesota","TX":"Texas","PA":"Pennsylvania","NC":"North Carolina","GA":"Georgia","VA":"Virginia","OH":"Ohio","IL":"Illinois","MO":"Missouri","WN":"Washington","LA":"Louisiana","AL":"Alabama","TN":"Tennessee","IN":"Indiana"};window.BNS_FONTCSS={"Block":"'Archivo Black', 'Arial Black', sans-serif","Condensed":"'Oswald', 'Arial Narrow', sans-serif","Heavy Impact":"'Anton', Impact, sans-serif","Modern":"'Montserrat', Helvetica, sans-serif","Stencil":"'Black Ops One', Impact, sans-serif","Classic Serif":"'Playfair Display', Georgia, serif","Slab":"'Alfa Slab One', Georgia, serif","Nautical":"'Bungee', Impact, sans-serif","Brush Script":"'Pacifico', cursive","Formal Script":"'Great Vibes', cursive"};
 (function(){
   var W=document.getElementById('order'); if(!W) return;
   var COL=window.BNS_COL||{};
@@ -853,7 +954,9 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
 
   function stateFromPrefix(){
     var m=($('f_text').value||'').trim().toUpperCase().match(/^([A-Z]{2})/);
-    return (m && (window.BNS_PREFIX||{})[m[1]]) || '';
+    // VESSEL prefixes, not postal codes: MS is Massachusetts, MI is
+    // Mississippi, MC is Michigan. A postal lookup gets two of those wrong.
+    return (m && (window.BNS_PREFIX_STATE||{})[m[1]]) || '';
   }
   function isNum(){return kind()!=='Boat name';}
   function hasName(){return kind()!=='Registration numbers';}
@@ -868,6 +971,14 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     return Math.round(n);
   }
 
+  /** What we would actually cut: the corrected spacing, not the raw typing. */
+  function numberForPreview(){
+    var raw=($('f_text').value||'').trim();
+    if(!raw || !window.BNS_VALIDATE) return raw;
+    var v=window.BNS_VALIDATE.check(raw);
+    return v.fixed || raw;
+  }
+
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
@@ -879,7 +990,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
-      number: ($('f_text').value||'').trim(), placeholder: PLACEHOLDER,
+      number: numberForPreview(), placeholder: PLACEHOLDER,
       name: ($('f_name2').value||'').trim()
     });
     lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
@@ -930,6 +1041,20 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     for(var j=0;j<d.length;j++) d[j].textContent=demo;
   }
 
+  /** Tier-1 check on the registration number. Advisory only. */
+  function runValidate(){
+    var box=$('vcheck'); if(!box || !window.BNS_VALIDATE) return;
+    if(!isNum() || !$('f_text').value.trim()){ box.className='vcheck'; box.innerHTML=''; return; }
+    var v=window.BNS_VALIDATE.check($('f_text').value);
+    if(v.level==='vok'){
+      box.className='vcheck vok';
+      box.innerHTML = v.state ? 'Reads as a <strong>'+esc(v.state)+'</strong> number.' : '';
+      return;
+    }
+    box.className='vcheck '+v.level;
+    box.innerHTML=v.msg;
+  }
+
   function syncStep2(){
     var num=isNum(), nm=hasName();
     $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
@@ -976,7 +1101,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   function render(){
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
-    if(cur===2) syncStep2();
+    if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX) summary();
   }
 
@@ -989,7 +1114,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
     nextBtn.classList.toggle('paybtn', cur===MAX);
     document.getElementById('prevwrap').hidden = (cur===MAX);
-    if(cur===2) syncStep2();
+    if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX){ summary(); initPay(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;

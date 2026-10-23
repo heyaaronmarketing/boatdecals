@@ -197,7 +197,7 @@ STATES = [
               "before the new one goes on."),
     dict(slug="florida", name="Florida", ab="FL", fleet=1700000, vol=140,
          agency="Florida Department of Highway Safety and Motor Vehicles", tier=1),
-    dict(slug="michigan", name="Michigan", ab="MI", fleet=1700000, vol=140,
+    dict(slug="michigan", name="Michigan", ab="MC", fleet=1700000, vol=140,
          agency="Michigan Secretary of State", tier=1),
     dict(slug="new-york", name="New York", ab="NY", fleet=1300000, vol=20,
          agency="New York State DMV", tier=1),
@@ -208,7 +208,7 @@ STATES = [
               "CF numbers - which is what people actually search for."),
     dict(slug="south-carolina", name="South Carolina", ab="SC", fleet=1100000, vol=30,
          agency="South Carolina Department of Natural Resources", tier=1),
-    dict(slug="wisconsin", name="Wisconsin", ab="WI", fleet=1100000, vol=70,
+    dict(slug="wisconsin", name="Wisconsin", ab="WS", fleet=1100000, vol=70,
          agency="Wisconsin DNR", tier=1),
     dict(slug="minnesota", name="Minnesota", ab="MN", fleet=1000000, vol=30,
          agency="Minnesota DNR", tier=1),
@@ -269,6 +269,73 @@ def google_fonts_href():
     """One stylesheet request for all ten faces."""
     fams = "&".join("family=" + f[2] for f in FONTS)
     return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
+
+# ------------------------------------------------- vessel number prefixes
+# The two-letter prefix a state issues on a registration number. Established
+# by the USCG under the Federal Boating Act of 1958 - five years BEFORE the
+# Post Office standardised its own two-letter codes, which is why 11 of them
+# disagree with the postal abbreviation.
+#
+# Two of those collide, and they are the reason this table exists rather than
+# a postal-code lookup:
+#   MS = Massachusetts (not Mississippi)
+#   MI = Mississippi   (not Michigan)
+#   MC = Michigan
+#
+# Sources: Murray Yacht Sales; Wisconsin DNR boating handbook ("WS 1234 AB");
+# Michigan SOS watercraft dealer manual ("MC"). Secondary, not an official
+# machine-readable feed - which is exactly why the validator warns and never
+# blocks an order.
+VESSEL_PREFIX = {
+    "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR",
+    "California":"CF","Colorado":"CL","Connecticut":"CT","Delaware":"DL",
+    "District of Columbia":"DC","Florida":"FL","Georgia":"GA","Hawaii":"HA",
+    "Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KA",
+    "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD",
+    "Massachusetts":"MS","Michigan":"MC","Minnesota":"MN","Mississippi":"MI",
+    "Missouri":"MO","Montana":"MT","Nebraska":"NB","Nevada":"NV",
+    "New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM","New York":"NY",
+    "North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
+    "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
+    "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
+    "Virginia":"VA","Washington":"WN","West Virginia":"WV","Wisconsin":"WS",
+    "Wyoming":"WY",
+    # Territories issue numbers too.
+    "American Samoa":"AS","Guam":"GU","Northern Mariana Islands":"CM",
+    "Puerto Rico":"PR","US Virgin Islands":"VI",
+}
+# prefix -> state. A bijection, so a valid prefix names exactly one issuer.
+PREFIX_STATE = {v: k for k, v in VESSEL_PREFIX.items()}
+# postal code -> vessel prefix, for the 11 that disagree. Used by geo seeding.
+POSTAL_TO_VESSEL = {"CA":"CF","CO":"CL","DE":"DL","HI":"HA","KS":"KA",
+                    "MA":"MS","MI":"MC","MS":"MI","NE":"NB","WA":"WN","WI":"WS"}
+
+# Postal codes a customer might type that are NOT valid vessel prefixes, so we
+# can say exactly what they meant. MI and MS are deliberately absent: both ARE
+# valid prefixes (Mississippi, Massachusetts), so "did you mean" there would be
+# wrong as often as right.
+POSTAL_MISTAKE = {
+    "CA": ("California", "CF"),
+    "CO": ("Colorado", "CL"),
+    "DE": ("Delaware", "DL"),
+    "HI": ("Hawaii", "HA"),
+    "KS": ("Kansas", "KA"),
+    "MA": ("Massachusetts", "MS"),
+    "NE": ("Nebraska", "NB"),
+    "WA": ("Washington", "WN"),
+    "WI": ("Wisconsin", "WS"),
+}
+
+# Maine is the documented format outlier: 2 digits + 3 letters, or 4 digits +
+# 1 letter, instead of the usual up-to-4 digits + up-to-2 letters.
+FORMAT_EXCEPTIONS = {
+    "ME": {"note": "Maine numbers run ME 12ABC or ME 1234A rather than the "
+                   "usual four-digits-two-letters.",
+           "patterns": [r"^\d{2}[A-Z]{3}$", r"^\d{4}[A-Z]$"]},
+}
+# California never issues I, O or Q in a CF number.
+NO_LETTERS = {"CF": "IOQ"}
+
 
 # (name, hex, is_light) - is_light drives which hull colour the preview sits on.
 COLORS = [("White","#ffffff",1),("Black","#111111",0),("Navy","#12243f",0),

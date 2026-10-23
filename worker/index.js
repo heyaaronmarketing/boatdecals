@@ -129,6 +129,14 @@ async function handleOrder(request, env) {
     o.font_requested = o.font;
     o.font = BLOCK_FONTS[0];
   }
+  // Advisory only - annotates the order, never refuses it.
+  o.number_flag = o.kind === "Boat name" ? "" : checkNumber(o.text);
+  // The client derives this too, but an API post or a JS failure should not
+  // cost us the data: the prefix names the issuing state on its own.
+  if (!o.state && o.text) {
+    const pfx = String(o.text).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 2);
+    o.state = PREFIX_STATE[pfx] || "";
+  }
   o.total = priceOf(o);
   // A mismatch means the client is stale or tampered with. Log it, trust ours.
   o.mismatch = o.quoted && o.quoted !== o.total ? 1 : 0;
@@ -169,6 +177,10 @@ async function handleOrder(request, env) {
     const rows = [
       ["Reference", o.ref], ["Product", o.kind],
       ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
+      ...(o.number_flag
+        ? [["CHECK THE NUMBER", `${o.number_flag} - confirm against the customer's
+            registration card before cutting`]]
+        : []),
       ["State", o.state], ["Height", o.height + '"'],
       ["Font", o.font_requested
         ? `${o.font} - customer asked for ${o.font_requested}, which is not legal `
@@ -214,7 +226,8 @@ async function handleOrder(request, env) {
     } catch (err) { console.error("resend failed", err && err.message); }
   }
 
-  return json({ ok: true, ref: o.ref, total: o.total });
+  return json({ ok: true, ref: o.ref, total: o.total,
+                state: o.state || undefined, flag: o.number_flag || undefined });
 }
 
 const esc = s => String(s).replace(/[&<>"]/g,
@@ -276,10 +289,55 @@ const RETIRED = {
 };
 
 /**
- * Two states do not use their postal abbreviation on the water. Everywhere
- * else the postal code is the registration prefix.
+ * Vessel prefix -> issuing state. Mirrors content.py: PREFIX_STATE, and
+ * verify.py fails the build if the two drift apart.
+ *
+ * MS is Massachusetts, MI is Mississippi, MC is Michigan - a postal-code
+ * lookup gets two of those wrong.
  */
-const PREFIX_OVERRIDE = { CA: "CF", WA: "WN" };
+const PREFIX_STATE = {AK:"Alaska",AL:"Alabama",AR:"Arkansas",AS:"American Samoa",AZ:"Arizona",CF:"California",CL:"Colorado",CM:"Northern Mariana Islands",CT:"Connecticut",DC:"District of Columbia",DL:"Delaware",FL:"Florida",GA:"Georgia",GU:"Guam",HA:"Hawaii",IA:"Iowa",ID:"Idaho",IL:"Illinois",IN:"Indiana",KA:"Kansas",KY:"Kentucky",LA:"Louisiana",MC:"Michigan",MD:"Maryland",ME:"Maine",MI:"Mississippi",MN:"Minnesota",MO:"Missouri",MS:"Massachusetts",MT:"Montana",NB:"Nebraska",NC:"North Carolina",ND:"North Dakota",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NV:"Nevada",NY:"New York",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",PR:"Puerto Rico",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VA:"Virginia",VI:"US Virgin Islands",VT:"Vermont",WN:"Washington",WS:"Wisconsin",WV:"West Virginia",WY:"Wyoming"};
+
+// Postal codes that are not valid vessel prefixes, so the intent is clear.
+const POSTAL_MISTAKE = { CA: ["California", "CF"], CO: ["Colorado", "CL"], DE: ["Delaware", "DL"], HI: ["Hawaii", "HA"], KS: ["Kansas", "KA"], MA: ["Massachusetts", "MS"], NE: ["Nebraska", "NB"], WA: ["Washington", "WN"], WI: ["Wisconsin", "WS"] };
+
+/**
+ * Tier-1 check, mirroring engine/validate.py. ADVISORY ONLY: it never rejects
+ * an order, it annotates one. The table is secondary-sourced and old hulls
+ * carry retired formats, so a hard rule here would turn our incomplete data
+ * into lost sales. The shop sees the flag on the proof and decides.
+ */
+function checkNumber(text) {
+  const compact = String(text || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (compact.length < 3) return "";
+  const prefix = compact.slice(0, 2), rest = compact.slice(2);
+  const state = PREFIX_STATE[prefix];
+  if (!state) {
+    const oops = POSTAL_MISTAKE[prefix];
+    return oops
+      ? `typed "${prefix}" (postal code) - ${oops[0]} issues "${oops[1]}"`
+      : `unrecognised prefix "${prefix}"`;
+  }
+  const m = rest.match(/^(\d{1,4})([A-Z]{0,3})$/);
+  if (!m) return `does not read as prefix + digits + letters`;
+  // Maine's own forms are checked INSTEAD of the generic letter count, not
+  // before it - a valid ME 12ABC has three trailing letters and would
+  // otherwise be flagged by the generic rule it is an exception to.
+  if (prefix === "ME") {
+    if (!/^\d{2}[A-Z]{3}$/.test(rest) && !/^\d{4}[A-Z]$/.test(rest))
+      return "unusual for Maine (expected ME 12ABC or ME 1234A)";
+  } else if (m[2].length > 2) {
+    return `${m[2].length} trailing letters is unusual`;
+  }
+  if (prefix === "CF" && /[IOQ]/.test(m[2]))
+    return "California does not issue I, O or Q";
+  return "";
+}
+
+/**
+ * Postal code -> vessel prefix for the 11 states that disagree. Everywhere
+ * else the postal code IS the prefix. Mirrors content.py: POSTAL_TO_VESSEL.
+ */
+const PREFIX_OVERRIDE = { CA: "CF", CO: "CL", DE: "DL", HI: "HA", KS: "KA", MA: "MS", MI: "MC", MS: "MI", NE: "NB", WA: "WN", WI: "WS" };
 
 /**
  * Best-guess registration prefix for the visitor, from Cloudflare's own geo.

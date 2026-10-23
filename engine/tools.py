@@ -223,6 +223,17 @@ LAYOUT_JS = r"""
         'Federal rule requires the characters to contrast with the background &mdash; '+
         'switch to '+(hd? 'White or Yellow':'Black or Navy')+'.');
 
+    // prefix - the same table the order form uses
+    var V = window.BNS_VALIDATE;
+    if(V){
+      var vr = V.check(raw);
+      if(vr.level === 'vwarn' || vr.level === 'vnote'){
+        add(false, vr.msg.replace(/<\/?strong>/g, ''));
+      } else if(vr.state){
+        add(true, 'Prefix reads as a <strong>'+vr.state+'</strong> number.');
+      }
+    }
+
     // format + spacing
     var groups=raw.split(/[\s-]+/).filter(function(x){return x;});
     var compact=raw.replace(/[\s-]/g,'');

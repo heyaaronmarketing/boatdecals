@@ -127,6 +127,7 @@ def form():
       <label for=f_text>Registration number</label>
       <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
              autocomplete=off maxlength=40 autocapitalize=characters spellcheck=false>
+      <div class=vcheck id=vcheck role=status aria-live=polite></div>
     </div>
     <div id=namewrap hidden style="margin-top:14px">
       <label for=f_name2>Boat name</label>
@@ -244,7 +245,9 @@ JS = r"""
 
   function stateFromPrefix(){
     var m=($('f_text').value||'').trim().toUpperCase().match(/^([A-Z]{2})/);
-    return (m && (window.BNS_PREFIX||{})[m[1]]) || '';
+    // VESSEL prefixes, not postal codes: MS is Massachusetts, MI is
+    // Mississippi, MC is Michigan. A postal lookup gets two of those wrong.
+    return (m && (window.BNS_PREFIX_STATE||{})[m[1]]) || '';
   }
   function isNum(){return kind()!=='Boat name';}
   function hasName(){return kind()!=='Registration numbers';}
@@ -259,6 +262,14 @@ JS = r"""
     return Math.round(n);
   }
 
+  /** What we would actually cut: the corrected spacing, not the raw typing. */
+  function numberForPreview(){
+    var raw=($('f_text').value||'').trim();
+    if(!raw || !window.BNS_VALIDATE) return raw;
+    var v=window.BNS_VALIDATE.check(raw);
+    return v.fixed || raw;
+  }
+
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
@@ -270,7 +281,7 @@ JS = r"""
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
-      number: ($('f_text').value||'').trim(), placeholder: PLACEHOLDER,
+      number: numberForPreview(), placeholder: PLACEHOLDER,
       name: ($('f_name2').value||'').trim()
     });
     lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
@@ -321,6 +332,20 @@ JS = r"""
     for(var j=0;j<d.length;j++) d[j].textContent=demo;
   }
 
+  /** Tier-1 check on the registration number. Advisory only. */
+  function runValidate(){
+    var box=$('vcheck'); if(!box || !window.BNS_VALIDATE) return;
+    if(!isNum() || !$('f_text').value.trim()){ box.className='vcheck'; box.innerHTML=''; return; }
+    var v=window.BNS_VALIDATE.check($('f_text').value);
+    if(v.level==='vok'){
+      box.className='vcheck vok';
+      box.innerHTML = v.state ? 'Reads as a <strong>'+esc(v.state)+'</strong> number.' : '';
+      return;
+    }
+    box.className='vcheck '+v.level;
+    box.innerHTML=v.msg;
+  }
+
   function syncStep2(){
     var num=isNum(), nm=hasName();
     $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
@@ -367,7 +392,7 @@ JS = r"""
   function render(){
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
-    if(cur===2) syncStep2();
+    if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX) summary();
   }
 
@@ -380,7 +405,7 @@ JS = r"""
     nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
     nextBtn.classList.toggle('paybtn', cur===MAX);
     document.getElementById('prevwrap').hidden = (cur===MAX);
-    if(cur===2) syncStep2();
+    if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX){ summary(); initPay(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
