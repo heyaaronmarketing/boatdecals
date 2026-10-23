@@ -49,7 +49,11 @@ for label, vals in (("title", titles), ("description", descs)):
 
 # The wizard is the only conversion path; if it loses a step, nothing converts.
 design = (OUT / "design" / "index.html").read_text()
-for need in ("data-step=\"1\"", "data-step=\"5\"", "id=payelement", "BNS_COL=",
+# Step count asserted explicitly so a section cannot vanish unnoticed.
+_steps = len(re.findall(r'data-step="\d"', design))
+if _steps != 4:
+    fails.append("order wizard has %d steps, expected 4" % _steps)
+for need in ("data-step=\"1\"", "data-step=\"4\"", "id=payelement", "BNS_COL=",
              "id=prevsvg", "id=p_num", "name=kind"):
     if need not in design: fails.append("order wizard missing %s" % need)
 

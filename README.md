@@ -66,13 +66,22 @@ the shop email. `verify.py` now rejects any label containing the delimiter.
 
 ## The order wizard
 
-Five steps, one decision each, in a fixed-height shell (`min-height` on `.wizbody`)
+Four steps, one decision each, in a fixed-height shell (`min-height` on `.wizbody`)
 so the panel never jumps. Anti-fatigue rules, all load-bearing:
 
 - step 1 **auto-advances on click** — no Continue press to start
 - only steps 2 and 5 require typing; 1, 3 and 4 are pure clicking
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
+- **there is no upsell step.** The add-ons on `/pricing/` are requested in the
+  checkout notes box instead. The worker still prices every entry in
+  `UPGRADE_ADD`, so a note-added upgrade costs exactly what a clicked one would
+  have — don't delete that table just because nothing posts it any more.
+
+`MAX` is derived from the rendered step count, and every conditional uses it
+rather than a literal, so adding or removing a section renumbers everything.
+`verify.py` asserts the count is 4 — a silently vanished section would otherwise
+look like a working wizard.
 
 ### The preview (`engine/preview.py`)
 

@@ -563,16 +563,9 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
     </fieldset>
   </section>
 
+
   <!-- 4 ------------------------------------------------------------- -->
   <section class=step data-step="4">
-    <h2>Anything else?</h2>
-    <p class=sublede>Shipping is already paid &mdash; these add nothing to send.</p>
-    <div class=mgrid><label class=mcard><input type=checkbox name=upgrade value="Premium 8-year cast vinyl" data-add="8"><span class=mbox><span class=flag>Most popular</span><b>Premium 8-year cast vinyl</b><em>Cast film instead of calendared - holds colour about three years longer.</em><i>Worth it if the boat lives outside or you picked a dark colour.</i><span class=mamt>+$8</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Spare set - a second pair at half price" data-add="9"><span class=mbox><span class=flag>Best value</span><b>Spare set</b><em>A whole second pair in the envelope for when one gets dock-rashed.</em><i>Cheaper now than reordering later, and shipping is already paid.</i><span class=mamt>+$9</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Install kit - squeegee + solution + tape" data-add="6"><span class=mbox><b>Install kit</b><em>The felt squeegee and application fluid that make the wet method foolproof.</em><i>A bare set ships with a basic squeegee. This is the proper kit.</i><span class=mamt>+$6</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Rush - cut and shipped today" data-add="12"><span class=mbox><b>Rush</b><em>Jumps the queue. Order before 1pm CT on a business day.</em><i>Only worth it if you are launching this weekend.</i><span class=mamt>+$12</span><span class=mtick aria-hidden="true">&#10003;</span></span></label><label class=mcard><input type=checkbox name=upgrade value="Reflective finish" data-add="10"><span class=mbox><b>Reflective finish</b><em>Glass-bead film that lights up under a spotlight at night.</em><i>Legal in every state. Popular on working and patrol boats.</i><span class=mamt>+$10</span><span class=mtick aria-hidden="true">&#10003;</span></span></label></div>
-    <p class=tinylink><a href="#" id=skipups>Skip &mdash; none of these</a></p>
-  </section>
-
-  <!-- 5 ------------------------------------------------------------- -->
-  <section class=step data-step="5">
     <h2>Checkout</h2>
     <div class=sumbox id=summary></div>
     <div class="fieldrow two">
@@ -588,7 +581,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card number.</div>
     </div>
-    <details class=extra><summary>Add a phone, boat details or a note</summary>
+    <details class=extra><summary>Add a note, rush, premium vinyl or boat details</summary>
       <div class="fieldrow two" style="margin-top:11px">
         <div><label for=f_phone>Phone</label>
           <input type=tel id=f_phone name=phone autocomplete=tel></div>
@@ -597,7 +590,7 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
       </div>
       <div style="margin-top:11px"><label for=f_notes>Notes</label>
         <textarea id=f_notes name=notes rows=2
-          placeholder="Dark blue hull. Rivets across the panel."></textarea></div>
+          placeholder="Rush it. Premium vinyl. Dark blue hull."></textarea></div>
     </details>
     <div class=err id=e5 role=alert></div>
     <p class=guar>Proof before we cut &middot; free re-cut &middot; full refund if
@@ -916,7 +909,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
     if(cur===2) syncStep2();
-    if(cur===5) summary();
+    if(cur===MAX) summary();
   }
 
   function show(n){
@@ -927,9 +920,9 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     backBtn.hidden = cur===1;
     nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
     nextBtn.classList.toggle('paybtn', cur===MAX);
-    document.getElementById('prevwrap').hidden = (cur===5);
+    document.getElementById('prevwrap').hidden = (cur===MAX);
     if(cur===2) syncStep2();
-    if(cur===5){ summary(); initPay(); }
+    if(cur===MAX){ summary(); initPay(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
     if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
@@ -953,7 +946,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
         return false; }
       $('e2').textContent=''; return true;
     }
-    if(cur===5){
+    if(cur===MAX){
       var em=$('f_email').value.trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
         $('e5').textContent='We need a valid email to send your proof.';
@@ -1106,8 +1099,6 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   W.querySelectorAll('[name=kind]').forEach(function(r){
     r.addEventListener('change',function(){ render(); setTimeout(function(){show(2);},140); });
   });
-  var skip=$('skipups');
-  if(skip) skip.addEventListener('click',function(ev){ev.preventDefault();show(5);});
 
   W.addEventListener('input',render);
   W.addEventListener('change',render);

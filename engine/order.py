@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """The order wizard - this site's only conversion element.
 
-Five steps, one decision each, in a fixed-height shell so the page never jumps:
+Four steps, one decision each, in a fixed-height shell so the page never jumps:
 
   1. What do you need?      three cards, auto-advances on click (no typing)
-  2. What should it say?    the only step that demands real typing
-  3. How should it look?    clicks only; live preview flips its hull colour so
+  2. What should it say?    lettering + font; the only step that demands typing
+  3. How should it look?    clicks only; the preview flips its panel dark so
                             light vinyl always renders on dark and vice versa
-  4. Anything else?         merchandising - where AOV is actually made
-  5. Checkout               Stripe Payment Element, embedded
+  4. Checkout               Stripe Payment Element, embedded
+
+There is deliberately no upsell step. The add-ons on /pricing/ are requested in
+the checkout notes box instead - the worker still prices them, so a note-added
+upgrade costs the same as a clicked one would have.
 
 Anti-fatigue rules this file holds to:
   - never more than one required text field per step
@@ -90,14 +93,6 @@ def form():
            '<span class=flag>%s</span>' % flag if flag else "",
            _thumb(key), lbl, blurb, price)
         for lbl, base, blurb, price, flag, key in KINDS)
-    ups = "".join(
-        '<label class=mcard><input type=checkbox name=upgrade value="%s" data-add="%d">'
-        '<span class=mbox>%s<b>%s</b><em>%s</em><i>%s</i>'
-        '<span class=mamt>+$%d</span><span class=mtick aria-hidden="true">&#10003;</span>'
-        '</span></label>'
-        % (lbl, amt, '<span class=flag>%s</span>' % flag if flag else "",
-           lbl.split(" - ")[0], blurb, note, amt)
-        for lbl, amt, blurb, flag, note in UPGRADES)
     cols = _colors("color")
 
     return ("""
@@ -163,16 +158,9 @@ def form():
     </fieldset>
   </section>
 
+
   <!-- 4 ------------------------------------------------------------- -->
   <section class=step data-step="4">
-    <h2>Anything else?</h2>
-    <p class=sublede>Shipping is already paid &mdash; these add nothing to send.</p>
-    <div class=mgrid>""" + ups + """</div>
-    <p class=tinylink><a href="#" id=skipups>Skip &mdash; none of these</a></p>
-  </section>
-
-  <!-- 5 ------------------------------------------------------------- -->
-  <section class=step data-step="5">
     <h2>Checkout</h2>
     <div class=sumbox id=summary></div>
     <div class="fieldrow two">
@@ -188,7 +176,7 @@ def form():
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card number.</div>
     </div>
-    <details class=extra><summary>Add a phone, boat details or a note</summary>
+    <details class=extra><summary>Add a note, rush, premium vinyl or boat details</summary>
       <div class="fieldrow two" style="margin-top:11px">
         <div><label for=f_phone>Phone</label>
           <input type=tel id=f_phone name=phone autocomplete=tel></div>
@@ -197,7 +185,7 @@ def form():
       </div>
       <div style="margin-top:11px"><label for=f_notes>Notes</label>
         <textarea id=f_notes name=notes rows=2
-          placeholder="Dark blue hull. Rivets across the panel."></textarea></div>
+          placeholder="Rush it. Premium vinyl. Dark blue hull."></textarea></div>
     </details>
     <div class=err id=e5 role=alert></div>
     <p class=guar>Proof before we cut &middot; free re-cut &middot; full refund if
@@ -363,7 +351,7 @@ JS = r"""
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
     if(cur===2) syncStep2();
-    if(cur===5) summary();
+    if(cur===MAX) summary();
   }
 
   function show(n){
@@ -374,9 +362,9 @@ JS = r"""
     backBtn.hidden = cur===1;
     nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
     nextBtn.classList.toggle('paybtn', cur===MAX);
-    document.getElementById('prevwrap').hidden = (cur===5);
+    document.getElementById('prevwrap').hidden = (cur===MAX);
     if(cur===2) syncStep2();
-    if(cur===5){ summary(); initPay(); }
+    if(cur===MAX){ summary(); initPay(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
     if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
@@ -400,7 +388,7 @@ JS = r"""
         return false; }
       $('e2').textContent=''; return true;
     }
-    if(cur===5){
+    if(cur===MAX){
       var em=$('f_email').value.trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
         $('e5').textContent='We need a valid email to send your proof.';
@@ -553,8 +541,6 @@ JS = r"""
   W.querySelectorAll('[name=kind]').forEach(function(r){
     r.addEventListener('change',function(){ render(); setTimeout(function(){show(2);},140); });
   });
-  var skip=$('skipups');
-  if(skip) skip.addEventListener('click',function(ev){ev.preventDefault();show(5);});
 
   W.addEventListener('input',render);
   W.addEventListener('change',render);
