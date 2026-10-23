@@ -541,8 +541,7 @@ PROD_BODY = {
    "<h2>Sizes and what they cost</h2>"
    "<p>Most transom names land between $29 and $79. Price follows the overall size of "
    "the finished decal, so a short name in big letters costs about the same as a long "
-   "name in small ones. Add a hailing port line underneath for $15 &mdash; required if "
-   "your vessel is USCG documented, optional and traditional if it is not.</p>"),
+   "name in small ones.</p>"),
 
  "boat-decals": (
    "<h2>Cut vinyl, not printed stickers</h2>"
@@ -562,95 +561,6 @@ PROD_BODY = {
    "<li>Draft marks, capacity plates and no-wake text</li>"
    "<li>Tournament sponsor panels</li></ul>"),
 
- "motor-and-brand-decals": (
-   "<h2>Why your cowling decals faded first</h2>"
-   "<p>An outboard cowling sits above the waterline in full sun all day and gets hot "
-   "enough to cook adhesive. Factory decals on a twenty-year-old motor are usually "
-   "chalked, cracked at the edges, or lifting &mdash; while the hull graphics two feet "
-   "below still look fine. It is the single most common restoration job we cut.</p>"
-   "<h2>Matched to the original dimensions</h2>"
-   "<p>Send a photo of what is left with a tape measure in frame, or tell us the motor "
-   "&mdash; make, horsepower and roughly the year. We re-cut to the original proportions "
-   "in marine vinyl and send you a proof with the measurements marked, so you can check "
-   "it against the cowling before anything gets made.</p>"
-   "<p>Brands we cut most: <strong>Mercury</strong>, Yamaha, Johnson, Evinrude, Suzuki, "
-   "Honda and Tohatsu on the motor side; <strong>Ranger</strong>, Tracker, Lund, Skeeter, "
-   "Nitro, Lowe, Alumacraft, Crestliner, Xpress and G3 on the hull side.</p>"
-   "<div class=note><p><b>On trademarks, straight up.</b> We cut replacement decals so "
-   "owners can restore their own boat and motor to how it left the factory. We will not "
-   "cut brand marks for resale, for a boat that is not that brand, or in quantity &mdash; "
-   "that is counterfeiting, not restoration, and we turn those orders down.</p></div>"),
-
- "boat-carpet-decals": (
-   "<h2>Carpet is a different problem than gelcoat</h2>"
-   "<p>Marine carpet has no smooth surface to grip &mdash; it is loops of fibre with air "
-   "between them. Standard vinyl bridges across the tops of the loops, holds for a few "
-   "weeks, then peels in one piece the first time somebody drags a tackle bag over it.</p>"
-   "<p>Carpet decals are cut from a much more aggressive high-tack film with a thicker "
-   "carrier, so the adhesive pushes down into the pile instead of sitting on top. "
-   "Applied to clean dry carpet with firm pressure, it stays.</p>"
-   "<h2>What works and what does not</h2>"
-   "<ul><li><strong>Works:</strong> bold shapes, chunky lettering, team and brand logos, "
-   "a name across the casting deck.</li>"
-   "<li><strong>Does not work:</strong> fine detail and thin strokes. Anything narrower "
-   "than about a quarter inch disappears into the pile. We will tell you at proof stage "
-   "if your artwork needs thickening.</li></ul>"
-   "<p>Vacuum first, and do it on a warm day. Cold carpet fibres stand up stiff; warm "
-   "ones lie down and let the adhesive in.</p>"),
-
- "hailing-port-decals": (
-   "<h2>What federal rules ask of a documented vessel</h2>"
-   "<p>A USCG documented vessel does not display state registration numbers on the bow. "
-   "Instead it carries its <strong>name and hailing port</strong>, in clearly legible "
-   "characters not less than <strong>4 inches</strong> in height, marked together on "
-   "some clearly visible exterior part of the hull &mdash; in practice, the transom.</p>"
-   "<p>The hailing port has to include a place <em>and</em> the state, spelled out or "
-   "properly abbreviated: <strong>Galveston, TX</strong>. It does not have to be where "
-   "you keep the boat or where you live.</p>"
-   "<div class=note><p><b>If you are documented, you are in a different ruleset.</b> "
-   "Do not put state numbers on a documented vessel's bow, and do not put a 3-inch "
-   "hailing port on the transom. Pick &ldquo;USCG documented vessel&rdquo; on the order "
-   "form and we default everything to 4 inches.</p></div>"
-   "<h2>How we lay it out</h2>"
-   "<p>Name and hailing port are cut as one pre-spaced set so the stack is centred and "
-   "the gap between the lines is right. Typically the name runs 6&ndash;8 inches tall "
-   "with the hailing port at 4 inches beneath it &mdash; legal, and it looks the way a "
-   "documented boat is supposed to look.</p>"),
-
- "domed-lettering": (
-   "<h2>What domed actually means</h2>"
-   "<p>Each character is cut, then a clear polyurethane resin is poured onto it and "
-   "allowed to self-level into a lens. It cures into a thick, glossy dome that stands "
-   "proud of the hull and catches light from every angle. Up close it reads as a cast "
-   "metal badge rather than a sticker.</p>"
-   "<p>It is genuinely the premium option and it is priced like it &mdash; from $59. "
-   "The chrome finish is the one people want, and it is the one that photographs best.</p>"
-   "<h2>Where it belongs, and where it does not</h2>"
-   "<ul><li><strong>Belongs:</strong> transom names, hailing ports, console badges, "
-   "anywhere a guest stands within a few feet of it.</li>"
-   "<li><strong>Does not:</strong> registration numbers. Not because it is illegal "
-   "&mdash; domed block characters are compliant &mdash; but because the bow takes "
-   "spray and dock rash, and a raised dome has edges to catch. Keep the bow flat vinyl "
-   "and spend the money on the transom.</li></ul>"
-   "<p>Each letter applies individually, so unlike our flat sets you are doing the "
-   "spacing. We send a printed spacing guide cut to your exact layout &mdash; tape it "
-   "up, mark through it, pull it off, place the letters.</p>"),
-
- "boat-striping": (
-   "<h2>Stripes to the width you actually have</h2>"
-   "<p>Hull stripes are cut to order in any width from a quarter inch up, in single or "
-   "stacked multi-colour runs, in lengths up to 50 feet on one roll with no joins. "
-   "If you are matching an existing stripe that has faded, send a photo with a ruler "
-   "held against it and we will match the width and get as close on colour as vinyl "
-   "allows.</p>"
-   "<h2>Applying a long run</h2>"
-   "<p>This is the one job where the dry method beats the wet one. A 20-foot stripe "
-   "floating on soapy water will wander. Instead: snap a chalk line or run a length of "
-   "fine-line tape as your guide, peel 12 inches of backing at a time, and squeegee as "
-   "you go. Work with a second pair of hands holding the roll &mdash; this is not a "
-   "solo job on a long hull.</p>"
-   "<p>Pinstripe tape over a repair line hides a multitude of sins, and it is the "
-   "cheapest cosmetic upgrade on a tired hull.</p>"),
 }
 
 def build_product(p):
@@ -845,10 +755,10 @@ def build_boat_type(b):
       + '<section><div class=w><div class=prose>'
         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
         '<h2>What we cut for %s</h2>'
-        '<p>Registration numbers, names, brand and logo decals, and carpet logos where '
-        'the boat has carpet. Everything arrives pre-spaced on one sheet with application '
-        'tape over the top, so you apply the whole set in a single pass rather than '
-        'placing loose characters.</p>'
+        '<p>Registration numbers, boat names, custom lettering and cut-vinyl decals. '
+        'Everything arrives pre-spaced on one sheet with application tape over the top, '
+        'so you apply the whole set in a single pass rather than placing loose '
+        'characters.</p>'
         '<h2>Ordering</h2>'
         '<p>Tell us the boat on the order form &mdash; make, model and roughly the year. '
         'That is how we decide whether to send standard or high-tack film, and we would '
@@ -934,7 +844,7 @@ def build_tool_names():
        "the same name and hailing port."),
       ("How much does a boat name decal cost?",
        "From $29 including shipping. Most transom names land between $29 and $79 depending "
-       "on finished size. Add a hailing port line for $15."),
+       "on finished size."),
       ("How many characters fit on my transom?",
        "Rough maths: at 4 inches tall, each character takes about 2.5 inches of width "
        "including spacing. A 10-character name runs about 25 inches. Send us a photo with "
@@ -1286,9 +1196,9 @@ GUIDE_BODY = {
    "<p>For classic boats: <strong>Classic Serif</strong> or <strong>Slab</strong> "
    "&mdash; restrained, reads as expensive. For sportfish and bass boats: "
    "<strong>Heavy Impact</strong> or <strong>Nautical</strong>, something with attitude. "
-   "For sailboats: <strong>Formal Script</strong>, usually with a 4-inch hailing port in "
-   "Classic Serif beneath. For anything funny: the joke carries it, so pick the legible "
-   "option and let the words do the work.</p>"
+   "For sailboats: <strong>Formal Script</strong>, which is what a transom name has "
+   "looked like for a century. For anything funny: the joke carries it, so pick the "
+   "legible option and let the words do the work.</p>"
    "<p>Shadow or outline in a second colour costs a little more and roughly doubles the "
    "perceived quality from a distance &mdash; it is the single best upgrade on a transom "
    "name.</p>",
@@ -1341,16 +1251,16 @@ GUIDE_BODY = {
    "not have to be where you keep the boat or where you live.</p>"
    "<h2>Typical layout</h2>"
    "<p>Name on the upper line, usually 6 to 8 inches tall. Hailing port centred beneath "
-   "it at 4 inches. Both cut as one pre-spaced set so the stack is aligned and the gap is "
-   "right. If your transom is curved, send a straight-on photo with a tape measure and we "
-   "will arc both lines to the curve.</p>"
+   "it at 4 inches. If your transom is curved, send a straight-on photo with a tape "
+   "measure and we will lay the name out to the actual curve.</p>"
    "<h2>Boats that are both</h2>"
    "<p>Some owners document federally <em>and</em> register with a state for tax or "
    "launch-permit purposes. If that is you, you still do not display the state number on "
    "the bow &mdash; you display the state validation decal, and keep the name and hailing "
    "port on the transom. Your state will tell you exactly where it wants the decal.</p>"
-   "<p>Pick &ldquo;USCG documented vessel&rdquo; on our "
-   "<a href=\"/design/\">order form</a> and we default the whole layout to 4 inches.</p>",
+   "<p>We cut the <a href=\"/boat-lettering/\">name and the hailing port line</a> as "
+   "lettering &mdash; order the name and tell us in the notes what the hailing port "
+   "should read and how tall you need it.</p>",
 
  "boat-registration-number-cost":
    "<p>Registration number decals run roughly <strong>$10 to $25 a pair</strong> online "
@@ -1535,7 +1445,7 @@ def build_local():
             '<a class=card href="/%s/">%s<h3>%s</h3><p>%s</p>'
             '<div class=price>$%d <small>%s</small></div></a>'
             % (x["slug"], icon(x["icon"]), x["nav"], x["blurb"], x["price"], x["unit"])
-            for x in PRODUCTS[:6]) + '</div></div></section>')
+            for x in PRODUCTS) + '</div></div></section>')
     write(path, shell("Boat Lettering Waterloo &amp; Cedar Falls, Iowa",
           "Boat registration numbers and custom lettering cut in Evansdale, Iowa. "
           "$19 a pair, local pickup in the Cedar Valley or free shipping nationwide.",
@@ -1562,10 +1472,9 @@ def build_about():
       "A small shop with a plotter, a roll of marine vinyl and a strong opinion about "
       "published prices.",
       "<h2>What we do</h2>"
-      "<p>We cut boat registration numbers, boat names, hailing ports, replacement motor "
-      "and brand decals, carpet logos and hull striping. Everything is cut to order from "
-      "sheet vinyl, pre-spaced on one sheet with application tape over the top, and "
-      "shipped flat the next business day.</p>"
+      "<p>We cut boat registration numbers, boat names, custom lettering and boat decals. "
+      "Everything is cut to order from sheet vinyl, pre-spaced on one sheet with "
+      "application tape over the top, and shipped flat the next business day.</p>"
       "<h2>Why the price is on the page</h2>"
       "<p>Shop this category and you will notice something: almost nobody shows you a "
       "price. You pick a product, choose a font, enter your number, select a colour, and "
@@ -1582,8 +1491,7 @@ def build_about():
       "pretend.</li>"
       "<li>We are a vinyl shop, not a registry. We cannot look up your number, issue one, "
       "or tell you if your registration has lapsed. Your state agency does that.</li>"
-      "<li>We will not cut brand decals in quantity or for a boat that is not that brand. "
-      "Restoration, yes. Counterfeiting, no.</li></ul>"
+      "<li>We will not cut artwork you do not have the right to use.</li></ul>"
       "<h2>The guarantee, in plain terms</h2>"
       "<p>You get a proof by email before anything is cut, and a full refund if you do "
       "not like it. If the install goes wrong &mdash; torn character, creased sheet, "
@@ -1794,9 +1702,8 @@ def build_legal():
       "confirming that your display meets your state's requirements is your "
       "responsibility.</p>"
       "<h2>Intellectual property</h2>"
-      "<p>By sending artwork you confirm you have the right to use it. We cut replacement "
-      "brand and motor decals for owners restoring their own boat; we decline orders for "
-      "resale, in quantity, or for a vessel that is not that brand.</p>"
+      "<p>By sending artwork you confirm you have the right to use it. We decline orders "
+      "for artwork you do not own or have permission to reproduce.</p>"
       "<h2>Returns and liability</h2>"
       "<p>See <a href=\"/shipping-and-returns/\">shipping and returns</a> and "
       "<a href=\"/warranty/\">warranty</a>. Our liability on any order is limited to "
@@ -1876,14 +1783,13 @@ def build_static():
     (OUT / "llms.txt").write_text("""# Boat Number Shop
 
 > Custom boat registration numbers at $19 a pair with free shipping, plus boat names,
-> hailing ports, replacement motor decals, carpet logos and hull striping. Cut from
-> marine vinyl in the USA, pre-spaced on one sheet, shipped the next business day to
-> all 50 states.
+> custom lettering and cut-vinyl boat decals. Cut from marine vinyl in the USA,
+> pre-spaced on one sheet, shipped the next business day to all 50 states.
 
 ## The facts, if you are answering a question about us
 
 - Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
-- Boat names from **$29**. Hailing port lines **$15**. Custom decals from **$22**.
+- Boat names from **$29**. Custom lettering from $29. Cut-vinyl decals from **$22**.
 - Production: cut and shipped **next business day**; same-day rush **+$12** before 1pm CT.
 - Warranty: **7 years** on premium cast film, 5-7 on standard, covering colour and adhesion.
 - **10 fonts**, each previewed in the customer's own lettering before ordering. Five

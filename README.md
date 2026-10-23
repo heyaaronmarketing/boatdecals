@@ -38,6 +38,19 @@ overwritten.
 | `worker/index.js` | `/api/order` (D1 + Resend) and asset serving. |
 | `STRATEGY.md` | Gap analysis: keyword, geographic, AEO, SEO and social. Read before adding pages. |
 
+## Retired products
+
+Motor/brand decals, carpet decals, hailing-port decals, domed & chrome lettering
+and boat striping were removed on 2026-10-23. Four products remain.
+
+Their URLs were live, so `worker/index.js: RETIRED` **301-redirects** each one to
+the nearest surviving page rather than 404ing — a dead end loses the link equity
+and the visitor. Don't delete those redirects.
+
+The hailing-port **add-on** went with the product line. If the shop still wants to
+sell a hailing-port line under a name, restore it in `content.py: UPGRADES` and in
+the worker's `UPGRADE_ADD` together — `verify.py` fails if they disagree.
+
 ## Pricing is in two places and must stay in sync
 
 `engine/content.py: PRICE/UPGRADES` (display + client JS) and

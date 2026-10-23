@@ -260,9 +260,25 @@ async function handleCheckout(request, env) {
   }
 }
 
+/**
+ * Discontinued product pages. They were live and may be indexed, so they get a
+ * permanent redirect to the nearest surviving page rather than a 404 - a dead
+ * end loses both the link equity and the visitor.
+ */
+const RETIRED = {
+  "/motor-and-brand-decals/": "/boat-decals/",
+  "/boat-carpet-decals/": "/boat-decals/",
+  "/boat-striping/": "/boat-decals/",
+  "/hailing-port-decals/": "/boat-lettering/",
+  "/domed-lettering/": "/boat-lettering/",
+};
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    const retired = RETIRED[url.pathname] || RETIRED[url.pathname + "/"];
+    if (retired) return Response.redirect(new URL(retired, url).toString(), 301);
 
     if (url.pathname === "/api/order") {
       if (request.method !== "POST") return json({ error: "POST only" }, 405);
