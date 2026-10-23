@@ -80,7 +80,20 @@ def head(title, desc, path, schema, noindex=False):
     e(html.unescape(title)), e(html.unescape(desc)), canon, e(B),
     CSS, json.dumps(schema, separators=(',', ':')))
 
-PROD_NAV = "".join('<a href="/%s/">%s</a>' % (p["slug"], p["nav"]) for p in PRODUCTS[:3])
+# Header nav. Labels are what customers say ("Boat Numbers"), not what the
+# product pages are titled - the hrefs still point at the canonical slugs.
+NAV_MAIN = [
+    ("Boat Numbers", "/boat-registration-numbers/"),
+    ("Boat Letters", "/boat-lettering/"),
+    ("Boat Names",   "/boat-name-decals/"),
+    ("Pricing",      "/pricing/"),
+    ("By State",     "/registration-numbers/"),
+]
+NAV_ABOUT = [
+    ("Guides",     "/guides/"),
+    ("Guarantee",  "/warranty/"),
+    ("Name Ideas", "/tools/boat-name-generator/"),
+]
 
 def topbar():
     return ('<div class=top><div class=w>'
@@ -91,12 +104,32 @@ def topbar():
             '</div></div>' % (SITE["city"], SITE["region"], PT, PH))
 
 def header():
-    return ('<header><div class=w><a class=brand href="/">%s<span>Boat Number<br>Shop</span></a>'
-            '<nav>%s<a href="/pricing/">Pricing</a><a href="/registration-numbers/">By state</a>'
-            '<a href="/tools/boat-name-generator/">Name ideas</a><a href="/guides/">Guides</a></nav>'
-            '<a class=hcall href="tel:%s" data-call>%s</a>'
+    """Header nav.
+
+    The About group opens on :hover and :focus-within, so it works for mouse,
+    keyboard and touch without any JavaScript - and "About" itself stays a real
+    link rather than becoming a button you cannot follow.
+
+    Below 900px the links collapse behind a toggle; that is the only part that
+    needs JS, and the footer carries every link if it fails.
+    """
+    main = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_MAIN)
+    sub = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_ABOUT)
+    return ('<header><div class=w>'
+            '<a class=brand href="/">%s<span>Boat Number<br>Shop</span></a>'
+            '<button type=button class=menubtn id=menubtn aria-expanded="false" '
+            'aria-controls="nav" aria-label="Menu">'
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" '
+            'stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>'
+            '<nav id=nav>%s'
+            '<span class=navgroup><a class=navtop href="/about/">About'
+            '<svg class=caret viewBox="0 0 12 12" aria-hidden="true">'
+            '<path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" '
+            'fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'
+            '<span class=navmenu>%s</span></span>'
+            '</nav>'
             '<a class=hbtn href="/design/">Start your order</a></div></header>'
-            % (WORDMARK, PROD_NAV, PT, PH))
+            % (WORDMARK, main, sub))
 
 def sticky(label="Registration numbers", price=19):
     return ('<div class=sticky><span class=sp>$%d<em>%s</em></span>'
@@ -257,7 +290,12 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
     parts.append('</main>')
     parts.append(footer())
     parts.append(sticky(sticky_label or "Registration numbers", sticky_price))
-    parts.append('<script>document.body.classList.add("has-sticky");</script>')
+    parts.append('<script>document.body.classList.add("has-sticky");'
+                 '(function(){var b=document.getElementById("menubtn"),'
+                 'n=document.getElementById("nav");if(!b||!n)return;'
+                 'b.addEventListener("click",function(){'
+                 'var o=n.classList.toggle("open");'
+                 'b.setAttribute("aria-expanded",o?"true":"false");});})();</script>')
     if js:
         if "BNS_STRIPE_PK" in js:
             # Precedence: a real publishable key wins; otherwise PAY_MODE decides

@@ -82,6 +82,24 @@ explanation and the prose could go.
 (56px at ≥900px) was silently adding **112px to every step** — `.step{padding:0}`
 is load-bearing, don't remove it.
 
+### Header nav
+
+Labels are customer vocabulary ("Boat Numbers"), not page titles — the hrefs
+still point at the canonical slugs. Edit `NAV_MAIN` / `NAV_ABOUT` in
+`engine/build.py`; nothing else needs touching.
+
+The About group opens on `:hover` **and** `:focus-within`, so mouse, keyboard
+and touch all work with no JavaScript — and "About" stays a real link to
+`/about/` rather than a button you cannot follow. The invisible `::after` strip
+below it stops the menu closing as the pointer travels into the panel.
+
+Below 900px the links collapse behind a toggle (the only part needing JS) and
+the About group renders inline as a labelled section rather than a flyout. The
+footer carries every link, so a JS failure leaves nothing unreachable.
+
+The phone number is deliberately **not** in the header row — it's in the topbar,
+the footer and on `/contact/`.
+
 ### Hero layout
 
 `.herogrid` uses three named areas (`a` headline, `f` form, `b` supporting copy),

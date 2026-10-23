@@ -25,13 +25,59 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 header .w{display:flex;align-items:center;gap:18px;padding:11px 18px}
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;
 line-height:1.08;color:var(--nav);text-decoration:none;flex:0 0 auto}
-header nav{display:none;margin-left:auto;gap:17px;font-size:15px;font-weight:600}
-header nav a{color:var(--ink);text-decoration:none}
+header nav{display:none;margin-left:auto;gap:15px;font-size:14.6px;font-weight:600;
+align-items:center}
+header nav a{color:var(--ink);text-decoration:none;white-space:nowrap}
 header nav a:hover{color:var(--nav2)}
+
+/* About group. Opens on hover AND focus-within, so mouse, keyboard and touch
+   all work with no JS - and "About" stays a followable link. */
+.navgroup{position:relative;display:inline-flex;align-items:center}
+.navtop{display:inline-flex;align-items:center;gap:4px}
+.caret{width:11px;height:11px;flex:0 0 auto;transition:transform .14s;opacity:.75}
+.navgroup:hover .caret,.navgroup:focus-within .caret{transform:rotate(180deg)}
+.navmenu{display:none;position:absolute;top:100%;right:0;min-width:178px;
+background:#fff;border:1px solid var(--line);border-radius:11px;padding:6px;
+box-shadow:0 18px 38px -16px rgba(5,30,45,.38);z-index:60}
+/* A gap between the link and the panel would close the menu mid-travel. */
+.navgroup::after{content:"";position:absolute;top:100%;right:0;left:0;height:10px}
+.navgroup:hover .navmenu,.navgroup:focus-within .navmenu{display:block}
+.navmenu a{display:block;padding:9px 12px;border-radius:7px;font-size:14.6px;
+font-weight:650;color:var(--ink)}
+.navmenu a:hover,.navmenu a:focus-visible{background:var(--selbg);color:var(--nav)}
+
+/* Mobile toggle. The footer carries every link, so if the JS fails nothing is
+   unreachable - this only improves the header. */
+.menubtn{margin-left:auto;display:inline-grid;place-items:center;width:42px;height:42px;
+background:none;border:1.5px solid var(--line);border-radius:10px;color:var(--nav);
+cursor:pointer;padding:0;flex:0 0 auto}
+.menubtn svg{width:22px;height:22px}
+.menubtn:hover{background:var(--soft)}
+.menubtn[aria-expanded="true"]{background:var(--selbg);border-color:var(--nav2)}
 .hbtn{margin-left:auto;background:var(--cta);color:#fff;font-weight:800;font-size:14.5px;
 padding:10px 15px;border-radius:9px;text-decoration:none;white-space:nowrap}
 .hbtn:hover{background:var(--cta2)}
-@media(min-width:900px){header nav{display:flex}.hbtn{margin-left:0}}
+@media(max-width:899px){
+  /* brand ......... [Start your order] [menu]  on one row, nav wraps beneath */
+  header .w{flex-wrap:wrap;gap:8px;padding:9px 14px}
+  .brand{margin-right:auto;font-size:15.5px}
+  .brand svg{width:26px;height:26px}
+  .hbtn{order:2;margin-left:0;font-size:13.6px;padding:9px 12px}
+  .menubtn{order:3;margin-left:0;width:40px;height:40px}
+  header nav.open{display:flex;flex-direction:column;align-items:stretch;
+    order:4;width:100%;gap:0;margin:2px 0 4px;border-top:1px solid var(--line);
+    padding-top:4px}
+  header nav.open>a,.navmenu a{padding:11px 4px;font-size:16px;border-radius:8px}
+  header nav.open>a:not(:last-child),.navgroup{border-bottom:1px solid var(--line)}
+  /* No flyout on a phone - the group just reads as a labelled section. */
+  .navgroup{display:block;width:100%;border-bottom:0}
+  .navtop{padding:11px 4px;font-size:16px;font-weight:700}
+  .caret{display:none}
+  .navmenu{display:block;position:static;border:0;box-shadow:none;padding:0 0 6px 14px;
+    min-width:0}
+  .navmenu a{padding:9px 4px;color:var(--mut)}
+}
+@media(min-width:900px){header nav{display:flex}.hbtn{margin-left:0}.menubtn{display:none}}
 
 /* ---------- hero ---------- */
 .hero{background:linear-gradient(160deg,#0e3a52 0%,#155273 62%,#1b6382 100%);color:#fff;
@@ -223,10 +269,6 @@ body.has-sticky{padding-bottom:76px}
 """
 
 CSS += """
-.hcall{font-weight:800;font-size:15px;color:var(--nav);text-decoration:none;
-white-space:nowrap;display:none}
-@media(min-width:1020px){.hcall{display:inline;margin-left:auto}
-  .hcall+.hbtn{margin-left:14px}}
 .nap{border-top:1px solid rgba(255,255,255,.17);padding:18px 0 4px;margin-bottom:4px;
 font-size:14.6px;line-height:1.65;color:#c5dce8}
 .nap strong{color:#fff;font-size:15.5px}
