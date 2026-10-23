@@ -96,12 +96,19 @@ chips fall back to the stack's system fonts until it lands.
 `block_legal` marks the five faces satisfying 33 CFR 173.27's "plain vertical
 block characters":
 
-- **Registration numbers** — the other five are disabled and visibly greyed, not
-  hidden. People should see what they cannot have, and why.
+- **Registration numbers** — the other five are **removed from the grid**, so it
+  shows one tidy row of five. No explanatory hint; an order that cannot legally
+  be placed isn't worth describing.
 - **"Both"** — all ten unlock, because the font applies to the *name*. The big
   preview then renders the **number line in Block regardless** (`numBlock` →
   `numFam` in `preview.py`), because showing script registration numbers we would
-  never cut would make the preview a lie. The hint says so explicitly.
+  never cut would make the preview a lie. The hint says so explicitly — it is the
+  only font hint left, because it is the only case that isn't self-evident.
+
+`worker/index.js` keeps its own `BLOCK_FONTS` copy and **coerces** a non-block
+font to Block on a registration-numbers order. It coerces rather than rejects:
+losing a real order to a stale cached page is worse than correcting the font and
+flagging it in the shop email, on a proof the customer approves anyway.
 
 ### Colours
 

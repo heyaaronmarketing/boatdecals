@@ -26,6 +26,14 @@ const UPGRADE_ADD = {
 };
 const BASE_MIN = 19, BASE_MAX = 200;
 
+// 33 CFR 173.27 requires plain vertical block characters on a registration
+// number. The form only offers these five, but a stale cached page or a
+// hand-built POST could still ask for a script face - and cutting one would
+// be illegal. Coerce rather than reject: losing a real order over a cached
+// page is worse than quietly correcting the font and flagging it on the
+// proof the customer has to approve anyway.
+const BLOCK_FONTS = ["Block", "Condensed", "Heavy Impact", "Modern", "Stencil"];
+
 function priceOf(d) {
   let n = BASE[d.kind] ?? 19;
   n += HEIGHT_ADD[String(d.height || "3")] ?? 0;
@@ -117,6 +125,10 @@ async function handleOrder(request, env) {
   // two halves of a card order stay one row rather than two.
   const reuse = str(d.ref, 24);
   if (reuse) o.ref = reuse;
+  if (o.kind === "Registration numbers" && o.font && !BLOCK_FONTS.includes(o.font)) {
+    o.font_requested = o.font;
+    o.font = BLOCK_FONTS[0];
+  }
   o.total = priceOf(o);
   // A mismatch means the client is stale or tampered with. Log it, trust ours.
   o.mismatch = o.quoted && o.quoted !== o.total ? 1 : 0;
@@ -157,8 +169,13 @@ async function handleOrder(request, env) {
     const rows = [
       ["Reference", o.ref], ["Product", o.kind],
       ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
-      ["State", o.state], ["Height", o.height + '"'], ["Font", o.font],
-      ["Colour", o.color], ["Upgrades", o.upgrades || "none"],
+      ["State", o.state], ["Height", o.height + '"'],
+      ["Font", o.font_requested
+        ? `${o.font} - customer asked for ${o.font_requested}, which is not legal `
+          + `on a registration number. Corrected automatically; confirm on the proof.`
+        : o.font],
+      ["Colour", o.color],
+      ["Upgrades", o.upgrades || "none"],
       ["Price", "$" + o.total],
       ["Payment", o.test_mode
         ? `TEST MODE - no money taken (${o.card_brand || "card"} ending ${o.card_last4 || "----"})`

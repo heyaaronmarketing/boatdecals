@@ -156,6 +156,7 @@ font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:9p
 background:#fff;color:var(--ink);min-height:44px}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--sea);outline-offset:1px;border-color:var(--nav2)}
 .hint{font-size:12.2px;color:var(--mut);margin-top:3px}
+.hint:empty{display:none}
 fieldset{border:0;margin:0 0 11px}
 legend{font-size:12.8px;font-weight:700;margin-bottom:5px;color:var(--ink)}
 .opts{display:grid;gap:6px;grid-template-columns:repeat(4,1fr)}
@@ -381,9 +382,9 @@ letter-spacing:.01em;white-space:nowrap;overflow:hidden;max-width:100%}
 .fontchip input:checked+.fontbox{border-color:var(--nav2);background:var(--selbg);
 box-shadow:inset 0 0 0 1px var(--nav2)}
 .fontchip input:focus-visible+.fontbox{outline:2px solid var(--sea);outline-offset:2px}
-.fontchip.off{cursor:not-allowed}
-.fontchip.off .fontbox{opacity:.34;background:var(--soft)}
-.fontchip.off .fontdemo{color:var(--mut)}
+/* Faces that are not legal for the current order are removed from the grid,
+   not dimmed - so a registration-numbers order shows one tidy row of five. */
+.fontchip.off{display:none}
 
 /* step 4 merchandising */
 .mgrid{display:grid;gap:8px}

@@ -287,8 +287,8 @@ JS = r"""
 
   function syncFonts(){
     // Registration numbers must be plain vertical block characters, so the
-    // non-block faces are disabled rather than hidden - people should see
-    // what they are not allowed to have, and why.
+    // non-block faces are removed from the grid entirely - an order that
+    // cannot legally be placed is not worth showing.
     var lock = isNum() && kind()!=='Both';
     var chips=W.querySelectorAll('.fontchip'), moved=false;
     for(var i=0;i<chips.length;i++){
@@ -302,14 +302,14 @@ JS = r"""
       var first=W.querySelector('.fontchip:not(.off) input');
       if(first) first.checked=true;
     }
+    // Only the mixed case needs explaining: the chosen face lands on the name
+    // while the numbers are cut in Block regardless. Everything else is
+    // self-evident once the illegal faces are gone.
     var mixed = isNum() && hasName() && !isBlockFont(font());
-    $('fonthint').innerHTML = lock
-      ? 'Registration numbers must be <strong>plain vertical block characters</strong> '
-        + 'by law, so script and serif faces are greyed out.'
-      : mixed
-        ? 'This font goes on the <strong>name</strong>. Your registration numbers are '
-          + 'cut in Block either way &mdash; the law requires it.'
-        : 'Anything goes on a name. Script reads beautifully on a transom.';
+    $('fonthint').innerHTML = mixed
+      ? 'This font goes on the <strong>name</strong>. Your registration numbers are '
+        + 'cut in Block either way &mdash; the law requires it.'
+      : '';
     // Chips preview the real lettering, not a stand-in.
     var demo=(isNum()? $('f_text').value : $('f_name2').value).trim() || 'Abc';
     if(demo.length>7) demo=demo.slice(0,7).trim();
