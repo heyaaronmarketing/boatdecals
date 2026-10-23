@@ -493,3 +493,25 @@ figure.gshot img{display:block;width:100%;height:auto;border-radius:12px;
 background:var(--soft);aspect-ratio:3/2;object-fit:cover}
 figure.gshot figcaption{flex-direction:column;gap:1px;font-size:13px}
 """
+
+# ---- alternating image / text rows --------------------------------------
+CSS += """
+.altwrap{display:flex;flex-direction:column;gap:34px}
+.altrow{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);align-items:center}
+.altrow .alttext>h2:first-child{margin-top:0}
+.altrow.full{display:block}
+@media(min-width:900px){
+  .altwrap{gap:52px}
+  .altrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+  /* Zigzag: the image swaps sides each row. Only the column ORDER changes -
+     the DOM order stays image-then-text so the reading order on a phone and
+     in a screen reader is the same everywhere. */
+  .altrow.r .altimg{order:2}
+  .altrow.r .alttext{order:1}
+  .altrow.full{display:block;max-width:70ch}
+}
+.altrow .altimg figure{margin:0}
+.altrow .altimg img{border-radius:12px}
+.altrow .alttext p{max-width:none}
+.altrow .alttext>*:last-child{margin-bottom:0}
+"""

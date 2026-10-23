@@ -85,6 +85,22 @@ PAGE_IMAGE = {
     "/registration-numbers/minnesota/": "AL-06",
 }
 
+# Images paired to a page's prose sections, in document order. Short lists are
+# fine - sections past the end of the list render full width.
+PAGE_SECTIONS = {
+    "/boat-registration-numbers/": ["PR-1", "PR-6", "GD-1"],
+    "/boat-lettering/":            ["PR-5", "PR-4", "PR-3"],
+    "/boat-name-decals/":          ["AL-03", "PR-2", "PR-6"],
+    "/guides/where-to-put-boat-registration-numbers/": ["GD-1", "AL-01", "AL-04"],
+    "/guides/how-to-remove-boat-lettering/":           ["GD-2"],
+    "/guides/boat-registration-number-rules/":         ["GD-4", "PR-3"],
+    "/guides/boat-lettering-fonts/":                   ["PR-5", "AL-01"],
+    "/guides/best-vinyl-for-boat-lettering/":          ["AL-06", "AL-02"],
+    "/guides/documented-vessel-name-and-hailing-port/":["AL-08"],
+    "/guides/boat-registration-number-cost/":          ["PR-1"],
+    "/guides/how-to-apply-boat-lettering/":            ["AL-09"],
+}
+
 DISCLOSURE = ('<p class=imgnote>Illustrative images. The lettering shown is '
               'representative of what we cut &mdash; these are not photographs '
               'of a particular customer&rsquo;s boat.</p>')
@@ -122,6 +138,51 @@ def steps_strip(ids, heading="The whole job, start to finish"):
     return ('<section class=soft><div class=w><h2>%s</h2>'
             '<div class=gallery steps>%s</div>%s</div></section>'
             % (heading, cards, DISCLOSURE))
+
+
+def split_h2(body):
+    """Break a prose body into (heading, html) sections at each <h2>.
+
+    Anything before the first <h2> comes back under an empty heading so a
+    leading note or rule block is not lost.
+    """
+    import re as _re
+    parts = _re.split(r"(<h2>.*?</h2>)", body)
+    out, lead = [], parts[0].strip()
+    if lead:
+        out.append(("", lead))
+    for i in range(1, len(parts), 2):
+        out.append((parts[i], parts[i + 1] if i + 1 < len(parts) else ""))
+    return out
+
+
+def alternating(body, img_ids):
+    """Lay prose sections out beside images, alternating sides down the page.
+
+    Sections are paired with images in order; once the images run out the
+    remaining sections render full width rather than stretching one picture
+    over three topics. Below 900px every row stacks image-then-text, because
+    a zigzag on a phone is just a column with inconsistent reading order.
+    """
+    secs = split_h2(body)
+    rows, used = [], 0
+    for head, html in secs:
+        img = img_ids[used] if used < len(img_ids) and head else None
+        if img and IMAGES.get(img):
+            side = "r" if used % 2 else "l"          # first image on the left
+            rows.append('<div class="altrow %s">'
+                        '<div class=altimg>%s</div>'
+                        '<div class="alttext prose">%s%s</div></div>'
+                        % (side,
+                           figure(img, sizes="(min-width:900px) 44vw, 100vw",
+                                  cls="shot"),
+                           head, html))
+            used += 1
+        else:
+            rows.append('<div class="altrow full"><div class="alttext prose">'
+                        '%s%s</div></div>' % (head, html))
+    return ('<section><div class=w><div class=altwrap>%s</div>%s</div></section>'
+            % ("".join(rows), DISCLOSURE if used else ""))
 
 
 def gallery(ids, heading="What it looks like on the boat"):
@@ -684,11 +745,14 @@ def build_product(p):
     sch = graph(org_node(), crumb_node(trail, "/%s/" % p["slug"]),
                 product_node(p, "/%s/" % p["slug"]), faq_node(faqs, "/%s/" % p["slug"]))
     body = PROD_BODY.get(p["slug"], "")
+    secs = PAGE_SECTIONS.get("/%s/" % p["slug"], [])
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
                    "Next Day Shipping", "Marine Vinyl", "100% Compliant"],
             right=O.form())
-      + '<section><div class=w><div class=prose>' + body + '</div></div></section>'
+      + (alternating(body, secs) if secs
+         else '<section><div class=w><div class=prose>' + body
+              + '</div></div></section>')
 
       + '<section><div class=w><h2>How it works</h2>' + CB.HOW_IT_WORKS +
         '<a class="btn lg" href="/design/">Start your order</a></div></section>'
@@ -1432,14 +1496,16 @@ def build_guide(g):
     sch = graph(org_node(), crumb_node(trail, path), art, faq_node(faqs, path))
     others = "".join('<a href="/guides/%s/">%s</a>' % (x["slug"], x["nav"])
                      for x in GUIDES if x["slug"] != g["slug"])
-    lead = PAGE_IMAGE.get(path)
+    secs = PAGE_SECTIONS.get(path, [])
+    gbody = GUIDE_BODY.get(g["slug"], "")
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;line-height:1.16;margin-bottom:14px">%s</h1>'
-            % g["title"]
-            + ((figure(lead, sizes="(min-width:900px) 70vw, 100vw",
-                       cls="shot wide", lazy=False) + DISCLOSURE) if lead else "")
-            + '<div class=prose>%s</div>' % GUIDE_BODY.get(g["slug"], "")
-            + '<a class="btn lg" style="margin-top:10px" href="/design/">'
+            '</div></section>' % g["title"]
+            + (alternating(gbody, secs) if secs
+               else '<section><div class=w><div class=prose>%s</div></div></section>'
+                    % gbody)
+            + '<section style="padding-top:0"><div class=w>'
+              '<a class="btn lg" href="/design/">'
               'Order your numbers &middot; $19 a pair</a>'
               '</div></section>'
             # The seven frames belong to the install guide and nowhere else.

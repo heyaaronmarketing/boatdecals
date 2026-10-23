@@ -518,6 +518,25 @@ figure.gshot{margin:0}
 figure.gshot img{display:block;width:100%;height:auto;border-radius:12px;
 background:var(--soft);aspect-ratio:3/2;object-fit:cover}
 figure.gshot figcaption{flex-direction:column;gap:1px;font-size:13px}
+
+.altwrap{display:flex;flex-direction:column;gap:34px}
+.altrow{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);align-items:center}
+.altrow .alttext>h2:first-child{margin-top:0}
+.altrow.full{display:block}
+@media(min-width:900px){
+  .altwrap{gap:52px}
+  .altrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+  /* Zigzag: the image swaps sides each row. Only the column ORDER changes -
+     the DOM order stays image-then-text so the reading order on a phone and
+     in a screen reader is the same everywhere. */
+  .altrow.r .altimg{order:2}
+  .altrow.r .alttext{order:1}
+  .altrow.full{display:block;max-width:70ch}
+}
+.altrow .altimg figure{margin:0}
+.altrow .altimg img{border-radius:12px}
+.altrow .alttext p{max-width:none}
+.altrow .alttext>*:last-child{margin-bottom:0}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]}]}</script>
 </head><body>

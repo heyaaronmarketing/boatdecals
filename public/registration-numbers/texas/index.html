@@ -518,6 +518,25 @@ figure.gshot{margin:0}
 figure.gshot img{display:block;width:100%;height:auto;border-radius:12px;
 background:var(--soft);aspect-ratio:3/2;object-fit:cover}
 figure.gshot figcaption{flex-direction:column;gap:1px;font-size:13px}
+
+.altwrap{display:flex;flex-direction:column;gap:34px}
+.altrow{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);align-items:center}
+.altrow .alttext>h2:first-child{margin-top:0}
+.altrow.full{display:block}
+@media(min-width:900px){
+  .altwrap{gap:52px}
+  .altrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+  /* Zigzag: the image swaps sides each row. Only the column ORDER changes -
+     the DOM order stays image-then-text so the reading order on a phone and
+     in a screen reader is the same everywhere. */
+  .altrow.r .altimg{order:2}
+  .altrow.r .alttext{order:1}
+  .altrow.full{display:block;max-width:70ch}
+}
+.altrow .altimg figure{margin:0}
+.altrow .altimg img{border-radius:12px}
+.altrow .alttext p{max-width:none}
+.altrow .alttext>*:last-child{margin-bottom:0}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://boatnumbershop.com/registration-numbers/texas/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://boatnumbershop.com/"},{"@type":"ListItem","position":2,"name":"By state","item":"https://boatnumbershop.com/registration-numbers/"},{"@type":"ListItem","position":3,"name":"Texas","item":"https://boatnumbershop.com/registration-numbers/texas/"}]},{"@type":"FAQPage","@id":"https://boatnumbershop.com/registration-numbers/texas/#faq","mainEntity":[{"@type":"Question","name":"How tall do Texas boat registration numbers have to be?","acceptedAnswer":{"@type":"Answer","text":"Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Texas like everywhere else. Taller is always legal."}},{"@type":"Question","name":"What do Texas boat numbers start with?","acceptedAnswer":{"@type":"Answer","text":"TX. Your full number runs prefix, digits, then a letter suffix \u2014 for example TX 1234 AB. Copy it off your registration card exactly rather than guessing the spacing."}},{"@type":"Question","name":"Who issues boat registration in Texas?","acceptedAnswer":{"@type":"Answer","text":"You register through the Texas Parks and Wildlife Department. We only make the decals \u2014 you get the number from them first, then we cut it."}},{"@type":"Question","name":"Do the numbers need a space or a hyphen?","acceptedAnswer":{"@type":"Answer","text":"Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So TX 1234 AB, not TX1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong."}},{"@type":"Question","name":"Where do they go on the boat?","acceptedAnswer":{"@type":"Answer","text":"Each side of the forward half of the hull, reading left to right, in a colour that contrasts with the hull. The validation decal goes near the number \u2014 Texas publishes the exact offset, and it is usually within a few inches."}}]},{"@type":"Product","@id":"https://boatnumbershop.com/registration-numbers/texas/#product","name":"Registration numbers - Boat Number Shop","description":"Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day.","brand":{"@type":"Brand","name":"Boat Number Shop"},"category":"Marine vinyl decals","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","availability":"https://schema.org/InStock","url":"https://boatnumbershop.com/design/","priceValidUntil":"2026-12-31","shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":"0","currency":"USD"},"shippingDestination":{"@type":"DefinedRegion","addressCountry":"US"}}}}]}</script>
 </head><body>

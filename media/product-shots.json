@@ -1,0 +1,38 @@
+[
+ {
+  "name": "PR-1",
+  "aspect": "3:2",
+  "size": "2K",
+  "prompt": "A flat overhead photograph on a plain worn workbench of what comes in a boat lettering order: one long sheet of black vinyl lettering reading exactly \"IA 3717 ZW\" under clear application tape, a second identical sheet beside it, a red felt squeegee, and a folded sheet of plain printed instructions. Soft daylight from the left. Any registration lettering must be perfectly upright block capitals, never italic, with clear spaces between the groups. Casual smartphone snapshot, not a professional photograph. Flat overcast daylight or plain indoor workshop light, no golden hour. Slightly off-level handheld framing, visible sensor noise, natural muted colour, no HDR, no glow, nothing airbrushed. Do not render: human faces, brand logos, any text except what is specified in quotation marks, golden-hour light, glossy oversaturated colour, HDR halos, studio lighting, watermark."
+ },
+ {
+  "name": "PR-2",
+  "aspect": "3:2",
+  "size": "2K",
+  "prompt": "A close-up of a vinyl cutting plotter mid-job: a small blade head tracking across a roll of black vinyl on the machine bed, the cut outline of large block letters just visible in the film behind it, the roll feeding from below. Plain workshop lighting, a little dust on the machine. Casual smartphone snapshot, not a professional photograph. Flat overcast daylight or plain indoor workshop light, no golden hour. Slightly off-level handheld framing, visible sensor noise, natural muted colour, no HDR, no glow, nothing airbrushed. Do not render: human faces, brand logos, any text except what is specified in quotation marks, golden-hour light, glossy oversaturated colour, HDR halos, studio lighting, watermark."
+ },
+ {
+  "name": "PR-3",
+  "aspect": "3:2",
+  "size": "2K",
+  "prompt": "A close-up of a white fibreglass boat hull with white vinyl registration lettering applied to it - the lettering is almost invisible against the white gelcoat, readable only by the faint shadow at its edges. Overcast daylight, shot square on. Any registration lettering must be perfectly upright block capitals, never italic, with clear spaces between the groups. Casual smartphone snapshot, not a professional photograph. Flat overcast daylight or plain indoor workshop light, no golden hour. Slightly off-level handheld framing, visible sensor noise, natural muted colour, no HDR, no glow, nothing airbrushed. Do not render: human faces, brand logos, any text except what is specified in quotation marks, golden-hour light, glossy oversaturated colour, HDR halos, studio lighting, watermark."
+ },
+ {
+  "name": "PR-4",
+  "aspect": "3:2",
+  "size": "2K",
+  "prompt": "A yellow tape measure stretched horizontally across the flat white transom of a boat on a trailer, a hand holding each end, the transom otherwise bare with no lettering on it. A phone lies on the trailer frame below. Overcast daylight. Casual smartphone snapshot, not a professional photograph. Flat overcast daylight or plain indoor workshop light, no golden hour. Slightly off-level handheld framing, visible sensor noise, natural muted colour, no HDR, no glow, nothing airbrushed. Do not render: human faces, brand logos, any text except what is specified in quotation marks, golden-hour light, glossy oversaturated colour, HDR halos, studio lighting, watermark."
+ },
+ {
+  "name": "PR-5",
+  "aspect": "3:2",
+  "size": "2K",
+  "prompt": "A close-up of flowing black script lettering reading exactly \"SECOND WIND\" applied across the flat white transom of a boat, photographed square on from a few feet away, outboard motor partly in frame below, weathered gelcoat. Casual smartphone snapshot, not a professional photograph. Flat overcast daylight or plain indoor workshop light, no golden hour. Slightly off-level handheld framing, visible sensor noise, natural muted colour, no HDR, no glow, nothing airbrushed. Do not render: human faces, brand logos, any text except what is specified in quotation marks, golden-hour light, glossy oversaturated colour, HDR halos, studio lighting, watermark."
+ },
+ {
+  "name": "PR-6",
+  "aspect": "3:2",
+  "size": "2K",
+  "prompt": "The side of a white boat hull showing two separate lines of black vinyl lettering one above the other: the upper line is noticeably larger, the lower line is about half its height. Both read exactly \"IA 3717 ZW\". Shot square on in overcast daylight so the size difference is obvious. Any registration lettering must be perfectly upright block capitals, never italic, with clear spaces between the groups. Casual smartphone snapshot, not a professional photograph. Flat overcast daylight or plain indoor workshop light, no golden hour. Slightly off-level handheld framing, visible sensor noise, natural muted colour, no HDR, no glow, nothing airbrushed. Do not render: human faces, brand logos, any text except what is specified in quotation marks, golden-hour light, glossy oversaturated colour, HDR halos, studio lighting, watermark."
+ }
+]

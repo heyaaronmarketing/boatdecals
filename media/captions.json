@@ -182,5 +182,53 @@
   "page": "",
   "master": "media/shots/AC-3.jpg",
   "social": "media/social/AC-3/"
+ },
+ {
+  "id": "PR-1",
+  "caption": "What arrives in the envelope",
+  "sub": "Two sets, a squeegee and the instructions",
+  "page": "/boat-registration-numbers/",
+  "master": "media/shots/PR-1.jpg",
+  "social": "media/social/PR-1/"
+ },
+ {
+  "id": "PR-2",
+  "caption": "Cut to order",
+  "sub": "Cut from sheet vinyl to order, not printed",
+  "page": "/boat-name-decals/",
+  "master": "media/shots/PR-2.jpg",
+  "social": "media/social/PR-2/"
+ },
+ {
+  "id": "PR-3",
+  "caption": "The contrast mistake",
+  "sub": "White on white is not &ldquo;distinctly visible&rdquo;",
+  "page": "/boat-lettering/",
+  "master": "media/shots/PR-3.jpg",
+  "social": "media/social/PR-3/"
+ },
+ {
+  "id": "PR-4",
+  "caption": "Measuring the transom",
+  "sub": "Send us the measurement and we lay it out",
+  "page": "/boat-lettering/",
+  "master": "media/shots/PR-4.jpg",
+  "social": "media/social/PR-4/"
+ },
+ {
+  "id": "PR-5",
+  "caption": "Script on a transom",
+  "sub": "Script reads beautifully on a transom",
+  "page": "/boat-lettering/",
+  "master": "media/shots/PR-5.jpg",
+  "social": "media/social/PR-5/"
+ },
+ {
+  "id": "PR-6",
+  "caption": "Three inches against six",
+  "sub": "The same number at two heights",
+  "page": "/boat-registration-numbers/",
+  "master": "media/shots/PR-6.jpg",
+  "social": "media/social/PR-6/"
  }
 ]

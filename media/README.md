@@ -74,6 +74,20 @@ tape measure against 3-inch characters.
 
 `AC-*` — action and atmosphere. **Social only, never used as proof.**
 
+`PR-*` — product-page shots: what arrives in the envelope, the plotter cutting,
+white-on-white as the contrast mistake, measuring a transom.
+
+### The alternating layout
+
+`alternating(body, img_ids)` splits a prose body at each `<h2>` and lays the
+sections out beside images, zigzagging down the page. `PAGE_SECTIONS` maps each
+page to its images **in document order**; a short list is fine, because sections
+past the end render full width rather than stretching one picture over three
+topics.
+
+Only the CSS column *order* flips — the DOM order stays image-then-text, so the
+reading order on a phone and in a screen reader is identical on every row.
+
 ### Shots that were dropped
 
 `GD-3` (cast vs calendared vinyl) was cut after two attempts. The model renders
