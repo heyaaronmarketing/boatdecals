@@ -611,6 +611,129 @@ font-weight:700;color:var(--nav2);text-decoration:none}
 .gmore{margin:16px 0 0;font-size:14.6px;font-weight:700}
 .gmore a{color:var(--nav2);text-decoration:none}
 .gmore a:hover{text-decoration:underline}
+
+/* ---------- name generator ---------- */
+.ngpanel{padding:18px}
+.ngrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+justify-content:space-between}
+.nglab{font-weight:800;font-size:15px;color:var(--ink)}
+.nghint{font-size:13px;color:var(--mut);margin:0}
+.nghint b{color:var(--ink)}
+kbd{font:inherit;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;
+border-radius:5px;padding:0 5px;background:#fff}
+
+.ngcats{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.ngcat{border:1px solid var(--line);background:#fff;border-radius:999px;
+padding:8px 13px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;
+color:var(--ink);white-space:nowrap;transition:border-color .15s,transform .15s}
+.ngcat:hover{border-color:var(--nav2);transform:translateY(-1px)}
+.ngcat.on{background:var(--nav);color:#fff;border-color:var(--nav)}
+.ngcat.special{border-style:dashed}
+.ngcat.armed{border-style:solid;background:var(--selbg)}
+.ngcat.armed.on{background:var(--nav);color:#fff}
+
+.ngfields{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:640px){.ngfields{grid-template-columns:1.4fr 1fr}}
+.ngfield label{display:block;font-size:12px;font-weight:700;color:var(--mut);
+margin-bottom:4px}
+.ngfield input{width:100%;font:inherit;font-size:15px;padding:10px 12px;
+border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.ngfield input:focus{outline:2px solid var(--nav2);outline-offset:1px;
+border-color:var(--nav2)}
+
+.ngctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn.ngspin{font-size:16px}
+.btn.ghost{background:#fff;color:var(--nav);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--soft);border-color:var(--nav2)}
+.btn.sm{padding:8px 13px;font-size:13.5px;min-height:0}
+
+.nggrid{display:grid;gap:12px;margin-top:18px;
+grid-template-columns:repeat(auto-fill,minmax(248px,1fr))}
+.ngcard{background:#fff;border:1px solid var(--line);border-radius:12px;
+padding:14px 14px 10px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
+transition:border-color .15s,box-shadow .15s,transform .15s;animation:ngpop .3s both}
+.ngcard:hover{border-color:var(--nav2);transform:translateY(-2px);
+box-shadow:0 10px 24px -14px rgba(14,58,82,.5)}
+@keyframes ngpop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.ngcard{animation:none}}
+.ngtag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+color:var(--mut)}
+.ngname{font-size:26px;line-height:1.08;font-weight:800;color:var(--nav);
+letter-spacing:-.01em;word-break:break-word}
+.ngnote{font-size:12.5px;color:var(--mut);font-style:italic;margin-top:-4px}
+.ngmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ngchip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;
+background:var(--selbg);color:var(--ink)}
+.ngchip.ok{background:#dcf0e6;color:var(--ok)}
+.ngchip.warn{background:#fae6da;color:var(--warn)}
+.ngacts2{display:flex;gap:4px;justify-content:flex-end;align-items:center;
+border-top:1px dashed var(--line);padding-top:8px}
+.ngic{appearance:none;border:0;background:transparent;cursor:pointer;font:inherit;
+font-size:15px;padding:4px 8px;border-radius:7px;color:var(--mut);line-height:1}
+.ngic:hover{background:var(--soft);color:var(--nav)}
+.ngic.saved{color:var(--warn)}
+.ngic.cut{font-size:12px;font-weight:800;color:#fff;background:var(--nav);
+padding:6px 11px}
+.ngic.cut:hover{background:var(--nav2);color:#fff}
+.ngempty{grid-column:1/-1;text-align:center;color:var(--mut);padding:30px 10px}
+
+.ngtray{position:sticky;bottom:0;z-index:5;margin-top:18px}
+.ngtraybox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+background:var(--nav);color:#fff;border-radius:12px;padding:12px 14px}
+.nglist{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.ngsv{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+border-radius:999px;padding:4px 10px;font-size:13px;display:inline-flex;gap:6px;
+align-items:center}
+.ngsv button{all:unset;cursor:pointer;opacity:.7;font-size:15px;line-height:1}
+.ngsv button:hover{opacity:1}
+.ngtraybox .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.ngtraybox .btn.ghost:hover{background:rgba(255,255,255,.12);border-color:#fff}
+
+.ngmodal{position:fixed;inset:0;background:rgba(6,28,42,.72);display:none;
+align-items:center;justify-content:center;padding:16px;z-index:60}
+.ngmodal.open{display:flex}
+.ngsheet{position:relative;background:var(--soft);border-radius:16px;max-width:760px;
+width:100%;max-height:92vh;overflow:auto;padding:20px}
+.ngx{position:absolute;top:8px;right:12px;font-size:26px;line-height:1;
+background:none;border:0;cursor:pointer;color:var(--mut);padding:4px 8px}
+.ngx:hover{color:var(--ink)}
+.ngcolors{display:flex;gap:7px;align-items:center;margin-bottom:9px;font-size:13px;
+color:var(--mut)}
+.ngcolors button{width:25px;height:25px;border-radius:50%;border:2px solid #fff;
+box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.ngcolors button:focus-visible{outline:2px solid var(--nav2);outline-offset:2px}
+.ngtransom{background:linear-gradient(180deg,#1d5a7a,#0e3a52 55%,#082435);
+border-radius:18px 18px 60px 60px/18px 18px 40px 40px;min-height:190px;display:flex;
+align-items:center;justify-content:center;padding:32px 24px 42px;position:relative;
+overflow:hidden;box-shadow:inset 0 -18px 40px rgba(0,0,0,.35),
+inset 0 2px 0 rgba(255,255,255,.15)}
+.ngtransom:before{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;
+background:linear-gradient(180deg,rgba(255,255,255,0),rgba(170,220,255,.22));
+border-radius:0 0 60px 60px/0 0 40px 40px}
+.ngtxt{color:#fff;text-align:center;font-size:clamp(26px,7vw,60px);line-height:1.05;
+word-break:break-word;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.ngport{color:rgba(255,255,255,.85);font-size:clamp(11px,2.2vw,16px);text-align:center;
+margin-top:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.ngfonts{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.ngfonts button{border:1px solid var(--line);background:#fff;border-radius:8px;
+padding:7px 11px;cursor:pointer;font:inherit;font-size:13.5px;color:var(--ink)}
+.ngfonts button.on{background:var(--nav);color:#fff;border-color:var(--nav)}
+.ngradio{background:var(--nav);color:#bdf0d3;border-radius:10px;padding:12px 14px;
+font-size:14px;margin:8px 0 12px;line-height:1.5}
+.ngtests{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+margin:12px 0}
+.ngtest{background:#fff;border:1px solid var(--line);border-radius:10px;
+padding:10px 12px;font-size:13px}
+.ngtest b{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--mut);margin-bottom:3px}
+.ngfoot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+justify-content:space-between;margin-top:10px}
+.ngacts{display:flex;gap:6px;flex-wrap:wrap}
+.btn.ngcut{font-size:15px}
+.ngtoast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);
+background:var(--ink);color:#fff;padding:10px 17px;border-radius:999px;font-size:14px;
+opacity:0;transition:.22s;pointer-events:none;z-index:70}
+.ngtoast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://boatnumbershop.com/tools/registration-number-layout-checker/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://boatnumbershop.com/"},{"@type":"ListItem","position":2,"name":"Free tools","item":"https://boatnumbershop.com/tools/registration-number-layout-checker/"},{"@type":"ListItem","position":3,"name":"Layout checker","item":"https://boatnumbershop.com/tools/registration-number-layout-checker/"}]},{"@type":"WebApplication","@id":"https://boatnumbershop.com/tools/registration-number-layout-checker/#app","name":"Boat Registration Number Size & Spacing Checker","url":"https://boatnumbershop.com/tools/registration-number-layout-checker/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@id":"https://boatnumbershop.com/#org"}},{"@type":"FAQPage","@id":"https://boatnumbershop.com/tools/registration-number-layout-checker/#faq","mainEntity":[{"@type":"Question","name":"How tall do boat registration numbers have to be?","acceptedAnswer":{"@type":"Answer","text":"Not less than 3 inches in height, in plain vertical block characters. Federal rule, every state. Taller is always legal."}},{"@type":"Question","name":"Do boat registration numbers have to be a certain colour?","acceptedAnswer":{"@type":"Answer","text":"No specific colour is required, but the characters must contrast with the colour of the background and be distinctly visible and legible. White numbers on a white hull fail that test."}},{"@type":"Question","name":"Do I need a space or a hyphen in my boat number?","acceptedAnswer":{"@type":"Answer","text":"Yes - a space or hyphen equal to the width of a letter other than 'I' or a number other than '1', between the letter and number groupings. So TX 1234 AB."}},{"@type":"Question","name":"How wide will my registration numbers be?","acceptedAnswer":{"@type":"Answer","text":"Roughly 0.6 times the character height per character, plus the spaces. A six-character number at 3 inches finishes about 13-15 inches wide. The tool above calculates it for your exact number."}}]}]}</script>
 </head><body>

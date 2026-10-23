@@ -598,3 +598,6 @@ CSS += """
 .gmore a{color:var(--nav2);text-decoration:none}
 .gmore a:hover{text-decoration:underline}
 """
+
+import namegen as _NG
+CSS += _NG.CSS

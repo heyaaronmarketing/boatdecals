@@ -607,6 +607,21 @@ JS = r"""
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
   setTimeout(function(){ if(cur===MAX && !mounted) degrade(); },4000);
   seedStatePrefix();
-  show(1);
+
+  // /design/?name=Wet+Couch&port=Evansdale%2C+IA - the name generator's CTA.
+  // Without this the name is dropped and the customer retypes what they just
+  // picked, which is the fastest way to lose them.
+  (function(){
+    var q=new URLSearchParams(location.search);
+    var nm=(q.get('name')||'').slice(0,40).trim();
+    if(!nm) return;
+    var kindEl=[].slice.call(W.querySelectorAll('[name=kind]'))
+      .filter(function(r){return r.value==='Boat name';})[0];
+    if(kindEl) kindEl.checked=true;
+    var f=$('f_name2'); if(f) f.value=nm;
+    render();
+    show(2);
+    return true;
+  })() || show(1);
 })();
 """

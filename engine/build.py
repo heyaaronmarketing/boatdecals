@@ -8,6 +8,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      LOCAL_TOWNS, LOCAL_WATERS, google_fonts_href,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL)
 from style import CSS
+import namegen as NG
 import order as O
 import mockpay as MP
 import preview as PV
@@ -1067,36 +1068,30 @@ def tool_shell(t, body, js, faqs, extra_schema=None):
 
 def build_tool_names():
     t = TOOLS[0]
-    sets = ",".join('"%s":[%s]' % (k, ",".join('"%s"' % n.replace('"', '')
-                    for n in v)) for k, v in T.NAME_SETS.items())
-    data = ("window.BNS_NAMES={%s};window.BNS_ADJ=[%s];window.BNS_NOUN=[%s];"
-            % (sets, ",".join('"%s"' % a for a in T.ADJ),
-               ",".join('"%s"' % n for n in T.NOUN)))
-    opts = "".join('<option value="%s">%s</option>' % (k, k) for k in T.NAME_SETS)
-    body = ('<p class=lede>Pick a mood, hit spin, and keep going until something sticks. '
-            'Everything here is a real name you could legally put on a transom &mdash; '
-            'and when you find it, we cut it from $29.</p>'
-            '<div class=tool>'
-            '<div class="fieldrow two"><div><label for=namestyle>What kind of name?</label>'
-            '<select id=namestyle>' + opts + '<option value="Mix">Surprise me</option>'
-            '</select></div>'
-            '<div style="display:flex;align-items:flex-end">'
-            '<button type=button class=btn id=spin style="width:100%">Spin 12 more</button>'
-            '</div></div>'
-            '<div class=out id=nameout></div></div>'
-            '<div class=prose>'
+    body = ('<p class=lede>Twenty-two categories nobody else bothered to write &mdash; '
+            'double meanings, deadpan one-liners, anagrams, head scratchers, pontoon-dad '
+            'energy, slightly haunted. Every name gets a radio-call test and a '
+            'transom-width estimate. When one sticks, we cut it in Evansdale from '
+            '$%d.</p>' % PRICE["name_from"]
+            + NG.markup()
+            + '<div class=prose>'
             '<h2>How to actually pick one</h2>'
-            '<p>Four tests, in order of how much they will matter later:</p>'
+            '<p>Four tests, in order of how much they will matter later. The generator '
+            'runs the first three for you.</p>'
             '<ol><li><strong>Say it as a radio call.</strong> &ldquo;Mayday, mayday, this '
-            'is <em>Ship Faced</em>&rdquo; is a sentence you may one day have to say to the '
-            'Coast Guard in front of your family. The joke names are funny at the dock and '
-            'less funny on channel 16.</li>'
+            'is <em>Wet Couch</em>&rdquo; is a sentence you may one day have to say to the '
+            'Coast Guard in front of your family. Click any name to see how it reads on '
+            'channel 16.</li>'
             '<li><strong>Spell it over the radio.</strong> If it needs spelling twice, it '
-            'is too clever. Short and phonetic wins.</li>'
-            '<li><strong>Count the characters.</strong> A 22-character name at 4 inches '
-            'runs over five feet wide. Measure your transom before you fall in love.</li>'
+            'is too clever. Short and phonetic wins. The deliberately-misspelled category '
+            'is funny on the dock and a full-time job on the VHF.</li>'
+            '<li><strong>Count the characters.</strong> At 4 inches tall each character '
+            'takes about 2.5 inches of width, so a 22-character name runs over five feet. '
+            'The estimate is on every card &mdash; measure the transom before you fall in '
+            'love.</li>'
             '<li><strong>Check it is not already on your lake.</strong> There is exactly '
-            'one <em>Serenity</em> per marina and it is awkward for everybody.</li></ol>'
+            'one <em>Serenity</em> per marina and it is awkward for everybody. That is the '
+            'whole reason the weird categories exist.</li></ol>'
             '<h2>Renaming a boat</h2>'
             '<p>Sailors will tell you renaming is bad luck unless you hold a ceremony that '
             'involves telling Poseidon in writing and pouring champagne into the water. '
@@ -1108,11 +1103,13 @@ def build_tool_names():
             'have to file to change it. State-registered boats have no such paperwork '
             '&mdash; the name is decoration and you can change it on a Saturday.</p>'
             '</div>'
-            '<a class="btn lg" href="/design/">Get your name cut &middot; from $29</a>')
+            '<a class="btn lg" href="/design/">Get your name cut &middot; from $%d</a>'
+            % PRICE["name_from"])
     faqs = [
-      ("Is the generator free?", "Yes, and there is no email wall. Spin it as long as "
-       "you like. We make money when you decide to put one on the boat."),
-      ("Can I use a name someone else has?",
+      ("Is the boat name generator free?",
+       "Yes, and there is no email wall. Spin it as long as you like. We make money when "
+       "you decide to put one on the boat."),
+      ("Can I use a boat name someone else already has?",
        "On a state-registered boat, yes - boat names are not registered or protected, and "
        "there are hundreds of boats called Serenity. On a USCG documented vessel the name "
        "goes on the certificate, and the Coast Guard will not document two vessels with "
@@ -1124,8 +1121,11 @@ def build_tool_names():
        "Rough maths: at 4 inches tall, each character takes about 2.5 inches of width "
        "including spacing. A 10-character name runs about 25 inches. Send us a photo with "
        "a tape measure in it and we will lay it out properly."),
+      ("Are these boat names family friendly?",
+       "PG-13. Nothing here will get you a conversation with the marina manager, but a "
+       "couple will get you a look from your mother-in-law."),
     ]
-    tool_shell(t, body, data + T.NAME_JS, faqs)
+    tool_shell(t, body, NG.NAMES_JS, faqs)
 
 def build_tool_funny():
     t = TOOLS[1]
