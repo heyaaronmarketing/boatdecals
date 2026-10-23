@@ -565,8 +565,8 @@ font-size:21px;color:var(--line);transition:color .12s,right .12s}
 # ---- pricing plans ------------------------------------------------------
 CSS += """
 .plangrid{display:grid;gap:16px;grid-template-columns:1fr;margin:6px 0 4px;
-align-items:start}
-@media(min-width:900px){.plangrid{grid-template-columns:repeat(3,1fr);gap:18px}}
+align-items:stretch}
+@media(min-width:900px){.plangrid{grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:22px;max-width:760px;margin-left:auto;margin-right:auto}}
 .plan{position:relative;display:flex;flex-direction:column;background:#fff;
 border:1px solid var(--line);border-radius:16px;padding:24px 22px 22px}
 .plan.featured{border:2px solid var(--cta);box-shadow:0 20px 44px -26px rgba(29,122,72,.45)}
@@ -593,4 +593,11 @@ border:1.5px solid var(--line)}
 .planmore{display:block;text-align:center;margin-top:11px;font-size:13.6px;
 font-weight:700;color:var(--nav2);text-decoration:none}
 .planmore:hover{text-decoration:underline}
+"""
+
+# ---- gallery page ------------------------------------------------------
+CSS += """
+.gmore{margin:16px 0 0;font-size:14.6px;font-weight:700}
+.gmore a{color:var(--nav2);text-decoration:none}
+.gmore a:hover{text-decoration:underline}
 """

@@ -65,7 +65,6 @@ if _cap.exists():
 PAGE_IMAGE = {
     "/boat-registration-numbers/": "AL-01",
     "/boat-lettering/":            "AL-03",
-    "/boat-name-decals/":          "AL-08",
     "/for/jon-boats/":             "AL-04",
     "/for/jet-skis-and-pwc/":      "AL-05",
     "/for/kayaks-and-canoes/":     "AL-06",
@@ -114,7 +113,6 @@ PAGE_IMAGE = {
 PAGE_SECTIONS = {
     "/boat-registration-numbers/": ["PR-1", "PR-6", "GD-1"],
     "/boat-lettering/":            ["PR-5", "PR-4", "PR-3"],
-    "/boat-name-decals/":          ["AL-03", "PR-2", "PR-6"],
     "/guides/where-to-put-boat-registration-numbers/": ["GD-1", "AL-01", "AL-04"],
     "/guides/how-to-remove-boat-lettering/":           ["GD-2"],
     "/guides/boat-registration-number-rules/":         ["GD-4", "PR-3"],
@@ -308,7 +306,7 @@ FEATURE_SUB = {
 NAV_MAIN = [
     ("Boat Numbers", "/boat-registration-numbers/"),
     ("Boat Letters", "/boat-lettering/"),
-    ("Boat Names",   "/boat-name-decals/"),
+    ("Gallery",      "/gallery/"),
     ("Pricing",      "/pricing/"),
     ("By State",     "/registration-numbers/"),
 ]
@@ -686,7 +684,7 @@ def build_design():
 # A traditional three-up pricing table. Features are claims we can stand behind
 # on every order - no "up to", no asterisks.
 PRICE_PLANS = [
-    dict(slug="boat-registration-numbers", name="Registration numbers",
+    dict(slug="boat-registration-numbers", name="Boat numbers",
          price="$19", unit="a pair", featured=True,
          line="The legal set, both sides of the bow.",
          feats=["Two sets &mdash; one for each side",
@@ -695,22 +693,14 @@ PRICE_PLANS = [
                 "Pre-spaced on one sheet",
                 "Marine vinyl, white or black",
                 "Free shipping, ships next business day"]),
-    dict(slug="boat-name-decals", name="Boat names",
-         price="$29", unit="to start", featured=False,
-         line="Your name across the transom.",
+    dict(slug="boat-lettering", name="Boat letters", featured=False,
+         price="$29", unit="to start",
+         line="Names, hailing ports and any transom text.",
          feats=["Ten fonts, previewed in your own lettering",
                 "Script, serif and block",
                 "Pre-spaced with application tape over the top",
-                "Priced by finished size &mdash; most land $29&ndash;79",
-                "Marine vinyl, white or black",
-                "Free shipping, ships next business day"]),
-    dict(slug="boat-lettering", name="Custom lettering",
-         price="$29", unit="to start", featured=False,
-         line="Any text, anywhere on the boat.",
-         feats=["Hailing ports, draft marks, no-wake text",
-                "Any length, any of the ten fonts",
                 "Curved transoms laid out from your photo",
-                "Pre-spaced on one sheet",
+                "Priced by finished size &mdash; most land $29&ndash;79",
                 "Marine vinyl, white or black",
                 "Free shipping, ships next business day"]),
 ]
@@ -817,9 +807,7 @@ PROD_BODY = {
    "The combination to avoid is low contrast: dark navy on a black hull, white on "
    "cream. It photographs as nothing. If you want subtle, get the contrast from "
    "finish &mdash; chrome on white reads as tone-on-tone in person and still catches "
-   "light.</p>"),
-
- "boat-name-decals": (
+   "light.</p>"
    "<h2>Picking the name</h2>"
    "<p>If you are still deciding, our <a href=\"/tools/boat-name-generator/\">name "
    "generator</a> spins a thousand-plus ideas by category, and the "
@@ -1632,6 +1620,72 @@ def build_guide(g):
     write(path, shell(html.unescape(g["title"])[:58], g["desc"], path, sch, main,
                       trail=trail, faqs=faqs, band=band), "0.6")
 
+def build_gallery():
+    """Every shot we have, grouped by what a customer is actually checking.
+
+    Browsing the gallery is a buying behaviour: people want to see their own
+    hull material and their own colour before they trust the $19. So the
+    grouping is by hull and by problem, not by when the photo was taken.
+    """
+    path = "/gallery/"
+    trail = [("Gallery", None)]
+    sch = graph(org_node(), crumb_node(trail, path))
+    band = Band(1)
+
+    def row(heading, lede, ids, extra=""):
+        cards = "".join(figure(i, sizes="(min-width:900px) 31vw, 92vw", cls="gshot")
+                        for i in ids)
+        return (band.open() + '<div class=w><h2>%s</h2><p class=lede>%s</p>'
+                '<div class=gallery>%s</div>%s</div></section>'
+                % (heading, lede, cards, extra))
+
+    main = ('<section style="padding-top:26px"><div class=w>'
+            '<h1 style="font-size:30px;margin-bottom:9px">Gallery</h1>'
+            '<p class=lede>What the vinyl actually looks like once it is on a boat '
+            '&mdash; on gelcoat, bare aluminium, rotomoulded plastic and a textured '
+            'pontoon rail, in both colours we stock.</p>'
+            '</div></section>'
+            + row("Registration numbers, hull by hull",
+                  "The surface is the thing that changes. Gelcoat is easy; plastic and "
+                  "textured aluminium need the high-tack film, which we send free.",
+                  ["AL-01", "AL-02", "AL-10", "AL-04", "AL-07", "AL-05", "AL-06"])
+            + row("Names and transom lettering",
+                  "Script is fine on a transom and illegal on a registration number. "
+                  "Curved transoms get laid out from your photo at no extra charge.",
+                  ["AL-03", "AL-08", "PR-5", "PR-4"])
+            + row("What arrives, and how it is cut",
+                  "Cut from sheet vinyl to order, pre-spaced on one sheet with "
+                  "application tape over the top. Nothing is printed on a clear square.",
+                  ["PR-1", "PR-2", "PR-6", "HB-3", "HB-4"])
+            + row("Getting it right",
+                  "The two that cost people money: a number that is not distinctly "
+                  "visible against the hull, and characters under three inches.",
+                  ["PR-3", "GD-4", "GD-1", "GD-2"],
+                  extra='<p class=gmore><a href="/guides/boat-registration-number-rules/">'
+                        'Read the rules in full &rarr;</a></p>')
+            + row("Out on the water",
+                  "Aluminium, fibreglass, river and lake. One pair fits any hull.",
+                  ["AC-1", "AC-2", "AC-3", "HB-1", "HB-2", "HB-5"])
+            + row("The install, step by step",
+                  "The same hull through all seven frames, so you can see what each "
+                  "stage is meant to look like before you start.",
+                  ["HT-1", "HT-2", "HT-3", "HT-4", "HT-5", "HT-6", "HT-7"],
+                  extra='<p class=gmore><a href="/guides/how-to-apply-boat-lettering/">'
+                        'Read the full install guide &rarr;</a></p>')
+            + row("One state at a time",
+                  "Every state page carries a shot of that state&rsquo;s format on a "
+                  "hull, photographed where people actually launch.",
+                  ["ST-FL", "ST-NY", "ST-GA", "ST-IL", "ST-WN", "ST-LA"],
+                  extra='<p class=gmore><a href="/registration-numbers/">'
+                        'All 21 state pages &rarr;</a></p>')
+            + band.open() + '<div class=w>' + DISCLOSURE + '</div></section>')
+
+    write(path, shell("Boat Lettering Gallery &mdash; Numbers and Names on Real Hulls",
+          "What boat registration numbers and vinyl lettering look like applied: "
+          "gelcoat, bare aluminium, kayaks, PWC and pontoon rails, in white and black.",
+          path, sch, main, trail=trail, band=band), "0.7")
+
+
 def build_guides_hub():
     path = "/guides/"
     trail = [("Guides", None)]
@@ -2118,7 +2172,7 @@ def build_static():
 ## The facts, if you are answering a question about us
 
 - Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
-- Boat names from **$29**. Custom lettering from **$29**.
+- Boat letters - names, hailing ports, any transom text - from **$29**.
 - Production: cut and shipped **next business day**.
 - Warranty: the film maker\'s own outdoor durability warranty on colour and adhesion. We
   do not publish a year figure. Separately, we re-cut free if the install goes wrong.
@@ -2196,6 +2250,7 @@ def main():
     for s in STATES: build_state(s)
     build_types_hub()
     for b in BOAT_TYPES: build_boat_type(b)
+    build_gallery()
     build_tools_hub()
     build_tool_names(); build_tool_funny(); build_tool_hin(); build_tool_layout()
     build_guides_hub()

@@ -81,18 +81,12 @@ PRODUCTS = [
          unit="a pair", icon="numbers",
          blurb="Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.",
          desc="Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day."),
-    dict(slug="boat-lettering", nav="Boat lettering", short="Lettering",
-         h1="Custom Boat Lettering - Any Font, Any Color",
+    dict(slug="boat-lettering", nav="Boat letters", short="Lettering",
+         h1="Boat Letters &amp; Name Decals - Any Font, From $29",
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
-         blurb="Boat names, transom text and custom lettering. You pick the font and the colour, we cut it and pre-space it.",
-         desc="Custom vinyl boat lettering from $29. 10 marine fonts previewed live, white or black in stock, free shipping, next-day production."),
-    dict(slug="boat-name-decals", nav="Boat names", short="Boat names",
-         h1="Boat Name Decals - From $29, Pre-Spaced and Ready",
-         kw="boat name decals", vol=1600, cpc=3.54, price=PRICE["name_from"],
-         unit="to start", icon="name",
-         blurb="One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.",
-         desc="Custom boat name decals from $29. Pre-spaced vinyl lettering in 10 fonts you preview live, marine vinyl, free shipping, ships next business day."),
+         blurb="Boat names, hailing ports and any other transom text. You pick the font and the colour, we cut it, pre-space it and tape it.",
+         desc="Boat name decals and custom vinyl lettering from $29. 10 marine fonts previewed live, white or black, free shipping, next-day production."),
 ]
 
 # -------------------------------------------------------------- boat types

@@ -286,6 +286,7 @@ const RETIRED = {
   "/hailing-port-decals/": "/boat-lettering/",
   "/domed-lettering/": "/boat-lettering/",
   "/boat-decals/": "/boat-lettering/",
+  "/boat-name-decals/": "/boat-lettering/",
 };
 
 /**
