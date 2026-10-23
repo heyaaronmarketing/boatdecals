@@ -134,5 +134,53 @@
   "page": "/guides/how-to-apply-boat-lettering/",
   "master": "media/shots/HT-7.jpg",
   "social": "media/social/HT-7/"
+ },
+ {
+  "id": "GD-1",
+  "caption": "Where the numbers go",
+  "sub": "Forward half, both sides",
+  "page": "/guides/where-to-put-boat-registration-numbers/",
+  "master": "media/shots/GD-1.jpg",
+  "social": "media/social/GD-1/"
+ },
+ {
+  "id": "GD-2",
+  "caption": "Removing old lettering",
+  "sub": "The ghost line the old set leaves behind",
+  "page": "/guides/how-to-remove-boat-lettering/",
+  "master": "media/shots/GD-2.jpg",
+  "social": "media/social/GD-2/"
+ },
+ {
+  "id": "GD-4",
+  "caption": "What three inches looks like",
+  "sub": "3 inches is the federal minimum",
+  "page": "/guides/boat-registration-number-rules/",
+  "master": "media/shots/GD-4.jpg",
+  "social": "media/social/GD-4/"
+ },
+ {
+  "id": "AC-1",
+  "caption": "On the water",
+  "sub": "Social only - never used as proof",
+  "page": "",
+  "master": "media/shots/AC-1.jpg",
+  "social": "media/social/AC-1/"
+ },
+ {
+  "id": "AC-2",
+  "caption": "At the ramp",
+  "sub": "Social only - never used as proof",
+  "page": "",
+  "master": "media/shots/AC-2.jpg",
+  "social": "media/social/AC-2/"
+ },
+ {
+  "id": "AC-3",
+  "caption": "Tied up",
+  "sub": "Social only - never used as proof",
+  "page": "",
+  "master": "media/shots/AC-3.jpg",
+  "social": "media/social/AC-3/"
  }
 ]

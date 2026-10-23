@@ -65,6 +65,21 @@ that is the federal rule the whole site teaches and the imagery has to
 demonstrate it. Also covers the four awkward substrates the site makes claims
 about: bare aluminium, PWC plastic, kayak polyethylene, pontoon rail.
 
-Still to shoot: `HT-*` how-to steps (the seven in
-`/guides/how-to-apply-boat-lettering/` — shoot that guide literally),
-`VT-*` one hero per boat-type page, `AC-*` action/lifestyle for social only.
+`HT-*` — the seven install steps, one boat, in order. Nano Banana Pro with
+`--ref`; see the models table above.
+
+`GD-*` — guide images, where a photograph does work the prose cannot: where the
+numbers go on a whole hull, the ghost outline old lettering leaves behind, a
+tape measure against 3-inch characters.
+
+`AC-*` — action and atmosphere. **Social only, never used as proof.**
+
+### Shots that were dropped
+
+`GD-3` (cast vs calendared vinyl) was cut after two attempts. The model renders
+"corners curled up half an inch" as a crumpled rubber blob, which is not what
+shrink-back looks like — a misleading photo on a page that teaches material
+differences is worse than no photo. The guide's table already makes the point.
+
+Some things an image model cannot do. Check whether the picture is *true*
+before checking whether it is pretty.

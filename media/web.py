@@ -34,7 +34,8 @@ def build(src, stem, w):
 
 
 def main():
-    masters = sorted(SRC.glob("AL-*.jpg")) + sorted(SRC.glob("HT-*.jpg"))
+    masters = sorted(p for pre in ("AL", "HT", "GD", "AC")
+                 for p in SRC.glob("%s-*.jpg" % pre))
     if not masters:
         sys.exit("no masters in %s" % SRC)
     OUT.mkdir(parents=True, exist_ok=True)

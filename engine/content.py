@@ -86,13 +86,13 @@ PRODUCTS = [
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
          blurb="Boat names, transom text and custom lettering. You pick the font and the colour, we cut it and pre-space it.",
-         desc="Custom vinyl boat lettering from $29. 10 marine fonts previewed live, white or black in stock, 7-year warranty, free shipping."),
+         desc="Custom vinyl boat lettering from $29. 10 marine fonts previewed live, white or black in stock, free shipping, next-day production."),
     dict(slug="boat-name-decals", nav="Boat names", short="Boat names",
          h1="Boat Name Decals - From $29, Pre-Spaced and Ready",
          kw="boat name decals", vol=1600, cpc=3.54, price=PRICE["name_from"],
          unit="to start", icon="name",
          blurb="One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.",
-         desc="Custom boat name decals from $29. Pre-spaced vinyl lettering in 10 fonts you preview live, 7-year marine vinyl, free shipping, ships next business day."),
+         desc="Custom boat name decals from $29. Pre-spaced vinyl lettering in 10 fonts you preview live, marine vinyl, free shipping, ships next business day."),
 ]
 
 # -------------------------------------------------------------- boat types

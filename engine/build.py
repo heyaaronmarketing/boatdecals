@@ -73,6 +73,9 @@ PAGE_IMAGE = {
     "/for/sailboats/":             "AL-08",
     "/for/bass-boats/":            "AL-10",
     "/guides/how-to-apply-boat-lettering/": "AL-09",
+    "/guides/where-to-put-boat-registration-numbers/": "GD-1",
+    "/guides/how-to-remove-boat-lettering/":           "GD-2",
+    "/guides/boat-registration-number-rules/":         "GD-4",
     "/registration-numbers/iowa/":      "AL-01",
     "/registration-numbers/michigan/":  "AL-02",
     "/registration-numbers/wisconsin/": "AL-04",
@@ -173,8 +176,8 @@ FEATURE_SUB = {
     "Next Day Shipping":
         "Cut and in the post the next business day, or the same day for $12.",
     "Marine Vinyl":
-        "7-year cast film built for sun, salt and spray &mdash; not 3-year "
-        "craft stock.",
+        "Cast film built for sun, salt and spray &mdash; not the 3-year craft "
+        "stock the cheap sets use.",
     "100% Compliant":
         "3-inch block characters spaced to 33 CFR 173.27. Legal in all 50 states.",
 }
@@ -476,7 +479,7 @@ def build_home():
     right = O.form()
     main = (
       hero("Boat Registration Numbers, $19 a Pair",
-           "Legal 3-inch block numbers for both sides of your hull, cut from 7-year "
+           "Legal 3-inch block numbers for both sides of your hull, cut from "
            "marine vinyl, pre-spaced on one sheet, and shipped free the next business "
            "day. Boat names and custom lettering too.",
            badge="Everyone else hides the price. Ours is right here.",
@@ -681,19 +684,12 @@ def build_product(p):
     sch = graph(org_node(), crumb_node(trail, "/%s/" % p["slug"]),
                 product_node(p, "/%s/" % p["slug"]), faq_node(faqs, "/%s/" % p["slug"]))
     body = PROD_BODY.get(p["slug"], "")
-    sw = '<div class=swatches>' + "".join(
-        '<span class=sw><i style="background:%s"></i>%s</span>' % (h, n)
-        for n, h, _light in COLORS) + "</div>"
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
                    "Next Day Shipping", "Marine Vinyl", "100% Compliant"],
             right=O.form())
       + '<section><div class=w><div class=prose>' + body + '</div></div></section>'
-      + '<section class=soft><div class=w><h2>Colours</h2>'
-        '<p class=lede><strong>White and black ship standard</strong> &mdash; between '
-        'them they contrast with every hull colour there is, which is what the law '
-        'actually asks for. Everything below is available to order: email us and we '
-        'will quote it with your job.</p>' + sw + '</div></section>'
+
       + '<section><div class=w><h2>How it works</h2>' + CB.HOW_IT_WORKS +
         '<a class="btn lg" href="/design/">Start your order</a></div></section>'
       + product_grid(exclude=p["slug"], heading="Other things we cut"))
@@ -761,7 +757,7 @@ def build_state(s):
               '<strong>%s</strong>, and that is what to search for and what the '
               'ramp conversation will use.</p>' % (nm, vern))
     main = (hero(h1,
-            "Legal 3-inch block numbers starting with %s, cut from 7-year marine vinyl, "
+            "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
             "the next business day." % ab,
             trust=["$19 for Two Sets", "%s prefix" % ab, "Next Day Shipping",
@@ -888,7 +884,7 @@ def build_boat_type(b):
          if ("/for/%s/" % b["slug"]) in PAGE_IMAGE else '')
       + product_grid(heading="Products for this boat"))
     write(path, shell(b["title"].replace("&amp;", "&")[:58],
-          "%s - cut from 7-year marine vinyl, $19 a pair for registration numbers, free "
+          "%s - cut from marine vinyl, $19 a pair for registration numbers, free "
           "shipping, ships next business day." % b["title"].replace("&amp;", "&"),
           path, sch, main, trail=trail, faqs=faqs, js=ORDER_JS), "0.7")
 

@@ -53,6 +53,9 @@ and wait longer.</li>
 you can help it. The adhesive is still curing.</li>
 </ol>"""
 
+# Three cards, not six. The proof, the re-cut and the pre-spacing claims were
+# cut on 2026-10-23; the warranty and shipping pages still carry those terms in
+# full, they just no longer lead the product pages.
 WHY_US = [
  ("$19 a pair, published",
   "Every competitor makes you build a design before showing a price. Ours is on the "
@@ -60,18 +63,9 @@ WHY_US = [
  ("Cut and shipped next business day",
   "Order before 1pm CT and it goes out the same day for $12. Otherwise next business "
   "day, free."),
- ("7-year marine vinyl",
-  "Cast vinyl rated seven years outdoors, not the 3-year calendared stock the cheap "
+ ("Marine Vinyl",
+  "Cast film built for sun, salt and spray, not the 3-year calendared stock the cheap "
   "sets use. High-tack on plastic hulls at no extra charge."),
- ("Pre-spaced on one sheet",
-  "The spacing is already legal and already right. You apply the whole set in one "
-  "pass instead of placing loose characters and hoping."),
- ("A proof before anything is cut",
-  "You see exactly what you are getting, by email. Do not like it? We redraw it, or "
-  "refund you in full."),
- ("Free re-cut if the install goes wrong",
-  "Tear a letter, crease the sheet, change your mind on the colour mid-job &mdash; "
-  "tell us and we cut it again. Vinyl is cheap; arguing is expensive."),
 ]
 
 HOW_IT_WORKS = """<ol class=steps>
