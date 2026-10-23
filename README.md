@@ -186,6 +186,21 @@ so the shop still gets the data without the customer filling a field.
 (56px at ≥900px) was silently adding **112px to every step** — `.step{padding:0}`
 is load-bearing, don't remove it.
 
+### Hero buttons
+
+The pair is normalised in one rule **inside `@media(min-width:900px)`**. Two
+traps live here, both of which bit:
+
+1. The primary carried `.btn.lg` (16.2px, 12px padding) while the ghost beside
+   it was a plain `.btn` (17px, 15px) — the *secondary* button was bigger than
+   the primary it defers to.
+2. `.heroCta{display:none}` for mobile loses to `.btn{display:inline-block}`,
+   which sits **later in the sheet at the same specificity**. It must be
+   written `.hero .btnrow .heroCta`. An unscoped desktop normalisation rule
+   out-specifies the mobile rules for the same reason.
+
+Check both breakpoints after touching anything in here.
+
 ### Hero layout
 
 `.herogrid` uses three named areas (`a` headline, `f` form, `b` supporting copy),

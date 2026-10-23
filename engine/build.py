@@ -354,12 +354,32 @@ def tools_grid():
         % (t["slug"], icon("tool"), t["nav"], t["desc"]) for t in TOOLS) + '</div>'
 
 def proof_band():
+    """The four headline claims.
+
+    Each sub-line exists to stop the headline over-promising:
+
+    - "Two Sets" has to say which two, because elsewhere on the site a "set"
+      has meant a pair.
+    - "Next Day Shipping" has to say shipped, not delivered - standard post is
+      3-6 days in transit after that, and a reader who takes the headline at
+      face value is a "where is my order" email.
+    - "100% Compliant" has to scope itself to what we actually control. We cut
+      the characters to the federal rule; where they get stuck is the owner's.
+    """
     return ('<section class=soft><div class=w><h2>The offer, plainly</h2>'
             '<div class=proof>'
-            '<div><b>$19</b><span>a pair, registration numbers, shipping included</span></div>'
-            '<div><b>Next day</b><span>cut and shipped, or same day for $12</span></div>'
-            '<div><b>7 years</b><span>marine vinyl warranty on colour and adhesion</span></div>'
-            '<div><b>Free re-cut</b><span>if the install goes wrong, we make it again</span></div>'
+            '<div><b>$19 for Two Sets</b>'
+            '<span>One for each side of the hull, pre-spaced on a single sheet. '
+            'Shipping included.</span></div>'
+            '<div><b>Next Day Shipping</b>'
+            '<span>Cut and in the post the next business day, or the same day '
+            'for $12.</span></div>'
+            '<div><b>Marine Vinyl</b>'
+            '<span>7-year cast film built for sun, salt and spray &mdash; not '
+            '3-year craft stock.</span></div>'
+            '<div><b>100% Compliant</b>'
+            '<span>3-inch block characters spaced to 33 CFR 173.27. Legal in '
+            'all 50 states.</span></div>'
             '</div></div></section>')
 
 # ------------------------------------------------------------------- home

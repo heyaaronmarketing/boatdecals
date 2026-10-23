@@ -88,9 +88,14 @@ padding:30px 0 34px}
 grid-template-areas:"a" "f" "b"}
 .heroA{grid-area:a}.heroF{grid-area:f}.heroB{grid-area:b}
 .heroA h1{margin-bottom:0}
-/* The wizard is right there on a phone, so a second CTA is just noise. */
-@media(max-width:899px){.heroCta{display:none}
-  .heroB .btnrow{margin-top:14px}.heroB .btn.ghost{width:100%}}
+/* The wizard is right there on a phone, so a second CTA is just noise.
+   Needs .hero .btnrow in front of it: .btn{display:inline-block} sits later in
+   this sheet at the same specificity and would otherwise win, which is exactly
+   how this hide silently stopped working. */
+@media(max-width:899px){
+  .hero .btnrow .heroCta{display:none}
+  .heroB .btnrow{margin-top:14px}
+  .hero .btnrow .btn.ghost{width:100%}}
 @media(min-width:900px){.hero{padding:40px 0 44px}.hero h1{font-size:40px}
 .herogrid{grid-template-columns:minmax(0,1fr) minmax(0,470px);
 grid-template-areas:"a f" "b f";column-gap:38px;row-gap:0;
@@ -115,7 +120,18 @@ min-height:52px;text-align:center}
 .btn.alt{background:#fff;color:var(--nav);border:1.5px solid var(--line)}
 .btn.alt:hover{background:var(--soft)}
 .btn.ghost{background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.4);color:#fff}
-.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:stretch}
+/* The hero pair must match. The primary carried .btn.lg (16.2px/12px padding)
+   while the ghost beside it was a plain .btn (17px/15px) - so the SECONDARY
+   button had bigger type and a chunkier box than the primary it was meant to
+   defer to. One rule for both, and the colour does the ranking.
+   Scoped to >=900px on purpose: below that the primary is hidden (the wizard
+   is right there) and the ghost goes full width, and an unscoped rule here
+   out-specifies both of those. */
+@media(min-width:900px){
+  .hero .btnrow .btn{display:inline-flex;align-items:center;justify-content:center;
+  font-size:16.6px;padding:14px 28px;min-height:54px;width:auto;line-height:1.2}
+}
 
 /* ---------- sections ---------- */
 section{padding:42px 0}
@@ -236,10 +252,11 @@ display:grid;place-items:center}
 .sw{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:8px;
 padding:5px 10px;font-size:13.3px;font-weight:600;background:#fff}
 .sw i{width:15px;height:15px;border-radius:4px;border:1px solid rgba(0,0,0,.22);display:block}
-.proof{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
+.proof{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
 margin-top:6px}
 .proof div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px}
-.proof b{display:block;font-size:18px;color:var(--nav);margin-bottom:2px}
+.proof b{display:block;font-size:17px;line-height:1.25;color:var(--nav);
+margin-bottom:4px}
 .proof span{font-size:14px;color:var(--mut);line-height:1.4;display:block}
 .stategrid{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(152px,1fr))}
 .stategrid a{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 13px;
