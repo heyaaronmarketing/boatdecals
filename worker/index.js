@@ -178,13 +178,13 @@ async function handleOrder(request, env) {
       ["Reference", o.ref], ["Product", o.kind],
       ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
       ...(o.number_flag
-        ? [["CHECK THE NUMBER", `${o.number_flag} - confirm against the customer's
+        ? [["CHECK THE NUMBER", `${o.number_flag} - check against the customer's
             registration card before cutting`]]
         : []),
       ["State", o.state], ["Height", o.height + '"'],
       ["Font", o.font_requested
         ? `${o.font} - customer asked for ${o.font_requested}, which is not legal `
-          + `on a registration number. Corrected automatically; confirm on the proof.`
+          + `on a registration number. Corrected automatically; check before cutting.`
         : o.font],
       ["Colour", o.color],
       ["Upgrades", o.upgrades || "none"],

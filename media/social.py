@@ -39,7 +39,7 @@ def crop(src, dest, w, h):
 def main():
     if not SRC.exists():
         sys.exit("no masters in %s - run gen.py first" % SRC)
-    masters = sorted(p for pre in ("AL", "HT", "GD", "AC", "PR")
+    masters = sorted(p for pre in ("AL", "HT", "GD", "AC", "PR", "ST", "HB")
                  for p in SRC.glob("%s-*.jpg" % pre))
     if not masters:
         sys.exit("no AL-*.jpg masters yet")

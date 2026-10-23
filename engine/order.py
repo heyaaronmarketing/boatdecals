@@ -433,7 +433,7 @@ JS = r"""
     if(cur===MAX){
       var em=$('f_email').value.trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
-        $('e5').textContent='We need a valid email to send your proof.';
+        $('e5').textContent='We need a valid email for your receipt.';
         $('f_email').focus(); return false; }
       if(!$('f_name').value.trim()){
         $('e5').textContent='We need a name for the order.';
@@ -500,8 +500,8 @@ JS = r"""
     if(w.dataset.degraded) return;
     w.dataset.degraded='1';
     $('payelement').innerHTML='<div class=paysoft><b>Card payment is being switched on.</b>'+
-      '<span>Send the order now and we will email your proof with a secure payment '+
-      'link. Nothing is cut until you approve the proof.</span></div>';
+      '<span>Send the order now and we will email you a secure payment link. '+
+      'Nothing is cut until it is paid.</span></div>';
     $('payhint').textContent='';
     nextBtn.textContent='Send my order';
   }
@@ -519,11 +519,12 @@ JS = r"""
     // are still flagged test_mode=1 in D1 and [TEST] in the shop email.
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
-      '<p>'+(paid?'Thanks. ':'')+'We are drawing your proof now. It lands in <strong>'+
-      esc($('f_email')?$('f_email').value:'your inbox')+'</strong> shortly'+
-      (paid?'.':', with a secure payment link.')+'</p>'+
-      '<p class=hint>Nothing gets cut until you reply <em>approved</em>. If the proof '+
-      'is wrong we redraw it free'+(paid?', or refund you in full':'')+'.</p>'+
+      '<p>'+(paid?'Thanks. ':'')+'Your receipt is on its way to <strong>'+
+      esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
+      (paid?'.':', along with a secure payment link.')+'</p>'+
+      '<p class=hint>We cut it the next business day and ship it free. Spotted a '+
+      'mistake? Email us today with this reference and we can almost always stop '+
+      'it before the plotter runs.</p>'+
       '<a class="btn lg" href="/">Back to the shop</a></div>';
     W.scrollIntoView({block:'center'});
   }
@@ -574,7 +575,7 @@ JS = r"""
         $('e5').textContent=(err&&err.message)||'That card did not go through.';
       });
     } else {
-      finish({payment:'proof-then-link'}).then(function(j){
+      finish({payment:'payment-link'}).then(function(j){
         if(!j.ok) throw new Error();
         done(j,false);
       }).catch(function(){

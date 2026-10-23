@@ -206,6 +206,21 @@ def alternating(body, img_ids, band):
     return "".join(out)
 
 
+def lead_figure(path, band=None, sizes="(min-width:900px) 70vw, 100vw"):
+    """The lead image for a page that is not a product, state or guide.
+
+    Returns an empty string when the page has no mapping, so a builder can
+    call it unconditionally.
+    """
+    img = PAGE_IMAGE.get(path)
+    if not img or not IMAGES.get(img):
+        return ""
+    inner = figure(img, sizes=sizes, cls="shot wide") + DISCLOSURE
+    if band is None:
+        return '<div style="margin:0 0 24px">%s</div>' % inner
+    return '%s<div class=w>%s</div></section>' % (band.open(), inner)
+
+
 def gallery(ids, heading="What it looks like on the boat"):
     cards = "".join(figure(i, sizes="(min-width:900px) 31vw, 92vw", cls="gshot")
                     for i in ids)
@@ -566,7 +581,7 @@ def tools_grid():
         '<div class=go>Open the tool &rarr;</div></a>'
         % (t["slug"], icon("tool"), t["nav"], t["desc"]) for t in TOOLS) + '</div>'
 
-def proof_band():
+def claims_band():
     """The four headline claims.
 
     Each sub-line exists to stop the headline over-promising:
@@ -580,7 +595,7 @@ def proof_band():
       the characters to the federal rule; where they get stuck is the owner's.
     """
     return ('<section class=soft><div class=w><h2>The offer, plainly</h2>'
-            '<div class=proof>'
+            '<div class=claims>'
             + "".join('<div><b>%s</b><span>%s</span></div>' % (f, FEATURE_SUB[f])
                       for f in FEATURES)
             + '</div></div></section>')
@@ -597,7 +612,7 @@ def build_home():
            "day. Boat names and custom lettering too.",
            badge="Everyone else hides the price. Ours is right here.",
            right=right)
-      + proof_band()
+      + claims_band()
       + gallery(["AL-01", "AL-02", "AL-08"])
       + '<section><div class=w><h2>Why buy here instead of the cheap set</h2>'
         '<p class=lede>There are $11 sets on marketplaces. Here is honestly what '
@@ -627,7 +642,8 @@ def build_design():
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">Start your order</h1>'
             '<p class=lede>Build it, see the price update as you go, and send it. '
-            'You get a proof by email before anything is cut or charged.</p>'
+            'The preview shows your exact lettering before you pay &mdash; we cut what '
+            'is on that screen.</p>'
             '</div></section>'
             '<section style="padding-top:0"><div class=w>'
             '<div class=herogrid><div>' + O.form() + '</div>'
@@ -639,7 +655,7 @@ def build_design():
             '</div></div></div></section>')
     write("/design/", shell("Start Your Order - Boat Lettering &amp; Numbers",
           "Build your boat registration numbers or custom lettering order. Live pricing, "
-          "live pricing, a free proof by email, and a full refund if you do not like it.",
+          "live pricing, a live preview of your exact lettering, and next-day shipping.",
           "/design/", sch, main, trail=trail, js=ORDER_JS), "0.9")
 
 # -------------------------------------------------------------- /pricing/
@@ -662,17 +678,17 @@ def build_pricing():
       ("Why is $19 not the cheapest price on the internet?",
        "Because it is not a race we want to win. An $11 set is usually calendared vinyl "
        "cut as loose characters, which means a 3-4 year life and you doing the spacing. "
-       "Ours is 7-year film, pre-spaced, with a proof and a free re-cut. If price is the "
+       "Ours is cast film, pre-spaced, and checked against the federal format before it "
+       "cuts. If price is the "
        "only thing that matters to you, the marketplace sets are genuinely cheaper and "
        "we would rather say so."),
       ("When do I pay?",
-       "By card at checkout. We then send your proof, and nothing is cut until you "
-       "approve it &mdash; if you do not like the proof we redraw it free or refund "
-       "you in full."),
+       "By card at checkout. The preview on that screen is what gets cut, so read it "
+       "before you pay. It ships the next business day."),
       ("How do I add a rush or premium vinyl?",
-       "Reply to your proof email and ask. The order form stays short on purpose, so "
-       "add-ons are requested rather than clicked - we price them exactly as listed and "
-       "redraw the proof before anything is cut."),
+       "Email us with your order reference as soon as you have ordered. The form stays "
+       "short on purpose, so add-ons are requested rather than clicked - we price them "
+       "exactly as listed and add them before it cuts."),
       ("Do you do trade or volume pricing?",
        "Yes - marinas, dealers and fleet operators. Email " + SITE["email"] +
        " with roughly how many sets a month and we will put numbers together."),
@@ -682,13 +698,14 @@ def build_pricing():
       '<h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">Pricing, all of it, on one page</h1>'
       '<p class=lede>No designer to click through before you see a number. '
       'Every price below includes free standard shipping in the USA.</p>'
+      + lead_figure("/pricing/") +
       '<div class=tw><table><thead><tr><th>Product</th><th>What it is</th><th>Price</th>'
       '</tr></thead><tbody>' + rows + '</tbody></table></div>'
       '<h2 style="margin-top:34px">Add-ons</h2>'
       '<p class=lede>The order form deliberately does not ask about these &mdash; it is '
-      'four steps and we would rather you finished it. <strong>Reply to your proof '
-      'email</strong> asking for any of them and we will add it at the price below '
-      'before anything is cut.</p>'
+      'four steps and we would rather you finished it. <strong>Email us with your '
+      'order reference</strong> and we will add any of them at the price below, '
+      'before it cuts.</p>'
       '<div class=tw><table><thead><tr><th>Upgrade</th><th>What it does</th><th>Cost</th>'
       '</tr></thead><tbody>' + ups + '</tbody></table></div>'
       '<h2 style="margin-top:34px">Which vinyl, and why it changes the price</h2>'
@@ -783,8 +800,9 @@ def build_product(p):
        "Cut and shipped the next business day, free. Order before 1pm CT and add $12 "
        "rush and it goes out the same day. Standard post is 3-6 days in transit."),
       ("Can I see it before it is made?",
-       "Yes, and you have to. We email a proof and nothing is cut or charged until you "
-       "reply approving it. If the proof is wrong we redraw it free."),
+       "Yes - the preview in the order form shows your exact lettering, at your chosen "
+       "height, in your chosen colour. That is what gets cut, so read it twice before "
+       "you pay."),
       ("What if I ruin it putting it on?",
        "Tell us and we cut it again free. That covers a torn character, a creased sheet "
        "or a set that went on crooked. We would rather send more vinyl than argue."),
@@ -904,8 +922,8 @@ def build_state(s):
       + '<h2>Ordering for a %s boat</h2>'
         '<p>Type the number as it appears on your card, pick a colour that contrasts with '
         'your hull, and leave the height at 3 inches unless you want it bolder. You will '
-        'get a proof by email showing the exact layout before anything is cut, and a '
-        'full refund if you do not like what you see.</p>' % nm
+        'see your exact lettering in the preview before you pay &mdash; that is what '
+        'gets cut.</p>' % nm
       + '</div>'
       + (('<div style="margin:22px 0">%s%s</div>'
           % (figure(PAGE_IMAGE["/registration-numbers/%s/" % s["slug"]],
@@ -948,7 +966,8 @@ def build_states_hub():
             trust=["$19 for Two Sets", "All 50 states", "Next Day Shipping",
                    "100% Compliant"],
             right=O.form())
-      + '<section><div class=w><h2>Pick your state</h2>' + state_wheel()
+      + '<section><div class=w>' + lead_figure(path) + '<h2>Pick your state</h2>'
+      + state_wheel()
       + '<h2 style="margin-top:34px">Prefix, fleet size and who issues it</h2>'
         '<p class=lede>Registered-vessel counts are a useful sanity check: the bigger the '
         'fleet, the longer the queue at your local shop in April.</p>'
@@ -990,8 +1009,7 @@ def build_boat_type(b):
         '<h2>Ordering</h2>'
         '<p>Tell us the boat on the order form &mdash; make, model and roughly the year. '
         'That is how we decide whether to send standard or high-tack film, and we would '
-        'rather get that right than have you peel a set off in August. You get a proof by '
-        'email before anything is cut.</p>'
+        'rather get that right than have you peel a set off in August.</p>'
         '</div><a class="btn lg" href="/design/">Start your order</a></div></section>'
         % (b["note"], b["nav"].lower())
       + (gallery([PAGE_IMAGE["/for/%s/" % b["slug"]]],
@@ -1017,7 +1035,7 @@ def tool_shell(t, body, js, faqs, extra_schema=None):
                 extra_schema)
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">%s</h1>'
-            % t["title"]) + body + '</div></section>'
+            % t["title"]) + lead_figure(path) + body + '</div></section>'
     write(path, shell(html.unescape(t["title"])[:58], t["desc"], path, sch, main,
                       trail=trail, faqs=faqs, js=js), "0.8")
 
@@ -1267,7 +1285,7 @@ def build_tools_hub():
             '<h1 style="font-size:30px;margin-bottom:9px">Free boat tools</h1>'
             '<p class=lede>No signup, no email wall. These are genuinely useful on their '
             'own &mdash; we built them because the people who need them usually need '
-            'vinyl afterwards.</p>' + tools_grid() + '</div></section>')
+            'vinyl afterwards.</p>' + lead_figure(path) + tools_grid() + '</div></section>')
     write(path, shell("Free Boat Tools - HIN Decoder, Name Generator",
           "Free boat tools: decode a hull identification number, generate boat name ideas, "
           "and check your registration number against the federal size and spacing rules.",
@@ -1500,14 +1518,16 @@ GUIDE_BODY = {
    "<div class=tw><table><thead><tr><th>Where</th><th>Typical price, a pair</th>"
    "<th>What you get</th></tr></thead><tbody>"
    "<tr><td>Marketplace sellers</td><td>$10&ndash;16</td><td>Usually calendared film, "
-   "often cut as loose characters you space yourself, no proof, no warranty</td></tr>"
+   "often cut as loose characters you space yourself, no format check, no "
+   "warranty</td></tr>"
    "<tr><td>Generic sign shops</td><td>$9&ndash;15</td><td>Cheap, competent, not boat "
    "specialists &mdash; you will be asked to specify everything</td></tr>"
    "<tr><td>Boat lettering specialists</td><td>$15&ndash;25</td><td>Pre-spaced, marine "
    "film, a warranty, and an install guarantee. Most hide the price behind a design "
    "tool</td></tr>"
    "<tr><td><strong>Us</strong></td><td><strong>$19</strong></td><td>Pre-spaced, 7-year "
-   "film, free shipping, proof before cutting, free re-cut if the install fails</td></tr>"
+   "film, free shipping, your number checked against its state format before it "
+   "cuts</td></tr>"
    "</tbody></table></div>"
    "<h2>What makes one set cost twice another</h2>"
    "<ul><li><strong>Film grade.</strong> Calendared 3&ndash;5 year stock versus cast "
@@ -1517,7 +1537,7 @@ GUIDE_BODY = {
    "cheaper to produce and much harder to install legally.</li>"
    "<li><strong>Shipping.</strong> A $12 set plus $6 shipping is an $18 set. Always "
    "compare delivered price.</li>"
-   "<li><strong>Proofing.</strong> Somebody looking at your layout before it cuts costs "
+   "<li><strong>Checking.</strong> Software that reads your number back to you before "
    "money and prevents the most expensive mistake, which is a wrong number.</li></ul>"
    "<h2>The hidden cost</h2>"
    "<p>A cheap set that chalks out in three years costs you another set plus the removal "
@@ -1579,7 +1599,8 @@ def build_guides_hub():
             '<h1 style="font-size:30px;margin-bottom:9px">Boat lettering guides</h1>'
             '<p class=lede>The rules, the install, the removal, and what the vinyl grades '
             'actually mean. Written by people who cut this every day.</p>'
-            '<div class=grid>%s</div></div></section>' % cards)
+            + lead_figure(path)
+            + '<div class=grid>%s</div></div></section>' % cards)
     write(path, shell("Boat Lettering &amp; Registration Guides",
           "Guides to boat registration number rules, where the numbers go, how to apply "
           "and remove boat lettering, fonts, and which marine vinyl to choose.",
@@ -1596,7 +1617,8 @@ def build_types_hub():
             '<h1 style="font-size:30px;margin-bottom:9px">Decals by boat type</h1>'
             '<p class=lede>Different hulls need different adhesive. Pick yours and we will '
             'send the right film &mdash; high-tack on plastic and textured aluminium, at '
-            'no extra charge.</p><div class=grid>%s</div></div></section>' % cards)
+            'no extra charge.</p>' + lead_figure(path)
+            + '<div class=grid>%s</div></div></section>' % cards)
     write(path, shell("Boat Decals by Boat Type",
           "Boat registration numbers and decals for sailboats, pontoons, jet skis, kayaks, "
           "bass boats and jon boats - with the right vinyl for each hull material.",
@@ -1630,8 +1652,7 @@ def build_local():
        "rather we did it, call and ask; it depends on the week."),
       ("How much is it?",
        "$19 a pair for registration numbers, the same price locally as online. Names "
-       "from $29. You pay at checkout, we send a proof, and nothing is cut until "
-       "you approve it."),
+       "from $29, including shipping. What the preview shows is what gets cut."),
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     gmap = ("https://www.google.com/maps?q=%s&output=embed"
@@ -1680,6 +1701,7 @@ def build_local():
         % (e(B), SITE["street"], SITE["city"], SITE["region"], SITE["postal"],
            PT, PH, SITE["hours"], gmap, e(B), towns, waters, SITE["county"],
            LOCAL_WATERS[0])
+      + lead_figure(path, band=Band(1))
       + '<section class=soft><div class=w><h2>What we cut</h2>'
         + '<div class=grid>' + "".join(
             '<a class=card href="/%s/">%s<h3>%s</h3><p>%s</p>'
@@ -1699,8 +1721,8 @@ def simple(path, title, desc, h1, lede, body, trail, faqs=None, prio="0.5",
                 faq_node(faqs, path) if faqs else None)
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">%s</h1>'
-            '<p class=lede>%s</p><div class=prose>%s</div></div></section>'
-            % (h1, lede, body))
+            '<p class=lede>%s</p>%s<div class=prose>%s</div></div></section>'
+            % (h1, lede, lead_figure(path), body))
     write(path, shell(title, desc, path, sch, main, trail=trail, faqs=faqs,
                       noindex=noindex), prio)
 
@@ -1733,8 +1755,8 @@ def build_about():
       "or tell you if your registration has lapsed. Your state agency does that.</li>"
       "<li>We will not cut artwork you do not have the right to use.</li></ul>"
       "<h2>The guarantee, in plain terms</h2>"
-      "<p>You get a proof by email before anything is cut, and a full refund if you do "
-      "not like it. If the install goes wrong &mdash; torn character, creased sheet, "
+      "<p>The preview in the order form shows your exact lettering before you pay, and "
+      "that is what we cut. If the install goes wrong &mdash; torn character, creased sheet, "
       "crooked set &mdash; tell us and we cut it again free. The film itself carries the "
       "manufacturer&rsquo;s outdoor warranty on colour and adhesion.</p>"
       "<h2>Where we are</h2>"
@@ -1753,8 +1775,8 @@ def build_about():
 def build_contact():
     faqs = [
       ("How do I place an order?",
-       "Through the order form - it takes about a minute and gives you a live price. You "
-       "get a proof by email before anything is cut."),
+       "Through the order form - it takes about a minute, prices itself as you go, and "
+       "previews your exact lettering before you pay."),
       ("How fast do you reply?",
        "Same working day in almost every case. Proofs usually go out within a few hours "
        "of the order during the week."),
@@ -1763,11 +1785,12 @@ def build_contact():
        "(319) 239-3793, Mon-Fri 8-5 CT. We ship to all 50 states and do local pickup "
        "in the Cedar Valley."),
       ("Can I change my order after sending it?",
-       "Yes, right up until you approve the proof. Reply to the proof email with the "
-       "change and we will redraw it."),
+       "Email us straight away with your order reference. We cut and ship the next "
+       "business day, so if you catch it the same day we can almost always change it "
+       "before the plotter runs."),
     ]
     simple("/contact/", "Contact Boat Number Shop",
-      "Call (319) 239-3793 or email us about an order, proof or trade account. Boat "
+      "Call (319) 239-3793 or email us about an order, a change or a trade account. Boat "
       "Number Shop, 475 River Forest Road, Evansdale, Iowa 50707.",
       "Contact us",
       "A real shop with a real phone, in Evansdale, Iowa.",
@@ -1786,14 +1809,14 @@ def build_contact():
       "Call before you drive over so somebody is here.</p>"
       "<h2>Email</h2>"
       "<p><a href=\"mailto:" + SITE["email"] + "\"><strong>" + SITE["email"] +
-      "</strong></a> &mdash; orders, proofs, artwork, trade enquiries, or just a question "
+      "</strong></a> &mdash; orders, changes, artwork, trade enquiries, or just a question "
       "about whether your hull needs high-tack.</p>"
       "<p>Hours: " + SITE["hours"] + ". Orders placed outside those hours go into the "
-      "queue and get proofed the next working morning.</p>"
+      "queue and are cut the next working morning.</p>"
       "<h2>Ordering</h2>"
       "<p>You do not need to email to order. The <a href=\"/design/\">order form</a> "
-      "takes about a minute and prices itself as you go. We send a proof before "
-      "anything is cut.</p>"
+      "takes about a minute, prices itself as you go, and previews your exact "
+      "lettering before you pay.</p>"
       "<h2>Sending artwork</h2>"
       "<p>Vector files cut directly &mdash; AI, EPS, SVG or PDF. A clean PNG or even a "
       "photo of the faded original works; we redraw it as vector at no charge. Email it "
@@ -1818,8 +1841,8 @@ def build_warranty():
        "suitable surface."),
       ("Can I return a custom decal?",
        "Custom-cut vinyl cannot be resold, so it is not returnable once cut - which is "
-       "exactly why we send a proof first and charge nothing until you approve it. If what "
-       "arrived does not match the proof you approved, that is on us and we remake it."),
+       "why the order form previews your exact lettering before you pay. If what "
+       "arrived does not match what you ordered, that is on us and we remake it."),
     ]
     simple("/warranty/", "Warranty &amp; Install Guarantee",
       "Seven-year marine vinyl warranty and a free re-cut if your install goes wrong. "
@@ -1847,10 +1870,10 @@ def build_warranty():
       "<p>Reasonable limits, stated plainly: one free re-cut per order, and it covers "
       "remaking what you originally ordered. If you want a different size, colour or "
       "wording, that is a new order.</p>"
-      "<h2>If the proof was wrong</h2>"
-      "<p>If what arrived does not match the proof you approved, that is our error "
-      "outright. We remake it at our cost and at the front of the queue, and you do not "
-      "pay twice.</p>"
+      "<h2>If we got it wrong</h2>"
+      "<p>If what arrived does not match what you ordered, that is our error outright. "
+      "We remake it at our cost and at the front of the queue, and you do not pay "
+      "twice.</p>"
       "<div class=note><p><b>Still being finalised.</b> These terms are current practice "
       "and will be restated in full on the formal terms page before launch. Anything we "
       "promise here, we honour.</p></div>",
@@ -1873,11 +1896,10 @@ def build_shipping():
       "Shipping &amp; returns",
       "Free shipping on everything. Next business day production as standard.",
       "<h2>Production time</h2>"
-      "<p>Orders are proofed, then cut and shipped the <strong>next business "
-      "day</strong>. Add <strong>$12 rush</strong> and an order placed before 1pm CT on a "
-      "business day is cut and shipped the same day.</p>"
-      "<p>The clock starts when you approve the proof, not when you submit the order "
-      "&mdash; so approve promptly if you are in a hurry.</p>"
+      "<p>Orders are cut and shipped the <strong>next business day</strong>. Add "
+      "<strong>$12 rush</strong> and an order placed before 1pm CT on a business day is "
+      "cut and shipped the same day.</p>"
+      "<p>The clock starts when you place the order.</p>"
       "<h2>Shipping</h2>"
       "<div class=tw><table><thead><tr><th>Method</th><th>Cost</th><th>Transit</th>"
       "</tr></thead><tbody>"
@@ -1890,18 +1912,19 @@ def build_shipping():
       "All 50 states and DC. We do not ship internationally.</p>"
       "<h2>Returns on custom work</h2>"
       "<p>Custom-cut vinyl with your registration number on it cannot be resold, so it is "
-      "not returnable once cut. That is why we send a proof first. <strong>Up until you "
-      "approve that proof you can cancel for a full refund, no reason needed.</strong></p>"
+      "not returnable once cut. That is why the order form previews your exact lettering "
+      "before you pay &mdash; read it twice. <strong>If you catch a mistake the same "
+      "day, email us: we cut the next business day, so there is usually still time to "
+      "stop it.</strong></p>"
       "<p>Three things we do fix:</p>"
-      "<ul><li><strong>It does not match the proof you approved.</strong> Our error. We "
-      "remake it free, at the front of the queue.</li>"
+      "<ul><li><strong>It does not match what you ordered.</strong> Our error. We remake "
+      "it free, at the front of the queue.</li>"
       "<li><strong>It arrived damaged.</strong> Tell us and we remake it free.</li>"
       "<li><strong>The install went wrong.</strong> Covered by our "
       "<a href=\"/warranty/\">install guarantee</a> &mdash; one free re-cut, no "
       "questions.</li></ul>"
-      "<p>If you typed the wrong number and approved a proof showing the wrong number, we "
-      "will still re-cut it once under the install guarantee. After that it is a new "
-      "order.</p>",
+      "<p>If you typed the wrong number, we will still re-cut it once under the install "
+      "guarantee. After that it is a new order.</p>",
       [("Shipping &amp; returns", None)], faqs=faqs, prio="0.5")
 
 def build_legal():
@@ -1913,8 +1936,8 @@ def build_legal():
       "email, optional phone, the lettering you want, your boat details and any notes. "
       "That is it. We do not run advertising trackers or sell data to anybody.</p>"
       "<h2>Why we hold it</h2>"
-      "<p>To cut your order, send your proof, take payment and deal with a warranty claim "
-      "later. We keep order records as long as we need them for accounting and warranty "
+      "<p>To cut your order, take payment, ship it and deal with a warranty claim later. "
+      "We keep order records as long as we need them for accounting and warranty "
       "purposes.</p>"
       "<h2>Who else sees it</h2>"
       "<p>Our email provider, our payment processor and our shipping carrier &mdash; each "
@@ -1928,14 +1951,16 @@ def build_legal():
     simple("/terms/", "Terms of Service", "Terms for ordering from Boat Number Shop.",
       "Terms of service", "The short version of how ordering works.",
       "<p><em>Last updated " + TODAY + ".</em></p>"
-      "<h2>Orders and proofs</h2>"
-      "<p>Payment is taken at checkout. We then send a proof, and <strong>nothing is cut "
-      "until you approve it</strong>. If the proof is wrong we redraw it free; if you no "
-      "longer want it at that point we refund you in full.</p>"
+      "<h2>Orders</h2>"
+      "<p>Payment is taken at checkout and the order goes into production. "
+      "<strong>The preview shown in the order form is what we cut</strong> &mdash; it "
+      "displays your exact lettering, height, font and colour before you pay. Orders "
+      "are cut the next business day, so a mistake caught the same day can usually "
+      "still be stopped: email us immediately with your order reference.</p>"
       "<h2>Accuracy of what you type</h2>"
-      "<p>We cut exactly what is on the approved proof. Check your registration number "
-      "character by character against your card &mdash; the proof exists for that reason. "
-      "If a wrong number gets approved we will re-cut once under the install guarantee.</p>"
+      "<p>We cut exactly what you typed. Check your registration number character by "
+      "character against your card &mdash; the preview exists for that reason. If a "
+      "wrong number gets ordered we will re-cut once under the install guarantee.</p>"
       "<h2>Compliance is yours</h2>"
       "<p>We make legal-size block characters and we state the federal rule accurately as "
       "we understand it. We are a vinyl shop, not your state agency or your lawyer: "
@@ -2053,7 +2078,7 @@ def build_static():
   are the only ones offered for registration numbers; the other five (Classic Serif,
   Slab, Nautical, Brush Script, Formal Script) are available for names and decals.
 - Install guarantee: **free re-cut** if the customer's install goes wrong.
-- Every order gets an **emailed proof** first; nothing is cut or charged until approved.
+- The order form **previews the customer's exact lettering** before payment; that is what gets cut.
 - **Boat Number Shop, 475 River Forest Road, Evansdale, IA 50707. Phone (319) 239-3793.**
   Mon-Fri 8-5 CT. A real vinyl shop in Black Hawk County, Iowa that ships to all 50
   states, with local pickup available in the Waterloo / Cedar Falls / Cedar Valley area.

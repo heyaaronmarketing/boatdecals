@@ -230,5 +230,165 @@
   "page": "/boat-registration-numbers/",
   "master": "media/shots/PR-6.jpg",
   "social": "media/social/PR-6/"
+ },
+ {
+  "id": "ST-AL",
+  "caption": "AL 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Alabama number looks like on the bow",
+  "page": "/registration-numbers/alabama/",
+  "master": "media/shots/ST-AL.jpg",
+  "social": "media/social/ST-AL/"
+ },
+ {
+  "id": "ST-FL",
+  "caption": "FL 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Florida number looks like on the bow",
+  "page": "/registration-numbers/florida/",
+  "master": "media/shots/ST-FL.jpg",
+  "social": "media/social/ST-FL/"
+ },
+ {
+  "id": "ST-GA",
+  "caption": "GA 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Georgia number looks like on the bow",
+  "page": "/registration-numbers/georgia/",
+  "master": "media/shots/ST-GA.jpg",
+  "social": "media/social/ST-GA/"
+ },
+ {
+  "id": "ST-IL",
+  "caption": "IL 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Illinois number looks like on the bow",
+  "page": "/registration-numbers/illinois/",
+  "master": "media/shots/ST-IL.jpg",
+  "social": "media/social/ST-IL/"
+ },
+ {
+  "id": "ST-IN",
+  "caption": "IN 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Indiana number looks like on the bow",
+  "page": "/registration-numbers/indiana/",
+  "master": "media/shots/ST-IN.jpg",
+  "social": "media/social/ST-IN/"
+ },
+ {
+  "id": "ST-LA",
+  "caption": "LA 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Louisiana number looks like on the bow",
+  "page": "/registration-numbers/louisiana/",
+  "master": "media/shots/ST-LA.jpg",
+  "social": "media/social/ST-LA/"
+ },
+ {
+  "id": "ST-NY",
+  "caption": "NY 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a New York number looks like on the bow",
+  "page": "/registration-numbers/new-york/",
+  "master": "media/shots/ST-NY.jpg",
+  "social": "media/social/ST-NY/"
+ },
+ {
+  "id": "ST-NC",
+  "caption": "NC 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a North Carolina number looks like on the bow",
+  "page": "/registration-numbers/north-carolina/",
+  "master": "media/shots/ST-NC.jpg",
+  "social": "media/social/ST-NC/"
+ },
+ {
+  "id": "ST-OH",
+  "caption": "OH 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Ohio number looks like on the bow",
+  "page": "/registration-numbers/ohio/",
+  "master": "media/shots/ST-OH.jpg",
+  "social": "media/social/ST-OH/"
+ },
+ {
+  "id": "ST-PA",
+  "caption": "PA 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Pennsylvania number looks like on the bow",
+  "page": "/registration-numbers/pennsylvania/",
+  "master": "media/shots/ST-PA.jpg",
+  "social": "media/social/ST-PA/"
+ },
+ {
+  "id": "ST-SC",
+  "caption": "SC 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a South Carolina number looks like on the bow",
+  "page": "/registration-numbers/south-carolina/",
+  "master": "media/shots/ST-SC.jpg",
+  "social": "media/social/ST-SC/"
+ },
+ {
+  "id": "ST-TN",
+  "caption": "TN 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Tennessee number looks like on the bow",
+  "page": "/registration-numbers/tennessee/",
+  "master": "media/shots/ST-TN.jpg",
+  "social": "media/social/ST-TN/"
+ },
+ {
+  "id": "ST-VA",
+  "caption": "VA 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Virginia number looks like on the bow",
+  "page": "/registration-numbers/virginia/",
+  "master": "media/shots/ST-VA.jpg",
+  "social": "media/social/ST-VA/"
+ },
+ {
+  "id": "ST-WN",
+  "caption": "WN 1234 AB &middot; 3\" black on a light hull",
+  "sub": "What a Washington number looks like on the bow",
+  "page": "/registration-numbers/washington/",
+  "master": "media/shots/ST-WN.jpg",
+  "social": "media/social/ST-WN/"
+ },
+ {
+  "id": "HB-1",
+  "caption": "Every kind of boat",
+  "sub": "One pair fits any hull",
+  "page": "/registration-numbers/",
+  "master": "media/shots/HB-1.jpg",
+  "social": "media/social/HB-1/"
+ },
+ {
+  "id": "HB-2",
+  "caption": "Aluminium and fibreglass",
+  "sub": "Different hulls, different adhesive",
+  "page": "/for/",
+  "master": "media/shots/HB-2.jpg",
+  "social": "media/social/HB-2/"
+ },
+ {
+  "id": "HB-3",
+  "caption": "Cut to order in Evansdale",
+  "sub": "Plotter, vinyl, and a bench",
+  "page": "/about/",
+  "master": "media/shots/HB-3.jpg",
+  "social": "media/social/HB-3/"
+ },
+ {
+  "id": "HB-4",
+  "caption": "Copy it off the card",
+  "sub": "Character by character",
+  "page": "/guides/",
+  "master": "media/shots/HB-4.jpg",
+  "social": "media/social/HB-4/"
+ },
+ {
+  "id": "HB-5",
+  "caption": "On the Cedar River",
+  "sub": "Local pickup at the shop",
+  "page": "/boat-lettering-waterloo-cedar-falls/",
+  "master": "media/shots/HB-5.jpg",
+  "social": "media/social/HB-5/"
+ },
+ {
+  "id": "HB-6",
+  "caption": "Names at the dock",
+  "sub": "From $29, any font",
+  "page": "/tools/",
+  "master": "media/shots/HB-6.jpg",
+  "social": "media/social/HB-6/"
  }
 ]

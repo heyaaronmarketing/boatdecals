@@ -69,6 +69,9 @@ WHY_US = [
 ]
 
 # Four steps, four cards. (title, body) - build.py numbers them.
+# No proof step. The live preview IS the proof - it shows the actual lettering,
+# in the chosen font and colour, at the chosen height, before any money moves.
+# That is why the preview and the number validator earn their keep.
 HOW_IT_WORKS_STEPS = [
  ("Type what it should say",
   "Straight off your registration card for numbers, or whatever you have "
@@ -76,9 +79,9 @@ HOW_IT_WORKS_STEPS = [
  ("Pick height, font and colour",
   "The form only offers block faces once you choose registration numbers, "
   "because the law requires them."),
- ("We email you a proof",
-  "Usually within a few hours on a working day. Nothing is cut yet and you "
-  "can still change anything."),
+ ("Check the preview",
+  "It shows your exact lettering, at your height, in your colour. We cut "
+  "what is on that screen - so read it twice."),
  ("We cut it and ship it",
   "Next business day, free, pre-spaced with application tape over the top."),
 ]

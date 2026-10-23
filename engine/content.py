@@ -99,7 +99,7 @@ PRODUCTS = [
 BOAT_TYPES = [
     dict(slug="sailboats", nav="Sailboats", title="Sailboat Name Decals &amp; Lettering",
          kw="sailboat name decals", vol=1600, cpc=3.54,
-         lead="Transom names and lettering for sail. Curved transoms need the layout drawn to the curve, so we send a proof first.",
+         lead="Transom names and lettering for sail. Curved transoms need the layout drawn to the curve, so send us a photo with a tape measure in it.",
          note="A sailboat transom is rarely flat. Send a straight-on photo with a tape measure in frame and we will lay the name out to the actual curve."),
     dict(slug="pontoon-boats", nav="Pontoon boats", title="Pontoon Boat Decals &amp; Lettering",
          kw="pontoon boat decals", vol=480, cpc=0.59,

@@ -1,0 +1,72 @@
+{
+ "ST-AL": [
+  "Alabama",
+  "AL 1234 AB",
+  "alabama"
+ ],
+ "ST-FL": [
+  "Florida",
+  "FL 1234 AB",
+  "florida"
+ ],
+ "ST-GA": [
+  "Georgia",
+  "GA 1234 AB",
+  "georgia"
+ ],
+ "ST-IL": [
+  "Illinois",
+  "IL 1234 AB",
+  "illinois"
+ ],
+ "ST-IN": [
+  "Indiana",
+  "IN 1234 AB",
+  "indiana"
+ ],
+ "ST-LA": [
+  "Louisiana",
+  "LA 1234 AB",
+  "louisiana"
+ ],
+ "ST-NY": [
+  "New York",
+  "NY 1234 AB",
+  "new-york"
+ ],
+ "ST-NC": [
+  "North Carolina",
+  "NC 1234 AB",
+  "north-carolina"
+ ],
+ "ST-OH": [
+  "Ohio",
+  "OH 1234 AB",
+  "ohio"
+ ],
+ "ST-PA": [
+  "Pennsylvania",
+  "PA 1234 AB",
+  "pennsylvania"
+ ],
+ "ST-SC": [
+  "South Carolina",
+  "SC 1234 AB",
+  "south-carolina"
+ ],
+ "ST-TN": [
+  "Tennessee",
+  "TN 1234 AB",
+  "tennessee"
+ ],
+ "ST-VA": [
+  "Virginia",
+  "VA 1234 AB",
+  "virginia"
+ ],
+ "ST-WN": [
+  "Washington",
+  "WN 1234 AB",
+  "washington"
+ ]
+}
