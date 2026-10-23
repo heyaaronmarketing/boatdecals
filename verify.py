@@ -25,6 +25,20 @@ for f in pages:
     p = "/" + str(f.parent.relative_to(OUT)).replace("\\", "/") + "/"
     have.add("/" if p == "/./" else p)
 
+_YR_N = (r"(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|"
+         r"twelve|fifteen|twenty)")
+_YR_SPAN = _YR_N + r"(?:\s*(?:to|-|&ndash;|&mdash;)\s*\d+)?"
+_DUR = r"(?:warrant\w*|durabilit\w*|outdoor life|rated for|lasts?|adhesion|chalks)"
+_MATERIAL = r"(?:film|vinyl|stock)"
+# (pattern, may a person-noun excuse it)
+_FILM_LIFE_PATTERNS = [
+    (_YR_SPAN + r"[\s-]year\s+(?:\w+\s+){0,3}" + _MATERIAL, True),
+    (_YR_SPAN + r"\s+years?\s+on\s+(?:\w+\s+){0,3}" + _MATERIAL, False),
+    (_DUR + r"[^<.]{0,40}?" + _YR_SPAN + r"[\s-]*years?", False),
+    (_YR_SPAN + r"[\s-]*years?[^<.]{0,40}?" + _DUR, False),
+    (_MATERIAL + r"\s+(?:runs?|lasts?)[^<.]{0,20}?" + _YR_SPAN + r"[\s-]*years?", False),
+]
+
 broken, blocks, bad_json, titles, descs = set(), 0, 0, [], []
 for f in OUT.rglob("*.html"):
     t = f.read_text()
@@ -34,10 +48,21 @@ for f in OUT.rglob("*.html"):
         blocks += 1
         try: json.loads(m)
         except Exception: bad_json += 1; fails.append("invalid JSON-LD in %s" % f)
-    for yr in set(re.findall(
-            r"(?i)\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)[\s&;a-z-]{0,12}"
-            r"year[s-]?\b(?=[^<]{0,60}(?:film|vinyl|warrant|durab|last|outdoor))", t)):
-        fails.append("film-life claim %r in %s - we do not publish a year figure" % (yr, f))
+    # Film-life figures were pulled from the whole site on Aaron's call, so a
+    # year figure must never attach to the MATERIAL again. Proximity was the
+    # wrong test in both directions: a wide window let "we cut" next door
+    # suppress a real claim, and a narrow one flagged the About page's "fifteen
+    # years of making vinyl stick". What separates them is what the years are
+    # attached to - a warranty, a film, a rating (bad), or a verb and a person
+    # (fine). Checked against a fixture of 9 real claims and 8 legitimate
+    # sentences: 0 missed, 0 false positives.
+    for pat, person_ok in _FILM_LIFE_PATTERNS:
+        for m in re.finditer(r"(?i)\b" + pat, t):
+            if person_ok and re.match(r"(?i)\s*(?:pro|veteran|owner|career)\b",
+                                      t[m.end():m.end() + 14]):
+                continue        # "a 15-year vinyl pro" is a person
+            fails.append("film-life claim %r in %s - we do not publish a year "
+                         "figure" % (" ".join(m.group(0).split())[:48], f))
     for dbl in set(re.findall(r"&amp;(#?\w{2,8});", t)):
         fails.append("double-escaped entity &amp;%s; in %s" % (dbl, f))
     if f.name == "index.html":

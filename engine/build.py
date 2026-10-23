@@ -12,6 +12,7 @@ import namegen as NG
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
                         USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
+from content import ABOUT, OWNER, OWNER_LINKS
 import order as O
 import mockpay as MP
 import preview as PV
@@ -359,7 +360,7 @@ def sticky(label="Registration numbers", price=19):
             '<a class=btn href="/design/">Start your order</a></div>'
             % (price, e(html.unescape(label))))
 
-def hero(h1, sub, trust=None, right="", badge=None):
+def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     t = trust or list(FEATURES)
     bd = '<div class=badge>%s</div>' % badge if badge else ""
     # Three grid areas, not two columns. On a phone that puts the wizard
@@ -370,9 +371,11 @@ def hero(h1, sub, trust=None, right="", badge=None):
             '<div class=heroF>%s</div>'
             '<div class=heroB><p class=sub>%s</p><div class=trust>%s</div>'
             '<div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a>'
-            '<a class="btn ghost" href="/pricing/">See all prices</a></div></div>'
+            '<a class="btn ghost" href="%s">%s</a></div></div>'
             '</div></section>'
-            % (bd, h1, right, sub, "".join("<span>%s</span>" % x for x in t)))
+            % (bd, h1, right, sub, "".join("<span>%s</span>" % x for x in t),
+               (cta2 or ("/pricing/", "See all prices"))[0],
+               (cta2 or ("/pricing/", "See all prices"))[1]))
 
 def faq_block(items, heading="Questions people actually ask", band=None):
     if not items: return ""
@@ -410,7 +413,8 @@ def footer():
             'rel="noopener">%s, %s, %s %s</a><br>'
             '<a href="tel:%s" data-call>%s</a> &middot; '
             '<a href="mailto:%s">%s</a><br>%s</div>'
-            '<div class=fbot><span>&copy; %s %s. Vinyl cut and shipped in %s, USA.</span>'
+            '<div class=fbot><span>&copy; %s %s. Cut by hand in %s, Iowa by a fire chief '
+            'with a dirt bike problem.</span>'
             '<span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a>'
             ' &middot; <a href="/sitemap.xml">Sitemap</a></span></div>'
             '</div></footer>'
@@ -637,6 +641,12 @@ def build_home():
            badge="Everyone else hides the price. Ours is right here.",
            right=right)
       + claims_band()
+      + '<section class=tight><div class=w><p class=ownerline>'
+        '<strong>Ryan Phillips</strong> has cut vinyl in %s, %s for 15+ years. '
+        'He is also the town&rsquo;s fire chief and a motocross racer, which tells '
+        'you two things: he shows up, and your decal money is funding something '
+        'fast. <a href="/about/">Meet Ryan &rarr;</a></p></div></section>'
+        % (SITE["city"], SITE["region_name"])
       + gallery(["AL-01", "AL-02", "AL-08"])
       + '<section><div class=w><h2>Why buy here instead of the cheap set</h2>'
         '<p class=lede>There are $11 sets on marketplaces. Here is honestly what '
@@ -1683,7 +1693,7 @@ GUIDE_BODY = {
    "<li><strong>Checking.</strong> Software that reads your number back to you before "
    "money and prevents the most expensive mistake, which is a wrong number.</li></ul>"
    "<h2>The hidden cost</h2>"
-   "<p>A cheap set that chalks out in three years costs you another set plus the removal "
+   "<p>A cheap set that chalks out early costs you another set plus the removal "
    "job &mdash; and removal is the part that takes the afternoon and risks the gelcoat. "
    "Our <a href=\"/guides/how-to-remove-boat-lettering/\">removal guide</a> is honest "
    "about how tedious that is. Buying the better film the first time is the cheapest "
@@ -1952,50 +1962,163 @@ def simple(path, title, desc, h1, lede, body, trail, faqs=None, prio="0.5",
                       noindex=noindex), prio)
 
 def build_about():
-    simple("/about/", "About Boat Number Shop",
-      "A small US vinyl shop cutting boat registration numbers, names and marine decals "
-      "to order. Why we publish our prices and re-cut free.",
-      "About Boat Number Shop",
-      "A small shop with a plotter, a roll of marine vinyl and a strong opinion about "
-      "published prices.",
-      "<h2>What we do</h2>"
-      "<p>We cut boat registration numbers, boat names and custom lettering. "
-      "Everything is cut to order from sheet vinyl, pre-spaced on one sheet with "
-      "application tape over the top, and shipped flat the next business day.</p>"
-      "<h2>Why the price is on the page</h2>"
-      "<p>Shop this category and you will notice something: almost nobody shows you a "
-      "price. You pick a product, choose a font, enter your number, select a colour, and "
-      "only then does a figure appear. The largest shop in the category &mdash; the one "
-      "partnered with BoatUS &mdash; does not publish a number at all.</p>"
-      "<p>There is a reason for that, and it is not a good one. Registration numbers are "
-      "a legal chore. You do not want to design anything; you want to type eight "
-      "characters, pay, and get back to the boat. So ours is $19 a pair, it is on the "
-      "homepage, and it includes shipping.</p>"
-      "<h2>What we will tell you honestly</h2>"
-      "<ul><li>There are $11 sets on marketplaces. They are genuinely cheaper, and they "
-      "are usually calendared craft film cut as loose characters. If price is "
-      "the only thing that matters, buy those &mdash; we would rather say so than "
-      "pretend.</li>"
-      "<li>We are a vinyl shop, not a registry. We cannot look up your number, issue one, "
-      "or tell you if your registration has lapsed. Your state agency does that.</li>"
-      "<li>We will not cut artwork you do not have the right to use.</li></ul>"
-      "<h2>The guarantee, in plain terms</h2>"
-      "<p>The preview in the order form shows your exact lettering before you pay, and "
-      "that is what we cut. If the install goes wrong &mdash; torn character, creased sheet, "
-      "crooked set &mdash; tell us and we cut it again free. The film itself carries the "
-      "manufacturer&rsquo;s outdoor warranty on colour and adhesion.</p>"
-      "<h2>Where we are</h2>"
-      "<p>We cut everything in <strong>" + SITE["city"] + ", " + SITE["region_name"]
-      + "</strong>, in " + SITE["county"] + " &mdash; on the Cedar River, between "
-      "Waterloo and Cedar Falls. Everything ships from here to all 50 states, and "
-      "locals can <a href=\"/boat-lettering-waterloo-cedar-falls/\">pick up at the "
-      "shop</a>.</p>"
-      "<p><strong>" + B + "</strong><br>" + SITE["street"] + "<br>"
-      + SITE["city"] + ", " + SITE["region"] + " " + SITE["postal"] + "<br>"
-      "<a href=\"tel:" + PT + "\" data-call>" + PH + "</a> &middot; "
-      "<a href=\"mailto:" + SITE["email"] + "\">" + SITE["email"] + "</a><br>"
-      + SITE["hours"] + "</p>",
-      [("About", None)], prio="0.5")
+    """Ryan's page, from Aaron's brief.
+
+    Built WITHOUT the photographs on purpose. Every image the brief calls for
+    is either a Facebook screenshot (it says plainly: get the originals, FB
+    compresses hard) or a shot that does not exist yet. The one thing I will
+    not do is fill the gaps with the site's AI product imagery: those are
+    illustrative shots of nobody's boat, and captioning one as Ryan's bench or
+    Ryan's hull would be presenting a generated image as a real named person's
+    work. media/CAPTIONS.md already forbids that for customers; it matters
+    more, not less, for the owner.
+
+    So each section is written to stand up as type. The shot list lives in the
+    brief and the slots drop in without a rewrite.
+    """
+    o, L = OWNER, OWNER_LINKS
+    band = Band(1)
+
+    def sec(heading, body, extra=""):
+        return (band.open() + '<div class=w><div class=prose><h2>%s</h2>%s</div>%s'
+                '</div></section>' % (heading, body, extra))
+
+    # --- 1. hero -----------------------------------------------------------
+    main = (hero("Fire chief. Landlord. Motocross racer. Sticker guy.",
+            "%s has been cutting vinyl in %s, %s for %s years. Every decal you "
+            "buy funds something loud with a motor."
+            % (o["full"], SITE["city"], SITE["region_name"], o["years"]),
+            trust=["$19 for Two Sets", "Cut in Evansdale", "Next Day Shipping",
+                   "100%% Compliant"],
+            right=O.form(),
+            cta2=("/tools/boat-name-generator/", "Try the name generator")))
+
+    # --- 2. the sticker guy ------------------------------------------------
+    main += sec("Fifteen years of making vinyl stick",
+      "<p>%s started cutting vinyl in his garage more than fifteen years ago and "
+      "never really stopped. Boat names and registration numbers. Semi doors and "
+      "trailer lettering. Race-car number plates. Motorcycle tanks and helmets. If "
+      "it moves and needs a name, a number or a little attitude, there is a decent "
+      "chance he has already done one like it for somebody in the Cedar Valley.</p>"
+      "<p>He is the one people text when they need it <em>right</em>, not just "
+      "<em>fast</em>. It is usually both. He has lettered boats that live on the "
+      "Cedar River and boats that see the water two weekends a year, and he sizes "
+      "every one by hand so the numbers read from the dock, not just from the "
+      "trailer.</p>" % o["first"])
+
+    # --- 3. the day job ----------------------------------------------------
+    stacy = ("<p>His wife %s serves on the department right alongside him. In a town "
+             "of about 4,700 people, that is the kind of thing folks notice and "
+             "remember.</p>" % o["spouse"]) if ABOUT["name_stacy"] else ""
+    main += sec("When the pager goes off, he goes",
+      '<p>The sticker business is the fun part. The serious part is that %s is '
+      '<a href="%s" rel="noopener" target="_blank">%s</a>, a volunteer department '
+      'that answers calls 24 hours a day, every day of the year. He has held the '
+      'job for years. He is the one <a href="%s" rel="noopener nofollow" '
+      'target="_blank">talking to the news</a> after a bad night, and the one '
+      '<a href="%s" rel="noopener nofollow" target="_blank">standing in front of '
+      'city council</a> asking for new turnout gear so his crew goes in '
+      'protected.</p>'
+      '%s'
+      '<p>%s does not bring it up much. We are bringing it up because it tells you '
+      'how he treats people who are counting on him, and you are about to be one '
+      'of them.</p>'
+      % (o["first"], L["department"], o["role"], L["news"], L["council"],
+         stacy, o["first"]),
+      extra='<div class=w style="padding:0"><div class=note style="margin-top:20px">'
+            '<p><b>Fire chief. Volunteer. Shows up at 3am for strangers.</b> '
+            'He will show up for your decal too.</p></div></div>')
+
+    # --- 4. the landlord (gated) -------------------------------------------
+    if ABOUT["rentals"]:
+        main += sec("He fixes things. His own, mostly.",
+          "<p>%s also owns and rents a handful of homes around %s and Elk Run "
+          "Heights, and he is the hands-on kind &mdash; new siding, fresh paint, a "
+          "kitchen torn out and put back better. The point for you is simple: he "
+          "knows what it takes to make something hold up to Iowa weather, Iowa "
+          "tenants and Iowa winters. Vinyl on a hull is easy by comparison.</p>"
+          % (o["first"], SITE["city"]))
+
+    # --- 5. the fast toys fund --------------------------------------------
+    main += sec("Where your money actually goes",
+      "<p>We could tell you the proceeds go toward growing the business. Some do. "
+      "The rest go toward %s&rsquo;s well-documented addiction to anything with a "
+      "motor that goes faster than it probably should.</p>"
+      "<p>He races motocross in the %s, which means lining up at the gate on Sunday "
+      "mornings with people half his age and pretending his back does not hurt. He "
+      "rides a Harley and has made the pilgrimage to the rally. In the fall he is "
+      "in camo somewhere in a tree stand. In the summer he is on the water, which "
+      "is how this whole decal thing started in the first place.</p>"
+      "<p>So when you order a set of registration numbers, understand what you are "
+      "really buying: one more set of knobbies, one more tank of race gas, one more "
+      "weekend at the track. Thank you for your service.</p>"
+      % (o["first"], o["series"]))
+
+    # --- 6. why that matters ----------------------------------------------
+    main += sec("What a fire chief&rsquo;s decal looks like",
+      "<p>Your decal is cut by someone who has spent fifteen years making vinyl "
+      "survive fibreglass, aluminium, gelcoat and Iowa weather. Not a print farm. "
+      "Not a chatbot. One person in %s who answers his own messages.</p>"
+      "<ul>"
+      "<li><strong>Correct sizing the first time.</strong> State registration rules "
+      "are built into the order form &mdash; 3-inch block characters where the law "
+      "says three inches, contrasting colour where the law says contrasting.</li>"
+      "<li><strong>Marine-grade vinyl.</strong> The same film he has put on boats "
+      "that sit in the sun all summer and in a barn all winter.</li>"
+      "<li><strong>Fast turnaround.</strong> Orders go out %s. If the pager goes "
+      "off, it might be the day after. He will tell you.</li>"
+      "<li><strong>A real person on the other end.</strong> Something wrong? You "
+      "hear back from %s, not a ticket number.</li>"
+      "</ul>" % (SITE["city"], ABOUT["turnaround"], o["first"]))
+
+    # --- 7. closing --------------------------------------------------------
+    main += (band.open("ctaband") + '<div class="w ctainner">'
+      '<h2>Your boat needs a name. Probably a bad one.</h2>'
+      '<p>We built a free name generator because the world has enough boats called '
+      '<em>Serenity</em>. It does puns, double meanings, deadpan, and a few '
+      'categories you will not find anywhere else. Spin it until something makes '
+      'you laugh, then let %s put it on the hull.</p>'
+      '<div class=ctarow>'
+      '<a class="btn lg" href="/tools/boat-name-generator/">Generate a boat name</a>'
+      '<a class=ctalink href="/boat-registration-numbers/">Shop registration '
+      'numbers &rarr;</a>'
+      '</div></div></section>' % o["first"])
+
+    faqs = [
+      ("Who actually cuts my boat decal?",
+       "%s, in %s, %s. He has been cutting vinyl for more than fifteen years and he "
+       "answers his own messages - there is no call centre and no ticket queue."
+       % (o["full"], SITE["city"], SITE["region_name"])),
+      ("Is Boat Number Shop a real shop or a drop-shipper?",
+       "A real shop. Everything is cut to order on a plotter in %s, %s, pre-spaced "
+       "on one sheet, and shipped flat from here to all 50 states. Nothing is "
+       "drop-shipped and nothing is printed overseas."
+       % (SITE["city"], SITE["region_name"])),
+      ("How fast will my order ship?",
+       "Orders go out %s. %s is also a volunteer fire chief, so on the rare day a "
+       "call runs long it might be the day after - and he will tell you rather than "
+       "let you wonder." % (ABOUT["turnaround"], o["first"])),
+      ("Where is Boat Number Shop based?",
+       "%s, %s, in %s - on the Cedar River between Waterloo and Cedar Falls. "
+       "Everything ships from here."
+       % (SITE["city"], SITE["region_name"], SITE["county"])),
+    ]
+    person = {"@type": "Person", "@id": U("/about/") + "#owner", "name": o["full"],
+              "jobTitle": ["Owner", o["role"]], "worksFor": {"@id": U("/#org")},
+              "homeLocation": {"@type": "Place", "address": {
+                  "@type": "PostalAddress", "addressLocality": SITE["city"],
+                  "addressRegion": SITE["region"], "addressCountry": "US"}}}
+    trail = [("About", None)]
+    sch = graph(org_node(), crumb_node(trail, "/about/"), person,
+                faq_node(faqs, "/about/"))
+    write("/about/", shell(
+      "About Ryan Phillips, the Guy Who Cuts It",
+      "Custom boat decals and registration numbers cut by hand in Iowa by a "
+      "15-year vinyl pro who is also the local fire chief. Free boat name "
+      "generator.",
+      "/about/", sch, main, trail=trail, faqs=faqs,
+      faq_heading="About the shop", js=ORDER_JS, band=band), "0.6")
+
 
 def build_contact():
     faqs = [

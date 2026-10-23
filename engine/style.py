@@ -648,3 +648,11 @@ height:9px;border-radius:50%;background:var(--sbright,var(--sea))}
 .waters b{display:block;color:var(--nav);font-size:15.6px}
 .waters span{color:var(--mut)}
 """
+
+# ---- owner line --------------------------------------------------------
+CSS += """
+.ownerline{max-width:66ch;margin:0 auto;text-align:center;font-size:15.6px;
+color:var(--mut);line-height:1.6}
+.ownerline strong{color:var(--ink)}
+.ownerline a{font-weight:700;white-space:nowrap}
+"""
