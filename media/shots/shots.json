@@ -1,0 +1,52 @@
+[
+ {
+  "id": "AL-01",
+  "spec": "Black on white hull \u00b7 3\" block \u00b7 bow",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "AL-02",
+  "spec": "White on navy hull \u00b7 3\" block \u00b7 bow",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "AL-03",
+  "spec": "Black script transom name \u00b7 6\"",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "AL-04",
+  "spec": "Black on bare aluminium \u00b7 jon boat",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "AL-05",
+  "spec": "Black on PWC plastic hull",
+  "aspect": "1024x1024"
+ },
+ {
+  "id": "AL-06",
+  "spec": "Black on kayak \u00b7 high-tack vinyl",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "AL-07",
+  "spec": "Black on pontoon rail",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "AL-08",
+  "spec": "Name + hailing port \u00b7 curved transom",
+  "aspect": "1024x1024"
+ },
+ {
+  "id": "AL-09",
+  "spec": "Application detail \u00b7 wet method",
+  "aspect": "1024x1024"
+ },
+ {
+  "id": "AL-10",
+  "spec": "White on metalflake \u00b7 bass boat",
+  "aspect": "1536x1024"
+ }
+]

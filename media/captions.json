@@ -1,0 +1,82 @@
+[
+ {
+  "id": "AL-01",
+  "caption": "IA 3717 ZW \u00b7 3\" black on a white hull",
+  "sub": "Bow, both sides, with the validation decal aft",
+  "page": "/registration-numbers/iowa/",
+  "master": "media/shots/AL-01.png",
+  "social": "media/social/AL-01/"
+ },
+ {
+  "id": "AL-02",
+  "caption": "MC 1234 AB \u00b7 3\" white on a navy hull",
+  "sub": "Dark hull, light vinyl - the contrast rule in one picture",
+  "page": "/registration-numbers/michigan/",
+  "master": "media/shots/AL-02.png",
+  "social": "media/social/AL-02/"
+ },
+ {
+  "id": "AL-03",
+  "caption": "Transom name \u00b7 6\" black script",
+  "sub": "Boat names start at $29",
+  "page": "/boat-name-decals/",
+  "master": "media/shots/AL-03.png",
+  "social": "media/social/AL-03/"
+ },
+ {
+  "id": "AL-04",
+  "caption": "WS 1234 AB \u00b7 3\" black on bare aluminium",
+  "sub": "Flat panel between the rivet rows",
+  "page": "/for/jon-boats/",
+  "master": "media/shots/AL-04.png",
+  "social": "media/social/AL-04/"
+ },
+ {
+  "id": "AL-05",
+  "caption": "CF 1234 AB \u00b7 3\" black on a PWC hull",
+  "sub": "High-tack vinyl, free on every PWC order",
+  "page": "/for/jet-skis-and-pwc/",
+  "master": "media/shots/AL-05.png",
+  "social": "media/social/AL-05/"
+ },
+ {
+  "id": "AL-06",
+  "caption": "MN 1234 AB \u00b7 3\" black on a kayak",
+  "sub": "Rotomoulded plastic needs high-tack",
+  "page": "/for/kayaks-and-canoes/",
+  "master": "media/shots/AL-06.png",
+  "social": "media/social/AL-06/"
+ },
+ {
+  "id": "AL-07",
+  "caption": "TX 1234 AB \u00b7 3\" black on a pontoon rail",
+  "sub": "Textured aluminium, high-tack as standard",
+  "page": "/for/pontoon-boats/",
+  "master": "media/shots/AL-07.png",
+  "social": "media/social/AL-07/"
+ },
+ {
+  "id": "AL-08",
+  "caption": "Name + hailing port \u00b7 6\" and 4\" on a curved transom",
+  "sub": "Arced to the curve from your photo",
+  "page": "/for/sailboats/",
+  "master": "media/shots/AL-08.png",
+  "social": "media/social/AL-08/"
+ },
+ {
+  "id": "AL-09",
+  "caption": "Going on \u00b7 wet method, application tape still over the top",
+  "sub": "Pre-spaced, so the spacing is already legal",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/AL-09.png",
+  "social": "media/social/AL-09/"
+ },
+ {
+  "id": "AL-10",
+  "caption": "MO 1234 AB \u00b7 3\" white on metalflake",
+  "sub": "Glossy gelcoat is the easiest surface there is",
+  "page": "/for/bass-boats/",
+  "master": "media/shots/AL-10.png",
+  "social": "media/social/AL-10/"
+ }
+]

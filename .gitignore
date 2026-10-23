@@ -2,3 +2,7 @@ node_modules/
 .wrangler/
 .dev.vars
 *.log
+
+# Generated imagery: masters are committed (they are the deliverable), crops
+# are derived - regenerate with `python3 media/social.py`.
+media/social/
