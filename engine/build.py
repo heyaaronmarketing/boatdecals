@@ -447,9 +447,9 @@ def build_pricing():
        "approve it &mdash; if you do not like the proof we redraw it free or refund "
        "you in full."),
       ("How do I add a rush or premium vinyl?",
-       "Put it in the notes box at checkout. The order form stays short on purpose, so "
+       "Reply to your proof email and ask. The order form stays short on purpose, so "
        "add-ons are requested rather than clicked - we price them exactly as listed and "
-       "show them on your proof before anything is charged."),
+       "redraw the proof before anything is cut."),
       ("Do you do trade or volume pricing?",
        "Yes - marinas, dealers and fleet operators. Email " + SITE["email"] +
        " with roughly how many sets a month and we will put numbers together."),
@@ -463,8 +463,9 @@ def build_pricing():
       '</tr></thead><tbody>' + rows + '</tbody></table></div>'
       '<h2 style="margin-top:34px">Add-ons</h2>'
       '<p class=lede>The order form deliberately does not ask about these &mdash; it is '
-      'four steps and we would rather you finished it. Mention any of them in the notes '
-      'box at checkout and we will add it to your proof at the price below.</p>'
+      'four steps and we would rather you finished it. <strong>Reply to your proof '
+      'email</strong> asking for any of them and we will add it at the price below '
+      'before anything is cut.</p>'
       '<div class=tw><table><thead><tr><th>Upgrade</th><th>What it does</th><th>Cost</th>'
       '</tr></thead><tbody>' + ups + '</tbody></table></div>'
       '<h2 style="margin-top:34px">Which vinyl, and why it changes the price</h2>'

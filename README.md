@@ -73,8 +73,8 @@ so the panel never jumps. Anti-fatigue rules, all load-bearing:
 - only steps 2 and 5 require typing; 1, 3 and 4 are pure clicking
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
-- **there is no upsell step.** The add-ons on `/pricing/` are requested in the
-  checkout notes box instead. The worker still prices every entry in
+- **there is no upsell step, and no notes field.** The add-ons on `/pricing/`
+  are requested by replying to the proof email instead. The worker still prices every entry in
   `UPGRADE_ADD`, so a note-added upgrade costs exactly what a clicked one would
   have — don't delete that table just because nothing posts it any more.
 
@@ -213,8 +213,21 @@ Three layers enforce it, and `verify.py` gates all three:
    scrubbing, because a silent scrub would hide the regression that caused it
 3. There is no column for a full number in `schema.sql`
 
-A permanent **TEST MODE** banner sits above the field, the shop email is subject
--prefixed `[TEST]` with a "do not cut it" warning, and rows land with
+⚠️ **The TEST MODE banner was removed from the card field** at the owner's
+request, so there is no longer anything on screen telling a visitor the field
+takes no payment. `initPay()` therefore only mounts the sandbox on a
+**preview host** — `*.workers.dev`, `*.pages.dev`, `localhost`, `127.0.0.1`.
+On any real domain without Stripe keys it falls through to `degrade()` and the
+emailed-payment-link flow instead. **Do not loosen that host check**: without
+it, pointing boatnumbershop.com at this worker would put a dead card field in
+front of real customers who would believe they had paid.
+
+(A build-time guard on `SITE_URL` was tried first and removed — the canonical
+URL is always the production domain, so it could not tell a preview deploy from
+a live one. The host is the only honest signal.)
+
+The confirmation screen still carries a TEST MODE notice, the shop email is
+subject-prefixed `[TEST]` with a "do not cut it" warning, and rows land with
 `test_mode=1, status='test', paid=0` — so `SUM(total) WHERE paid=1` is real
 revenue with no test exclusion needed.
 

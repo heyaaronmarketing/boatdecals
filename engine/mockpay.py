@@ -5,6 +5,11 @@ to nobody.
 Why this exists: the shop needs a working end-to-end demo (and a way to test the
 order pipeline) before Stripe keys are issued.
 
+The TEST MODE banner was removed from the field at the owner's request, so the
+only remaining on-screen signal is on the confirmation. The guard against a
+sandbox build reaching the production domain now lives in build.py - see
+assert_pay_mode_is_safe().
+
 The hard rule this file enforces: **a full card number never leaves the browser
 and is never stored.** The field accepts any digits so testing is frictionless,
 but on submit only the detected brand and the last four are put in the payload.
@@ -12,16 +17,9 @@ The PAN and CVC are read, formatted, validated for shape, and discarded. The
 worker additionally refuses any field that still looks like a full card number,
 so a future edit here cannot quietly start leaking one.
 
-A visible TEST MODE banner sits above the field at all times. Nobody should be
-able to mistake this for a live checkout - including Aaron's brother.
 """
 
 HTML = """
-<div class=testbar>
-  <b>Test mode</b>
-  <span>Any card works &mdash; try <code>4242 4242 4242 4242</code>. Nothing is
-  charged and no card is stored.</span>
-</div>
 <div class=sfield>
   <label for=cc_num>Card number</label>
   <div class=sinput id=cc_numwrap>
@@ -59,8 +57,6 @@ background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid #d08700;
 border-radius:0 8px 8px 0;padding:7px 10px;margin-bottom:9px;font-size:12.2px}
 .testbar b{color:#8a5a00;font-size:11.6px;text-transform:uppercase;letter-spacing:.05em}
 .testbar span{color:#6b5526;line-height:1.45}
-.testbar code{background:#fdf0d4;border-radius:4px;padding:1px 5px;font-size:12.8px;
-font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
 .sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
 .sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
 .srow{display:flex;gap:7px}

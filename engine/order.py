@@ -176,20 +176,7 @@ def form():
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card number.</div>
     </div>
-    <details class=extra><summary>Add a note, rush, premium vinyl or boat details</summary>
-      <div class="fieldrow two" style="margin-top:11px">
-        <div><label for=f_phone>Phone</label>
-          <input type=tel id=f_phone name=phone autocomplete=tel></div>
-        <div><label for=f_boat>Boat make &amp; model</label>
-          <input type=text id=f_boat name=boat placeholder="2004 Tracker Pro 170"></div>
-      </div>
-      <div style="margin-top:11px"><label for=f_notes>Notes</label>
-        <textarea id=f_notes name=notes rows=2
-          placeholder="Rush it. Premium vinyl. Dark blue hull."></textarea></div>
-    </details>
     <div class=err id=e5 role=alert></div>
-    <p class=guar>Proof before we cut &middot; free re-cut &middot; full refund if
-      you do not like the proof</p>
   </section>
 
   </div>
@@ -409,16 +396,23 @@ JS = r"""
             height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),
             name:$('f_name').value.trim(), email:$('f_email').value.trim(),
-            phone:$('f_phone').value.trim(), boat:$('f_boat').value.trim(),
-            notes:$('f_notes').value.trim(), quoted_total:price(),
-            page:location.pathname};
+            quoted_total:price(), page:location.pathname};
   }
 
   // ---- payment ---------------------------------------------------------
   function initPay(){
     if(mounted) return;
     if(!window.BNS_STRIPE_PK || !window.Stripe){
-      if(window.BNS_PAY_MODE==='sandbox'){ mounted=true; mountSandbox(); }
+      // The sandbox card field no longer carries a TEST MODE banner, so it is
+      // only safe somewhere nobody can mistake it for a real shop. On a real
+      // domain with no Stripe keys, fall back to the payment-link flow rather
+      // than show a card field that silently takes no payment - a customer
+      // would otherwise believe they had paid.
+      var h=location.hostname;
+      var preview = /(^|\.)workers\.dev$/.test(h) || /(^|\.)pages\.dev$/.test(h)
+                 || h==='localhost' || h==='127.0.0.1' || h==='';
+      if(window.BNS_PAY_MODE==='sandbox' && preview){ mounted=true; mountSandbox(); }
+      else { degrade(); }
       return;
     }
     mounted=true;
