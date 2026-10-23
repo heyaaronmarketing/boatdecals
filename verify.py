@@ -34,6 +34,10 @@ for f in OUT.rglob("*.html"):
         blocks += 1
         try: json.loads(m)
         except Exception: bad_json += 1; fails.append("invalid JSON-LD in %s" % f)
+    for yr in set(re.findall(
+            r"(?i)\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)[\s&;a-z-]{0,12}"
+            r"year[s-]?\b(?=[^<]{0,60}(?:film|vinyl|warrant|durab|last|outdoor))", t)):
+        fails.append("film-life claim %r in %s - we do not publish a year figure" % (yr, f))
     for dbl in set(re.findall(r"&amp;(#?\w{2,8});", t)):
         fails.append("double-escaped entity &amp;%s; in %s" % (dbl, f))
     if f.name == "index.html":

@@ -61,11 +61,11 @@ WHY_US = [
   "Every competitor makes you build a design before showing a price. Ours is on the "
   "page and it includes shipping."),
  ("Cut and shipped next business day",
-  "Order before 1pm CT and it goes out the same day for $12. Otherwise next business "
-  "day, free."),
+  "Cut the next business day and in the post the same afternoon, free. No queue, "
+  "no proof to approve first."),
  ("Marine Vinyl",
-  "Cast film built for sun, salt and spray, not the 3-year calendared stock the cheap "
-  "sets use. High-tack on plastic hulls at no extra charge."),
+  "Marine film built for sun, salt and spray, not the craft stock the cheap sets "
+  "use. High-tack on plastic hulls at no extra charge."),
 ]
 
 # Four steps, four cards. (title, body) - build.py numbers them.

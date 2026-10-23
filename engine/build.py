@@ -295,10 +295,10 @@ FEATURE_SUB = {
         "One for each side of the hull, pre-spaced on a single sheet. "
         "Shipping included.",
     "Next Day Shipping":
-        "Cut and in the post the next business day, or the same day for $12.",
+        "Cut and in the post the next business day.",
     "Marine Vinyl":
-        "Cast film built for sun, salt and spray &mdash; not the 3-year craft "
-        "stock the cheap sets use.",
+        "Marine film built for sun, salt and spray &mdash; not the craft stock "
+        "the cheap sets use.",
     "100% Compliant":
         "3-inch block characters spaced to 33 CFR 173.27. Legal in all 50 states.",
 }
@@ -736,32 +736,20 @@ def plan_table():
 
 def build_pricing():
     trail = [("Pricing", None)]
-    rows = "".join('<tr><td><a href="/%s/"><strong>%s</strong></a></td><td>%s</td>'
-                   '<td><strong>$%d</strong> %s</td></tr>'
-                   % (p["slug"], p["nav"], p["blurb"], p["price"], p["unit"])
-                   for p in PRODUCTS)
-    ups = "".join('<tr><td><strong>%s</strong></td><td>%s %s</td><td>+$%d</td></tr>'
-                  % (lbl, blurb, note, amt)
-                  for lbl, amt, blurb, flag, note in UPGRADES)
     faqs = [
       ("Is shipping really free?",
        "Yes, on everything, to anywhere in the 50 states. Standard post, 3-6 days in "
-       "transit. If you need it faster, rush production is $12 and we will quote "
-       "expedited post at cost."),
+       "transit. If you need it sooner than that, email us before you order and we "
+       "will tell you what is possible and what it costs."),
       ("Why is $19 not the cheapest price on the internet?",
        "Because it is not a race we want to win. An $11 set is usually cut as loose "
        "characters, which means you doing the spacing on the water. Ours arrives "
        "pre-spaced on one sheet and checked against your state format before it cuts. "
-       "Both are calendared marine film at that price - cast is the $8 upgrade. If "
-       "price is the only thing that matters to you, the marketplace sets are genuinely "
-       "cheaper and we would rather say so."),
+       "If price is the only thing that matters to you, the marketplace sets are "
+       "genuinely cheaper and we would rather say so."),
       ("When do I pay?",
        "By card at checkout. The preview on that screen is what gets cut, so read it "
        "before you pay. It ships the next business day."),
-      ("How do I add a rush or premium vinyl?",
-       "Email us with your order reference as soon as you have ordered. The form stays "
-       "short on purpose, so add-ons are requested rather than clicked - we price them "
-       "exactly as listed and add them before it cuts."),
       ("Do you do trade or volume pricing?",
        "Yes - marinas, dealers and fleet operators. Email " + SITE["email"] +
        " with roughly how many sets a month and we will put numbers together."),
@@ -772,18 +760,10 @@ def build_pricing():
       '<p class=lede>No designer to click through before you see a number. '
       'Every price includes free standard shipping in the USA.</p>'
       + plan_table()
-      + '</div></section>'
-      + '<section class=soft><div class=w><h2>Add-ons</h2>'
-        '<p class=lede>The order form deliberately does not ask about these &mdash; it '
-        'is four steps and we would rather you finished it. <strong>Email us with your '
-        'order reference</strong> and we will add any of them at the price below, '
-        'before it cuts.</p>'
-        '<div class=tw><table><thead><tr><th>Upgrade</th><th>What it does</th>'
-        '<th>Cost</th></tr></thead><tbody>' + ups + '</tbody></table></div>'
-        '</div></section>')
+      + '</div></section>')
     write("/pricing/", shell("Boat Lettering &amp; Registration Number Prices",
-          "Every price on one page: boat registration numbers $19 a pair, names from $29, "
-          "decals from $22. Free shipping, next-business-day production.",
+          "Boat registration numbers $19 a pair, boat names from $29, custom lettering "
+          "from $29. Free shipping, next-business-day production.",
           "/pricing/", sch, main, trail=trail, faqs=faqs,
           faq_heading="Pricing questions"), "0.9")
 
@@ -861,8 +841,8 @@ def build_product(p):
     trail = [(p["nav"], None)]
     faqs = [
       ("How fast will I get it?",
-       "Cut and shipped the next business day, free. Order before 1pm CT and add $12 "
-       "rush and it goes out the same day. Standard post is 3-6 days in transit."),
+       "Cut and shipped the next business day, free. Standard post is 3-6 days in "
+       "transit after that."),
       ("Can I see it before it is made?",
        "Yes - the preview in the order form shows your exact lettering, at your chosen "
        "height, in your chosen colour. That is what gets cut, so read it twice before "
@@ -871,9 +851,9 @@ def build_product(p):
        "Tell us and we cut it again free. That covers a torn character, a creased sheet "
        "or a set that went on crooked. We would rather send more vinyl than argue."),
       ("How long will it last?",
-       "The cast film carries a 7-year outdoor warranty on colour and adhesion; standard "
-       "calendared film runs 5-7 years. Both outlast the 3-4 years typical of the "
-       "cheapest marketplace sets."),
+       "Years, not seasons - it is marine-grade film, not craft vinyl, and it is the "
+       "same stock sign shops put on vehicles. A dark colour in southern sun fades "
+       "soonest. If one of ours fails on a hull you prepared properly, tell us."),
     ]
     sch = graph(org_node(), crumb_node(trail, "/%s/" % p["slug"]),
                 product_node(p, "/%s/" % p["slug"]), faq_node(faqs, "/%s/" % p["slug"]))
@@ -1523,11 +1503,11 @@ GUIDE_BODY = {
    "<p><strong>Cast</strong> vinyl is made by pouring liquid resin onto a carrier and "
    "letting it cure flat. Because it is never stretched, it carries no internal stress, "
    "so it conforms to curves and stays where you put it. Thinner, more conformable, "
-   "longer outdoor life &mdash; typically 7 to 9 years.</p>"
+   "and the longer-lived of the two outdoors.</p>"
    "<p><strong>Calendared</strong> vinyl is squeezed between rollers into sheet. It is "
    "cheaper and slightly thicker, but it remembers being stretched and slowly tries to "
-   "shrink back, which is what makes old decals pull away at the corners. Typically 5 to "
-   "7 years, less on a dark colour in southern sun.</p>"
+   "shrink back, which is what makes old decals pull away at the corners. Shorter "
+   "outdoor life than cast, and shorter again on a dark colour in southern sun.</p>"
    "<p>For a flat transom on a trailered boat, calendared is honestly fine and it is what "
    "we ship as standard. For a curved hull, a dark colour, or a boat kept in a slip in "
    "Florida, pay the $8.</p>"
@@ -1538,7 +1518,7 @@ GUIDE_BODY = {
    "<p>High-tack film uses a much more aggressive adhesive designed for exactly this. We "
    "send it free on any kayak, canoe or PWC order, and on textured pontoon rails, because "
    "shipping the wrong film to save nothing is a bad trade.</p>"
-   "<h2>What a 7-year warranty actually covers</h2>"
+   "<h2>What a film warranty actually covers</h2>"
    "<p>Honest version: it covers the <strong>film</strong> &mdash; colour fade beyond a "
    "stated tolerance, cracking, and adhesive failure where the film was applied correctly "
    "to a suitable surface. It does not cover a decal applied over wax, applied in the "
@@ -1589,13 +1569,13 @@ GUIDE_BODY = {
    "<tr><td>Boat lettering specialists</td><td>$15&ndash;25</td><td>Pre-spaced, marine "
    "film, a warranty, and an install guarantee. Most hide the price behind a design "
    "tool</td></tr>"
-   "<tr><td><strong>Us</strong></td><td><strong>$19</strong></td><td>Pre-spaced, 7-year "
-   "film, free shipping, your number checked against its state format before it "
+   "<tr><td><strong>Us</strong></td><td><strong>$19</strong></td><td>Pre-spaced, "
+   "marine film, free shipping, your number checked against its state format before it "
    "cuts</td></tr>"
    "</tbody></table></div>"
    "<h2>What makes one set cost twice another</h2>"
-   "<ul><li><strong>Film grade.</strong> Calendared 3&ndash;5 year stock versus cast "
-   "7&ndash;9 year. This is most of the difference, and you will not see it for three "
+   "<ul><li><strong>Film grade.</strong> Craft and sign-stock calendared versus marine "
+   "cast. This is most of the difference, and you will not see it for a few "
    "summers.</li>"
    "<li><strong>Pre-spaced or loose.</strong> Pre-spacing is labour. Loose characters are "
    "cheaper to produce and much harder to install legally.</li>"
@@ -1607,8 +1587,8 @@ GUIDE_BODY = {
    "<p>A cheap set that chalks out in three years costs you another set plus the removal "
    "job &mdash; and removal is the part that takes the afternoon and risks the gelcoat. "
    "Our <a href=\"/guides/how-to-remove-boat-lettering/\">removal guide</a> is honest "
-   "about how tedious that is. Buying film rated for seven years rather than three is "
-   "the cheapest decision in this whole category.</p>"
+   "about how tedious that is. Buying the better film the first time is the cheapest "
+   "decision in this whole category.</p>"
    "<p><a href=\"/pricing/\">Our full price list is on one page</a>, including names, "
    "decals and upgrades.</p>",
 }
@@ -1618,8 +1598,8 @@ def build_guide(g):
     trail = [("Guides", "/guides/"), (g["nav"], None)]
     faqs = [
       ("How much do boat registration numbers cost here?",
-       "$19 a pair with free shipping, pre-spaced and cut from 7-year marine vinyl, "
-       "shipped the next business day."),
+       "$19 a pair with free shipping, pre-spaced and cut from marine vinyl, shipped "
+       "the next business day."),
       ("Do you ship to my state?",
        "All 50 states and DC, free. We cut for every state's number format."),
     ]
@@ -1812,7 +1792,7 @@ def build_about():
       "homepage, and it includes shipping.</p>"
       "<h2>What we will tell you honestly</h2>"
       "<ul><li>There are $11 sets on marketplaces. They are genuinely cheaper, and they "
-      "are usually 3&ndash;4 year calendared film cut as loose characters. If price is "
+      "are usually calendared craft film cut as loose characters. If price is "
       "the only thing that matters, buy those &mdash; we would rather say so than "
       "pretend.</li>"
       "<li>We are a vinyl shop, not a registry. We cannot look up your number, issue one, "
@@ -1900,25 +1880,29 @@ def build_warranty():
        "We cut it again free. Email us what happened - a torn character, a creased sheet, "
        "a set that went on crooked. We do not require photos or an argument."),
       ("How long is the warranty?",
-       "Seven years on cast premium film and five to seven on standard, covering colour "
+       "The film carries its maker's own outdoor durability warranty, covering colour "
        "fade, cracking and adhesive failure where the decal was correctly applied to a "
-       "suitable surface."),
+       "suitable surface. We do not publish a year figure, because it belongs to the "
+       "film maker and varies by stock and climate. Separately, we re-cut free if your "
+       "install goes wrong."),
       ("Can I return a custom decal?",
        "Custom-cut vinyl cannot be resold, so it is not returnable once cut - which is "
        "why the order form previews your exact lettering before you pay. If what "
        "arrived does not match what you ordered, that is on us and we remake it."),
     ]
     simple("/warranty/", "Warranty &amp; Install Guarantee",
-      "Seven-year marine vinyl warranty and a free re-cut if your install goes wrong. "
+      "A manufacturer film warranty and a free re-cut if your install goes wrong. "
       "What is covered, what is not, and how to claim.",
       "Warranty &amp; install guarantee",
       "Two separate promises: one from the film manufacturer, one from us.",
       "<h2>1. The film warranty</h2>"
-      "<p>Our premium cast vinyl carries a <strong>7-year</strong> outdoor durability "
-      "rating, and standard calendared film runs <strong>5 to 7 years</strong>. That "
-      "covers colour fade beyond the manufacturer's stated tolerance, cracking or "
-      "embrittlement of the film, and adhesive failure where the decal was correctly "
-      "applied to a suitable, prepared surface.</p>"
+      "<p>We cut on marine-grade film that carries its maker&rsquo;s own outdoor "
+      "durability warranty. That warranty covers colour fade beyond the manufacturer\'s "
+      "stated tolerance, cracking or embrittlement of the film, and adhesive failure "
+      "where the decal was correctly applied to a suitable, prepared surface.</p>"
+      "<p>We do not quote a number of years for it here, because the figure belongs to "
+      "the film maker and varies by stock, colour and climate. If a set of ours fails "
+      "on a hull you prepared properly, tell us and we will deal with it.</p>"
       "<p><strong>It does not cover:</strong> application over wax, polish or a dirty "
       "hull; application below about 50&deg;F; standard film applied to polyethylene or "
       "textured surfaces that needed high-tack; physical damage, dock rash or abrasion; "
@@ -1949,8 +1933,8 @@ def build_shipping():
        "Yes, on everything, to all 50 states and DC. Standard post, typically 3-6 days in "
        "transit after production."),
       ("How fast is production?",
-       "Cut and shipped the next business day as standard. Add $12 rush and an order "
-       "placed before 1pm CT on a business day goes out the same day."),
+       "Cut and shipped the next business day. If you need it sooner, email us before "
+       "you order and we will tell you what is possible."),
       ("Do you ship internationally?",
        "Not currently. Everything is cut and shipped in the USA, to US addresses."),
     ]
@@ -1960,9 +1944,9 @@ def build_shipping():
       "Shipping &amp; returns",
       "Free shipping on everything. Next business day production as standard.",
       "<h2>Production time</h2>"
-      "<p>Orders are cut and shipped the <strong>next business day</strong>. Add "
-      "<strong>$12 rush</strong> and an order placed before 1pm CT on a business day is "
-      "cut and shipped the same day.</p>"
+      "<p>Orders are cut and shipped the <strong>next business day</strong>. If you need "
+      "one sooner than that, email us before you order and we will tell you what is "
+      "possible.</p>"
       "<p>The clock starts when you place the order.</p>"
       "<h2>Shipping</h2>"
       "<div class=tw><table><thead><tr><th>Method</th><th>Cost</th><th>Transit</th>"
@@ -2135,8 +2119,9 @@ def build_static():
 
 - Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
 - Boat names from **$29**. Custom lettering from **$29**.
-- Production: cut and shipped **next business day**; same-day rush **+$12** before 1pm CT.
-- Warranty: **7 years** on premium cast film, 5-7 on standard, covering colour and adhesion.
+- Production: cut and shipped **next business day**.
+- Warranty: the film maker\'s own outdoor durability warranty on colour and adhesion. We
+  do not publish a year figure. Separately, we re-cut free if the install goes wrong.
 - **10 fonts**, each previewed in the customer's own lettering before ordering. Five
   (Block, Condensed, Heavy Impact, Modern, Stencil) are plain vertical block faces and
   are the only ones offered for registration numbers; the other five (Classic Serif,

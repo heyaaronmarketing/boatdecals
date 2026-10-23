@@ -168,7 +168,7 @@ GUIDES = [
     dict(slug="best-vinyl-for-boat-lettering", nav="Vinyl types",
          title="Best Vinyl for Boat Lettering: Cast vs Calendared",
          kw="best vinyl for boat lettering", vol=10,
-         desc="Cast vs calendared vinyl for boats, when high-tack is mandatory, and what a 7-year warranty actually covers."),
+         desc="Cast vs calendared vinyl for boats, when high-tack is mandatory, and what a film warranty actually covers."),
     dict(slug="documented-vessel-name-and-hailing-port", nav="Documented vessels",
          title="Documented Vessel Name &amp; Hailing Port Requirements",
          kw="documented vessel lettering", vol=10,
@@ -357,7 +357,7 @@ FAQ_HOME = [
     ("How much do boat registration numbers cost?",
      "Ours are $19 a pair with free shipping, cut and shipped the next business day. "
      "Online prices across the market run about $10 to $25 a pair. Cheap sets are usually "
-     "calendared vinyl with a 3-4 year life, cut as loose characters you space yourself."),
+     "calendared craft vinyl, cut as loose characters you space yourself."),
     ("Do boat registration numbers have to be a certain colour?",
      "Not a specific colour - but federal rule 33 CFR 173.27 requires the characters to "
      "contrast with the background and be distinctly visible and legible. White numbers on "
