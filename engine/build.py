@@ -83,6 +83,30 @@ PAGE_IMAGE = {
     "/registration-numbers/texas/":     "AL-07",
     "/registration-numbers/missouri/":  "AL-10",
     "/registration-numbers/minnesota/": "AL-06",
+    # The ST-* set: one hull per state, shot in that state's own landscape.
+    "/registration-numbers/alabama/":        "ST-AL",
+    "/registration-numbers/florida/":        "ST-FL",
+    "/registration-numbers/georgia/":        "ST-GA",
+    "/registration-numbers/illinois/":       "ST-IL",
+    "/registration-numbers/indiana/":        "ST-IN",
+    "/registration-numbers/louisiana/":      "ST-LA",
+    "/registration-numbers/north-carolina/": "ST-NC",
+    "/registration-numbers/new-york/":       "ST-NY",
+    "/registration-numbers/ohio/":           "ST-OH",
+    "/registration-numbers/pennsylvania/":   "ST-PA",
+    "/registration-numbers/south-carolina/": "ST-SC",
+    "/registration-numbers/tennessee/":      "ST-TN",
+    "/registration-numbers/virginia/":       "ST-VA",
+    "/registration-numbers/washington/":     "ST-WN",
+    # Hubs and the remaining standalone pages.
+    "/registration-numbers/": "HB-2",
+    "/for/":                  "HB-1",
+    "/guides/":               "HB-4",
+    "/about/":                "HB-3",
+    "/boat-lettering-waterloo-cedar-falls/": "HB-5",
+    "/warranty/":             "AC-3",
+    "/shipping-and-returns/": "AC-2",
+    "/tools/":                "AC-1",
 }
 
 # Images paired to a page's prose sections, in document order. Short lists are
@@ -111,7 +135,7 @@ def figure(img_id, sizes="(min-width:900px) 46vw, 100vw", cls="shot", lazy=True)
     m = IMAGES.get(img_id)
     if not m:
         return ""
-    alt = "%s. %s." % (m["caption"], m["sub"])
+    alt = html.unescape("%s. %s." % (m["caption"], m["sub"]))
     return (
       '<figure class="%s">'
       '<picture>'

@@ -34,8 +34,8 @@ for f in OUT.rglob("*.html"):
         blocks += 1
         try: json.loads(m)
         except Exception: bad_json += 1; fails.append("invalid JSON-LD in %s" % f)
-    if "&amp;amp;" in t or "&amp;mdash;" in t:
-        fails.append("double-escaped entities in %s" % f)
+    for dbl in set(re.findall(r"&amp;(#?\w{2,8});", t)):
+        fails.append("double-escaped entity &amp;%s; in %s" % (dbl, f))
     if f.name == "index.html":
         mt = re.search(r"<title>(.*?)</title>", t)
         md = re.search(r'name="description" content="(.*?)"', t)

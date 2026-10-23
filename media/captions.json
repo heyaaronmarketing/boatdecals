@@ -1,394 +1,386 @@
 [
- {
-  "id": "AL-01",
-  "caption": "IA 3717 ZW \u00b7 3\" black on a white hull",
-  "sub": "Bow, both sides, with the validation decal aft",
-  "page": "/registration-numbers/iowa/",
-  "master": "media/shots/AL-01.png",
-  "social": "media/social/AL-01/"
- },
- {
-  "id": "AL-02",
-  "caption": "MC 1234 AB \u00b7 3\" white on a navy hull",
-  "sub": "Dark hull, light vinyl - the contrast rule in one picture",
-  "page": "/registration-numbers/michigan/",
-  "master": "media/shots/AL-02.png",
-  "social": "media/social/AL-02/"
- },
- {
-  "id": "AL-03",
-  "caption": "Transom name \u00b7 6\" black script",
-  "sub": "Boat names start at $29",
-  "page": "/boat-name-decals/",
-  "master": "media/shots/AL-03.png",
-  "social": "media/social/AL-03/"
- },
- {
-  "id": "AL-04",
-  "caption": "WS 1234 AB \u00b7 3\" black on bare aluminium",
-  "sub": "Flat panel between the rivet rows",
-  "page": "/for/jon-boats/",
-  "master": "media/shots/AL-04.png",
-  "social": "media/social/AL-04/"
- },
- {
-  "id": "AL-05",
-  "caption": "CF 1234 AB \u00b7 3\" black on a PWC hull",
-  "sub": "High-tack vinyl, free on every PWC order",
-  "page": "/for/jet-skis-and-pwc/",
-  "master": "media/shots/AL-05.png",
-  "social": "media/social/AL-05/"
- },
- {
-  "id": "AL-06",
-  "caption": "MN 1234 AB \u00b7 3\" black on a kayak",
-  "sub": "Rotomoulded plastic needs high-tack",
-  "page": "/for/kayaks-and-canoes/",
-  "master": "media/shots/AL-06.png",
-  "social": "media/social/AL-06/"
- },
- {
-  "id": "AL-07",
-  "caption": "TX 1234 AB \u00b7 3\" black on a pontoon rail",
-  "sub": "Textured aluminium, high-tack as standard",
-  "page": "/for/pontoon-boats/",
-  "master": "media/shots/AL-07.png",
-  "social": "media/social/AL-07/"
- },
- {
-  "id": "AL-08",
-  "caption": "Name + hailing port \u00b7 6\" and 4\" on a curved transom",
-  "sub": "Arced to the curve from your photo",
-  "page": "/for/sailboats/",
-  "master": "media/shots/AL-08.png",
-  "social": "media/social/AL-08/"
- },
- {
-  "id": "AL-09",
-  "caption": "Going on \u00b7 wet method, application tape still over the top",
-  "sub": "Pre-spaced, so the spacing is already legal",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/AL-09.png",
-  "social": "media/social/AL-09/"
- },
- {
-  "id": "AL-10",
-  "caption": "MO 1234 AB \u00b7 3\" white on metalflake",
-  "sub": "Glossy gelcoat is the easiest surface there is",
-  "page": "/for/bass-boats/",
-  "master": "media/shots/AL-10.png",
-  "social": "media/social/AL-10/"
- },
- {
-  "id": "HT-1",
-  "caption": "Step 1 &middot; Wash, then wipe with alcohol",
-  "sub": "Soap leaves a film and wax is the enemy of adhesive",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-1.jpg",
-  "social": "media/social/HT-1/"
- },
- {
-  "id": "HT-2",
-  "caption": "Step 2 &middot; Tape the sheet in position, dry",
-  "sub": "Two strips of tape along the top edge, as a hinge",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-2.jpg",
-  "social": "media/social/HT-2/"
- },
- {
-  "id": "HT-3",
-  "caption": "Step 3 &middot; Wet the hull",
-  "sub": "A few drops of dish soap in a spray bottle of water",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-3.jpg",
-  "social": "media/social/HT-3/"
- },
- {
-  "id": "HT-4",
-  "caption": "Step 4 &middot; Peel the backing away",
-  "sub": "The characters stay on the clear tape",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-4.jpg",
-  "social": "media/social/HT-4/"
- },
- {
-  "id": "HT-5",
-  "caption": "Step 5 &middot; Squeegee from the centre out",
-  "sub": "Firmly, from the middle toward each edge",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-5.jpg",
-  "social": "media/social/HT-5/"
- },
- {
-  "id": "HT-6",
-  "caption": "Step 6 &middot; Pull the tape back on itself",
-  "sub": "Flat back against itself, not straight out",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-6.jpg",
-  "social": "media/social/HT-6/"
- },
- {
-  "id": "HT-7",
-  "caption": "Step 7 &middot; Leave it 24 hours",
-  "sub": "No pressure washing, no launching, for a day",
-  "page": "/guides/how-to-apply-boat-lettering/",
-  "master": "media/shots/HT-7.jpg",
-  "social": "media/social/HT-7/"
- },
- {
-  "id": "GD-1",
-  "caption": "Where the numbers go",
-  "sub": "Forward half, both sides",
-  "page": "/guides/where-to-put-boat-registration-numbers/",
-  "master": "media/shots/GD-1.jpg",
-  "social": "media/social/GD-1/"
- },
- {
-  "id": "GD-2",
-  "caption": "Removing old lettering",
-  "sub": "The ghost line the old set leaves behind",
-  "page": "/guides/how-to-remove-boat-lettering/",
-  "master": "media/shots/GD-2.jpg",
-  "social": "media/social/GD-2/"
- },
- {
-  "id": "GD-4",
-  "caption": "What three inches looks like",
-  "sub": "3 inches is the federal minimum",
-  "page": "/guides/boat-registration-number-rules/",
-  "master": "media/shots/GD-4.jpg",
-  "social": "media/social/GD-4/"
- },
- {
-  "id": "AC-1",
-  "caption": "On the water",
-  "sub": "Social only - never used as proof",
-  "page": "",
-  "master": "media/shots/AC-1.jpg",
-  "social": "media/social/AC-1/"
- },
- {
-  "id": "AC-2",
-  "caption": "At the ramp",
-  "sub": "Social only - never used as proof",
-  "page": "",
-  "master": "media/shots/AC-2.jpg",
-  "social": "media/social/AC-2/"
- },
- {
-  "id": "AC-3",
-  "caption": "Tied up",
-  "sub": "Social only - never used as proof",
-  "page": "",
-  "master": "media/shots/AC-3.jpg",
-  "social": "media/social/AC-3/"
- },
- {
-  "id": "PR-1",
-  "caption": "What arrives in the envelope",
-  "sub": "Two sets, a squeegee and the instructions",
-  "page": "/boat-registration-numbers/",
-  "master": "media/shots/PR-1.jpg",
-  "social": "media/social/PR-1/"
- },
- {
-  "id": "PR-2",
-  "caption": "Cut to order",
-  "sub": "Cut from sheet vinyl to order, not printed",
-  "page": "/boat-name-decals/",
-  "master": "media/shots/PR-2.jpg",
-  "social": "media/social/PR-2/"
- },
- {
-  "id": "PR-3",
-  "caption": "The contrast mistake",
-  "sub": "White on white is not &ldquo;distinctly visible&rdquo;",
-  "page": "/boat-lettering/",
-  "master": "media/shots/PR-3.jpg",
-  "social": "media/social/PR-3/"
- },
- {
-  "id": "PR-4",
-  "caption": "Measuring the transom",
-  "sub": "Send us the measurement and we lay it out",
-  "page": "/boat-lettering/",
-  "master": "media/shots/PR-4.jpg",
-  "social": "media/social/PR-4/"
- },
- {
-  "id": "PR-5",
-  "caption": "Script on a transom",
-  "sub": "Script reads beautifully on a transom",
-  "page": "/boat-lettering/",
-  "master": "media/shots/PR-5.jpg",
-  "social": "media/social/PR-5/"
- },
- {
-  "id": "PR-6",
-  "caption": "Three inches against six",
-  "sub": "The same number at two heights",
-  "page": "/boat-registration-numbers/",
-  "master": "media/shots/PR-6.jpg",
-  "social": "media/social/PR-6/"
- },
- {
-  "id": "ST-AL",
-  "caption": "AL 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Alabama number looks like on the bow",
-  "page": "/registration-numbers/alabama/",
-  "master": "media/shots/ST-AL.jpg",
-  "social": "media/social/ST-AL/"
- },
- {
-  "id": "ST-FL",
-  "caption": "FL 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Florida number looks like on the bow",
-  "page": "/registration-numbers/florida/",
-  "master": "media/shots/ST-FL.jpg",
-  "social": "media/social/ST-FL/"
- },
- {
-  "id": "ST-GA",
-  "caption": "GA 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Georgia number looks like on the bow",
-  "page": "/registration-numbers/georgia/",
-  "master": "media/shots/ST-GA.jpg",
-  "social": "media/social/ST-GA/"
- },
- {
-  "id": "ST-IL",
-  "caption": "IL 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Illinois number looks like on the bow",
-  "page": "/registration-numbers/illinois/",
-  "master": "media/shots/ST-IL.jpg",
-  "social": "media/social/ST-IL/"
- },
- {
-  "id": "ST-IN",
-  "caption": "IN 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Indiana number looks like on the bow",
-  "page": "/registration-numbers/indiana/",
-  "master": "media/shots/ST-IN.jpg",
-  "social": "media/social/ST-IN/"
- },
- {
-  "id": "ST-LA",
-  "caption": "LA 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Louisiana number looks like on the bow",
-  "page": "/registration-numbers/louisiana/",
-  "master": "media/shots/ST-LA.jpg",
-  "social": "media/social/ST-LA/"
- },
- {
-  "id": "ST-NY",
-  "caption": "NY 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a New York number looks like on the bow",
-  "page": "/registration-numbers/new-york/",
-  "master": "media/shots/ST-NY.jpg",
-  "social": "media/social/ST-NY/"
- },
- {
-  "id": "ST-NC",
-  "caption": "NC 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a North Carolina number looks like on the bow",
-  "page": "/registration-numbers/north-carolina/",
-  "master": "media/shots/ST-NC.jpg",
-  "social": "media/social/ST-NC/"
- },
- {
-  "id": "ST-OH",
-  "caption": "OH 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Ohio number looks like on the bow",
-  "page": "/registration-numbers/ohio/",
-  "master": "media/shots/ST-OH.jpg",
-  "social": "media/social/ST-OH/"
- },
- {
-  "id": "ST-PA",
-  "caption": "PA 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Pennsylvania number looks like on the bow",
-  "page": "/registration-numbers/pennsylvania/",
-  "master": "media/shots/ST-PA.jpg",
-  "social": "media/social/ST-PA/"
- },
- {
-  "id": "ST-SC",
-  "caption": "SC 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a South Carolina number looks like on the bow",
-  "page": "/registration-numbers/south-carolina/",
-  "master": "media/shots/ST-SC.jpg",
-  "social": "media/social/ST-SC/"
- },
- {
-  "id": "ST-TN",
-  "caption": "TN 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Tennessee number looks like on the bow",
-  "page": "/registration-numbers/tennessee/",
-  "master": "media/shots/ST-TN.jpg",
-  "social": "media/social/ST-TN/"
- },
- {
-  "id": "ST-VA",
-  "caption": "VA 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Virginia number looks like on the bow",
-  "page": "/registration-numbers/virginia/",
-  "master": "media/shots/ST-VA.jpg",
-  "social": "media/social/ST-VA/"
- },
- {
-  "id": "ST-WN",
-  "caption": "WN 1234 AB &middot; 3\" black on a light hull",
-  "sub": "What a Washington number looks like on the bow",
-  "page": "/registration-numbers/washington/",
-  "master": "media/shots/ST-WN.jpg",
-  "social": "media/social/ST-WN/"
- },
- {
-  "id": "HB-1",
-  "caption": "Every kind of boat",
-  "sub": "One pair fits any hull",
-  "page": "/registration-numbers/",
-  "master": "media/shots/HB-1.jpg",
-  "social": "media/social/HB-1/"
- },
- {
-  "id": "HB-2",
-  "caption": "Aluminium and fibreglass",
-  "sub": "Different hulls, different adhesive",
-  "page": "/for/",
-  "master": "media/shots/HB-2.jpg",
-  "social": "media/social/HB-2/"
- },
- {
-  "id": "HB-3",
-  "caption": "Cut to order in Evansdale",
-  "sub": "Plotter, vinyl, and a bench",
-  "page": "/about/",
-  "master": "media/shots/HB-3.jpg",
-  "social": "media/social/HB-3/"
- },
- {
-  "id": "HB-4",
-  "caption": "Copy it off the card",
-  "sub": "Character by character",
-  "page": "/guides/",
-  "master": "media/shots/HB-4.jpg",
-  "social": "media/social/HB-4/"
- },
- {
-  "id": "HB-5",
-  "caption": "On the Cedar River",
-  "sub": "Local pickup at the shop",
-  "page": "/boat-lettering-waterloo-cedar-falls/",
-  "master": "media/shots/HB-5.jpg",
-  "social": "media/social/HB-5/"
- },
- {
-  "id": "HB-6",
-  "caption": "Names at the dock",
-  "sub": "From $29, any font",
-  "page": "/tools/",
-  "master": "media/shots/HB-6.jpg",
-  "social": "media/social/HB-6/"
- }
+  {
+    "id": "AL-01",
+    "caption": "IA 3717 ZW \u00b7 3\" black on a white hull",
+    "sub": "Bow, both sides, with the validation decal aft",
+    "page": "/registration-numbers/iowa/",
+    "master": "media/shots/AL-01.png",
+    "social": "media/social/AL-01/"
+  },
+  {
+    "id": "AL-02",
+    "caption": "MC 1234 AB \u00b7 3\" white on a navy hull",
+    "sub": "Dark hull, light vinyl - the contrast rule in one picture",
+    "page": "/registration-numbers/michigan/",
+    "master": "media/shots/AL-02.png",
+    "social": "media/social/AL-02/"
+  },
+  {
+    "id": "AL-03",
+    "caption": "Transom name \u00b7 6\" black script",
+    "sub": "Boat names start at $29",
+    "page": "/boat-name-decals/",
+    "master": "media/shots/AL-03.png",
+    "social": "media/social/AL-03/"
+  },
+  {
+    "id": "AL-04",
+    "caption": "WS 1234 AB \u00b7 3\" black on bare aluminium",
+    "sub": "Flat panel between the rivet rows",
+    "page": "/for/jon-boats/",
+    "master": "media/shots/AL-04.png",
+    "social": "media/social/AL-04/"
+  },
+  {
+    "id": "AL-05",
+    "caption": "CF 1234 AB \u00b7 3\" black on a PWC hull",
+    "sub": "High-tack vinyl, free on every PWC order",
+    "page": "/for/jet-skis-and-pwc/",
+    "master": "media/shots/AL-05.png",
+    "social": "media/social/AL-05/"
+  },
+  {
+    "id": "AL-06",
+    "caption": "MN 1234 AB \u00b7 3\" black on a kayak",
+    "sub": "Rotomoulded plastic needs high-tack",
+    "page": "/for/kayaks-and-canoes/",
+    "master": "media/shots/AL-06.png",
+    "social": "media/social/AL-06/"
+  },
+  {
+    "id": "AL-07",
+    "caption": "TX 1234 AB \u00b7 3\" black on a pontoon rail",
+    "sub": "Textured aluminium, high-tack as standard",
+    "page": "/for/pontoon-boats/",
+    "master": "media/shots/AL-07.png",
+    "social": "media/social/AL-07/"
+  },
+  {
+    "id": "AL-08",
+    "caption": "Name + hailing port \u00b7 6\" and 4\" on a curved transom",
+    "sub": "Arced to the curve from your photo",
+    "page": "/for/sailboats/",
+    "master": "media/shots/AL-08.png",
+    "social": "media/social/AL-08/"
+  },
+  {
+    "id": "AL-09",
+    "caption": "Going on \u00b7 wet method, application tape still over the top",
+    "sub": "Pre-spaced, so the spacing is already legal",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/AL-09.png",
+    "social": "media/social/AL-09/"
+  },
+  {
+    "id": "AL-10",
+    "caption": "MO 1234 AB \u00b7 3\" white on metalflake",
+    "sub": "Glossy gelcoat is the easiest surface there is",
+    "page": "/for/bass-boats/",
+    "master": "media/shots/AL-10.png",
+    "social": "media/social/AL-10/"
+  },
+  {
+    "id": "HT-1",
+    "caption": "Step 1 &middot; Wash, then wipe with alcohol",
+    "sub": "Soap leaves a film and wax is the enemy of adhesive",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-1.jpg",
+    "social": "media/social/HT-1/"
+  },
+  {
+    "id": "HT-2",
+    "caption": "Step 2 &middot; Tape the sheet in position, dry",
+    "sub": "Two strips of tape along the top edge, as a hinge",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-2.jpg",
+    "social": "media/social/HT-2/"
+  },
+  {
+    "id": "HT-3",
+    "caption": "Step 3 &middot; Wet the hull",
+    "sub": "A few drops of dish soap in a spray bottle of water",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-3.jpg",
+    "social": "media/social/HT-3/"
+  },
+  {
+    "id": "HT-4",
+    "caption": "Step 4 &middot; Peel the backing away",
+    "sub": "The characters stay on the clear tape",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-4.jpg",
+    "social": "media/social/HT-4/"
+  },
+  {
+    "id": "HT-5",
+    "caption": "Step 5 &middot; Squeegee from the centre out",
+    "sub": "Firmly, from the middle toward each edge",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-5.jpg",
+    "social": "media/social/HT-5/"
+  },
+  {
+    "id": "HT-6",
+    "caption": "Step 6 &middot; Pull the tape back on itself",
+    "sub": "Flat back against itself, not straight out",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-6.jpg",
+    "social": "media/social/HT-6/"
+  },
+  {
+    "id": "HT-7",
+    "caption": "Step 7 &middot; Leave it 24 hours",
+    "sub": "No pressure washing, no launching, for a day",
+    "page": "/guides/how-to-apply-boat-lettering/",
+    "master": "media/shots/HT-7.jpg",
+    "social": "media/social/HT-7/"
+  },
+  {
+    "id": "GD-1",
+    "caption": "Where the numbers go",
+    "sub": "Forward half, both sides",
+    "page": "/guides/where-to-put-boat-registration-numbers/",
+    "master": "media/shots/GD-1.jpg",
+    "social": "media/social/GD-1/"
+  },
+  {
+    "id": "GD-2",
+    "caption": "Removing old lettering",
+    "sub": "The ghost line the old set leaves behind",
+    "page": "/guides/how-to-remove-boat-lettering/",
+    "master": "media/shots/GD-2.jpg",
+    "social": "media/social/GD-2/"
+  },
+  {
+    "id": "GD-4",
+    "caption": "What three inches looks like",
+    "sub": "3 inches is the federal minimum",
+    "page": "/guides/boat-registration-number-rules/",
+    "master": "media/shots/GD-4.jpg",
+    "social": "media/social/GD-4/"
+  },
+  {
+    "id": "AC-1",
+    "caption": "On the water",
+    "sub": "Social only - never used as proof",
+    "page": "",
+    "master": "media/shots/AC-1.jpg",
+    "social": "media/social/AC-1/"
+  },
+  {
+    "id": "AC-2",
+    "caption": "At the ramp",
+    "sub": "Social only - never used as proof",
+    "page": "",
+    "master": "media/shots/AC-2.jpg",
+    "social": "media/social/AC-2/"
+  },
+  {
+    "id": "AC-3",
+    "caption": "Tied up",
+    "sub": "Social only - never used as proof",
+    "page": "",
+    "master": "media/shots/AC-3.jpg",
+    "social": "media/social/AC-3/"
+  },
+  {
+    "id": "PR-1",
+    "caption": "What arrives in the envelope",
+    "sub": "Two sets, a squeegee and the instructions",
+    "page": "/boat-registration-numbers/",
+    "master": "media/shots/PR-1.jpg",
+    "social": "media/social/PR-1/"
+  },
+  {
+    "id": "PR-2",
+    "caption": "Cut to order",
+    "sub": "Cut from sheet vinyl to order, not printed",
+    "page": "/boat-name-decals/",
+    "master": "media/shots/PR-2.jpg",
+    "social": "media/social/PR-2/"
+  },
+  {
+    "id": "PR-3",
+    "caption": "The contrast mistake",
+    "sub": "White on white is not &ldquo;distinctly visible&rdquo;",
+    "page": "/boat-lettering/",
+    "master": "media/shots/PR-3.jpg",
+    "social": "media/social/PR-3/"
+  },
+  {
+    "id": "PR-4",
+    "caption": "Measuring the transom",
+    "sub": "Send us the measurement and we lay it out",
+    "page": "/boat-lettering/",
+    "master": "media/shots/PR-4.jpg",
+    "social": "media/social/PR-4/"
+  },
+  {
+    "id": "PR-5",
+    "caption": "Script on a transom",
+    "sub": "Script reads beautifully on a transom",
+    "page": "/boat-lettering/",
+    "master": "media/shots/PR-5.jpg",
+    "social": "media/social/PR-5/"
+  },
+  {
+    "id": "PR-6",
+    "caption": "Three inches against six",
+    "sub": "The same number at two heights",
+    "page": "/boat-registration-numbers/",
+    "master": "media/shots/PR-6.jpg",
+    "social": "media/social/PR-6/"
+  },
+  {
+    "id": "ST-AL",
+    "caption": "AL 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Alabama number looks like on the bow",
+    "page": "/registration-numbers/alabama/",
+    "master": "media/shots/ST-AL.jpg",
+    "social": "media/social/ST-AL/"
+  },
+  {
+    "id": "ST-FL",
+    "caption": "FL 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Florida number looks like on the bow",
+    "page": "/registration-numbers/florida/",
+    "master": "media/shots/ST-FL.jpg",
+    "social": "media/social/ST-FL/"
+  },
+  {
+    "id": "ST-GA",
+    "caption": "GA 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Georgia number looks like on the bow",
+    "page": "/registration-numbers/georgia/",
+    "master": "media/shots/ST-GA.jpg",
+    "social": "media/social/ST-GA/"
+  },
+  {
+    "id": "ST-IL",
+    "caption": "IL 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Illinois number looks like on the bow",
+    "page": "/registration-numbers/illinois/",
+    "master": "media/shots/ST-IL.jpg",
+    "social": "media/social/ST-IL/"
+  },
+  {
+    "id": "ST-IN",
+    "caption": "IN 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Indiana number looks like on the bow",
+    "page": "/registration-numbers/indiana/",
+    "master": "media/shots/ST-IN.jpg",
+    "social": "media/social/ST-IN/"
+  },
+  {
+    "id": "ST-LA",
+    "caption": "LA 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Louisiana number looks like on the bow",
+    "page": "/registration-numbers/louisiana/",
+    "master": "media/shots/ST-LA.jpg",
+    "social": "media/social/ST-LA/"
+  },
+  {
+    "id": "ST-NY",
+    "caption": "NY 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a New York number looks like on the bow",
+    "page": "/registration-numbers/new-york/",
+    "master": "media/shots/ST-NY.jpg",
+    "social": "media/social/ST-NY/"
+  },
+  {
+    "id": "ST-NC",
+    "caption": "NC 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a North Carolina number looks like on the bow",
+    "page": "/registration-numbers/north-carolina/",
+    "master": "media/shots/ST-NC.jpg",
+    "social": "media/social/ST-NC/"
+  },
+  {
+    "id": "ST-OH",
+    "caption": "OH 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Ohio number looks like on the bow",
+    "page": "/registration-numbers/ohio/",
+    "master": "media/shots/ST-OH.jpg",
+    "social": "media/social/ST-OH/"
+  },
+  {
+    "id": "ST-PA",
+    "caption": "PA 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Pennsylvania number looks like on the bow",
+    "page": "/registration-numbers/pennsylvania/",
+    "master": "media/shots/ST-PA.jpg",
+    "social": "media/social/ST-PA/"
+  },
+  {
+    "id": "ST-SC",
+    "caption": "SC 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a South Carolina number looks like on the bow",
+    "page": "/registration-numbers/south-carolina/",
+    "master": "media/shots/ST-SC.jpg",
+    "social": "media/social/ST-SC/"
+  },
+  {
+    "id": "ST-TN",
+    "caption": "TN 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Tennessee number looks like on the bow",
+    "page": "/registration-numbers/tennessee/",
+    "master": "media/shots/ST-TN.jpg",
+    "social": "media/social/ST-TN/"
+  },
+  {
+    "id": "ST-VA",
+    "caption": "VA 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Virginia number looks like on the bow",
+    "page": "/registration-numbers/virginia/",
+    "master": "media/shots/ST-VA.jpg",
+    "social": "media/social/ST-VA/"
+  },
+  {
+    "id": "ST-WN",
+    "caption": "WN 1234 AB &middot; 3\" black on a light hull",
+    "sub": "What a Washington number looks like on the bow",
+    "page": "/registration-numbers/washington/",
+    "master": "media/shots/ST-WN.jpg",
+    "social": "media/social/ST-WN/"
+  },
+  {
+    "id": "HB-1",
+    "caption": "Every kind of boat",
+    "sub": "One pair fits any hull",
+    "page": "/registration-numbers/",
+    "master": "media/shots/HB-1.jpg",
+    "social": "media/social/HB-1/"
+  },
+  {
+    "id": "HB-2",
+    "caption": "Aluminium and fibreglass",
+    "sub": "Different hulls, different adhesive",
+    "page": "/for/",
+    "master": "media/shots/HB-2.jpg",
+    "social": "media/social/HB-2/"
+  },
+  {
+    "id": "HB-3",
+    "caption": "Cut to order in Evansdale",
+    "sub": "Plotter, vinyl, and a bench",
+    "page": "/about/",
+    "master": "media/shots/HB-3.jpg",
+    "social": "media/social/HB-3/"
+  },
+  {
+    "id": "HB-4",
+    "caption": "Copy it off the card",
+    "sub": "Character by character",
+    "page": "/guides/",
+    "master": "media/shots/HB-4.jpg",
+    "social": "media/social/HB-4/"
+  },
+  {
+    "id": "HB-5",
+    "caption": "On the Cedar River",
+    "sub": "Local pickup at the shop",
+    "page": "/boat-lettering-waterloo-cedar-falls/",
+    "master": "media/shots/HB-5.jpg",
+    "social": "media/social/HB-5/"
+  }
 ]
