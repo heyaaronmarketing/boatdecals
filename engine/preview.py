@@ -29,7 +29,7 @@ CSS = """
 .prev{border-radius:10px;padding:10px 12px;overflow:hidden;background:#e9f0f4;
 border:1px solid #cfdde6;transition:background .22s,border-color .22s}
 .prev.night{background:#1b2a33;border-color:#0e1b22}
-#prevsvg{display:block;width:100%;height:94px;transition:height .18s ease}
+#prevsvg{display:block;width:100%;height:94px}
 #p_num,#p_name{transition:fill .2s}
 .prevlbl{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;font-size:11.2px;
 color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
@@ -74,7 +74,7 @@ window.BNS_PREVIEW = (function(){
 
     tn.style.display = o.showNum ? '' : 'none';
     nm.style.display = o.showName ? '' : 'none';
-    tn.textContent = o.number || 'IA 3717 ZW';
+    tn.textContent = o.number || o.placeholder || 'IA 3717 ZW';
     nm.textContent = o.name   || 'Second Wind';
 
     // Stack the two lines before measuring, otherwise they sit on top of
@@ -86,18 +86,19 @@ window.BNS_PREVIEW = (function(){
   }
 
   /**
-   * Size the panel to the character height, then fit the glyphs to it.
+   * Fixed panel, scaling glyphs.
    *
-   * 3" is the baseline and keeps the panel it has always had; 4, 5 and 6 grow
-   * it in proportion, so picking a taller character visibly produces taller
-   * lettering instead of the same text re-fitted to the same box.
+   * The panel stays the size it has always been and the lettering grows inside
+   * it: 6" fills the panel, 3" renders at half that, 4 and 5 in between. The
+   * panel is the hull, so it should not change when the characters do.
    *
-   * Padding the viewBox out to the panel's own aspect ratio is what makes that
-   * proportional. Shrink-wrapping alone always fills the panel in one
-   * dimension, so every height rendered identically.
+   * Done by inflating the viewBox rather than resizing the element - a larger
+   * viewBox around the same glyphs renders them smaller. Shrink-wrapping alone
+   * always fills the panel in one dimension, which is why every height used to
+   * render identically.
    *
-   * Text too wide for the panel stays width-limited and shrinks, which is
-   * honest: a long name at 6" really will not fit where a short one does.
+   * Text too wide for the panel still shrinks to fit, which is honest: a long
+   * name at 6" really will not fit where a short one does.
    */
   function fit(svg, nodes, height){
     var x1=1e9, y1=1e9, x2=-1e9, y2=-1e9, got=false;
@@ -111,19 +112,22 @@ window.BNS_PREVIEW = (function(){
     if(!got){ svg.setAttribute('viewBox','0 0 300 64'); return; }
 
     var h = Math.max(3, Math.min(6, parseFloat(height) || 3));
-    svg.style.height = Math.round(BASE_H * h / 3) + 'px';
+    var scale = h / 6;                       // 6" fills the panel, 3" is half
 
-    var vx = x1 - PAD, vy = y1 - PAD;
-    var vw = (x2 - x1) + PAD * 2, vh = (y2 - y1) + PAD * 2;
-
+    var gw = (x2 - x1) + PAD * 2, gh = (y2 - y1) + PAD * 2;
     var box = svg.getBoundingClientRect();
-    if (box.width > 0 && box.height > 0) {
-      var want = vh * (box.width / box.height);
-      // Narrower than the panel: pad the sides so the fit is height-driven and
-      // the glyphs end up exactly as tall as the panel.
-      if (want > vw) { vx -= (want - vw) / 2; vw = want; }
-    }
-    svg.setAttribute('viewBox', vx+' '+vy+' '+vw+' '+vh);
+    var aspect = (box.width > 0 && box.height > 0)
+      ? box.width / box.height : 300 / BASE_H;
+
+    // Inflate the viewBox so the glyphs occupy `scale` of the panel height.
+    var vh = gh / scale, vw = vh * aspect;
+    // Still too wide at that scale? Let width drive and keep the aspect, so
+    // long lettering shrinks instead of spilling out of the panel.
+    if (gw > vw) { vw = gw; vh = vw / aspect; }
+
+    var cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
+    svg.setAttribute('viewBox',
+      (cx - vw / 2)+' '+(cy - vh / 2)+' '+vw+' '+vh);
   }
 
   return {render: render};

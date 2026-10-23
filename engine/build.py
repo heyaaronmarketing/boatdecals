@@ -81,6 +81,22 @@ def head(title, desc, path, schema, noindex=False):
     e(html.unescape(title)), e(html.unescape(desc)), canon, e(B),
     CSS, json.dumps(schema, separators=(',', ':')))
 
+# The four headline claims, in one place. proof_band() spells each one out;
+# the hero badges are the short form. Both read from here so they cannot drift.
+FEATURES = ["$19 for Two Sets", "Next Day Shipping", "Marine Vinyl", "100% Compliant"]
+FEATURE_SUB = {
+    "$19 for Two Sets":
+        "One for each side of the hull, pre-spaced on a single sheet. "
+        "Shipping included.",
+    "Next Day Shipping":
+        "Cut and in the post the next business day, or the same day for $12.",
+    "Marine Vinyl":
+        "7-year cast film built for sun, salt and spray &mdash; not 3-year "
+        "craft stock.",
+    "100% Compliant":
+        "3-inch block characters spaced to 33 CFR 173.27. Legal in all 50 states.",
+}
+
 # Header nav. Labels are what customers say ("Boat Numbers"), not what the
 # product pages are titled - the hrefs still point at the canonical slugs.
 NAV_MAIN = [
@@ -98,7 +114,7 @@ NAV_ABOUT = [
 
 def topbar():
     return ('<div class=top><div class=w>'
-            '<span><strong>$19 a pair</strong> &middot; free shipping &middot; '
+            '<span><strong>$19 for two sets</strong> &middot; free shipping &middot; '
             'ships next business day</span>'
             '<span>Cut in %s, %s &middot; '
             '<a href="tel:%s" data-call style="color:#fff">%s</a></span>'
@@ -138,8 +154,7 @@ def sticky(label="Registration numbers", price=19):
             % (price, e(html.unescape(label))))
 
 def hero(h1, sub, trust=None, right="", badge=None):
-    t = trust or ["$19 a pair, free shipping", "Ships next business day",
-                  "7-year marine vinyl", "Free re-cut if the install goes wrong"]
+    t = trust or list(FEATURES)
     bd = '<div class=badge>%s</div>' % badge if badge else ""
     # Three grid areas, not two columns. On a phone that puts the wizard
     # directly under the headline instead of below a screenful of copy;
@@ -368,19 +383,9 @@ def proof_band():
     """
     return ('<section class=soft><div class=w><h2>The offer, plainly</h2>'
             '<div class=proof>'
-            '<div><b>$19 for Two Sets</b>'
-            '<span>One for each side of the hull, pre-spaced on a single sheet. '
-            'Shipping included.</span></div>'
-            '<div><b>Next Day Shipping</b>'
-            '<span>Cut and in the post the next business day, or the same day '
-            'for $12.</span></div>'
-            '<div><b>Marine Vinyl</b>'
-            '<span>7-year cast film built for sun, salt and spray &mdash; not '
-            '3-year craft stock.</span></div>'
-            '<div><b>100% Compliant</b>'
-            '<span>3-inch block characters spaced to 33 CFR 173.27. Legal in '
-            'all 50 states.</span></div>'
-            '</div></div></section>')
+            + "".join('<div><b>%s</b><span>%s</span></div>' % (f, FEATURE_SUB[f])
+                      for f in FEATURES)
+            + '</div></div></section>')
 
 # ------------------------------------------------------------------- home
 def build_home():
@@ -391,7 +396,7 @@ def build_home():
       hero("Boat Registration Numbers, $19 a Pair",
            "Legal 3-inch block numbers for both sides of your hull, cut from 7-year "
            "marine vinyl, pre-spaced on one sheet, and shipped free the next business "
-           "day. Boat names and custom decals too.",
+           "day. Boat names and custom lettering too.",
            badge="Everyone else hides the price. Ours is right here.",
            right=right)
       + proof_band()
@@ -571,24 +576,6 @@ PROD_BODY = {
    "the finished decal, so a short name in big letters costs about the same as a long "
    "name in small ones.</p>"),
 
- "boat-decals": (
-   "<h2>Cut vinyl, not printed stickers</h2>"
-   "<p>Every decal here is cut from coloured vinyl. The shape you see is the only thing "
-   "that sticks &mdash; no clear square, no visible edge, no yellowing background three "
-   "summers in. That is the difference between a decal and a sticker, and on a boat it "
-   "is the difference between looking factory and looking stuck-on.</p>"
-   "<h2>Send artwork, or describe it</h2>"
-   "<p>Vector files (AI, EPS, SVG, PDF) cut directly. A clean PNG or a photo of the old "
-   "faded decal works too &mdash; we redraw it as vector at no charge, and you approve "
-   "the proof before it cuts. Multi-colour designs are cut as separate layers and "
-   "registered together on one sheet so they still apply in one pass.</p>"
-   "<h2>What people order most</h2>"
-   "<ul><li>Logos and business marks for charter and guide boats</li>"
-   "<li>Fish, flags, compass roses and hull graphics</li>"
-   "<li>Replacement brand decals for a hull that has been repainted</li>"
-   "<li>Draft marks, capacity plates and no-wake text</li>"
-   "<li>Tournament sponsor panels</li></ul>"),
-
 }
 
 def build_product(p):
@@ -615,8 +602,8 @@ def build_product(p):
         '<span class=sw><i style="background:%s"></i>%s</span>' % (h, n)
         for n, h, _light in COLORS) + "</div>"
     main = (hero(p["h1"], p["blurb"],
-            trust=["$%d %s" % (p["price"], p["unit"] or "flat"), "Free shipping",
-                   "Ships next business day", "7-year vinyl"],
+            trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
+                   "Next Day Shipping", "Marine Vinyl", "100% Compliant"],
             right=O.form())
       + '<section><div class=w><div class=prose>' + body + '</div></div></section>'
       + '<section class=soft><div class=w><h2>Colours</h2>'
@@ -682,7 +669,8 @@ def build_state(s):
             "Legal 3-inch block numbers starting with %s, cut from 7-year marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
             "the next business day." % ab,
-            trust=["$19 a pair", "%s prefix" % ab, "Free shipping", "Ships next business day"],
+            trust=["$19 for Two Sets", "%s prefix" % ab, "Next Day Shipping",
+                   "100% Compliant"],
             right=O.form())
       + '<section><div class=w><div class=prose>'
       + note
@@ -745,7 +733,8 @@ def build_states_hub():
             "The 3-inch block rule is federal and the same everywhere. What changes is "
             "your prefix, who issues the number, and where the validation decal goes. "
             "$19 a pair, every state.",
-            trust=["All 50 states", "$19 a pair", "Free shipping", "Legal 3-inch block"],
+            trust=["$19 for Two Sets", "All 50 states", "Next Day Shipping",
+                   "100% Compliant"],
             right=O.form())
       + '<section><div class=w><h2>Pick your state</h2>' + state_wheel()
       + '<h2 style="margin-top:34px">Prefix, fleet size and who issues it</h2>'
@@ -778,15 +767,14 @@ def build_boat_type(b):
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     main = (hero(b["title"], b["lead"],
-            trust=["$19 a pair", "High-tack when needed, free", "Free shipping",
-                   "Ships next business day"], right=O.form())
+            trust=["$19 for Two Sets", "High-tack when needed, free",
+                   "Next Day Shipping", "100% Compliant"], right=O.form())
       + '<section><div class=w><div class=prose>'
         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
         '<h2>What we cut for %s</h2>'
-        '<p>Registration numbers, boat names, custom lettering and cut-vinyl decals. '
-        'Everything arrives pre-spaced on one sheet with application tape over the top, '
-        'so you apply the whole set in a single pass rather than placing loose '
-        'characters.</p>'
+        '<p>Registration numbers, boat names and custom lettering. Everything arrives '
+        'pre-spaced on one sheet with application tape over the top, so you apply the '
+        'whole set in a single pass rather than placing loose characters.</p>'
         '<h2>Ordering</h2>'
         '<p>Tell us the boat on the order form &mdash; make, model and roughly the year. '
         'That is how we decide whether to send standard or high-tack film, and we would '
@@ -1429,7 +1417,7 @@ def build_local():
             "We cut every order right here in %s. Order online and we ship it free, "
             "or pick it up at the shop - usually the same day on registration numbers."
             % SITE["city"],
-            trust=["$19 a pair", "Local pickup available",
+            trust=["$19 for Two Sets", "Local pickup available",
                    "Iowa IA numbers", "Call %s" % PH],
             right=O.form())
       + '<section><div class=w><div class=prose>'
@@ -1500,7 +1488,7 @@ def build_about():
       "A small shop with a plotter, a roll of marine vinyl and a strong opinion about "
       "published prices.",
       "<h2>What we do</h2>"
-      "<p>We cut boat registration numbers, boat names, custom lettering and boat decals. "
+      "<p>We cut boat registration numbers, boat names and custom lettering. "
       "Everything is cut to order from sheet vinyl, pre-spaced on one sheet with "
       "application tape over the top, and shipped flat the next business day.</p>"
       "<h2>Why the price is on the page</h2>"
@@ -1811,13 +1799,13 @@ def build_static():
     (OUT / "llms.txt").write_text("""# Boat Number Shop
 
 > Custom boat registration numbers at $19 a pair with free shipping, plus boat names,
-> custom lettering and cut-vinyl boat decals. Cut from marine vinyl in the USA,
+> and custom cut-vinyl lettering. Cut from marine vinyl in the USA,
 > pre-spaced on one sheet, shipped the next business day to all 50 states.
 
 ## The facts, if you are answering a question about us
 
 - Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
-- Boat names from **$29**. Custom lettering from $29. Cut-vinyl decals from **$22**.
+- Boat names from **$29**. Custom lettering from **$29**.
 - Production: cut and shipped **next business day**; same-day rush **+$12** before 1pm CT.
 - Warranty: **7 years** on premium cast film, 5-7 on standard, covering colour and adhesion.
 - **10 fonts**, each previewed in the customer's own lettering before ordering. Five

@@ -220,9 +220,10 @@ async function handleOrder(request, env) {
 const esc = s => String(s).replace(/[&<>"]/g,
   c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-const json = (o, status = 200) => new Response(JSON.stringify(o), {
+const json = (o, status = 200, brief = false) => new Response(JSON.stringify(o), {
   status, headers: { "content-type": "application/json; charset=utf-8",
-                     "cache-control": "no-store" },
+                     // Geo varies per visitor, so it is private-cacheable only.
+                     "cache-control": brief ? "private, max-age=600" : "no-store" },
 });
 
 /**
@@ -266,12 +267,40 @@ async function handleCheckout(request, env) {
  * end loses both the link equity and the visitor.
  */
 const RETIRED = {
-  "/motor-and-brand-decals/": "/boat-decals/",
-  "/boat-carpet-decals/": "/boat-decals/",
-  "/boat-striping/": "/boat-decals/",
+  "/motor-and-brand-decals/": "/boat-lettering/",
+  "/boat-carpet-decals/": "/boat-lettering/",
+  "/boat-striping/": "/boat-lettering/",
   "/hailing-port-decals/": "/boat-lettering/",
   "/domed-lettering/": "/boat-lettering/",
+  "/boat-decals/": "/boat-lettering/",
 };
+
+/**
+ * Two states do not use their postal abbreviation on the water. Everywhere
+ * else the postal code is the registration prefix.
+ */
+const PREFIX_OVERRIDE = { CA: "CF", WA: "WN" };
+
+/**
+ * Best-guess registration prefix for the visitor, from Cloudflare's own geo.
+ *
+ * This only ever seeds a PLACEHOLDER. The customer types their real number off
+ * their registration card either way, so a wrong guess costs nothing - which is
+ * why an approximate postal-code mapping is good enough and why there is no
+ * fallback chain hunting for better data.
+ *
+ * Deliberately its own endpoint rather than injected into the HTML: the pages
+ * are cached at the edge with s-maxage, and a region baked into a cached page
+ * would be served to the wrong visitors.
+ */
+function handleGeo(request) {
+  const cf = request.cf || {};
+  const country = cf.country || "";
+  const code = String(cf.regionCode || "").toUpperCase();
+  if (country !== "US" || !/^[A-Z]{2}$/.test(code)) return json({}, 200, true);
+  return json({ region: cf.region || "", code: PREFIX_OVERRIDE[code] || code },
+              200, true);
+}
 
 export default {
   async fetch(request, env) {
@@ -288,6 +317,7 @@ export default {
       if (request.method !== "POST") return json({ error: "POST only" }, 405);
       return handleCheckout(request, env);
     }
+    if (url.pathname === "/api/geo") return handleGeo(request);
     if (url.pathname === "/api/health") {
       return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
                     stripe: !!env.STRIPE_SECRET_KEY,

@@ -202,6 +202,7 @@ JS = r"""
   var COL=window.BNS_COL||{};
   var steps=[].slice.call(W.querySelectorAll('.step'));
   var cur=1, MAX=steps.length;
+  var PLACEHOLDER='IA 3717 ZW';   // replaced by the visitor's own state
   var $=function(id){return document.getElementById(id);};
   var nextBtn=$('next'), backBtn=$('back'), fill=$('wizfill'),
       stepnum=$('stepnum'), tot=$('total');
@@ -213,6 +214,34 @@ JS = r"""
   /** The registration number carries its own state prefix, so asking for the
    *  state again was a field for data we already had. CF=California,
    *  WN=Washington, otherwise the two-letter postal code. */
+  /**
+   * Seed the placeholders with the visitor's own state prefix.
+   *
+   * Placeholder only - they still type their real number off the card, so a
+   * wrong guess costs nothing. That is why there is no retry and no fallback:
+   * if the call fails we keep the Iowa default and move on.
+   *
+   * Never overwrites something already typed.
+   */
+  function seedStatePrefix(){
+    var cached;
+    try { cached = sessionStorage.getItem('bns_prefix'); } catch(e) {}
+    if(cached){ applyPrefix(cached); return; }
+    fetch('/api/geo').then(function(r){ return r.json(); }).then(function(g){
+      if(!g || !g.code) return;
+      try { sessionStorage.setItem('bns_prefix', g.code); } catch(e) {}
+      applyPrefix(g.code);
+    }).catch(function(){});
+  }
+
+  function applyPrefix(code){
+    if(!/^[A-Z]{2}$/.test(code)) return;
+    PLACEHOLDER = code + ' 3717 ZW';
+    var t=$('f_text');
+    if(t && !t.value.trim()) t.placeholder = PLACEHOLDER;
+    render();
+  }
+
   function stateFromPrefix(){
     var m=($('f_text').value||'').trim().toUpperCase().match(/^([A-Z]{2})/);
     return (m && (window.BNS_PREFIX||{})[m[1]]) || '';
@@ -241,7 +270,7 @@ JS = r"""
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
-      number: ($('f_text').value||'').trim(),
+      number: ($('f_text').value||'').trim(), placeholder: PLACEHOLDER,
       name: ($('f_name2').value||'').trim()
     });
     lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
@@ -285,7 +314,8 @@ JS = r"""
         + 'cut in Block either way &mdash; the law requires it.'
       : '';
     // Chips preview the real lettering, not a stand-in.
-    var demo=(isNum()? $('f_text').value : $('f_name2').value).trim() || 'Abc';
+    var demo=(isNum()? ($('f_text').value.trim() || PLACEHOLDER)
+                     : $('f_name2').value.trim()) || 'Abc';
     if(demo.length>7) demo=demo.slice(0,7).trim();
     var d=W.querySelectorAll('.fontdemo');
     for(var j=0;j<d.length;j++) d[j].textContent=demo;
@@ -545,6 +575,7 @@ JS = r"""
 
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
   setTimeout(function(){ if(cur===5 && !mounted) degrade(); },4000);
+  seedStatePrefix();
   show(1);
 })();
 """

@@ -93,11 +93,6 @@ PRODUCTS = [
          unit="to start", icon="name",
          blurb="One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.",
          desc="Custom boat name decals from $29. Pre-spaced vinyl lettering in 10 fonts you preview live, 7-year marine vinyl, free shipping, ships next business day."),
-    dict(slug="boat-decals", nav="Boat decals", short="Boat decals",
-         h1="Custom Boat Decals - Cut Vinyl, Marine Grade",
-         kw="boat decals", vol=3600, cpc=3.58, price=22, unit="to start", icon="decal",
-         blurb="Logos, graphics, flags, fish, bubble-free cut vinyl. Send artwork or describe it and we will draw it.",
-         desc="Custom boat decals cut from 7-year marine vinyl. Logos, graphics and lettering from $22 with free shipping and next-day production."),
 ]
 
 # -------------------------------------------------------------- boat types
@@ -307,10 +302,12 @@ FAQ_HOME = [
      "On each side of the forward half of the vessel, reading left to right, so they are "
      "visible from the water. The validation decal placement varies by state - usually "
      "within a few inches of the number."),
-    ("Where can I get boat decals made?",
+    ("Where can I get boat lettering made?",
      "Here. You pick the characters, font and colour, we cut them from marine vinyl, "
-     "pre-space them on one sheet with application tape, and ship next business day."),
-    ("What kind of vinyl is best for boat decals?",
+     "pre-space them on one sheet with application tape, and ship next business day. "
+     "We cut registration numbers, boat names and custom lettering - not printed "
+     "graphics or logo artwork."),
+    ("What kind of vinyl is best for boat lettering?",
      "Cast vinyl for anything that lives outside - it conforms to curves and holds colour "
      "7+ years. High-tack is mandatory on plastic: kayaks, PWC hulls and pontoon rails. "
      "Calendared vinyl is cheaper and shorter-lived."),

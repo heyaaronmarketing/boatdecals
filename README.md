@@ -101,19 +101,35 @@ first, the only symptom was that the scroll-into-view and autofocus after it
 silently stopped working. `verify.py` now cross-checks every id the wizard's JS
 writes against the ids present in the markup.
 
-The panel is **94px at the 3" baseline and scales linearly** with the character
-height — 125px at 4", 157px at 5", 188px at 6" — so picking a taller character
-visibly produces taller lettering instead of the same text re-fitted to the same
-box. Measured: 1.00 / 1.34 / 1.68 / 2.00.
+The panel is **fixed at 94px and the glyphs scale inside it** — 6" fills it,
+3" renders at half. `fit()` inflates the viewBox rather than resizing the
+element: a larger viewBox around the same glyphs renders them smaller. Measured
+on short text: 1.00 / 1.35 / 1.65 / 2.00.
 
-`fit()` pads the viewBox out to the panel's own aspect ratio to achieve that.
 Shrink-wrapping alone always fills the panel in one dimension, which is why
-every height used to render identically. Text too wide for the panel stays
-width-limited and shrinks, which is honest — a long name at 6" really will not
-fit where a short one does.
+every height used to render identically before. Text too wide for the panel
+still shrinks to fit, so a long string at 6" lands below 2.00 — honest, because
+it really will not fit where a short one does.
 
-The baseline is a constant (`BASE_H`), not a CSS `min/max` pair: a min/max let
-the box resize as the text grew, which made the panel jitter while typing.
+The panel height is a constant (`BASE_H`), never a CSS `min/max` pair: a
+min/max let the box resize as the text grew, which made it jitter while typing.
+
+### Visitor state detection
+
+`/api/geo` returns `{region, code}` from Cloudflare's own `request.cf`, and the
+wizard seeds the placeholder with it (`seedStatePrefix`). `PREFIX_OVERRIDE` in
+the worker maps **CA → CF** and **WA → WN**, the two states that don't use their
+postal abbreviation on the water.
+
+It is a **placeholder only** — the customer types their real number off the
+card regardless, so a wrong guess costs nothing. That is why there's no retry,
+no fallback chain, and no attempt at better accuracy: failure quietly keeps the
+Iowa default. It never overwrites typed text, and the result is cached in
+`sessionStorage`.
+
+Deliberately its own endpoint rather than injected into the HTML: pages are
+edge-cached with `s-maxage`, and a region baked into a cached page would be
+served to the wrong visitors.
 
 The panel flips dark when the vinyl is light (`COLORS[2]`), so white, chrome and
 gold are always shown against something they can be seen on. That is 33 CFR
