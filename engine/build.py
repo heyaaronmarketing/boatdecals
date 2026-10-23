@@ -659,6 +659,57 @@ def build_design():
           "/design/", sch, main, trail=trail, js=ORDER_JS), "0.9")
 
 # -------------------------------------------------------------- /pricing/
+# A traditional three-up pricing table. Features are claims we can stand behind
+# on every order - no "up to", no asterisks.
+PRICE_PLANS = [
+    dict(slug="boat-registration-numbers", name="Registration numbers",
+         price="$19", unit="a pair", featured=True,
+         line="The legal set, both sides of the bow.",
+         feats=["Two sets &mdash; one for each side",
+                "3&quot; block characters, legal in all 50 states",
+                "Checked against your state&rsquo;s format before it cuts",
+                "Pre-spaced on one sheet",
+                "Marine vinyl, white or black",
+                "Free shipping, ships next business day"]),
+    dict(slug="boat-name-decals", name="Boat names",
+         price="$29", unit="to start", featured=False,
+         line="Your name across the transom.",
+         feats=["Ten fonts, previewed in your own lettering",
+                "Script, serif and block",
+                "Pre-spaced with application tape over the top",
+                "Priced by finished size &mdash; most land $29&ndash;79",
+                "Marine vinyl, white or black",
+                "Free shipping, ships next business day"]),
+    dict(slug="boat-lettering", name="Custom lettering",
+         price="$29", unit="to start", featured=False,
+         line="Any text, anywhere on the boat.",
+         feats=["Hailing ports, draft marks, no-wake text",
+                "Any length, any of the ten fonts",
+                "Curved transoms laid out from your photo",
+                "Pre-spaced on one sheet",
+                "Marine vinyl, white or black",
+                "Free shipping, ships next business day"]),
+]
+
+
+def plan_table():
+    cards = []
+    for pl in PRICE_PLANS:
+        feats = "".join("<li>%s</li>" % f for f in pl["feats"])
+        cards.append(
+            '<div class="plan%s">%s'
+            '<h3>%s</h3><p class=planline>%s</p>'
+            '<div class=planprice>%s <small>%s</small></div>'
+            '<ul class=planfeats>%s</ul>'
+            '<a class="btn planbtn" href="/design/">Start your order</a>'
+            '<a class=planmore href="/%s/">See details &rarr;</a>'
+            '</div>'
+            % (" featured" if pl["featured"] else "",
+               '<span class=planflag>Most ordered</span>' if pl["featured"] else "",
+               pl["name"], pl["line"], pl["price"], pl["unit"], feats, pl["slug"]))
+    return '<div class=plangrid>%s</div>' % "".join(cards)
+
+
 def build_pricing():
     trail = [("Pricing", None)]
     rows = "".join('<tr><td><a href="/%s/"><strong>%s</strong></a></td><td>%s</td>'
@@ -668,20 +719,18 @@ def build_pricing():
     ups = "".join('<tr><td><strong>%s</strong></td><td>%s %s</td><td>+$%d</td></tr>'
                   % (lbl, blurb, note, amt)
                   for lbl, amt, blurb, flag, note in UPGRADES)
-    vt = "".join('<tr><td><strong>%s</strong></td><td>%s</td><td>%s</td><td>%s</td></tr>'
-                 % r for r in CB.VINYL_TABLE)
     faqs = [
       ("Is shipping really free?",
        "Yes, on everything, to anywhere in the 50 states. Standard post, 3-6 days in "
        "transit. If you need it faster, rush production is $12 and we will quote "
        "expedited post at cost."),
       ("Why is $19 not the cheapest price on the internet?",
-       "Because it is not a race we want to win. An $11 set is usually calendared vinyl "
-       "cut as loose characters, which means a 3-4 year life and you doing the spacing. "
-       "Ours is cast film, pre-spaced, and checked against the federal format before it "
-       "cuts. If price is the "
-       "only thing that matters to you, the marketplace sets are genuinely cheaper and "
-       "we would rather say so."),
+       "Because it is not a race we want to win. An $11 set is usually cut as loose "
+       "characters, which means you doing the spacing on the water. Ours arrives "
+       "pre-spaced on one sheet and checked against your state format before it cuts. "
+       "Both are calendared marine film at that price - cast is the $8 upgrade. If "
+       "price is the only thing that matters to you, the marketplace sets are genuinely "
+       "cheaper and we would rather say so."),
       ("When do I pay?",
        "By card at checkout. The preview on that screen is what gets cut, so read it "
        "before you pay. It ships the next business day."),
@@ -695,28 +744,19 @@ def build_pricing():
     ]
     sch = graph(org_node(), crumb_node(trail, "/pricing/"), faq_node(faqs, "/pricing/"))
     main = ('<section style="padding-top:26px"><div class=w>'
-      '<h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">Pricing, all of it, on one page</h1>'
+      '<h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">Pricing</h1>'
       '<p class=lede>No designer to click through before you see a number. '
-      'Every price below includes free standard shipping in the USA.</p>'
-      + lead_figure("/pricing/") +
-      '<div class=tw><table><thead><tr><th>Product</th><th>What it is</th><th>Price</th>'
-      '</tr></thead><tbody>' + rows + '</tbody></table></div>'
-      '<h2 style="margin-top:34px">Add-ons</h2>'
-      '<p class=lede>The order form deliberately does not ask about these &mdash; it is '
-      'four steps and we would rather you finished it. <strong>Email us with your '
-      'order reference</strong> and we will add any of them at the price below, '
-      'before it cuts.</p>'
-      '<div class=tw><table><thead><tr><th>Upgrade</th><th>What it does</th><th>Cost</th>'
-      '</tr></thead><tbody>' + ups + '</tbody></table></div>'
-      '<h2 style="margin-top:34px">Which vinyl, and why it changes the price</h2>'
-      '<div class=tw><table><thead><tr><th>Film</th><th>What it is</th><th>Best for</th>'
-      '<th>Cost</th></tr></thead><tbody>' + vt + '</tbody></table></div>'
-      '<div class=note><p><b>Honest comparison.</b> Marketplace sets run $10&ndash;25 a '
-      'pair. Specialist shops run $13&ndash;25 and mostly hide the number behind a design '
-      'tool. The BoatUS-partnered shop does not publish a price at all and ships in '
-      '3&ndash;5 business days. We are $19, published, shipped next business day.</p></div>'
-      '<a class="btn lg" href="/design/">Start your order</a>'
-      '</div></section>')
+      'Every price includes free standard shipping in the USA.</p>'
+      + plan_table()
+      + '</div></section>'
+      + '<section class=soft><div class=w><h2>Add-ons</h2>'
+        '<p class=lede>The order form deliberately does not ask about these &mdash; it '
+        'is four steps and we would rather you finished it. <strong>Email us with your '
+        'order reference</strong> and we will add any of them at the price below, '
+        'before it cuts.</p>'
+        '<div class=tw><table><thead><tr><th>Upgrade</th><th>What it does</th>'
+        '<th>Cost</th></tr></thead><tbody>' + ups + '</tbody></table></div>'
+        '</div></section>')
     write("/pricing/", shell("Boat Lettering &amp; Registration Number Prices",
           "Every price on one page: boat registration numbers $19 a pair, names from $29, "
           "decals from $22. Free shipping, next-business-day production.",

@@ -580,6 +580,36 @@ transform:translateY(-1px)}
 .xgo{position:absolute;right:17px;top:50%;transform:translateY(-50%);
 font-size:21px;color:var(--line);transition:color .12s,right .12s}
 .xcard:hover .xgo{color:var(--cta);right:13px}
+
+.plangrid{display:grid;gap:16px;grid-template-columns:1fr;margin:6px 0 4px;
+align-items:start}
+@media(min-width:900px){.plangrid{grid-template-columns:repeat(3,1fr);gap:18px}}
+.plan{position:relative;display:flex;flex-direction:column;background:#fff;
+border:1px solid var(--line);border-radius:16px;padding:24px 22px 22px}
+.plan.featured{border:2px solid var(--cta);box-shadow:0 20px 44px -26px rgba(29,122,72,.45)}
+@media(min-width:900px){.plan.featured{margin-top:-10px;padding-top:30px}}
+.planflag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+background:var(--cta);color:#fff;font-size:11.5px;font-weight:800;
+letter-spacing:.04em;text-transform:uppercase;padding:4px 12px;border-radius:999px;
+white-space:nowrap}
+.plan h3{font-size:19px;margin-bottom:3px}
+.planline{font-size:14.3px;color:var(--mut);margin-bottom:14px;min-height:2.6em}
+.planprice{font-size:38px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em;margin-bottom:16px}
+.planprice small{font-size:14px;font-weight:600;color:var(--mut);letter-spacing:0}
+.planfeats{list-style:none;margin:0 0 20px;padding:0;flex:1}
+.planfeats li{position:relative;padding:0 0 9px 25px;font-size:14.6px;
+line-height:1.45;color:var(--ink)}
+.planfeats li::before{content:"";position:absolute;left:0;top:5px;width:15px;
+height:9px;border-left:2.4px solid var(--cta);border-bottom:2.4px solid var(--cta);
+transform:rotate(-45deg)}
+.planbtn{width:100%;font-size:16px;padding:13px 20px;min-height:50px}
+.plan:not(.featured) .planbtn{background:#fff;color:var(--nav);
+border:1.5px solid var(--line)}
+.plan:not(.featured) .planbtn:hover{background:var(--soft);border-color:var(--nav2)}
+.planmore{display:block;text-align:center;margin-top:11px;font-size:13.6px;
+font-weight:700;color:var(--nav2);text-decoration:none}
+.planmore:hover{text-decoration:underline}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://boatnumbershop.com/for/sailboats/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://boatnumbershop.com/"},{"@type":"ListItem","position":2,"name":"By boat type","item":"https://boatnumbershop.com/for/sailboats/"},{"@type":"ListItem","position":3,"name":"Sailboats","item":"https://boatnumbershop.com/for/sailboats/"}]},{"@type":"FAQPage","@id":"https://boatnumbershop.com/for/sailboats/#faq","mainEntity":[{"@type":"Question","name":"Will these stick to my sailboat?","acceptedAnswer":{"@type":"Answer","text":"A sailboat transom is rarely flat. Send a straight-on photo with a tape measure in frame and we will lay the name out to the actual curve."}},{"@type":"Question","name":"Do I need registration numbers on it?","acceptedAnswer":{"@type":"Answer","text":"If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order."}},{"@type":"Question","name":"What does it cost?","acceptedAnswer":{"@type":"Answer","text":"Registration numbers are $19 a pair including shipping. Names and graphics start at $29 and $22. High-tack vinyl, which your hull may need, is free."}}]}]}</script>
 </head><body>

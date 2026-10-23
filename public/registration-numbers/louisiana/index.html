@@ -580,6 +580,36 @@ transform:translateY(-1px)}
 .xgo{position:absolute;right:17px;top:50%;transform:translateY(-50%);
 font-size:21px;color:var(--line);transition:color .12s,right .12s}
 .xcard:hover .xgo{color:var(--cta);right:13px}
+
+.plangrid{display:grid;gap:16px;grid-template-columns:1fr;margin:6px 0 4px;
+align-items:start}
+@media(min-width:900px){.plangrid{grid-template-columns:repeat(3,1fr);gap:18px}}
+.plan{position:relative;display:flex;flex-direction:column;background:#fff;
+border:1px solid var(--line);border-radius:16px;padding:24px 22px 22px}
+.plan.featured{border:2px solid var(--cta);box-shadow:0 20px 44px -26px rgba(29,122,72,.45)}
+@media(min-width:900px){.plan.featured{margin-top:-10px;padding-top:30px}}
+.planflag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+background:var(--cta);color:#fff;font-size:11.5px;font-weight:800;
+letter-spacing:.04em;text-transform:uppercase;padding:4px 12px;border-radius:999px;
+white-space:nowrap}
+.plan h3{font-size:19px;margin-bottom:3px}
+.planline{font-size:14.3px;color:var(--mut);margin-bottom:14px;min-height:2.6em}
+.planprice{font-size:38px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em;margin-bottom:16px}
+.planprice small{font-size:14px;font-weight:600;color:var(--mut);letter-spacing:0}
+.planfeats{list-style:none;margin:0 0 20px;padding:0;flex:1}
+.planfeats li{position:relative;padding:0 0 9px 25px;font-size:14.6px;
+line-height:1.45;color:var(--ink)}
+.planfeats li::before{content:"";position:absolute;left:0;top:5px;width:15px;
+height:9px;border-left:2.4px solid var(--cta);border-bottom:2.4px solid var(--cta);
+transform:rotate(-45deg)}
+.planbtn{width:100%;font-size:16px;padding:13px 20px;min-height:50px}
+.plan:not(.featured) .planbtn{background:#fff;color:var(--nav);
+border:1.5px solid var(--line)}
+.plan:not(.featured) .planbtn:hover{background:var(--soft);border-color:var(--nav2)}
+.planmore{display:block;text-align:center;margin-top:11px;font-size:13.6px;
+font-weight:700;color:var(--nav2);text-decoration:none}
+.planmore:hover{text-decoration:underline}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://boatnumbershop.com/registration-numbers/louisiana/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://boatnumbershop.com/"},{"@type":"ListItem","position":2,"name":"By state","item":"https://boatnumbershop.com/registration-numbers/"},{"@type":"ListItem","position":3,"name":"Louisiana","item":"https://boatnumbershop.com/registration-numbers/louisiana/"}]},{"@type":"FAQPage","@id":"https://boatnumbershop.com/registration-numbers/louisiana/#faq","mainEntity":[{"@type":"Question","name":"How tall do Louisiana boat registration numbers have to be?","acceptedAnswer":{"@type":"Answer","text":"Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Louisiana like everywhere else. Taller is always legal."}},{"@type":"Question","name":"What do Louisiana boat numbers start with?","acceptedAnswer":{"@type":"Answer","text":"LA. Your full number runs prefix, digits, then a letter suffix \u2014 for example LA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing."}},{"@type":"Question","name":"Who issues boat registration in Louisiana?","acceptedAnswer":{"@type":"Answer","text":"You register through the Louisiana Department of Wildlife and Fisheries. We only make the decals \u2014 you get the number from them first, then we cut it."}},{"@type":"Question","name":"Do the numbers need a space or a hyphen?","acceptedAnswer":{"@type":"Answer","text":"Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So LA 1234 AB, not LA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong."}},{"@type":"Question","name":"Where do they go on the boat?","acceptedAnswer":{"@type":"Answer","text":"Each side of the forward half of the hull, reading left to right, in a colour that contrasts with the hull. The validation decal goes near the number \u2014 Louisiana publishes the exact offset, and it is usually within a few inches."}}]},{"@type":"Product","@id":"https://boatnumbershop.com/registration-numbers/louisiana/#product","name":"Registration numbers - Boat Number Shop","description":"Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day.","brand":{"@type":"Brand","name":"Boat Number Shop"},"category":"Marine vinyl decals","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","availability":"https://schema.org/InStock","url":"https://boatnumbershop.com/design/","priceValidUntil":"2026-12-31","shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":"0","currency":"USD"},"shippingDestination":{"@type":"DefinedRegion","addressCountry":"US"}}}}]}</script>
 </head><body>

@@ -1,6 +1,7 @@
 {
   "name": "boatdecals",
   "main": "worker/index.js",
+  "account_id": "681da9da7939c8989b00fb80ee4a791c",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "public",

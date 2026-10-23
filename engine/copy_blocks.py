@@ -86,16 +86,3 @@ HOW_IT_WORKS_STEPS = [
   "Next business day, free, pre-spaced with application tape over the top."),
 ]
 
-VINYL_TABLE = [
- ("Cast (premium, 8&nbsp;yr)", "Poured as a liquid, so it has no built-in stress. "
-  "Conforms to compound curves and holds colour longest.",
-  "Boats that live outside, dark colours, curved transoms", "+$8"),
- ("Calendared (standard, 5-7&nbsp;yr)", "Rolled into sheet. Slightly thicker, "
-  "wants to shrink back over years.",
-  "Flat panels, trailered boats, most registration numbers", "included"),
- ("High-tack", "Same film, much more aggressive adhesive.",
-  "Polyethylene kayaks, PWC hulls, textured pontoon rails, carpet",
-  "free when you need it"),
- ("Reflective", "Glass-bead layer returns light to its source.",
-  "Being seen at night, working and patrol boats", "+$10"),
-]
