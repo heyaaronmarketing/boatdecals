@@ -90,6 +90,30 @@ OUTLINE = {
 }
 
 
+def _bbox(d):
+    """Extremes of an M/L/Z path. Our outlines use no curves, so this is exact."""
+    import re as _re
+    pts = [tuple(map(float, q.split()))
+           for q in _re.findall(r"[ML]([-\d.]+ [-\d.]+)", d)]
+    xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+    return min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)
+
+
+def _prefix_size(d, ab):
+    """Fit the prefix to the silhouette, not to the box.
+
+    Tennessee is four times wider than it is tall. At one fixed size its "TN"
+    stood a long way clear of the shape top and bottom, and Virginia and North
+    Carolina were nearly as bad, while the tall states had room to spare. Size
+    from the shape's own bounds instead: cap height is about 0.72em in Archivo
+    Black and each character runs about 0.92em wide.
+    """
+    _x, _y, w, h = _bbox(d)
+    by_h = (h * 0.74) / 0.72
+    by_w = (w * 0.80) / (0.92 * len(ab))
+    return max(15.0, min(30.0, by_h, by_w))
+
+
 def state_badge(slug, ab, name):
     """The state identity graphic: the silhouette with the vessel prefix cut
     into it, the way the vinyl sits on a hull.
@@ -107,10 +131,78 @@ def state_badge(slug, ab, name):
     # ate letters on every narrow state - Minnesota read "MI", Florida lost
     # both. The letters sit over the shape with a halo instead, so they stay
     # legible where they cross the coastline onto the page.
+    deep, bright, motif = STATE_ACCENT.get(slug, ("#0e3a52", "#5fc4f5", ""))
+    bx, by, bw, bh = _bbox(d)
+    size = _prefix_size(d, ab)
+    cx, cy = bx + bw / 2.0, by + bh / 2.0      # centre on the shape, not the box
     return (
       '<svg class=sbadge viewBox="-6 -6 112 112" role="img" aria-label="%s, '
-      'vessel prefix %s" focusable="false">'
+      'vessel prefix %s" focusable="false" style="--sdeep:%s;--sbright:%s">'
       '<path d="%s" class=sbshape/>'
-      '<text x="50" y="52" class=sbtext text-anchor="middle" '
-      'dominant-baseline="central">%s</text>'
-      '</svg>' % (name, ab, d, ab))
+      '<text x="%.1f" y="%.1f" class=sbtext text-anchor="middle" '
+      'dominant-baseline="central" font-size="%.1f" stroke-width="%.1f">%s</text>'
+      '</svg>' % (name, ab, deep, bright, d, cx, cy, size, size * 0.23, ab))
+
+
+# ---------------------------------------------------------------- accents
+# One recognisable pair per state, drawn from what the state is actually
+# known for. `deep` fills the silhouette and must carry white text; `bright`
+# is the outline and the small accents.
+#
+# The hard constraint is not aesthetic. In a surprising number of states the
+# FIRST thing you think of is already a school or pro palette, so the obvious
+# answer had to be rejected and the second-most-obvious used instead:
+#
+#   Iowa      corn is gold, and gold+black is Hawkeye. Kept the corn yellow,
+#             paired it with field green instead of black.
+#   Louisiana Mardi Gras purple-and-gold IS LSU. Went to crawfish and cypress.
+#   Wisconsin cheese gold with green is the Packers; barn red is close to
+#             Badger cardinal. Went to cranberry - the state fruit, and
+#             Wisconsin grows more than anywhere else.
+#   Texas     burnt orange is UT. Oil gives black anyway, so brass not orange.
+#   Michigan  maize is Michigan. Used the Great Lakes instead.
+#   Florida   citrus orange with green is Miami. Used the deco/flamingo
+#             palette, which is just as instantly Florida.
+#   Ohio      the buckeye is the state tree and predates the football team;
+#             the NUT is brown and gold, which is nothing like scarlet-grey.
+#   Virginia  the blue crab is orange and blue, i.e. UVA. Used the bay and
+#             oyster shell.
+#
+# slug -> (deep, bright, what it is drawn from)
+STATE_ACCENT = {
+ "iowa":           ("#2f4a1e", "#f0b429", "corn and field green"),
+ "florida":        ("#0e4b4f", "#f4766a", "deco teal and flamingo"),
+ "michigan":       ("#10414f", "#57c4d4", "Great Lakes water"),
+ "new-york":       ("#1f3d2b", "#cf3b44", "Adirondack pine and apple"),
+ "california":     ("#4a2418", "#f2960d", "redwood and golden poppy"),
+ "south-carolina": ("#1d2b52", "#5a9a52", "indigo and palmetto"),
+ "wisconsin":      ("#2b3f2a", "#a8243c", "cranberry bog"),
+ "minnesota":      ("#15372b", "#8fc7d6", "north-woods pine and ice"),
+ "texas":          ("#17181c", "#c8963c", "oil and brass"),
+ "pennsylvania":   ("#23262b", "#d9762b", "anthracite and molten steel"),
+ "north-carolina": ("#1b2a38", "#d9c08a", "Outer Banks storm and sand"),
+ "georgia":        ("#6e2a1c", "#f09a6b", "peach and red clay"),
+ "virginia":       ("#1f3f55", "#cbbfa4", "Chesapeake bay and oyster shell"),
+ "ohio":           ("#43291a", "#c9a227", "buckeye brown and husk gold"),
+ "illinois":       ("#33301f", "#d8b43f", "prairie gold and black soil"),
+ "missouri":       ("#36402f", "#cdbb94", "Ozark limestone and river green"),
+ "washington":     ("#163a2b", "#c33c2f", "evergreen and apple"),
+ "louisiana":      ("#1f3a30", "#d64527", "cypress swamp and crawfish"),
+ "alabama":        ("#2b3036", "#c96a24", "Birmingham iron and molten ore"),
+ "tennessee":      ("#2d241b", "#c98b2e", "charred barrel and whiskey amber"),
+ "indiana":        ("#343a3c", "#cfc3a8", "quarry stone and limestone"),
+}
+
+
+def _lum(hexs):
+    def ch(v):
+        v /= 255.0
+        return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+    r, g, b = (int(hexs[i:i + 2], 16) for i in (1, 3, 5))
+    return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b)
+
+
+def contrast_on_white_text(hexs):
+    """WCAG contrast of white text on this background. The prefix letters sit
+    on `deep`, so every deep has to clear 4.5:1 or the badge is unreadable."""
+    return round((1.0 + 0.05) / (_lum(hexs) + 0.05), 2)

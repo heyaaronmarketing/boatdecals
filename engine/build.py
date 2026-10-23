@@ -10,7 +10,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
 from style import CSS
 import namegen as NG
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
-                        USCG_NATIONAL, state_badge)
+                        USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
 import order as O
 import mockpay as MP
@@ -883,8 +883,12 @@ def state_identity(s, band):
     """
     fleet, rank, scope = USCG_FLEET[s["slug"]]
     share = fleet / float(USCG_NATIONAL) * 100
-    return (band.open("sidband") + '<div class="w sband">'
-      + state_badge(s["slug"], s["ab"], s["name"])
+    _deep, _bright, _motif = STATE_ACCENT.get(s["slug"], ("", "", ""))
+    return (band.open("sidband")
+      + '<div class="w sband" style="--sbright:%s">' % _bright
+      + '<div>' + state_badge(s["slug"], s["ab"], s["name"])
+      + ('<p class=smotif>%s in %s</p>' % (s["name"], _motif) if _motif else "")
+      + '</div>'
       + '<div><div class=sfacts>'
         '<div class=sfact><b>%s</b><span>Registered vessels</span></div>'
         '<div class=sfact><b>#%d</b><span>Of the 50 states</span></div>'

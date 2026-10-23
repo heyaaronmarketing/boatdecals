@@ -123,6 +123,21 @@ for _s in _ST:
         if _name.split(" and ")[0].split(",")[0] not in _h:
             fails.append("%s: water %r never reaches the page" % (_s["slug"], _name))
 
+# Every state accent must carry white text. The prefix letters sit on `deep`
+# with a `deep` halo, so a palette edit that lightens one turns the badge into
+# nothing. 4.5:1 is the WCAG AA threshold for large text with room to spare.
+from state_data import STATE_ACCENT, contrast_on_white_text
+for _slug, (_deep, _bright, _motif) in STATE_ACCENT.items():
+    _c = contrast_on_white_text(_deep)
+    if _c < 4.5:
+        fails.append("state accent %s: white on %s is only %.2f:1, prefix "
+                     "will not read" % (_slug, _deep, _c))
+    if not _motif:
+        fails.append("state accent %s has no motif label" % _slug)
+for _s in _ST:
+    if _s["slug"] not in STATE_ACCENT:
+        fails.append("no accent palette for %s" % _s["slug"])
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()
