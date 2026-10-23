@@ -537,6 +537,49 @@ figure.gshot figcaption{flex-direction:column;gap:1px;font-size:13px}
 .altrow .altimg img{border-radius:12px}
 .altrow .alttext p{max-width:none}
 .altrow .alttext>*:last-child{margin-bottom:0}
+
+/* Each alternating row is its own full-bleed band, so the zigzag reads as
+   distinct stripes rather than one long white column. */
+section.altband{padding:34px 0}
+@media(min-width:900px){section.altband{padding:46px 0}}
+section.tight{padding:14px 0 20px}
+section.tight .imgnote{margin:0}
+.altband .altwrap{display:block}
+.altband .altrow{margin:0}
+
+/* How it works: four numbered cards. */
+.stepgrid{display:grid;gap:12px;grid-template-columns:1fr;margin:4px 0 22px}
+@media(min-width:560px){.stepgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.stepgrid{grid-template-columns:repeat(4,1fr)}}
+.stepcard{position:relative;background:#fff;border:1px solid var(--line);
+border-radius:14px;padding:19px 17px 17px}
+section.soft .stepcard{background:#fff}
+.stepnum{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;
+background:var(--nav);color:#fff;font-weight:800;font-size:15px;line-height:1;
+margin-bottom:11px}
+.stepcard h3{font-size:16px;line-height:1.3;margin-bottom:5px}
+.stepcard p{font-size:14.4px;line-height:1.5;color:var(--mut);margin:0}
+
+/* Other things we cut: two cards, so give them room. */
+.xgrid{display:grid;gap:13px;grid-template-columns:1fr;margin-top:6px}
+@media(min-width:720px){.xgrid{grid-template-columns:1fr 1fr}}
+.xcard{position:relative;display:flex;align-items:center;gap:16px;background:#fff;
+border:1px solid var(--line);border-radius:14px;padding:18px 44px 18px 18px;
+text-decoration:none;color:inherit;
+transition:border-color .12s,box-shadow .12s,transform .12s}
+.xcard:hover{border-color:var(--nav2);box-shadow:0 14px 30px -20px rgba(5,30,45,.45);
+transform:translateY(-1px)}
+.xcard .icw{margin:0;flex:0 0 auto;width:52px;height:52px;border-radius:13px}
+.xcard .icw svg{width:28px;height:28px}
+.xcard:hover .icw{background:var(--nav);color:#fff}
+.xbody{min-width:0}
+.xcard h3{font-size:17.5px;margin-bottom:3px}
+.xcard p{font-size:14.3px;color:var(--mut);line-height:1.45;margin:0 0 7px}
+.xprice{font-size:18px;font-weight:800;color:var(--nav)}
+.xprice small{font-size:12.8px;font-weight:600;color:var(--mut)}
+.xgo{position:absolute;right:17px;top:50%;transform:translateY(-50%);
+font-size:21px;color:var(--line);transition:color .12s,right .12s}
+.xcard:hover .xgo{color:var(--cta);right:13px}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","LocalBusiness"],"@id":"https://boatnumbershop.com/#org","name":"Boat Number Shop","url":"https://boatnumbershop.com/","email":"orders@boatnumbershop.com","telephone":"(319) 239-3793","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","streetAddress":"475 River Forest Road","addressLocality":"Evansdale","addressRegion":"IA","postalCode":"50707","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.4583,"longitude":-92.2608},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://boatnumbershop.com/registration-numbers/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://boatnumbershop.com/"},{"@type":"ListItem","position":2,"name":"Numbers by state","item":"https://boatnumbershop.com/registration-numbers/"}]},{"@type":"FAQPage","@id":"https://boatnumbershop.com/registration-numbers/#faq","mainEntity":[{"@type":"Question","name":"Does every state use the same rule?","acceptedAnswer":{"@type":"Answer","text":"The core rule is federal and identical everywhere: 3-inch minimum, plain vertical block characters, contrasting colour, spaces or hyphens between groups, reading left to right, on both sides of the forward half. States can add requirements on top but cannot go below it. What genuinely varies is the prefix, the issuing agency, and exactly where the validation decal sits."}},{"@type":"Question","name":"Which states do not use their postal abbreviation?","acceptedAnswer":{"@type":"Answer","text":"California is the big one - California boat numbers start with CF, not CA, and everyone there calls them CF numbers. Washington uses WN rather than WA. Always copy the prefix off your own registration card rather than assuming."}},{"@type":"Question","name":"My state is not listed. Can you still cut my numbers?","acceptedAnswer":{"@type":"Answer","text":"Yes. We cut for all 50 states and DC - these are just the pages we have written up so far. Pick 'Other / not listed' on the order form and type your number."}}]}]}</script>
 </head><body>

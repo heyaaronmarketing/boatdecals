@@ -88,6 +88,13 @@ topics.
 Only the CSS column *order* flips — the DOM order stays image-then-text, so the
 reading order on a phone and in a screen reader is identical on every row.
 
+Each row is its own full-bleed `<section>`, so the zigzag reads as alternating
+bands rather than one long white column. Background colour comes from a
+page-level `Band` counter in `engine/build.py` — **not** from each builder
+deciding its own, which is how three white sections ended up running together.
+Anything that emits a section on a banded page has to take the counter,
+including `faq_block()`.
+
 ### Shots that were dropped
 
 `GD-3` (cast vs calendared vinyl) was cut after two attempts. The model renders

@@ -140,6 +140,26 @@ def steps_strip(ids, heading="The whole job, start to finish"):
             % (heading, cards, DISCLOSURE))
 
 
+class Band:
+    """Alternating section backgrounds, counted per page.
+
+    Product pages were running three white sections together because each
+    builder decided its own background in isolation. One counter per page
+    means the stripe stays honest no matter how many prose rows a page has.
+    """
+    def __init__(self, start=0):
+        self.i = start
+
+    def cls(self):
+        c = "soft" if self.i % 2 else ""
+        self.i += 1
+        return c
+
+    def open(self, extra=""):
+        c = " ".join(x for x in (self.cls(), extra) if x)
+        return '<section%s>' % (' class="%s"' % c if c else "")
+
+
 def split_h2(body):
     """Break a prose body into (heading, html) sections at each <h2>.
 
@@ -156,7 +176,7 @@ def split_h2(body):
     return out
 
 
-def alternating(body, img_ids):
+def alternating(body, img_ids, band):
     """Lay prose sections out beside images, alternating sides down the page.
 
     Sections are paired with images in order; once the images run out the
@@ -165,24 +185,25 @@ def alternating(body, img_ids):
     a zigzag on a phone is just a column with inconsistent reading order.
     """
     secs = split_h2(body)
-    rows, used = [], 0
+    out, used = [], 0
     for head, html in secs:
         img = img_ids[used] if used < len(img_ids) and head else None
         if img and IMAGES.get(img):
             side = "r" if used % 2 else "l"          # first image on the left
-            rows.append('<div class="altrow %s">'
-                        '<div class=altimg>%s</div>'
-                        '<div class="alttext prose">%s%s</div></div>'
-                        % (side,
-                           figure(img, sizes="(min-width:900px) 44vw, 100vw",
-                                  cls="shot"),
-                           head, html))
+            inner = ('<div class="altrow %s"><div class=altimg>%s</div>'
+                     '<div class="alttext prose">%s%s</div></div>'
+                     % (side, figure(img, sizes="(min-width:900px) 44vw, 100vw",
+                                     cls="shot"), head, html))
             used += 1
         else:
-            rows.append('<div class="altrow full"><div class="alttext prose">'
-                        '%s%s</div></div>' % (head, html))
-    return ('<section><div class=w><div class=altwrap>%s</div>%s</div></section>'
-            % ("".join(rows), DISCLOSURE if used else ""))
+            inner = ('<div class="altrow full"><div class="alttext prose">%s%s</div>'
+                     '</div>' % (head, html))
+        out.append('%s<div class=w>%s</div></section>'
+                   % (band.open("altband"), inner))
+    if used and out:
+        out[-1] = out[-1].replace("</div></section>",
+                                  DISCLOSURE + "</div></section>")
+    return "".join(out)
 
 
 def gallery(ids, heading="What it looks like on the boat"):
@@ -314,13 +335,17 @@ def hero(h1, sub, trust=None, right="", badge=None):
             '</div></section>'
             % (bd, h1, right, sub, "".join("<span>%s</span>" % x for x in t)))
 
-def faq_block(items, heading="Questions people actually ask"):
+def faq_block(items, heading="Questions people actually ask", band=None):
     if not items: return ""
     rows = "".join(
         '<details><summary>%s</summary><div class=ans><p>%s</p></div></details>'
         % (e(html.unescape(q)), a) for q, a in items)
-    return ('<section class=soft><div class=w><h2>%s</h2>'
-            '<div class=faq style="margin-top:18px">%s</div></div></section>' % (heading, rows))
+    # Participate in the page stripe when one is running, so the FAQ does not
+    # land on the same colour as the section above it.
+    open_tag = band.open() if band else '<section class=soft>'
+    return ('%s<div class=w><h2>%s</h2>'
+            '<div class=faq style="margin-top:18px">%s</div></div></section>'
+            % (open_tag, heading, rows))
 
 def footer():
     pl = "".join('<li><a href="/%s/">%s</a></li>' % (p["slug"], p["nav"]) for p in PRODUCTS)
@@ -444,11 +469,12 @@ def write(path, body, prio="0.7"):
     PAGES.append((path, prio))
 
 def shell(title, desc, path, schema, main, trail=None, noindex=False,
-          faqs=None, faq_heading=None, sticky_label=None, sticky_price=19, js=""):
+          faqs=None, faq_heading=None, sticky_label=None, sticky_price=19, js="",
+          band=None):
     parts = [head(title, desc, path, schema, noindex), topbar(), header()]
     if trail: parts.append(bc(trail))
     parts.append('<main id=main>' + main)
-    if faqs: parts.append(faq_block(faqs, faq_heading or "Questions people actually ask"))
+    if faqs: parts.append(faq_block(faqs, faq_heading or "Questions people actually ask", band))
     parts.append('</main>')
     parts.append(footer())
     parts.append(sticky(sticky_label or "Registration numbers", sticky_price))
@@ -490,6 +516,32 @@ def why_grid(limit=6):
     return '<div class="grid">' + "".join(
         '<div class=card><h3>%s</h3><p>%s</p></div>' % (t, d)
         for t, d in CB.WHY_US[:limit]) + '</div>'
+
+def how_it_works(band):
+    cards = "".join(
+        '<div class=stepcard><span class=stepnum>%d</span>'
+        '<h3>%s</h3><p>%s</p></div>' % (i + 1, t, b)
+        for i, (t, b) in enumerate(CB.HOW_IT_WORKS_STEPS))
+    return ('%s<div class=w><h2>How it works</h2>'
+            '<p class=lede>Four steps, about a minute.</p>'
+            '<div class=stepgrid>%s</div>'
+            '<a class="btn lg" href="/design/">Start your order</a>'
+            '</div></section>' % (band.open(), cards))
+
+
+def other_products(exclude, band, heading="Other things we cut"):
+    """The cross-sell. Three products means two cards here, so they get the
+    room to look deliberate rather than like a grid that ran out."""
+    items = [x for x in PRODUCTS if x["slug"] != exclude]
+    cards = "".join(
+        '<a class=xcard href="/%s/">%s<div class=xbody><h3>%s</h3><p>%s</p>'
+        '<div class=xprice>$%d <small>%s</small></div></div>'
+        '<span class=xgo aria-hidden="true">&rarr;</span></a>'
+        % (x["slug"], icon(x["icon"]), x["nav"], x["blurb"], x["price"], x["unit"])
+        for x in items)
+    return ('%s<div class=w><h2>%s</h2><div class=xgrid>%s</div></div></section>'
+            % (band.open(), heading, cards))
+
 
 def product_grid(exclude=None, heading="What we cut"):
     cards = "".join(
@@ -561,8 +613,7 @@ def build_home():
         'decal sits.</p>' + state_wheel(limit=20) +
         '<p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p>'
         '</div></section>'
-      + '<section class=soft><div class=w><h2>How it works</h2>' + CB.HOW_IT_WORKS +
-        '<a class="btn lg" href="/design/">Start your order</a></div></section>')
+      + how_it_works(Band(1)))
     write("/", shell("Boat Registration Numbers $19 a Pair - Free Shipping",
           "Custom boat registration numbers $19 a pair with free shipping. Legal 3-inch "
           "block vinyl for all 50 states, boat names from $29. Ships next business day.",
@@ -746,21 +797,21 @@ def build_product(p):
                 product_node(p, "/%s/" % p["slug"]), faq_node(faqs, "/%s/" % p["slug"]))
     body = PROD_BODY.get(p["slug"], "")
     secs = PAGE_SECTIONS.get("/%s/" % p["slug"], [])
+    band = Band()
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
                    "Next Day Shipping", "Marine Vinyl", "100% Compliant"],
             right=O.form())
-      + (alternating(body, secs) if secs
-         else '<section><div class=w><div class=prose>' + body
+      + (alternating(body, secs, band) if secs
+         else band.open() + '<div class=w><div class=prose>' + body
               + '</div></div></section>')
 
-      + '<section><div class=w><h2>How it works</h2>' + CB.HOW_IT_WORKS +
-        '<a class="btn lg" href="/design/">Start your order</a></div></section>'
-      + product_grid(exclude=p["slug"], heading="Other things we cut"))
+      + how_it_works(band)
+      + other_products(p["slug"], band))
     write("/%s/" % p["slug"],
           shell(p["h1"].replace("&amp;", "&")[:58], p["desc"], "/%s/" % p["slug"], sch,
                 main, trail=trail, faqs=faqs, sticky_label=p["nav"],
-                sticky_price=p["price"], js=ORDER_JS), "0.9")
+                sticky_price=p["price"], js=ORDER_JS, band=band), "0.9")
 
 # ---------------------------------------------------------------- states
 def build_state(s):
@@ -1498,12 +1549,13 @@ def build_guide(g):
                      for x in GUIDES if x["slug"] != g["slug"])
     secs = PAGE_SECTIONS.get(path, [])
     gbody = GUIDE_BODY.get(g["slug"], "")
+    band = Band()
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;line-height:1.16;margin-bottom:14px">%s</h1>'
             '</div></section>' % g["title"]
-            + (alternating(gbody, secs) if secs
-               else '<section><div class=w><div class=prose>%s</div></div></section>'
-                    % gbody)
+            + (alternating(gbody, secs, band) if secs
+               else band.open() + '<div class=w><div class=prose>%s</div>'
+                    '</div></section>' % gbody)
             + '<section style="padding-top:0"><div class=w>'
               '<a class="btn lg" href="/design/">'
               'Order your numbers &middot; $19 a pair</a>'
@@ -1514,7 +1566,7 @@ def build_guide(g):
             + '<section class=soft><div class=w><h2>More guides</h2>'
               '<div class=wheel>%s</div></div></section>' % others)
     write(path, shell(html.unescape(g["title"])[:58], g["desc"], path, sch, main,
-                      trail=trail, faqs=faqs), "0.6")
+                      trail=trail, faqs=faqs, band=band), "0.6")
 
 def build_guides_hub():
     path = "/guides/"

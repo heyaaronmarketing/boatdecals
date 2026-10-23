@@ -515,3 +515,49 @@ CSS += """
 .altrow .alttext p{max-width:none}
 .altrow .alttext>*:last-child{margin-bottom:0}
 """
+
+# ---- banded sections, step cards, cross-sell ----------------------------
+CSS += """
+/* Each alternating row is its own full-bleed band, so the zigzag reads as
+   distinct stripes rather than one long white column. */
+section.altband{padding:34px 0}
+@media(min-width:900px){section.altband{padding:46px 0}}
+section.tight{padding:14px 0 20px}
+section.tight .imgnote{margin:0}
+.altband .altwrap{display:block}
+.altband .altrow{margin:0}
+
+/* How it works: four numbered cards. */
+.stepgrid{display:grid;gap:12px;grid-template-columns:1fr;margin:4px 0 22px}
+@media(min-width:560px){.stepgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.stepgrid{grid-template-columns:repeat(4,1fr)}}
+.stepcard{position:relative;background:#fff;border:1px solid var(--line);
+border-radius:14px;padding:19px 17px 17px}
+section.soft .stepcard{background:#fff}
+.stepnum{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;
+background:var(--nav);color:#fff;font-weight:800;font-size:15px;line-height:1;
+margin-bottom:11px}
+.stepcard h3{font-size:16px;line-height:1.3;margin-bottom:5px}
+.stepcard p{font-size:14.4px;line-height:1.5;color:var(--mut);margin:0}
+
+/* Other things we cut: two cards, so give them room. */
+.xgrid{display:grid;gap:13px;grid-template-columns:1fr;margin-top:6px}
+@media(min-width:720px){.xgrid{grid-template-columns:1fr 1fr}}
+.xcard{position:relative;display:flex;align-items:center;gap:16px;background:#fff;
+border:1px solid var(--line);border-radius:14px;padding:18px 44px 18px 18px;
+text-decoration:none;color:inherit;
+transition:border-color .12s,box-shadow .12s,transform .12s}
+.xcard:hover{border-color:var(--nav2);box-shadow:0 14px 30px -20px rgba(5,30,45,.45);
+transform:translateY(-1px)}
+.xcard .icw{margin:0;flex:0 0 auto;width:52px;height:52px;border-radius:13px}
+.xcard .icw svg{width:28px;height:28px}
+.xcard:hover .icw{background:var(--nav);color:#fff}
+.xbody{min-width:0}
+.xcard h3{font-size:17.5px;margin-bottom:3px}
+.xcard p{font-size:14.3px;color:var(--mut);line-height:1.45;margin:0 0 7px}
+.xprice{font-size:18px;font-weight:800;color:var(--nav)}
+.xprice small{font-size:12.8px;font-weight:600;color:var(--mut)}
+.xgo{position:absolute;right:17px;top:50%;transform:translateY(-50%);
+font-size:21px;color:var(--line);transition:color .12s,right .12s}
+.xcard:hover .xgo{color:var(--cta);right:13px}
+"""

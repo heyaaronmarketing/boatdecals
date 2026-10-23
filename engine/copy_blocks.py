@@ -68,17 +68,20 @@ WHY_US = [
   "sets use. High-tack on plastic hulls at no extra charge."),
 ]
 
-HOW_IT_WORKS = """<ol class=steps>
-<li><strong>Type what it should say.</strong> Straight off your registration card for
-numbers, or whatever you have picked for a name.</li>
-<li><strong>Pick height, font and colour.</strong> The form locks script fonts out of
-registration numbers, because the law requires block characters.</li>
-<li><strong>We email you a proof.</strong> Usually within a few hours during the
-working day. Nothing is cut yet, and you can still change anything &mdash; or
-cancel for a full refund.</li>
-<li><strong>You approve, we cut and ship.</strong> Next business day, free, pre-spaced
-with application tape over the top.</li>
-</ol>"""
+# Four steps, four cards. (title, body) - build.py numbers them.
+HOW_IT_WORKS_STEPS = [
+ ("Type what it should say",
+  "Straight off your registration card for numbers, or whatever you have "
+  "picked for a name."),
+ ("Pick height, font and colour",
+  "The form only offers block faces once you choose registration numbers, "
+  "because the law requires them."),
+ ("We email you a proof",
+  "Usually within a few hours on a working day. Nothing is cut yet and you "
+  "can still change anything."),
+ ("We cut it and ship it",
+  "Next business day, free, pre-spaced with application tape over the top."),
+]
 
 VINYL_TABLE = [
  ("Cast (premium, 8&nbsp;yr)", "Poured as a liquid, so it has no built-in stress. "
