@@ -163,6 +163,20 @@ for _s in _ST:
     if _s["slug"] not in STATE_ACCENT:
         fails.append("no accent palette for %s" % _s["slug"])
 
+# A <title> that stops dead at the slice length with no brand suffix is a
+# hard truncation, not a title. The product pages shipped "Boat Registration
+# Numbers for Any Boat, Legal in All 50 St" because the H1 was being reused as
+# the title and sliced at 58. An H1 and a title do different jobs; give a page
+# its own title rather than cutting one to fit.
+_SUFFIXES = (" | Boat Number Shop", " | Boat Numbers")
+for _f in OUT.rglob("index.html"):
+    _m = re.search(r"<title>(.*?)</title>", _f.read_text())
+    if not _m:
+        continue
+    _t = _m.group(1)
+    if len(_t) in (58, 59, 60) and not _t.endswith(_SUFFIXES):
+        fails.append("title truncated mid-word in %s: %r" % (_f, _t))
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

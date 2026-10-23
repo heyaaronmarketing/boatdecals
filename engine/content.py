@@ -76,13 +76,15 @@ UPGRADES = [
 # vol/cpc = the primary keyword this page is built to win.
 PRODUCTS = [
     dict(slug="boat-registration-numbers", nav="Registration numbers", short="Reg numbers",
-         h1="Boat Registration Numbers - $19 a Pair, Shipped Next Day",
+         h1="Boat Registration Numbers for Any Boat, Legal in All 50 States",
+         title="Boat Registration Numbers for All 50 States",
          kw="boat registration numbers", vol=5400, cpc=2.60, price=PRICE["numbers"],
          unit="a pair", icon="numbers",
          blurb="Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.",
          desc="Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day."),
     dict(slug="boat-lettering", nav="Boat letters", short="Lettering",
          h1="Boat Letters &amp; Name Decals - Any Font, From $29",
+         title="Boat Letters &amp; Name Decals, Any Font",
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
          blurb="Boat names, hailing ports and any other transom text. You pick the font and the colour, we cut it, pre-space it and tape it.",

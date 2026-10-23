@@ -16,8 +16,11 @@ Sources:
   RP-1  Ryan's own Facebook profile picture, lifted from the full-page capture
         in ~/Downloads. 1002x979 native, which is enough for a 1400px hero
         with a 1.4x Lanczos resample. NO generative upscaling - see below.
-  RP-2+ Original full-resolution phone photographs of Evansdale Fire & Rescue
-        (5712x4284), straight from Ryan. No processing needed beyond resize.
+Fire department photographs are deliberately NOT here. There are originals of
+the Evansdale station, Engine 201 and the turnout racks, and they were briefly
+on the About page, but Ryan asked that they not be used - his call, and the
+right one: department apparatus and branding on a page that sells decals
+implies an endorsement the department never gave.
 
 On AI enhancement: not used, and not wanted. Generative upscalers do not
 recover detail, they invent it. On a photograph of a real, named person that
@@ -34,12 +37,10 @@ OUT = ROOT / "shots"
 DL = pathlib.Path.home() / "Downloads"
 CAPTURE = DL / "screencapture-facebook-ryan-phillips-420847-2026-10-23-14_01_41.png"
 
-# (id, source HEIC in ~/Downloads)
-FROM_PHONE = [
-    ("RP-2", "IMG_2802.HEIC"),   # turnout gear on the racks
-    ("RP-3", "IMG_2809.HEIC"),   # Engine 201, front
-    ("RP-4", "IMG_2813.HEIC"),   # the apparatus bay, looking through
-]
+# Ryan asked that the Evansdale Fire & Rescue photographs not be used on the
+# site, so nothing is pulled from the phone originals. The list is kept empty
+# rather than deleted so the plumbing is here if that ever changes.
+FROM_PHONE = []
 # the motocross profile picture, measured off the capture
 MX_BOX = (1299, 1971, 2301, 2950)
 

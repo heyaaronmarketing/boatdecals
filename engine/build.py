@@ -634,7 +634,7 @@ def build_home():
                 product_node(PRODUCTS[0], "/"), faq_node(FAQ_HOME, "/"))
     right = O.form()
     main = (
-      hero("Boat Registration Numbers, $19 a Pair",
+      hero("Custom Boat Registration Numbers, Cut and Shipped Next Day",
            "Legal 3-inch block numbers for both sides of your hull, cut from "
            "marine vinyl, pre-spaced on one sheet, and shipped free the next business "
            "day. Boat names and custom lettering too.",
@@ -663,7 +663,7 @@ def build_home():
         '<p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p>'
         '</div></section>'
       + how_it_works(Band(1)))
-    write("/", shell("Boat Registration Numbers $19 a Pair - Free Shipping",
+    write("/", shell("Boat Registration Numbers - Legal 3-Inch Sets, Both Sides",
           "Custom boat registration numbers $19 a pair with free shipping. Legal 3-inch "
           "block vinyl for all 50 states, boat names from $29. Ships next business day.",
           "/", sch, main, faqs=FAQ_HOME, js=ORDER_JS), "1.0")
@@ -867,7 +867,8 @@ def build_product(p):
       + how_it_works(band)
       + other_products(p["slug"], band))
     write("/%s/" % p["slug"],
-          shell(p["h1"].replace("&amp;", "&")[:58], p["desc"], "/%s/" % p["slug"], sch,
+          shell(p.get("title", p["h1"]).replace("&amp;", "&"), p["desc"],
+                "/%s/" % p["slug"], sch,
                 main, trail=trail, faqs=faqs, sticky_label=p["nav"],
                 sticky_price=p["price"], js=ORDER_JS, band=band), "0.9")
 
@@ -960,7 +961,8 @@ def build_state(s):
     trail = [("By state", "/registration-numbers/"), (s["name"], None)]
     nm, ab = s["name"], s["ab"]
     vern = s.get("vern")
-    h1 = "%s Boat Registration Numbers - $19 a Pair" % nm
+    h1 = ("%s Boat Registration Numbers: %s Prefix, Legal 3-Inch Block"
+          % (nm, ab))
     title = "%s Boat Registration Numbers %s" % (nm, ab)
     desc = ("%s boat registration numbers, $19 a pair with free shipping. Legal 3-inch "
             "block vinyl starting with %s, cut and shipped next business day." % (nm, ab))
@@ -2014,10 +2016,6 @@ def build_about():
     stacy = ("<p>His wife %s serves on the department right alongside him. In a town "
              "of about 4,700 people, that is the kind of thing folks notice and "
              "remember.</p>" % o["spouse"]) if ABOUT["name_stacy"] else ""
-    fd = ('<div class=fdgrid>'
-          + figure("RP-2", sizes="(min-width:900px) 46vw, 100vw", cls="shot")
-          + figure("RP-3", sizes="(min-width:900px) 46vw, 100vw", cls="shot")
-          + '</div>')
     main += sec("When the pager goes off, he goes",
       '<p>The sticker business is the fun part. The serious part is that %s is '
       '<a href="%s" rel="noopener" target="_blank">%s</a>, a volunteer department '
@@ -2035,7 +2033,7 @@ def build_about():
          stacy, o["first"]),
       extra='<div class=note style="margin:20px 0 22px">'
             '<p><b>Fire chief. Volunteer. Shows up at 3am for strangers.</b> '
-            'He will show up for your decal too.</p></div>' + fd)
+            'He will show up for your decal too.</p></div>')
 
     # --- 4. the landlord (gated) -------------------------------------------
     if ABOUT["rentals"]:
