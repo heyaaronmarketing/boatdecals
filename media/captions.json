@@ -382,5 +382,25 @@
     "page": "/boat-lettering-waterloo-cedar-falls/",
     "master": "media/shots/HB-5.jpg",
     "social": "media/social/HB-5/"
+  },
+  {
+    "id": "RP-1",
+    "caption": "Ryan, number 113",
+    "sub": "His own profile picture, and the reason the shop exists"
+  },
+  {
+    "id": "RP-2",
+    "caption": "Turnout gear, Evansdale Fire &amp; Rescue",
+    "sub": "A volunteer department: the gear waits, the people come"
+  },
+  {
+    "id": "RP-3",
+    "caption": "Engine 201",
+    "sub": "Evansdale Fire &amp; Rescue, in the bay"
+  },
+  {
+    "id": "RP-4",
+    "caption": "The apparatus bay",
+    "sub": "Evansdale Fire &amp; Rescue"
   }
 ]

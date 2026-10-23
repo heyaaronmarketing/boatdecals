@@ -656,3 +656,9 @@ color:var(--mut);line-height:1.6}
 .ownerline strong{color:var(--ink)}
 .ownerline a{font-weight:700;white-space:nowrap}
 """
+
+# ---- about: department photos ------------------------------------------
+CSS += """
+.fdgrid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:4px}
+@media(min-width:760px){.fdgrid{grid-template-columns:1fr 1fr;gap:18px}}
+"""

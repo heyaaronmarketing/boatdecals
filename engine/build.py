@@ -1991,7 +1991,11 @@ def build_about():
             trust=["$19 for Two Sets", "Cut in Evansdale", "Next Day Shipping",
                    "100%% Compliant"],
             right=O.form(),
-            cta2=("/tools/boat-name-generator/", "Try the name generator")))
+            cta2=("/tools/boat-name-generator/", "Try the name generator"))
+      + band.open() + '<div class=w>'
+      + figure("RP-1", sizes="(min-width:900px) 70vw, 100vw", cls="shot wide",
+               lazy=False)
+      + '</div></section>')
 
     # --- 2. the sticker guy ------------------------------------------------
     main += sec("Fifteen years of making vinyl stick",
@@ -2010,6 +2014,10 @@ def build_about():
     stacy = ("<p>His wife %s serves on the department right alongside him. In a town "
              "of about 4,700 people, that is the kind of thing folks notice and "
              "remember.</p>" % o["spouse"]) if ABOUT["name_stacy"] else ""
+    fd = ('<div class=fdgrid>'
+          + figure("RP-2", sizes="(min-width:900px) 46vw, 100vw", cls="shot")
+          + figure("RP-3", sizes="(min-width:900px) 46vw, 100vw", cls="shot")
+          + '</div>')
     main += sec("When the pager goes off, he goes",
       '<p>The sticker business is the fun part. The serious part is that %s is '
       '<a href="%s" rel="noopener" target="_blank">%s</a>, a volunteer department '
@@ -2025,9 +2033,9 @@ def build_about():
       'of them.</p>'
       % (o["first"], L["department"], o["role"], L["news"], L["council"],
          stacy, o["first"]),
-      extra='<div class=w style="padding:0"><div class=note style="margin-top:20px">'
+      extra='<div class=note style="margin:20px 0 22px">'
             '<p><b>Fire chief. Volunteer. Shows up at 3am for strangers.</b> '
-            'He will show up for your decal too.</p></div></div>')
+            'He will show up for your decal too.</p></div>' + fd)
 
     # --- 4. the landlord (gated) -------------------------------------------
     if ABOUT["rentals"]:

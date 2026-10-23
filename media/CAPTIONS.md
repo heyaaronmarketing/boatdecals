@@ -56,3 +56,20 @@ Within a season that is a real gallery with real names, and these generated
 shots get demoted to hero/atmosphere only. AI is the bridge, not the
 destination - the sites that win this category long-term are the ones with 161
 pages of real customers.
+
+
+## RP-* is different: those are real photographs
+
+Every prefix on this site except `RP-` is a generated, illustrative image, and
+the rule above applies to all of them: never caption one as a specific
+person's boat or a specific person's work.
+
+`RP-*` are genuine photographs - Ryan's own profile picture and original
+full-resolution phone photos of Evansdale Fire & Rescue, straight from him.
+They can carry a factual caption, because they are factual.
+
+They are also NOT generatively upscaled. An AI upscaler does not recover
+detail, it invents it, and on a photograph of a real named person that
+produces a synthetic face presented as a photograph of him. RP-1 is resampled
+with Lanczos only. If a photo is too small for its slot, the fix is a better
+photo. See media/owner.py.

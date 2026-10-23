@@ -34,7 +34,7 @@ def build(src, stem, w):
 
 
 def main():
-    masters = sorted(p for pre in ("AL", "HT", "GD", "AC", "PR", "ST", "HB")
+    masters = sorted(p for pre in ("AL", "HT", "GD", "AC", "PR", "ST", "HB", "RP")
                  for p in SRC.glob("%s-*.jpg" % pre))
     if not masters:
         sys.exit("no masters in %s" % SRC)
