@@ -103,6 +103,28 @@ block characters":
   `numFam` in `preview.py`), because showing script registration numbers we would
   never cut would make the preview a lie. The hint says so explicitly.
 
+### Colours
+
+The order form offers **White and Black only** (`content.py: ORDER_COLORS`).
+Between them they contrast with every hull colour there is, which is what
+33 CFR 173.27 actually asks for, and both are always in stock.
+
+The full `COLORS` list still drives the swatch display on product pages, which
+now says white and black ship standard and the rest are quoted by email —
+**don't let the order form and the product pages disagree again**: advertising
+32 colours while shipping a two-colour picker is how refund requests start.
+
+### Sizes
+
+The chip holds the measurement alone; the caption and the price sit **outside
+and below** it (`.optbox` + `.optcap`, both children of `.opt`).
+
+⚠️ **The wizard renders inside `.hero{color:#fff}`.** Anything in the panel that
+doesn't set its own colour inherits white and vanishes — `<legend>` did exactly
+that and "Colour" / "Character height" were invisible for several deploys.
+`.panel` now anchors `color:var(--ink)` and `verify.py` gates both that rule and
+the explicit `legend` colour.
+
 ### The state field is gone
 
 Step 2 no longer asks for it — the registration number already carries its state

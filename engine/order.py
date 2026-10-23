@@ -19,7 +19,7 @@ Anti-fatigue rules this file holds to:
 Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
-from content import (PRICE, FONTS, COLORS, POPULAR_COLORS, STATES, UPGRADES)
+from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES)
 import preview as PV
 
 HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better"),
@@ -53,17 +53,17 @@ def _thumb(key):
 
 
 def _colors(prefix):
-    pop = [c for c in COLORS if c[0] in POPULAR_COLORS]
-    rest = [c for c in COLORS if c[0] not in POPULAR_COLORS]
-    def sw(c, checked=False):
-        name, hexv, light = c
-        return ('<label class=csw title="%s"><input type=radio name="%s" value="%s" '
-                'data-hex="%s" data-light="%d"%s>'
-                '<span style="background:%s"></span><em>%s</em></label>'
-                % (name, prefix, name, hexv, light,
-                   " checked" if checked else "", hexv, name))
-    return ("".join(sw(c, c[0] == "Black") for c in pop),
-            "".join(sw(c) for c in rest))
+    """Two colours, named rather than left as unlabelled swatches - at this
+    size a white chip and a light-grey chip are hard to tell apart."""
+    picks = [c for c in COLORS if c[0] in ORDER_COLORS]
+    picks.sort(key=lambda c: ORDER_COLORS.index(c[0]))
+    return "".join(
+        '<label class=csw><input type=radio name="%s" value="%s" data-hex="%s" '
+        'data-light="%d"%s><span class=cswbox><i style="background:%s"></i>%s</span>'
+        '</label>'
+        % (prefix, name, hexv, light, " checked" if name == "Black" else "",
+           hexv, name)
+        for name, hexv, light in picks)
 
 
 def form():
@@ -78,9 +78,10 @@ def form():
         for i, (lbl, css, _g, block) in enumerate(FONTS))
     heights = "".join(
         '<label class=opt><input type=radio name=height value="%d" data-add="%d"%s>'
-        '<span>%s<em>%s</em></span></label>'
-        % (h, add, " checked" if h == 3 else "", lbl,
-           note if add == 0 else note + " &middot; +$%d" % add)
+        '<span class=optbox>%s</span>'
+        '<em class=optcap>%s<b>%s</b></em></label>'
+        % (h, add, " checked" if h == 3 else "", lbl, note,
+           "included" if add == 0 else "+$%d" % add)
         for h, add, lbl, note in HEIGHTS)
     kinds = "".join(
         '<label class=kind><input type=radio name=kind value="%s" data-base="%d"%s>'
@@ -97,7 +98,7 @@ def form():
         % (lbl, amt, '<span class=flag>%s</span>' % flag if flag else "",
            lbl.split(" - ")[0], blurb, note, amt)
         for lbl, amt, blurb, flag, note in UPGRADES)
-    pop, rest = _colors("color")
+    cols = _colors("color")
 
     return ("""
 <div id=order class="panel wiz">
@@ -153,9 +154,10 @@ def form():
     <h2>How should it look?</h2>
     
     <fieldset><legend>Colour</legend>
-      <div class=swrow>""" + pop + """</div>
-      <details class=morecol><summary>14 more colours</summary>
-        <div class=swrow style="margin-top:9px">""" + rest + """</div></details>
+      <div class=swrow>""" + cols + """</div>
+      <div class=hint>White on a dark hull, black on a light one &mdash; the law
+        wants contrast. Other colours are available,
+        <a href="/contact/">just ask</a>.</div>
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts>""" + heights + """</div>

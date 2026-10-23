@@ -94,7 +94,7 @@ PRODUCTS = [
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
          blurb="Names, home ports, hull stripes, transom text. You pick the font and the colour, we cut it and pre-space it.",
-         desc="Custom vinyl boat lettering from $29. 10 marine fonts previewed live, 32 colours, 7-year warranty, free shipping, next-day production."),
+         desc="Custom vinyl boat lettering from $29. 10 marine fonts previewed live, white or black in stock, 7-year warranty, free shipping."),
     dict(slug="boat-name-decals", nav="Boat names", short="Boat names",
          h1="Boat Name Decals - From $29, Pre-Spaced and Ready",
          kw="boat name decals", vol=1600, cpc=3.54, price=PRICE["name_from"],
@@ -322,9 +322,10 @@ COLORS = [("White","#ffffff",1),("Black","#111111",0),("Navy","#12243f",0),
           ("Tan","#c9a979",1),("Grey","#8b949c",1),("Silver Metallic","#c6ccd1",1),
           ("Gold Metallic","#c9a227",1),("Chrome","#dfe6ea",1),
           ("Reflective White","#f2f4f5",1),("Reflective Red","#d02b3f",0)]
-# The eight people actually pick. Shown first so step 3 is one glance, not a scroll.
-POPULAR_COLORS = ["Black","White","Navy","Red","Royal Blue","Silver Metallic",
-                  "Gold Metallic","Chrome"]
+# What the order form offers. Two colours cover the overwhelming majority of
+# boat lettering, they are always in stock, and between them they satisfy the
+# contrast rule against any hull. Everything else in COLORS is quoted by email.
+ORDER_COLORS = ["White", "Black"]
 
 # PAA harvested live from Google on 2026-10-22. These are the questions the
 # answer engines are already answering for someone else.

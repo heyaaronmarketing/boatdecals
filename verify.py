@@ -81,6 +81,13 @@ for banned in ("pan:", "number:", "cvc:", "card_number"):
         fails.append("mockpay collect() appears to return %r" % banned)
 if "carriesCardNumber" not in wjs or "const PAN" not in wjs:
     fails.append("worker lost its card-number refusal guard")
+# The wizard renders inside .hero{color:#fff}; anything in it that does not
+# set its own colour inherits white and disappears.
+if "color:var(--ink);box-shadow" not in design:
+    fails.append("the order panel lost its explicit text colour - elements that "
+                 "do not set their own will inherit the hero's white")
+if "legend{" in design and "legend{font-size:12.8px;font-weight:700;margin-bottom:5px;color:var(--ink)}" not in design:
+    fails.append("<legend> lost its explicit colour (renders white on white in the hero)")
 if '.testbar' not in design or 'Test mode' not in design:
     fails.append("sandbox checkout is live without a visible TEST MODE banner")
 

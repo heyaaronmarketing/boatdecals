@@ -681,9 +681,11 @@ def build_product(p):
                    "Ships next business day", "7-year vinyl"],
             right=O.form())
       + '<section><div class=w><div class=prose>' + body + '</div></div></section>'
-      + '<section class=soft><div class=w><h2>Colours in stock</h2>'
-        '<p class=lede>All 32, no upcharge on standard colours. Metallic, chrome and '
-        'reflective carry a small premium.</p>' + sw + '</div></section>'
+      + '<section class=soft><div class=w><h2>Colours</h2>'
+        '<p class=lede><strong>White and black ship standard</strong> &mdash; between '
+        'them they contrast with every hull colour there is, which is what the law '
+        'actually asks for. Everything below is available to order: email us and we '
+        'will quote it with your job.</p>' + sw + '</div></section>'
       + '<section><div class=w><h2>How it works</h2>' + CB.HOW_IT_WORKS +
         '<a class="btn lg" href="/design/">Start your order</a></div></section>'
       + product_grid(exclude=p["slug"], heading="Other things we cut"))
