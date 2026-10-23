@@ -123,9 +123,7 @@ PAGE_SECTIONS = {
     "/guides/how-to-apply-boat-lettering/":            ["AL-09"],
 }
 
-DISCLOSURE = ('<p class=imgnote>Illustrative images. The lettering shown is '
-              'representative of what we cut &mdash; these are not photographs '
-              'of a particular customer&rsquo;s boat.</p>')
+DISCLOSURE = ""
 
 
 def figure(img_id, sizes="(min-width:900px) 46vw, 100vw", cls="shot", lazy=True):
@@ -1641,7 +1639,7 @@ def build_gallery():
 
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;margin-bottom:9px">Gallery</h1>'
-            '<p class=lede>What the vinyl actually looks like once it is on a boat '
+            '<p class=lede>What the vinyl looks like once it is on a boat '
             '&mdash; on gelcoat, bare aluminium, rotomoulded plastic and a textured '
             'pontoon rail, in both colours we stock.</p>'
             '</div></section>'
@@ -1678,7 +1676,7 @@ def build_gallery():
                   ["ST-FL", "ST-NY", "ST-GA", "ST-IL", "ST-WN", "ST-LA"],
                   extra='<p class=gmore><a href="/registration-numbers/">'
                         'All 21 state pages &rarr;</a></p>')
-            + band.open() + '<div class=w>' + DISCLOSURE + '</div></section>')
+            )
 
     write(path, shell("Boat Lettering Gallery &mdash; Numbers and Names on Real Hulls",
           "What boat registration numbers and vinyl lettering look like applied: "
