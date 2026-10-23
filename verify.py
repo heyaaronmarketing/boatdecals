@@ -100,6 +100,29 @@ for _val, _base, _c, _p, _f, _k, _label in _KINDS:
         fails.append("order kind %r (base %d) missing from worker BASE - the radio "
                      "value is a contract, rename the label instead" % (_val, _base))
 
+# Published statistics must trace to the cited source. These pages shipped
+# invented fleet figures for months (NY at 1.3M against an actual 428,445), so
+# the numbers now live in one table and the gate proves every state page prints
+# the value from it and nothing else.
+from state_data import USCG_FLEET, USCG_NATIONAL
+from state_waters import WATERS
+from content import STATES as _ST
+for _s in _ST:
+    _page = OUT / "registration-numbers" / _s["slug"] / "index.html"
+    if not _page.exists():
+        fails.append("missing state page %s" % _s["slug"]); continue
+    _h = _page.read_text()
+    _n = "{:,}".format(USCG_FLEET[_s["slug"]][0])
+    if _n not in _h:
+        fails.append("%s does not print its USCG figure %s" % (_s["slug"], _n))
+    if "uscgboating.org" not in _h:
+        fails.append("%s cites no source for its statistics" % _s["slug"])
+    if _s["slug"] not in WATERS:
+        fails.append("%s has no boating-waters research" % _s["slug"])
+    for _name, _note in WATERS.get(_s["slug"], {}).get("waters", []):
+        if _name.split(" and ")[0].split(",")[0] not in _h:
+            fails.append("%s: water %r never reaches the page" % (_s["slug"], _name))
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

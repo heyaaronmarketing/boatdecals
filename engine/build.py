@@ -9,6 +9,9 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL)
 from style import CSS
 import namegen as NG
+from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
+                        USCG_NATIONAL, state_badge)
+from state_waters import WATERS
 import order as O
 import mockpay as MP
 import preview as PV
@@ -859,6 +862,85 @@ def build_product(p):
                 sticky_price=p["price"], js=ORDER_JS, band=band), "0.9")
 
 # ---------------------------------------------------------------- states
+def ordinal(n):
+    """21st, not 21th. The hand-rolled version special-cased 2 and 3 and then
+    printed "22th" and "21th" on two live pages."""
+    words = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",
+             6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth"}
+    if n in words:
+        return words[n]
+    suf = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return "%d%s" % (n, suf)
+
+
+def state_identity(s, band):
+    """The band that says, immediately, which state you are on.
+
+    Shape plus prefix plus three real numbers. The numbers are the Coast
+    Guard's, cited inline, because a state page that invents its own
+    statistics is worth nothing to an answer engine - and these pages were
+    previously publishing fleet figures that were wrong by 2-3x.
+    """
+    fleet, rank, scope = USCG_FLEET[s["slug"]]
+    share = fleet / float(USCG_NATIONAL) * 100
+    return (band.open("sidband") + '<div class="w sband">'
+      + state_badge(s["slug"], s["ab"], s["name"])
+      + '<div><div class=sfacts>'
+        '<div class=sfact><b>%s</b><span>Registered vessels</span></div>'
+        '<div class=sfact><b>#%d</b><span>Of the 50 states</span></div>'
+        '<div class=sfact><b>%s</b><span>Vessel prefix</span></div>'
+        '</div>'
+        '<p class=ssrc>%s of every registered boat in the country is in %s. '
+        'Registration counts from the %s, 2024 figures. '
+        '<a href="%s" rel="nofollow noopener" target="_blank">Source</a>.</p>'
+        '</div></div></section>'
+      % ("{:,}".format(fleet), rank, s["ab"],
+         ("%.1f%%" % share) if share >= 0.1 else "Under 0.1%",
+         s["name"], USCG_SOURCE, USCG_URL))
+
+
+def state_waters(s, band):
+    """Where people in this state actually put a boat in the water.
+
+    This is the part a state page lives or dies on. Anyone can restate the
+    federal 3-inch rule; naming Okoboji, the Santee Cooper lakes or the
+    Western Basin the way a local names them is what makes the page worth
+    ranking, and what an answer engine has nothing else to quote for.
+    """
+    w = WATERS.get(s["slug"])
+    if not w:
+        return ""
+    items = "".join('<li><b>%s</b><span>%s</span></li>' % (n, note)
+                    for n, note in w["waters"])
+    return (band.open() + '<div class=w>'
+      '<h2>Where people boat in %s</h2>'
+      '<p class=lede>%s</p>'
+      '<ul class=waters>%s</ul>'
+      '<p style="margin-top:18px"><strong>The season.</strong> %s</p>'
+      '</div></section>' % (s["name"], w["lede"], items, w["season"]))
+
+
+def state_scope(s, band):
+    """What this state actually requires you to register.
+
+    Straight off the Coast Guard's own summary of each state's system, which
+    is the authoritative answer to "do I have to register my kayak" - a real
+    query with a different answer in nearly every state.
+    """
+    _f, _r, scope = USCG_FLEET[s["slug"]]
+    return (band.open() + '<div class=w><div class=prose>'
+      '<h2>What has to be registered in %s</h2>'
+      '<div class=rule><p><strong>%s registers:</strong> %s.</p></div>'
+      '<p>That is the Coast Guard&rsquo;s own summary of the %s system. It '
+      'matters because it decides whether you need a number on the bow at '
+      'all &mdash; the answer for a kayak or a canoe is different in nearly '
+      'every state, and a boat that does not need registering does not need '
+      'numbers from us either. If you are not required to register it, we '
+      'would rather tell you that than sell you a set.</p>'
+      '</div></div></section>'
+      % (s["name"], s["name"], scope[0].lower() + scope[1:], s["agency"]))
+
+
 def build_state(s):
     path = "/registration-numbers/%s/" % s["slug"]
     trail = [("By state", "/registration-numbers/"), (s["name"], None)]
@@ -894,6 +976,31 @@ def build_state(s):
         "The validation decal goes near the number &mdash; %s publishes the exact "
         "offset, and it is usually within a few inches." % nm)),
     ]
+    # Statewide AEO: these are the questions people type with a state name in
+    # them, and every answer here is backed by something on the page - the
+    # Coast Guard scope line, the Coast Guard count, or the waters research.
+    _fleet, _rank, _scope = USCG_FLEET[s["slug"]]
+    _w = WATERS.get(s["slug"])
+    faqs += [
+      ("Do I have to register a kayak or canoe in %s?" % nm,
+       "%s registers %s. If your boat falls outside that, it does not need a "
+       "registration number on the bow &mdash; and it does not need a set from us "
+       "either. This is the Coast Guard's own summary of the %s system."
+       % (nm, _scope[0].lower() + _scope[1:], s["agency"])),
+      ("How many registered boats are there in %s?" % nm,
+       "%s, which puts %s %s in the country. That is the Coast Guard's 2024 count, "
+       "from Recreational Boating Statistics, Table 38."
+       % ("{:,}".format(_fleet), nm, ordinal(_rank))),
+    ]
+    if _w:
+        faqs.append(
+          ("Where are the best places to boat in %s?" % nm,
+           "%s %s" % (_w["waters"][0][0] + " is the one most people name first: "
+                      + _w["waters"][0][1].rstrip(".") + ".",
+                      "Others worth knowing: " + ", ".join(
+                        n for n, _ in _w["waters"][1:5]) + ".")))
+        faqs.append(
+          ("When is boating season in %s?" % nm, _w["season"]))
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path),
                 product_node(PRODUCTS[0], path))
     note = '<div class=note><p><b>%s specifics.</b> %s</p></div>' % (nm, s["note"]) \
@@ -930,10 +1037,6 @@ def build_state(s):
       + ('<h2>Where the validation decal goes in %s</h2><p>%s</p>' % (nm, s["decal"])
          if s.get("decal") else "")
       + vb
-      + '<p>%s has roughly <strong>%s registered vessels</strong>, which makes it one of '
-        'the larger boating states in the country &mdash; and means a lot of numbers get '
-        'replaced every spring when the old set chalks out.</p>'
-        % (nm, "{:,}".format(s["fleet"]))
       + CB.FED_RULE
       + ('<h2>Getting the number in the first place</h2>'
          '<p>Register the boat through <strong>%s</strong> first. That is where the '
@@ -958,7 +1061,10 @@ def build_state(s):
             trust=["$19 for Two Sets", "%s prefix" % ab, "Next Day Shipping",
                    "100% Compliant"],
             right=O.form())
+      + state_identity(s, band)
       + alternating(body, imgs, band)
+      + state_waters(s, band)
+      + state_scope(s, band)
       + cta_band(band)
       + band.open() + '<div class=w><h2>Other states</h2>' + state_wheel(current=s["slug"])
       + '</div></section>')
@@ -985,9 +1091,11 @@ def build_states_hub():
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     rows = "".join('<tr><td><a href="/registration-numbers/%s/"><strong>%s</strong></a></td>'
-                   '<td><strong>%s</strong></td><td>%s</td><td>%s</td></tr>'
-                   % (s["slug"], s["name"], s["ab"], "{:,}".format(s["fleet"]), s["agency"])
-                   for s in sorted(STATES, key=lambda x: -x["fleet"]))
+                   '<td><strong>%s</strong></td><td>%s</td><td>#%d</td><td>%s</td></tr>'
+                   % (s["slug"], s["name"], s["ab"],
+                      "{:,}".format(USCG_FLEET[s["slug"]][0]),
+                      USCG_FLEET[s["slug"]][1], s["agency"])
+                   for s in sorted(STATES, key=lambda x: -USCG_FLEET[x["slug"]][0]))
     main = (hero("Boat Registration Numbers by State",
             "The 3-inch block rule is federal and the same everywhere. What changes is "
             "your prefix, who issues the number, and where the validation decal goes. "
@@ -998,10 +1106,13 @@ def build_states_hub():
       + '<section><div class=w>' + lead_figure(path) + '<h2>Pick your state</h2>'
       + state_wheel()
       + '<h2 style="margin-top:34px">Prefix, fleet size and who issues it</h2>'
-        '<p class=lede>Registered-vessel counts are a useful sanity check: the bigger the '
-        'fleet, the longer the queue at your local shop in April.</p>'
+        '<p class=lede>Registered-vessel counts below are the Coast Guard\'s 2024 '
+        'figures, not estimates. They are a useful sanity check: the bigger the fleet, '
+        'the longer the queue at your local shop in April. Nationally there are '
+        '%s registered recreational vessels.</p>'
         '<div class=tw><table><thead><tr><th>State</th><th>Prefix</th>'
-        '<th>Registered vessels</th><th>Issuing agency</th></tr></thead><tbody>'
+        '<th>Registered vessels</th><th>US rank</th><th>Issuing agency</th>'
+        '</tr></thead><tbody>' % "{:,}".format(USCG_NATIONAL)
         + rows + '</tbody></table></div>'
       + '<div class=prose>' + CB.FED_RULE + '</div>'
       + '<a class="btn lg" href="/design/">Start your order</a></div></section>')

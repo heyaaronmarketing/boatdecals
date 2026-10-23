@@ -614,3 +614,33 @@ CSS += """
 white-space:nowrap}
 .ctalink:hover{text-decoration:underline}
 """
+
+# ---- state identity band -----------------------------------------------
+CSS += """
+.sband{display:grid;gap:20px;grid-template-columns:1fr;align-items:center}
+@media(min-width:760px){.sband{grid-template-columns:168px 1fr;gap:28px}}
+.sbadge{width:132px;height:132px;display:block;margin:0 auto;overflow:visible}
+@media(min-width:760px){.sbadge{width:168px;height:168px}}
+.sbshape{fill:var(--nav);stroke:var(--sea);stroke-width:1.6;
+stroke-linejoin:round}
+.sbtext{font:900 30px/1 'Archivo Black','Arial Black',sans-serif;fill:#fff;
+letter-spacing:.01em;stroke:var(--nav);stroke-width:7;paint-order:stroke fill;
+stroke-linejoin:round}
+.sfacts{display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:560px){.sfacts{grid-template-columns:repeat(3,1fr)}}
+.sfact{background:#fff;border:1px solid var(--line);border-radius:11px;
+padding:11px 13px}
+.sfact b{display:block;font-size:20px;line-height:1.15;color:var(--nav);
+font-weight:800;letter-spacing:-.01em}
+.sfact span{display:block;font-size:11.5px;color:var(--mut);font-weight:700;
+letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
+.ssrc{font-size:12px;color:var(--mut);margin:12px 0 0}
+.ssrc a{color:var(--mut)}
+.waters{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:12px}
+@media(min-width:720px){.waters{grid-template-columns:1fr 1fr;gap:12px 24px}}
+.waters li{padding-left:17px;position:relative;font-size:15px;line-height:1.5}
+.waters li::before{content:"";position:absolute;left:0;top:9px;width:9px;
+height:9px;border-radius:50%;background:var(--sea)}
+.waters b{display:block;color:var(--nav);font-size:15.6px}
+.waters span{color:var(--mut)}
+"""
