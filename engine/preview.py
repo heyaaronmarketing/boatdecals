@@ -18,7 +18,7 @@ SVG = """
   <text id=p_num x="150" y="40" text-anchor="middle"
         font-family="Arial Black, Impact, sans-serif" font-weight="900"
         font-size="34" letter-spacing="1.5" fill="#111">IA 3717 ZW</text>
-  <text id=p_name x="150" y="40" text-anchor="middle"
+  <text id=p_name x="150" y="40" text-anchor="middle" style="display:none"
         font-family="Arial Black, Impact, sans-serif" font-weight="900"
         font-size="34" fill="#111">Second Wind</text>
 </svg>

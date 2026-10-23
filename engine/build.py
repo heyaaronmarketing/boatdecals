@@ -668,10 +668,6 @@ def build_design():
             '<section style="padding-top:0"><div class=w>'
             '<div class=herogrid><div>' + O.form() + '</div>'
             '<div>' + why_grid(6) +
-            '<div class=note style="margin-top:16px"><p><b>Not sure what to type?</b> '
-            'For registration numbers, copy the line off your registration card exactly '
-            '&mdash; prefix, digits and suffix. If you have not registered yet, order '
-            'after you have the number in hand; we cannot guess it.</p></div>'
             '</div></div></div></section>')
     write("/design/", shell("Start Your Order - Boat Lettering &amp; Numbers",
           "Build your boat registration numbers or custom lettering order. Live pricing, "

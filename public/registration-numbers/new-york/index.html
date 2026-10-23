@@ -620,7 +620,7 @@ font-weight:700;color:var(--nav2);text-decoration:none}
     <div class=wizbar><i id=wizfill></i></div>
     <div class=wizmeta>
       <button type=button class=wizback id=back hidden>&larr; Back</button>
-      <span id=stepnum>Step 1 of 5</span>
+      <span id=stepnum>Step 1 of 4</span>
       <span class=wiztot>Total <b id=total>$19</b></span>
     </div>
   </div>
@@ -633,7 +633,7 @@ font-weight:700;color:var(--nav2);text-decoration:none}
   <text id=p_num x="150" y="40" text-anchor="middle"
         font-family="Arial Black, Impact, sans-serif" font-weight="900"
         font-size="34" letter-spacing="1.5" fill="#111">IA 3717 ZW</text>
-  <text id=p_name x="150" y="40" text-anchor="middle"
+  <text id=p_name x="150" y="40" text-anchor="middle" style="display:none"
         font-family="Arial Black, Impact, sans-serif" font-weight="900"
         font-size="34" fill="#111">Second Wind</text>
 </svg>
@@ -681,8 +681,7 @@ font-weight:700;color:var(--nav2);text-decoration:none}
     <fieldset><legend>Colour</legend>
       <div class=swrow><label class=csw><input type=radio name="color" value="White" data-hex="#ffffff" data-light="1"><span class=cswbox><i style="background:#ffffff"></i>White</span></label><label class=csw><input type=radio name="color" value="Black" data-hex="#111111" data-light="0" checked><span class=cswbox><i style="background:#111111"></i>Black</span></label></div>
       <div class=hint>White on a dark hull, black on a light one &mdash; the law
-        wants contrast. Other colours are available,
-        <a href="/contact/">just ask</a>.</div>
+        wants contrast.</div>
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts><label class=opt><input type=radio name=height value="3" data-add="0" checked><span class=optbox>3&quot;</span><em class=optcap>legal minimum<b>included</b></em></label><label class=opt><input type=radio name=height value="4" data-add="4"><span class=optbox>4&quot;</span><em class=optcap>reads better<b>+$4</b></em></label><label class=opt><input type=radio name=height value="5" data-add="8"><span class=optbox>5&quot;</span><em class=optcap>bold<b>+$8</b></em></label><label class=opt><input type=radio name=height value="6" data-add="13"><span class=optbox>6&quot;</span><em class=optcap>big transom<b>+$13</b></em></label></div>
@@ -1430,7 +1429,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   });
 
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
-  setTimeout(function(){ if(cur===5 && !mounted) degrade(); },4000);
+  setTimeout(function(){ if(cur===MAX && !mounted) degrade(); },4000);
   seedStatePrefix();
   show(1);
 })();

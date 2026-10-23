@@ -95,13 +95,13 @@ def form():
         for lbl, base, blurb, price, flag, key in KINDS)
     cols = _colors("color")
 
-    return ("""
+    markup = ("""
 <div id=order class="panel wiz">
   <div class=wizhead>
     <div class=wizbar><i id=wizfill></i></div>
     <div class=wizmeta>
       <button type=button class=wizback id=back hidden>&larr; Back</button>
-      <span id=stepnum>Step 1 of 5</span>
+      <span id=stepnum>Step 1 of __STEPS__</span>
       <span class=wiztot>Total <b id=total>$19</b></span>
     </div>
   </div>
@@ -151,8 +151,7 @@ def form():
     <fieldset><legend>Colour</legend>
       <div class=swrow>""" + cols + """</div>
       <div class=hint>White on a dark hull, black on a light one &mdash; the law
-        wants contrast. Other colours are available,
-        <a href="/contact/">just ask</a>.</div>
+        wants contrast.</div>
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts>""" + heights + """</div>
@@ -185,7 +184,13 @@ def form():
   <div class=wizfoot>
     <button type=button class="btn lg" id=next>Continue</button>
   </div>
-</div>""").replace("__HULL__", PV.SVG)
+</div>""")
+
+    # The step label and the progress bar both derive from how many <section
+    # class=step> blocks are actually in the markup. A hand-kept "of 5" is how
+    # the header went on claiming five steps a month after step 4 was removed.
+    steps = markup.count('class=step ') + markup.count('class="step on"')
+    return markup.replace("__HULL__", PV.SVG).replace("__STEPS__", str(steps))
 
 
 def color_js():
@@ -600,7 +605,7 @@ JS = r"""
   });
 
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
-  setTimeout(function(){ if(cur===5 && !mounted) degrade(); },4000);
+  setTimeout(function(){ if(cur===MAX && !mounted) degrade(); },4000);
   seedStatePrefix();
   show(1);
 })();
