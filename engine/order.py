@@ -237,7 +237,7 @@ JS = r"""
     var h=val('height'), hv=h?h.value:'3';
     var fn=font();
     window.BNS_PREVIEW.render({
-      hex: meta[0], light: !!meta[1], font: fn,
+      hex: meta[0], light: !!meta[1], font: fn, height: hv,
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
@@ -458,10 +458,11 @@ JS = r"""
   }
 
   function done(j,paid,test){
+    // No test marker on screen any more, by request. The protection that
+    // matters is in initPay(): the sandbox only mounts on a preview host, so a
+    // real customer on a real domain never sees this card field at all. Orders
+    // are still flagged test_mode=1 in D1 and [TEST] in the shop email.
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
-      (test?'<div class=testbar style="text-align:left"><b>Test mode</b>'+
-            '<span>No payment was taken and no card was stored. This order is '+
-            'flagged as a test.</span></div>':'')+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
       '<p>'+(paid?'Thanks. ':'')+'We are drawing your proof now. It lands in <strong>'+
       esc($('f_email')?$('f_email').value:'your inbox')+'</strong> shortly'+

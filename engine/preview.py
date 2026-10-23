@@ -29,7 +29,7 @@ CSS = """
 .prev{border-radius:10px;padding:10px 12px;overflow:hidden;background:#e9f0f4;
 border:1px solid #cfdde6;transition:background .22s,border-color .22s}
 .prev.night{background:#1b2a33;border-color:#0e1b22}
-#prevsvg{display:block;width:100%;height:94px}
+#prevsvg{display:block;width:100%;height:94px;transition:height .18s ease}
 #p_num,#p_name{transition:fill .2s}
 .prevlbl{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;font-size:11.2px;
 color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
@@ -41,6 +41,7 @@ window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
   var SCRIPTY=/script|vibes|formal|brush/i;
   var PAD=7;           // viewBox units of breathing room around the glyphs
+  var BASE_H=94;       // panel height at the 3" baseline, in px
   var LINEGAP=9;
 
   function render(o){
@@ -81,11 +82,24 @@ window.BNS_PREVIEW = (function(){
     if(both){ tn.setAttribute('y', 30); nm.setAttribute('y', 30 + 34 + LINEGAP); }
     else { tn.setAttribute('y', 40); nm.setAttribute('y', 40); }
 
-    fit(svg, [o.showNum && tn, o.showName && nm].filter(Boolean));
+    fit(svg, [o.showNum && tn, o.showName && nm].filter(Boolean), o.height);
   }
 
-  /** Shrink-wrap the viewBox to the glyphs so they fill the panel. */
-  function fit(svg, nodes){
+  /**
+   * Size the panel to the character height, then fit the glyphs to it.
+   *
+   * 3" is the baseline and keeps the panel it has always had; 4, 5 and 6 grow
+   * it in proportion, so picking a taller character visibly produces taller
+   * lettering instead of the same text re-fitted to the same box.
+   *
+   * Padding the viewBox out to the panel's own aspect ratio is what makes that
+   * proportional. Shrink-wrapping alone always fills the panel in one
+   * dimension, so every height rendered identically.
+   *
+   * Text too wide for the panel stays width-limited and shrinks, which is
+   * honest: a long name at 6" really will not fit where a short one does.
+   */
+  function fit(svg, nodes, height){
     var x1=1e9, y1=1e9, x2=-1e9, y2=-1e9, got=false;
     nodes.forEach(function(n){
       var b; try { b=n.getBBox(); } catch(e) { return; }
@@ -95,8 +109,21 @@ window.BNS_PREVIEW = (function(){
       x2=Math.max(x2,b.x+b.width); y2=Math.max(y2,b.y+b.height);
     });
     if(!got){ svg.setAttribute('viewBox','0 0 300 64'); return; }
-    svg.setAttribute('viewBox',
-      (x1-PAD)+' '+(y1-PAD)+' '+(x2-x1+PAD*2)+' '+(y2-y1+PAD*2));
+
+    var h = Math.max(3, Math.min(6, parseFloat(height) || 3));
+    svg.style.height = Math.round(BASE_H * h / 3) + 'px';
+
+    var vx = x1 - PAD, vy = y1 - PAD;
+    var vw = (x2 - x1) + PAD * 2, vh = (y2 - y1) + PAD * 2;
+
+    var box = svg.getBoundingClientRect();
+    if (box.width > 0 && box.height > 0) {
+      var want = vh * (box.width / box.height);
+      // Narrower than the panel: pad the sides so the fit is height-driven and
+      // the glyphs end up exactly as tall as the panel.
+      if (want > vw) { vx -= (want - vw) / 2; vw = want; }
+    }
+    svg.setAttribute('viewBox', vx+' '+vy+' '+vw+' '+vh);
   }
 
   return {render: render};

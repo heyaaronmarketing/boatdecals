@@ -52,11 +52,6 @@ HTML = """
 """
 
 CSS = """
-.testbar{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;
-background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid #d08700;
-border-radius:0 8px 8px 0;padding:7px 10px;margin-bottom:9px;font-size:12.2px}
-.testbar b{color:#8a5a00;font-size:11.6px;text-transform:uppercase;letter-spacing:.05em}
-.testbar span{color:#6b5526;line-height:1.45}
 .sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
 .sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
 .srow{display:flex;gap:7px}

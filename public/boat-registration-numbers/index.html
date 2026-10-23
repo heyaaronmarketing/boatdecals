@@ -448,17 +448,12 @@ font-size:28px;font-weight:800;display:grid;place-items:center;margin:0 auto 16p
 .prev{border-radius:10px;padding:10px 12px;overflow:hidden;background:#e9f0f4;
 border:1px solid #cfdde6;transition:background .22s,border-color .22s}
 .prev.night{background:#1b2a33;border-color:#0e1b22}
-#prevsvg{display:block;width:100%;height:94px}
+#prevsvg{display:block;width:100%;height:94px;transition:height .18s ease}
 #p_num,#p_name{transition:fill .2s}
 .prevlbl{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;font-size:11.2px;
 color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
 .prevlbl b{color:var(--ink);font-weight:800}
 
-.testbar{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;
-background:#fff7e6;border:1px solid #f0d9a8;border-left:4px solid #d08700;
-border-radius:0 8px 8px 0;padding:7px 10px;margin-bottom:9px;font-size:12.2px}
-.testbar b{color:#8a5a00;font-size:11.6px;text-transform:uppercase;letter-spacing:.05em}
-.testbar span{color:#6b5526;line-height:1.45}
 .sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
 .sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
 .srow{display:flex;gap:7px}
@@ -723,6 +718,7 @@ window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
   var SCRIPTY=/script|vibes|formal|brush/i;
   var PAD=7;           // viewBox units of breathing room around the glyphs
+  var BASE_H=94;       // panel height at the 3" baseline, in px
   var LINEGAP=9;
 
   function render(o){
@@ -763,11 +759,24 @@ window.BNS_PREVIEW = (function(){
     if(both){ tn.setAttribute('y', 30); nm.setAttribute('y', 30 + 34 + LINEGAP); }
     else { tn.setAttribute('y', 40); nm.setAttribute('y', 40); }
 
-    fit(svg, [o.showNum && tn, o.showName && nm].filter(Boolean));
+    fit(svg, [o.showNum && tn, o.showName && nm].filter(Boolean), o.height);
   }
 
-  /** Shrink-wrap the viewBox to the glyphs so they fill the panel. */
-  function fit(svg, nodes){
+  /**
+   * Size the panel to the character height, then fit the glyphs to it.
+   *
+   * 3" is the baseline and keeps the panel it has always had; 4, 5 and 6 grow
+   * it in proportion, so picking a taller character visibly produces taller
+   * lettering instead of the same text re-fitted to the same box.
+   *
+   * Padding the viewBox out to the panel's own aspect ratio is what makes that
+   * proportional. Shrink-wrapping alone always fills the panel in one
+   * dimension, so every height rendered identically.
+   *
+   * Text too wide for the panel stays width-limited and shrinks, which is
+   * honest: a long name at 6" really will not fit where a short one does.
+   */
+  function fit(svg, nodes, height){
     var x1=1e9, y1=1e9, x2=-1e9, y2=-1e9, got=false;
     nodes.forEach(function(n){
       var b; try { b=n.getBBox(); } catch(e) { return; }
@@ -777,8 +786,21 @@ window.BNS_PREVIEW = (function(){
       x2=Math.max(x2,b.x+b.width); y2=Math.max(y2,b.y+b.height);
     });
     if(!got){ svg.setAttribute('viewBox','0 0 300 64'); return; }
-    svg.setAttribute('viewBox',
-      (x1-PAD)+' '+(y1-PAD)+' '+(x2-x1+PAD*2)+' '+(y2-y1+PAD*2));
+
+    var h = Math.max(3, Math.min(6, parseFloat(height) || 3));
+    svg.style.height = Math.round(BASE_H * h / 3) + 'px';
+
+    var vx = x1 - PAD, vy = y1 - PAD;
+    var vw = (x2 - x1) + PAD * 2, vh = (y2 - y1) + PAD * 2;
+
+    var box = svg.getBoundingClientRect();
+    if (box.width > 0 && box.height > 0) {
+      var want = vh * (box.width / box.height);
+      // Narrower than the panel: pad the sides so the fit is height-driven and
+      // the glyphs end up exactly as tall as the panel.
+      if (want > vw) { vx -= (want - vw) / 2; vw = want; }
+    }
+    svg.setAttribute('viewBox', vx+' '+vy+' '+vw+' '+vh);
   }
 
   return {render: render};
@@ -824,7 +846,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     var h=val('height'), hv=h?h.value:'3';
     var fn=font();
     window.BNS_PREVIEW.render({
-      hex: meta[0], light: !!meta[1], font: fn,
+      hex: meta[0], light: !!meta[1], font: fn, height: hv,
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
@@ -1045,10 +1067,11 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   }
 
   function done(j,paid,test){
+    // No test marker on screen any more, by request. The protection that
+    // matters is in initPay(): the sandbox only mounts on a preview host, so a
+    // real customer on a real domain never sees this card field at all. Orders
+    // are still flagged test_mode=1 in D1 and [TEST] in the shop email.
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
-      (test?'<div class=testbar style="text-align:left"><b>Test mode</b>'+
-            '<span>No payment was taken and no card was stored. This order is '+
-            'flagged as a test.</span></div>':'')+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
       '<p>'+(paid?'Thanks. ':'')+'We are drawing your proof now. It lands in <strong>'+
       esc($('f_email')?$('f_email').value:'your inbox')+'</strong> shortly'+

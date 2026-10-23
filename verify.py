@@ -105,8 +105,15 @@ if "color:var(--ink);box-shadow" not in design:
                  "do not set their own will inherit the hero's white")
 if "legend{" in design and "legend{font-size:12.8px;font-weight:700;margin-bottom:5px;color:var(--ink)}" not in design:
     fails.append("<legend> lost its explicit colour (renders white on white in the hero)")
-if '.testbar' not in design or 'Test mode' not in design:
-    fails.append("sandbox checkout is live without a visible TEST MODE banner")
+# There is no TEST MODE marker on screen any more (removed by request), so the
+# host check in initPay() is the ONLY thing stopping a dead card field from
+# appearing in front of real customers on a real domain. Guard it hard.
+if "window.BNS_PAY_MODE==='sandbox' && preview" not in design:
+    fails.append("initPay() no longer gates the sandbox card form on a preview "
+                 "host - on a real domain this would show a card field that "
+                 "takes no payment")
+if "workers\\.dev" not in design and "workers.dev" not in design:
+    fails.append("the preview-host allowlist is gone from the order JS")
 
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))

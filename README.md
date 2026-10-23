@@ -101,9 +101,19 @@ first, the only symptom was that the scroll-into-view and autofocus after it
 silently stopped working. `verify.py` now cross-checks every id the wizard's JS
 writes against the ids present in the markup.
 
-The SVG height is **fixed at 94px on purpose** — a min/max pair let the box
-resize as the text grew, which made the whole panel jitter while someone was
-typing.
+The panel is **94px at the 3" baseline and scales linearly** with the character
+height — 125px at 4", 157px at 5", 188px at 6" — so picking a taller character
+visibly produces taller lettering instead of the same text re-fitted to the same
+box. Measured: 1.00 / 1.34 / 1.68 / 2.00.
+
+`fit()` pads the viewBox out to the panel's own aspect ratio to achieve that.
+Shrink-wrapping alone always fills the panel in one dimension, which is why
+every height used to render identically. Text too wide for the panel stays
+width-limited and shrinks, which is honest — a long name at 6" really will not
+fit where a short one does.
+
+The baseline is a constant (`BASE_H`), not a CSS `min/max` pair: a min/max let
+the box resize as the text grew, which made the panel jitter while typing.
 
 The panel flips dark when the vinyl is light (`COLORS[2]`), so white, chrome and
 gold are always shown against something they can be seen on. That is 33 CFR
@@ -226,10 +236,14 @@ front of real customers who would believe they had paid.
 URL is always the production domain, so it could not tell a preview deploy from
 a live one. The host is the only honest signal.)
 
-The confirmation screen still carries a TEST MODE notice, the shop email is
-subject-prefixed `[TEST]` with a "do not cut it" warning, and rows land with
-`test_mode=1, status='test', paid=0` — so `SUM(total) WHERE paid=1` is real
-revenue with no test exclusion needed.
+**There is no TEST MODE marker anywhere on screen** — not on the card field, not
+on the confirmation. Both were removed by request. What remains is shop-side:
+the email is subject-prefixed `[TEST]` with a "do not cut it" warning, and rows
+land with `test_mode=1, status='test', paid=0` — so `SUM(total) WHERE paid=1` is
+real revenue with no test exclusion needed.
+
+That makes the host check the single point of failure, which is why `verify.py`
+asserts it and why breaking it was tested before being trusted.
 
 To go live, set both keys and rebuild (the publishable key is read at build time,
 so a redeploy alone will not switch modes).
