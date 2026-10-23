@@ -4,7 +4,8 @@
 import json, os, pathlib, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
-                     STATES, FONTS, COLORS, FAQ_HOME, LOCAL_TOWNS, LOCAL_WATERS)
+                     STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
+                     LOCAL_TOWNS, LOCAL_WATERS, google_fonts_href)
 from style import CSS
 import order as O
 import mockpay as MP
@@ -298,6 +299,15 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
                  'b.setAttribute("aria-expanded",o?"true":"false");});})();</script>')
     if js:
         if "BNS_STRIPE_PK" in js:
+            # Fonts load async so they never block first paint; the chips fall
+            # back to the stack's system fonts until they arrive.
+            gf = google_fonts_href()
+            parts.append(
+                '<link rel="preconnect" href="https://fonts.googleapis.com">'
+                '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+                '<link rel="stylesheet" href="%s" media="print" '
+                'onload="this.media=\'all\'">'
+                '<noscript><link rel="stylesheet" href="%s"></noscript>' % (gf, gf))
             # Precedence: a real publishable key wins; otherwise PAY_MODE decides
             # between the sandbox card form and the emailed-payment-link fallback.
             pk = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
@@ -495,8 +505,9 @@ PROD_BODY = {
    "<a href=\"/guides/where-to-put-boat-registration-numbers/\">Full placement guide</a>.</p>"),
 
  "boat-lettering": (
-   "<h2>Fonts that work, and one that is illegal</h2>"
-   "<p>We cut 40-plus fonts. On a transom name, almost anything goes &mdash; script "
+   "<h2>Fonts that work, and the ones that are illegal</h2>"
+   "<p>We cut ten fonts, and you see your own lettering in every one of them before "
+   "you choose. On a transom name almost anything goes &mdash; script "
    "reads beautifully, and a heavy serif looks like money. On a <strong>registration "
    "number, script is not legal</strong>: the rule says plain vertical block characters, "
    "so our order form locks script out the moment you pick registration numbers. It is "
@@ -1257,9 +1268,9 @@ GUIDE_BODY = {
    "<li>Italic or slanted faces &mdash; &ldquo;vertical&rdquo; is in the rule</li>"
    "<li>Outline-only fonts with a hollow centre</li>"
    "<li>Heavily stylised display faces, western or gothic</li></ul>"
-   "<p>What works: Arial Black, Helvetica Bold, a true block face, Impact. Our order form "
-   "locks the illegal options out the moment you select registration numbers, so you "
-   "cannot accidentally order an unlawful set.</p>"
+   "<p>Of the ten faces we cut, five qualify: <strong>Block, Condensed, Heavy Impact, "
+   "Modern and Stencil</strong>. Our order form greys the other five out the moment you "
+   "pick registration numbers, so you cannot accidentally order an unlawful set.</p>"
    "<h2>For a boat name: the distance test</h2>"
    "<p>Whatever you pick has to survive being read from fifty yards away, at an angle, "
    "in glare, often from a moving boat. That rules out more than legality does:</p>"
@@ -1270,11 +1281,12 @@ GUIDE_BODY = {
    "<li><strong>Beware all-caps script.</strong> Script faces are designed with lowercase. "
    "All-caps script is hard to read and looks like a wedding invitation.</li></ul>"
    "<h2>What people actually order</h2>"
-   "<p>For classic boats: Copperplate, Times Bold, Optima &mdash; serif, restrained, reads "
-   "as expensive. For sportfish and bass boats: Impact, heavy italics, something with "
-   "attitude. For sailboats: a good script, usually with a 4-inch hailing port in a "
-   "matching serif beneath. For anything funny: the joke carries it, so pick the "
-   "legible option and let the words do the work.</p>"
+   "<p>For classic boats: <strong>Classic Serif</strong> or <strong>Slab</strong> "
+   "&mdash; restrained, reads as expensive. For sportfish and bass boats: "
+   "<strong>Heavy Impact</strong> or <strong>Nautical</strong>, something with attitude. "
+   "For sailboats: <strong>Formal Script</strong>, usually with a 4-inch hailing port in "
+   "Classic Serif beneath. For anything funny: the joke carries it, so pick the legible "
+   "option and let the words do the work.</p>"
    "<p>Shadow or outline in a second colour costs a little more and roughly doubles the "
    "perceived quality from a distance &mdash; it is the single best upgrade on a transom "
    "name.</p>",
@@ -1872,6 +1884,10 @@ def build_static():
 - Boat names from **$29**. Hailing port lines **$15**. Custom decals from **$22**.
 - Production: cut and shipped **next business day**; same-day rush **+$12** before 1pm CT.
 - Warranty: **7 years** on premium cast film, 5-7 on standard, covering colour and adhesion.
+- **10 fonts**, each previewed in the customer's own lettering before ordering. Five
+  (Block, Condensed, Heavy Impact, Modern, Stencil) are plain vertical block faces and
+  are the only ones offered for registration numbers; the other five (Classic Serif,
+  Slab, Nautical, Brush Script, Formal Script) are available for names and decals.
 - Install guarantee: **free re-cut** if the customer's install goes wrong.
 - Every order gets an **emailed proof** first; nothing is cut or charged until approved.
 - **Boat Number Shop, 475 River Forest Road, Evansdale, IA 50707. Phone (319) 239-3793.**

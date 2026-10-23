@@ -79,6 +79,37 @@ gold are always shown against something they can be seen on. That is 33 CFR
 Step 1's three options use line icons (`_KICON` in `engine/order.py`): a hash
 for numbers, a letterform for names, two stacked plates for both.
 
+### Fonts
+
+Ten faces, defined once in `content.py: FONTS` as
+`(label, css family, Google spec, block_legal)`.
+
+**All ten are free Google Fonts on purpose.** A plotter cuts any TTF, so the shop
+installs these and cuts *exactly* what the customer previewed. Substituting a
+lookalike for the preview would make it a lie.
+
+Each chip renders the customer's own lettering (first 7 characters) in that face,
+so the choice is made on the thing itself rather than a font name. The stylesheet
+loads async (`media="print"` → `onload`), so it never blocks first paint and the
+chips fall back to the stack's system fonts until it lands.
+
+`block_legal` marks the five faces satisfying 33 CFR 173.27's "plain vertical
+block characters":
+
+- **Registration numbers** — the other five are disabled and visibly greyed, not
+  hidden. People should see what they cannot have, and why.
+- **"Both"** — all ten unlock, because the font applies to the *name*. The big
+  preview then renders the **number line in Block regardless** (`numBlock` →
+  `numFam` in `preview.py`), because showing script registration numbers we would
+  never cut would make the preview a lie. The hint says so explicitly.
+
+### The state field is gone
+
+Step 2 no longer asks for it — the registration number already carries its state
+prefix. `stateFromPrefix()` reads the first two characters against
+`window.BNS_PREFIX` (so CF → California, WN → Washington) and posts it silently,
+so the shop still gets the data without the customer filling a field.
+
 ⚠️ **The steps are `<section>` elements.** The global `section{padding:42px 0}`
 (56px at ≥900px) was silently adding **112px to every step** — `.step{padding:0}`
 is load-bearing, don't remove it.

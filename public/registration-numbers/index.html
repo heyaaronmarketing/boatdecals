@@ -360,6 +360,29 @@ transform:scale(1.06)}
 .morecol{margin-top:10px}
 .morecol summary{font-size:13.8px;font-weight:700;color:var(--nav2);cursor:pointer}
 
+/* font picker - step 2 */
+.fontset{margin-bottom:4px}
+/* Two rows of five. The chips only need to tell the faces apart - the big
+   preview above does the real work, in the customer's full lettering. */
+.fontgrid{display:grid;gap:5px;grid-template-columns:repeat(3,1fr)}
+@media(min-width:420px){.fontgrid{grid-template-columns:repeat(5,1fr)}}
+.fontchip{position:relative;cursor:pointer}
+.fontchip input{position:absolute;opacity:0;width:1px;height:1px}
+.fontbox{display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:1px;border:1.5px solid var(--line);border-radius:8px;padding:6px 3px 4px;
+background:#fff;height:100%;min-height:46px;overflow:hidden;
+transition:border-color .12s,background .12s}
+.fontdemo{display:block;font-size:15px;line-height:1.15;color:var(--ink);
+white-space:nowrap;max-width:100%;overflow:hidden}
+.fontbox em{font-style:normal;font-size:9.4px;font-weight:700;color:var(--mut);
+letter-spacing:.01em;white-space:nowrap;overflow:hidden;max-width:100%}
+.fontchip input:checked+.fontbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.fontchip input:focus-visible+.fontbox{outline:2px solid var(--sea);outline-offset:2px}
+.fontchip.off{cursor:not-allowed}
+.fontchip.off .fontbox{opacity:.34;background:var(--soft)}
+.fontchip.off .fontdemo{color:var(--mut)}
+
 /* step 4 merchandising */
 .mgrid{display:grid;gap:8px}
 @media(min-width:560px){.mgrid{grid-template-columns:1fr 1fr}}
@@ -507,15 +530,12 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
       <div class=hint>Stuck? <a href="/tools/boat-name-generator/" target="_blank"
         rel="noopener">1,000 name ideas</a>.</div>
     </div>
-    <div id=statewrap style="margin-top:14px">
-      <label for=f_state>Your state</label>
-      <select id=f_state name=state>
-        <option value="">Select your state&hellip;</option><option value="Iowa">Iowa</option><option value="Florida">Florida</option><option value="Michigan">Michigan</option><option value="New York">New York</option><option value="California">California</option><option value="South Carolina">South Carolina</option><option value="Wisconsin">Wisconsin</option><option value="Minnesota">Minnesota</option><option value="Texas">Texas</option><option value="Pennsylvania">Pennsylvania</option><option value="North Carolina">North Carolina</option><option value="Georgia">Georgia</option><option value="Virginia">Virginia</option><option value="Ohio">Ohio</option><option value="Illinois">Illinois</option><option value="Missouri">Missouri</option><option value="Washington">Washington</option><option value="Louisiana">Louisiana</option><option value="Alabama">Alabama</option><option value="Tennessee">Tennessee</option><option value="Indiana">Indiana</option>
-        <option value="Other">Other / not listed</option>
-        <option value="USCG documented">USCG documented vessel</option></select>
-      <div class=hint id=statehint>We check your prefix and spacing before it cuts.</div>
-    </div>
     <div class=err id=e2 role=alert></div>
+    <fieldset class=fontset style="margin-top:14px">
+      <legend>Pick a font</legend>
+      <div class=fontgrid><label class=fontchip data-block="1"><input type=radio name=font value="Block" checked><span class=fontbox><span class=fontdemo style="font-family:'Archivo Black', 'Arial Black', sans-serif">Abc</span><em>Block</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Condensed"><span class=fontbox><span class=fontdemo style="font-family:'Oswald', 'Arial Narrow', sans-serif">Abc</span><em>Condensed</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Heavy Impact"><span class=fontbox><span class=fontdemo style="font-family:'Anton', Impact, sans-serif">Abc</span><em>Heavy Impact</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Modern"><span class=fontbox><span class=fontdemo style="font-family:'Montserrat', Helvetica, sans-serif">Abc</span><em>Modern</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Stencil"><span class=fontbox><span class=fontdemo style="font-family:'Black Ops One', Impact, sans-serif">Abc</span><em>Stencil</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Classic Serif"><span class=fontbox><span class=fontdemo style="font-family:'Playfair Display', Georgia, serif">Abc</span><em>Classic Serif</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Slab"><span class=fontbox><span class=fontdemo style="font-family:'Alfa Slab One', Georgia, serif">Abc</span><em>Slab</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Nautical"><span class=fontbox><span class=fontdemo style="font-family:'Bungee', Impact, sans-serif">Abc</span><em>Nautical</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Brush Script"><span class=fontbox><span class=fontdemo style="font-family:'Pacifico', cursive">Abc</span><em>Brush Script</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Formal Script"><span class=fontbox><span class=fontdemo style="font-family:'Great Vibes', cursive">Abc</span><em>Formal Script</em></span></label></div>
+      <div class=hint id=fonthint></div>
+    </fieldset>
   </section>
 
   <!-- 3 ------------------------------------------------------------- -->
@@ -529,12 +549,6 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts><label class=opt><input type=radio name=height value="3" data-add="0" checked><span>3&quot;<em>legal minimum</em></span></label><label class=opt><input type=radio name=height value="4" data-add="4"><span>4&quot;<em>reads better &middot; +$4</em></span></label><label class=opt><input type=radio name=height value="5" data-add="8"><span>5&quot;<em>bold &middot; +$8</em></span></label><label class=opt><input type=radio name=height value="6" data-add="13"><span>6&quot;<em>big transom &middot; +$13</em></span></label></div>
-    </fieldset>
-    <fieldset style="margin-bottom:2px"><legend>Font</legend>
-      <select id=f_font name=font data-block='<option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option>'
-              data-all='<option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Brush Script">Brush Script</option><option value="Edwardian Script">Edwardian Script</option><option value="Lobster">Lobster</option><option value="Great Vibes">Great Vibes</option><option value="Old English">Old English</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option>'><option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option></select>
-      <div class=hint id=fonthint>Numbers must be block characters by law, so
-        script is not offered.</div>
     </fieldset>
   </section>
 

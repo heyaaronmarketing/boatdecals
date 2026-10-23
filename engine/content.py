@@ -94,13 +94,13 @@ PRODUCTS = [
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
          blurb="Names, home ports, hull stripes, transom text. You pick the font and the colour, we cut it and pre-space it.",
-         desc="Custom vinyl boat lettering from $29. 40+ marine fonts, 32 colours, 7-year warranty, free shipping, next-business-day production."),
+         desc="Custom vinyl boat lettering from $29. 10 marine fonts previewed live, 32 colours, 7-year warranty, free shipping, next-day production."),
     dict(slug="boat-name-decals", nav="Boat names", short="Boat names",
          h1="Boat Name Decals - From $29, Pre-Spaced and Ready",
          kw="boat name decals", vol=1600, cpc=3.54, price=PRICE["name_from"],
          unit="to start", icon="name",
          blurb="One decal, pre-spaced, with application tape over the top. Peel the backing, squeegee it on, pull the tape.",
-         desc="Custom boat name decals from $29. Pre-spaced vinyl lettering in 40+ fonts, 7-year marine vinyl, free shipping, ships next business day."),
+         desc="Custom boat name decals from $29. Pre-spaced vinyl lettering in 10 fonts you preview live, 7-year marine vinyl, free shipping, ships next business day."),
     dict(slug="boat-decals", nav="Boat decals", short="Boat decals",
          h1="Custom Boat Decals - Cut Vinyl, Marine Grade",
          kw="boat decals", vol=3600, cpc=3.58, price=22, unit="to start", icon="decal",
@@ -284,10 +284,34 @@ STATES = [
          agency="Indiana Bureau of Motor Vehicles", tier=2),
 ]
 
-FONTS = ["Block (legal for numbers)", "Arial Black", "Helvetica Bold", "Impact",
-         "Clarendon", "Copperplate", "Times Bold", "Optima", "Futura",
-         "Brush Script", "Edwardian Script", "Lobster", "Great Vibes",
-         "Old English", "Stencil", "Varsity Block", "Hobo", "Cooper Black"]
+# Ten fonts, previewed in the customer's own lettering before they pick.
+#
+# All ten are free Google Fonts, chosen deliberately: a vinyl plotter cuts any
+# TTF, so the shop can install these and cut EXACTLY what the customer saw.
+# Substituting a lookalike would make the preview a lie.
+#
+# block=True marks the faces that satisfy 33 CFR 173.27's "plain vertical block
+# characters" - only those are offered for registration numbers.
+#   (label, css family, Google spec, block-legal)
+FONTS = [
+    ("Block",          "'Archivo Black', 'Arial Black', sans-serif", "Archivo+Black",            True),
+    ("Condensed",      "'Oswald', 'Arial Narrow', sans-serif",       "Oswald:wght@700",          True),
+    ("Heavy Impact",   "'Anton', Impact, sans-serif",                "Anton",                    True),
+    ("Modern",         "'Montserrat', Helvetica, sans-serif",        "Montserrat:wght@800",      True),
+    ("Stencil",        "'Black Ops One', Impact, sans-serif",        "Black+Ops+One",            True),
+    ("Classic Serif",  "'Playfair Display', Georgia, serif",         "Playfair+Display:wght@900", False),
+    ("Slab",           "'Alfa Slab One', Georgia, serif",            "Alfa+Slab+One",            False),
+    ("Nautical",       "'Bungee', Impact, sans-serif",               "Bungee",                   False),
+    ("Brush Script",   "'Pacifico', cursive",                        "Pacifico",                 False),
+    ("Formal Script",  "'Great Vibes', cursive",                     "Great+Vibes",              False),
+]
+FONT_NAMES = [f[0] for f in FONTS]
+BLOCK_FONTS = [f[0] for f in FONTS if f[3]]
+
+def google_fonts_href():
+    """One stylesheet request for all ten faces."""
+    fams = "&".join("family=" + f[2] for f in FONTS)
+    return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
 
 # (name, hex, is_light) - is_light drives which hull colour the preview sits on.
 COLORS = [("White","#ffffff",1),("Black","#111111",0),("Navy","#12243f",0),

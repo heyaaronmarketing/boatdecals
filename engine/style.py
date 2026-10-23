@@ -357,6 +357,29 @@ transform:scale(1.06)}
 .morecol{margin-top:10px}
 .morecol summary{font-size:13.8px;font-weight:700;color:var(--nav2);cursor:pointer}
 
+/* font picker - step 2 */
+.fontset{margin-bottom:4px}
+/* Two rows of five. The chips only need to tell the faces apart - the big
+   preview above does the real work, in the customer's full lettering. */
+.fontgrid{display:grid;gap:5px;grid-template-columns:repeat(3,1fr)}
+@media(min-width:420px){.fontgrid{grid-template-columns:repeat(5,1fr)}}
+.fontchip{position:relative;cursor:pointer}
+.fontchip input{position:absolute;opacity:0;width:1px;height:1px}
+.fontbox{display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:1px;border:1.5px solid var(--line);border-radius:8px;padding:6px 3px 4px;
+background:#fff;height:100%;min-height:46px;overflow:hidden;
+transition:border-color .12s,background .12s}
+.fontdemo{display:block;font-size:15px;line-height:1.15;color:var(--ink);
+white-space:nowrap;max-width:100%;overflow:hidden}
+.fontbox em{font-style:normal;font-size:9.4px;font-weight:700;color:var(--mut);
+letter-spacing:.01em;white-space:nowrap;overflow:hidden;max-width:100%}
+.fontchip input:checked+.fontbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.fontchip input:focus-visible+.fontbox{outline:2px solid var(--sea);outline-offset:2px}
+.fontchip.off{cursor:not-allowed}
+.fontchip.off .fontbox{opacity:.34;background:var(--soft)}
+.fontchip.off .fontdemo{color:var(--mut)}
+
 /* step 4 merchandising */
 .mgrid{display:grid;gap:8px}
 @media(min-width:560px){.mgrid{grid-template-columns:1fr 1fr}}

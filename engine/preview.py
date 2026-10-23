@@ -39,7 +39,7 @@ color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
 JS = r"""
 window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
-  var SCRIPTY=/script|vibes|lobster|old english/i;
+  var SCRIPTY=/script|vibes|formal|brush/i;
   var PAD=7;           // viewBox units of breathing room around the glyphs
   var LINEGAP=9;
 
@@ -47,21 +47,27 @@ window.BNS_PREVIEW = (function(){
     var svg=$('prevsvg'); if(!svg) return;
     $('prev').classList.toggle('night', !!o.light);
 
-    var fam = SCRIPTY.test(o.font)
-      ? 'Georgia, "Times New Roman", serif'
-      : 'Arial Black, Impact, Haettenschweiler, sans-serif';
-    var style = SCRIPTY.test(o.font) ? 'italic' : 'normal';
-    var track = SCRIPTY.test(o.font) ? '0' : '1.5';
+    // The chosen face, so the big preview and the chip agree.
+    var fam = o.css || 'Arial Black, Impact, Haettenschweiler, sans-serif';
+    var script = SCRIPTY.test(o.font);
+    var style = 'normal';
+    var track = script ? '0' : '1.2';
+    // On a "Both" order the name can be script but the numbers legally cannot,
+    // so the number line is drawn in block regardless. Showing script numbers
+    // we would never cut would make the preview a lie.
+    var numFam = o.numBlock ? "'Archivo Black','Arial Black',sans-serif" : fam;
 
     var tn=$('p_num'), nm=$('p_name');
     var both = o.showNum && o.showName;
 
     [tn,nm].forEach(function(t){
       t.setAttribute('fill', o.hex);
-      t.setAttribute('font-family', fam);
+      t.setAttribute('font-family', t===tn ? numFam : fam);
       t.setAttribute('font-style', style);
-      t.setAttribute('letter-spacing', track);
+      t.setAttribute('letter-spacing', (t===tn && o.numBlock) ? '1.2' : track);
       t.setAttribute('font-size', 34);
+      t.setAttribute('font-weight', (t===tn && o.numBlock) ? '900'
+                                     : (script ? '400' : '900'));
       t.setAttribute('x', 150);
     });
 

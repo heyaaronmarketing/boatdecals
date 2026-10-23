@@ -360,6 +360,29 @@ transform:scale(1.06)}
 .morecol{margin-top:10px}
 .morecol summary{font-size:13.8px;font-weight:700;color:var(--nav2);cursor:pointer}
 
+/* font picker - step 2 */
+.fontset{margin-bottom:4px}
+/* Two rows of five. The chips only need to tell the faces apart - the big
+   preview above does the real work, in the customer's full lettering. */
+.fontgrid{display:grid;gap:5px;grid-template-columns:repeat(3,1fr)}
+@media(min-width:420px){.fontgrid{grid-template-columns:repeat(5,1fr)}}
+.fontchip{position:relative;cursor:pointer}
+.fontchip input{position:absolute;opacity:0;width:1px;height:1px}
+.fontbox{display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:1px;border:1.5px solid var(--line);border-radius:8px;padding:6px 3px 4px;
+background:#fff;height:100%;min-height:46px;overflow:hidden;
+transition:border-color .12s,background .12s}
+.fontdemo{display:block;font-size:15px;line-height:1.15;color:var(--ink);
+white-space:nowrap;max-width:100%;overflow:hidden}
+.fontbox em{font-style:normal;font-size:9.4px;font-weight:700;color:var(--mut);
+letter-spacing:.01em;white-space:nowrap;overflow:hidden;max-width:100%}
+.fontchip input:checked+.fontbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.fontchip input:focus-visible+.fontbox{outline:2px solid var(--sea);outline-offset:2px}
+.fontchip.off{cursor:not-allowed}
+.fontchip.off .fontbox{opacity:.34;background:var(--soft)}
+.fontchip.off .fontdemo{color:var(--mut)}
+
 /* step 4 merchandising */
 .mgrid{display:grid;gap:8px}
 @media(min-width:560px){.mgrid{grid-template-columns:1fr 1fr}}
@@ -507,15 +530,12 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
       <div class=hint>Stuck? <a href="/tools/boat-name-generator/" target="_blank"
         rel="noopener">1,000 name ideas</a>.</div>
     </div>
-    <div id=statewrap style="margin-top:14px">
-      <label for=f_state>Your state</label>
-      <select id=f_state name=state>
-        <option value="">Select your state&hellip;</option><option value="Iowa">Iowa</option><option value="Florida">Florida</option><option value="Michigan">Michigan</option><option value="New York">New York</option><option value="California">California</option><option value="South Carolina">South Carolina</option><option value="Wisconsin">Wisconsin</option><option value="Minnesota">Minnesota</option><option value="Texas">Texas</option><option value="Pennsylvania">Pennsylvania</option><option value="North Carolina">North Carolina</option><option value="Georgia">Georgia</option><option value="Virginia">Virginia</option><option value="Ohio">Ohio</option><option value="Illinois">Illinois</option><option value="Missouri">Missouri</option><option value="Washington">Washington</option><option value="Louisiana">Louisiana</option><option value="Alabama">Alabama</option><option value="Tennessee">Tennessee</option><option value="Indiana">Indiana</option>
-        <option value="Other">Other / not listed</option>
-        <option value="USCG documented">USCG documented vessel</option></select>
-      <div class=hint id=statehint>We check your prefix and spacing before it cuts.</div>
-    </div>
     <div class=err id=e2 role=alert></div>
+    <fieldset class=fontset style="margin-top:14px">
+      <legend>Pick a font</legend>
+      <div class=fontgrid><label class=fontchip data-block="1"><input type=radio name=font value="Block" checked><span class=fontbox><span class=fontdemo style="font-family:'Archivo Black', 'Arial Black', sans-serif">Abc</span><em>Block</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Condensed"><span class=fontbox><span class=fontdemo style="font-family:'Oswald', 'Arial Narrow', sans-serif">Abc</span><em>Condensed</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Heavy Impact"><span class=fontbox><span class=fontdemo style="font-family:'Anton', Impact, sans-serif">Abc</span><em>Heavy Impact</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Modern"><span class=fontbox><span class=fontdemo style="font-family:'Montserrat', Helvetica, sans-serif">Abc</span><em>Modern</em></span></label><label class=fontchip data-block="1"><input type=radio name=font value="Stencil"><span class=fontbox><span class=fontdemo style="font-family:'Black Ops One', Impact, sans-serif">Abc</span><em>Stencil</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Classic Serif"><span class=fontbox><span class=fontdemo style="font-family:'Playfair Display', Georgia, serif">Abc</span><em>Classic Serif</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Slab"><span class=fontbox><span class=fontdemo style="font-family:'Alfa Slab One', Georgia, serif">Abc</span><em>Slab</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Nautical"><span class=fontbox><span class=fontdemo style="font-family:'Bungee', Impact, sans-serif">Abc</span><em>Nautical</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Brush Script"><span class=fontbox><span class=fontdemo style="font-family:'Pacifico', cursive">Abc</span><em>Brush Script</em></span></label><label class=fontchip data-block="0"><input type=radio name=font value="Formal Script"><span class=fontbox><span class=fontdemo style="font-family:'Great Vibes', cursive">Abc</span><em>Formal Script</em></span></label></div>
+      <div class=hint id=fonthint></div>
+    </fieldset>
   </section>
 
   <!-- 3 ------------------------------------------------------------- -->
@@ -529,12 +549,6 @@ padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts><label class=opt><input type=radio name=height value="3" data-add="0" checked><span>3&quot;<em>legal minimum</em></span></label><label class=opt><input type=radio name=height value="4" data-add="4"><span>4&quot;<em>reads better &middot; +$4</em></span></label><label class=opt><input type=radio name=height value="5" data-add="8"><span>5&quot;<em>bold &middot; +$8</em></span></label><label class=opt><input type=radio name=height value="6" data-add="13"><span>6&quot;<em>big transom &middot; +$13</em></span></label></div>
-    </fieldset>
-    <fieldset style="margin-bottom:2px"><legend>Font</legend>
-      <select id=f_font name=font data-block='<option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option>'
-              data-all='<option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Brush Script">Brush Script</option><option value="Edwardian Script">Edwardian Script</option><option value="Lobster">Lobster</option><option value="Great Vibes">Great Vibes</option><option value="Old English">Old English</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option>'><option value="Block (legal for numbers)">Block (legal for numbers)</option><option value="Arial Black">Arial Black</option><option value="Helvetica Bold">Helvetica Bold</option><option value="Impact">Impact</option><option value="Clarendon">Clarendon</option><option value="Copperplate">Copperplate</option><option value="Times Bold">Times Bold</option><option value="Optima">Optima</option><option value="Futura">Futura</option><option value="Stencil">Stencil</option><option value="Varsity Block">Varsity Block</option><option value="Hobo">Hobo</option><option value="Cooper Black">Cooper Black</option></select>
-      <div class=hint id=fonthint>Numbers must be block characters by law, so
-        script is not offered.</div>
     </fieldset>
   </section>
 
@@ -605,7 +619,7 @@ state. Your state can add to it, but cannot drop below it.</cite>
 <p><b>The rule most people miss is contrast.</b> There is no required colour &mdash;
 but white numbers on a white hull are not &ldquo;distinctly visible and legible,&rdquo;
 and that is a failed inspection. Dark hull, light numbers. Light hull, dark numbers.
-Our order form flags the combination before it gets cut.</p></div><h2>Ordering for a North Carolina boat</h2><p>Type the number as it appears on your card, pick a colour that contrasts with your hull, and leave the height at 3 inches unless you want it bolder. You will get a proof by email showing the exact layout before anything is cut, and a full refund if you do not like what you see.</p></div><a class="btn lg" href="/design/">Order NC numbers &middot; $19</a></div></section><section class=soft><div class=w><h2>Other states</h2><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MI</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WI</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/" aria-current="page">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a><a href="/registration-numbers/indiana/">Indiana <i>IN</i></a></div></div></section><section class=soft><div class=w><h2>North Carolina questions</h2><div class=faq style="margin-top:18px"><details><summary>How tall do North Carolina boat registration numbers have to be?</summary><div class=ans><p>Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in North Carolina like everywhere else. Taller is always legal.</p></div></details><details><summary>What do North Carolina boat numbers start with?</summary><div class=ans><p><strong>NC</strong>. Your full number runs prefix, digits, then a letter suffix &mdash; for example NC 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.</p></div></details><details><summary>Who issues boat registration in North Carolina?</summary><div class=ans><p>You register through the NC Wildlife Resources Commission. We only make the decals &mdash; you get the number from them first, then we cut it.</p></div></details><details><summary>Do the numbers need a space or a hyphen?</summary><div class=ans><p>Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NC 1234 AB, not NC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.</p></div></details><details><summary>Where do they go on the boat?</summary><div class=ans><p>Each side of the forward half of the hull, reading left to right, in a colour that contrasts with the hull. The validation decal goes near the number &mdash; North Carolina publishes the exact offset, and it is usually within a few inches.</p></div></details></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat lettering</a></li><li><a href="/boat-name-decals/">Boat names</a></li><li><a href="/boat-decals/">Boat decals</a></li><li><a href="/motor-and-brand-decals/">Motor decals</a></li><li><a href="/boat-carpet-decals/">Carpet decals</a></li><li><a href="/hailing-port-decals/">Hailing port</a></li><li><a href="/domed-lettering/">Domed &amp; chrome</a></li><li><a href="/boat-striping/">Striping</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/about/">About us</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Boat Number Shop</strong><br><a href="https://www.google.com/maps/search/?api=1&amp;query=475+River+Forest+Road+Evansdale+IA+50707" rel="noopener">475 River Forest Road, Evansdale, IA 50707</a><br><a href="tel:+13192393793" data-call>(319) 239-3793</a> &middot; <a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a><br>Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Boat Number Shop. Vinyl cut and shipped in Evansdale, USA.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><div class=sticky><span class=sp>$19<em>Registration numbers</em></span><a class=btn href="/design/">Start your order</a></div><script>document.body.classList.add("has-sticky");(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><script>window.BNS_STRIPE_PK="";window.BNS_PAY_MODE="sandbox";window.BNS_MOCKPAY_HTML="\n<div class=testbar>\n  <b>Test mode</b>\n  <span>Any card works &mdash; try <code>4242 4242 4242 4242</code>. Nothing is\n  charged and no card is stored.</span>\n</div>\n<div class=sfield>\n  <label for=cc_num>Card number</label>\n  <div class=sinput id=cc_numwrap>\n    <input type=text id=cc_num inputmode=numeric autocomplete=\"off\"\n           placeholder=\"1234 1234 1234 1234\" maxlength=23 aria-describedby=cc_err>\n    <span class=brands id=cc_brand>\n      <i data-b=visa>VISA</i><i data-b=mc>MC</i><i data-b=amex>AMEX</i><i data-b=disc>DISC</i>\n    </span>\n  </div>\n</div>\n<div class=srow>\n  <div class=sfield>\n    <label for=cc_exp>Expiry</label>\n    <div class=sinput><input type=text id=cc_exp inputmode=numeric\n      placeholder=\"MM / YY\" maxlength=7 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_cvc>CVC</label>\n    <div class=sinput><input type=text id=cc_cvc inputmode=numeric\n      placeholder=\"CVC\" maxlength=4 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_zip>ZIP</label>\n    <div class=sinput><input type=text id=cc_zip inputmode=numeric\n      placeholder=\"50707\" maxlength=10 autocomplete=\"off\"></div>\n  </div>\n</div>\n<div class=scerr id=cc_err role=alert></div>\n\n";</script><script>
+Our order form flags the combination before it gets cut.</p></div><h2>Ordering for a North Carolina boat</h2><p>Type the number as it appears on your card, pick a colour that contrasts with your hull, and leave the height at 3 inches unless you want it bolder. You will get a proof by email showing the exact layout before anything is cut, and a full refund if you do not like what you see.</p></div><a class="btn lg" href="/design/">Order NC numbers &middot; $19</a></div></section><section class=soft><div class=w><h2>Other states</h2><div class=stategrid><a href="/registration-numbers/iowa/">Iowa <i>IA</i></a><a href="/registration-numbers/florida/">Florida <i>FL</i></a><a href="/registration-numbers/michigan/">Michigan <i>MI</i></a><a href="/registration-numbers/new-york/">New York <i>NY</i></a><a href="/registration-numbers/california/">California <i>CF</i></a><a href="/registration-numbers/south-carolina/">South Carolina <i>SC</i></a><a href="/registration-numbers/wisconsin/">Wisconsin <i>WI</i></a><a href="/registration-numbers/minnesota/">Minnesota <i>MN</i></a><a href="/registration-numbers/texas/">Texas <i>TX</i></a><a href="/registration-numbers/pennsylvania/">Pennsylvania <i>PA</i></a><a href="/registration-numbers/north-carolina/" aria-current="page">North Carolina <i>NC</i></a><a href="/registration-numbers/georgia/">Georgia <i>GA</i></a><a href="/registration-numbers/virginia/">Virginia <i>VA</i></a><a href="/registration-numbers/ohio/">Ohio <i>OH</i></a><a href="/registration-numbers/illinois/">Illinois <i>IL</i></a><a href="/registration-numbers/missouri/">Missouri <i>MO</i></a><a href="/registration-numbers/washington/">Washington <i>WN</i></a><a href="/registration-numbers/louisiana/">Louisiana <i>LA</i></a><a href="/registration-numbers/alabama/">Alabama <i>AL</i></a><a href="/registration-numbers/tennessee/">Tennessee <i>TN</i></a><a href="/registration-numbers/indiana/">Indiana <i>IN</i></a></div></div></section><section class=soft><div class=w><h2>North Carolina questions</h2><div class=faq style="margin-top:18px"><details><summary>How tall do North Carolina boat registration numbers have to be?</summary><div class=ans><p>Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in North Carolina like everywhere else. Taller is always legal.</p></div></details><details><summary>What do North Carolina boat numbers start with?</summary><div class=ans><p><strong>NC</strong>. Your full number runs prefix, digits, then a letter suffix &mdash; for example NC 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.</p></div></details><details><summary>Who issues boat registration in North Carolina?</summary><div class=ans><p>You register through the NC Wildlife Resources Commission. We only make the decals &mdash; you get the number from them first, then we cut it.</p></div></details><details><summary>Do the numbers need a space or a hyphen?</summary><div class=ans><p>Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NC 1234 AB, not NC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.</p></div></details><details><summary>Where do they go on the boat?</summary><div class=ans><p>Each side of the forward half of the hull, reading left to right, in a colour that contrasts with the hull. The validation decal goes near the number &mdash; North Carolina publishes the exact offset, and it is usually within a few inches.</p></div></details></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat lettering</a></li><li><a href="/boat-name-decals/">Boat names</a></li><li><a href="/boat-decals/">Boat decals</a></li><li><a href="/motor-and-brand-decals/">Motor decals</a></li><li><a href="/boat-carpet-decals/">Carpet decals</a></li><li><a href="/hailing-port-decals/">Hailing port</a></li><li><a href="/domed-lettering/">Domed &amp; chrome</a></li><li><a href="/boat-striping/">Striping</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/about/">About us</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Boat Number Shop</strong><br><a href="https://www.google.com/maps/search/?api=1&amp;query=475+River+Forest+Road+Evansdale+IA+50707" rel="noopener">475 River Forest Road, Evansdale, IA 50707</a><br><a href="tel:+13192393793" data-call>(319) 239-3793</a> &middot; <a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a><br>Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Boat Number Shop. Vinyl cut and shipped in Evansdale, USA.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><div class=sticky><span class=sp>$19<em>Registration numbers</em></span><a class=btn href="/design/">Start your order</a></div><script>document.body.classList.add("has-sticky");(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@700&family=Anton&family=Montserrat:wght@800&family=Black+Ops+One&family=Playfair+Display:wght@900&family=Alfa+Slab+One&family=Bungee&family=Pacifico&family=Great+Vibes&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@700&family=Anton&family=Montserrat:wght@800&family=Black+Ops+One&family=Playfair+Display:wght@900&family=Alfa+Slab+One&family=Bungee&family=Pacifico&family=Great+Vibes&display=swap"></noscript><script>window.BNS_STRIPE_PK="";window.BNS_PAY_MODE="sandbox";window.BNS_MOCKPAY_HTML="\n<div class=testbar>\n  <b>Test mode</b>\n  <span>Any card works &mdash; try <code>4242 4242 4242 4242</code>. Nothing is\n  charged and no card is stored.</span>\n</div>\n<div class=sfield>\n  <label for=cc_num>Card number</label>\n  <div class=sinput id=cc_numwrap>\n    <input type=text id=cc_num inputmode=numeric autocomplete=\"off\"\n           placeholder=\"1234 1234 1234 1234\" maxlength=23 aria-describedby=cc_err>\n    <span class=brands id=cc_brand>\n      <i data-b=visa>VISA</i><i data-b=mc>MC</i><i data-b=amex>AMEX</i><i data-b=disc>DISC</i>\n    </span>\n  </div>\n</div>\n<div class=srow>\n  <div class=sfield>\n    <label for=cc_exp>Expiry</label>\n    <div class=sinput><input type=text id=cc_exp inputmode=numeric\n      placeholder=\"MM / YY\" maxlength=7 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_cvc>CVC</label>\n    <div class=sinput><input type=text id=cc_cvc inputmode=numeric\n      placeholder=\"CVC\" maxlength=4 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_zip>ZIP</label>\n    <div class=sinput><input type=text id=cc_zip inputmode=numeric\n      placeholder=\"50707\" maxlength=10 autocomplete=\"off\"></div>\n  </div>\n</div>\n<div class=scerr id=cc_err role=alert></div>\n\n";</script><script>
 window.BNS_MOCKPAY = (function(){
   var $=function(i){return document.getElementById(i);};
 
@@ -708,7 +722,7 @@ window.BNS_MOCKPAY = (function(){
 </script><script>
 window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
-  var SCRIPTY=/script|vibes|lobster|old english/i;
+  var SCRIPTY=/script|vibes|formal|brush/i;
   var PAD=7;           // viewBox units of breathing room around the glyphs
   var LINEGAP=9;
 
@@ -716,21 +730,27 @@ window.BNS_PREVIEW = (function(){
     var svg=$('prevsvg'); if(!svg) return;
     $('prev').classList.toggle('night', !!o.light);
 
-    var fam = SCRIPTY.test(o.font)
-      ? 'Georgia, "Times New Roman", serif'
-      : 'Arial Black, Impact, Haettenschweiler, sans-serif';
-    var style = SCRIPTY.test(o.font) ? 'italic' : 'normal';
-    var track = SCRIPTY.test(o.font) ? '0' : '1.5';
+    // The chosen face, so the big preview and the chip agree.
+    var fam = o.css || 'Arial Black, Impact, Haettenschweiler, sans-serif';
+    var script = SCRIPTY.test(o.font);
+    var style = 'normal';
+    var track = script ? '0' : '1.2';
+    // On a "Both" order the name can be script but the numbers legally cannot,
+    // so the number line is drawn in block regardless. Showing script numbers
+    // we would never cut would make the preview a lie.
+    var numFam = o.numBlock ? "'Archivo Black','Arial Black',sans-serif" : fam;
 
     var tn=$('p_num'), nm=$('p_name');
     var both = o.showNum && o.showName;
 
     [tn,nm].forEach(function(t){
       t.setAttribute('fill', o.hex);
-      t.setAttribute('font-family', fam);
+      t.setAttribute('font-family', t===tn ? numFam : fam);
       t.setAttribute('font-style', style);
-      t.setAttribute('letter-spacing', track);
+      t.setAttribute('letter-spacing', (t===tn && o.numBlock) ? '1.2' : track);
       t.setAttribute('font-size', 34);
+      t.setAttribute('font-weight', (t===tn && o.numBlock) ? '900'
+                                     : (script ? '400' : '900'));
       t.setAttribute('x', 150);
     });
 
@@ -764,7 +784,7 @@ window.BNS_PREVIEW = (function(){
 
   return {render: render};
 })();
-window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};
+window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0],"Royal Blue":["#1b4fa8",0],"Light Blue":["#5fc4f5",1],"Teal":["#0d7f7f",0],"Forest":["#15512c",0],"Lime":["#7ac70c",1],"Yellow":["#f5d000",1],"Orange":["#f07c00",1],"Red":["#c8102e",0],"Burgundy":["#6d1026",0],"Purple":["#5b2a86",0],"Pink":["#e8669e",1],"Brown":["#5a3a22",0],"Tan":["#c9a979",1],"Grey":["#8b949c",1],"Silver Metallic":["#c6ccd1",1],"Gold Metallic":["#c9a227",1],"Chrome":["#dfe6ea",1],"Reflective White":["#f2f4f5",1],"Reflective Red":["#d02b3f",0]};window.BNS_PREFIX={"IA":"Iowa","FL":"Florida","MI":"Michigan","NY":"New York","CF":"California","SC":"South Carolina","WI":"Wisconsin","MN":"Minnesota","TX":"Texas","PA":"Pennsylvania","NC":"North Carolina","GA":"Georgia","VA":"Virginia","OH":"Ohio","IL":"Illinois","MO":"Missouri","WN":"Washington","LA":"Louisiana","AL":"Alabama","TN":"Tennessee","IN":"Indiana"};window.BNS_FONTCSS={"Block":"'Archivo Black', 'Arial Black', sans-serif","Condensed":"'Oswald', 'Arial Narrow', sans-serif","Heavy Impact":"'Anton', Impact, sans-serif","Modern":"'Montserrat', Helvetica, sans-serif","Stencil":"'Black Ops One', Impact, sans-serif","Classic Serif":"'Playfair Display', Georgia, serif","Slab":"'Alfa Slab One', Georgia, serif","Nautical":"'Bungee', Impact, sans-serif","Brush Script":"'Pacifico', cursive","Formal Script":"'Great Vibes', cursive"};
 (function(){
   var W=document.getElementById('order'); if(!W) return;
   var COL=window.BNS_COL||{};
@@ -777,6 +797,14 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       paying=false, sandbox=false;
 
   function kind(){var r=W.querySelector('[name=kind]:checked');return r?r.value:'Registration numbers';}
+
+  /** The registration number carries its own state prefix, so asking for the
+   *  state again was a field for data we already had. CF=California,
+   *  WN=Washington, otherwise the two-letter postal code. */
+  function stateFromPrefix(){
+    var m=($('f_text').value||'').trim().toUpperCase().match(/^([A-Z]{2})/);
+    return (m && (window.BNS_PREFIX||{})[m[1]]) || '';
+  }
   function isNum(){return kind()!=='Boat name';}
   function hasName(){return kind()!=='Registration numbers';}
   function val(n){var el=W.querySelector('[name='+n+']:checked');return el||null;}
@@ -790,43 +818,70 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     return Math.round(n);
   }
 
-  var SCRIPTY=/script|vibes|lobster|old english/i;
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
     var meta=COL[cname]||['#111111',0];
     var h=val('height'), hv=h?h.value:'3';
-    var fn=$('f_font').value||'Block';
+    var fn=font();
     window.BNS_PREVIEW.render({
       hex: meta[0], light: !!meta[1], font: fn,
+      css: (window.BNS_FONTCSS||{})[fn] || '',
+      numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
       number: ($('f_text').value||'').trim(),
       name: ($('f_name2').value||'').trim()
     });
-    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn.replace(/ \(.*\)/,''))+
+    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
       ' &middot; <b>'+esc(cname)+'</b> &middot; '+
       (isNum() ? (hasName()? 'pair + name, pre-spaced' : 'one pair, pre-spaced')
                : 'one decal, pre-spaced');
   }
 
+  function font(){
+    var r=W.querySelector('[name=font]:checked');
+    return r ? r.value : 'Block';
+  }
+  function isBlockFont(name){
+    var c=W.querySelector('[name=font][value="'+name+'"]');
+    return !c || c.closest('.fontchip').dataset.block==='1';
+  }
+
   function syncFonts(){
-    var sel=$('f_font'), lock=isNum() && kind()!=='Both';
-    var want = lock ? sel.dataset.block : sel.dataset.all;
-    if(sel.dataset.state !== (lock?'b':'a')){
-      var keep=sel.value;
-      sel.innerHTML=want; sel.dataset.state=(lock?'b':'a');
-      var ok=[].slice.call(sel.options).some(function(o){return o.value===keep;});
-      sel.value = ok ? keep : sel.options[0].value;
+    // Registration numbers must be plain vertical block characters, so the
+    // non-block faces are disabled rather than hidden - people should see
+    // what they are not allowed to have, and why.
+    var lock = isNum() && kind()!=='Both';
+    var chips=W.querySelectorAll('.fontchip'), moved=false;
+    for(var i=0;i<chips.length;i++){
+      var c=chips[i], inp=c.querySelector('input'),
+          ok = !lock || c.dataset.block==='1';
+      inp.disabled=!ok;
+      c.classList.toggle('off', !ok);
+      if(!ok && inp.checked){ inp.checked=false; moved=true; }
     }
-    $('fonthint').textContent = lock
-      ? 'Registration numbers must be plain vertical block characters, so script fonts are not offered.'
-      : 'Script reads beautifully on a transom. Any registration numbers in this order stay block.';
+    if(moved){
+      var first=W.querySelector('.fontchip:not(.off) input');
+      if(first) first.checked=true;
+    }
+    var mixed = isNum() && hasName() && !isBlockFont(font());
+    $('fonthint').innerHTML = lock
+      ? 'Registration numbers must be <strong>plain vertical block characters</strong> '
+        + 'by law, so script and serif faces are greyed out.'
+      : mixed
+        ? 'This font goes on the <strong>name</strong>. Your registration numbers are '
+          + 'cut in Block either way &mdash; the law requires it.'
+        : 'Anything goes on a name. Script reads beautifully on a transom.';
+    // Chips preview the real lettering, not a stand-in.
+    var demo=(isNum()? $('f_text').value : $('f_name2').value).trim() || 'Abc';
+    if(demo.length>7) demo=demo.slice(0,7).trim();
+    var d=W.querySelectorAll('.fontdemo');
+    for(var j=0;j<d.length;j++) d[j].textContent=demo;
   }
 
   function syncStep2(){
     var num=isNum(), nm=hasName();
     $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
-    $('statewrap').hidden=!num;
     $('s2h').textContent = num&&nm ? 'What should they say?'
                          : num ? 'What is your registration number?'
                                : 'What is the boat called?';
@@ -855,7 +910,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     box.innerHTML =
       '<div class=sumline><span>'+esc(txt.join('  ·  ')||'Your lettering')+'</span>'+
       '<span class=summeta>'+esc((val('height')||{value:'3'}).value)+'&quot; · '+
-      esc(c?c.value:'Black')+' · '+esc($('f_font').value)+' · free shipping</span></div>'+
+      esc(c?c.value:'Black')+' · '+esc(font())+' · free shipping</span></div>'+
       '<div class=sumitems>'+rows.map(function(r){
         return '<div class=sumrow><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>';
       }).join('')+'</div>'+
@@ -873,6 +928,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   function render(){
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
+    if(cur===2) syncStep2();
     if(cur===5) summary();
   }
 
@@ -920,8 +976,8 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     var ups=[];
     W.querySelectorAll('[name=upgrade]:checked').forEach(function(u){ups.push(u.value);});
     return {kind:kind(), text:$('f_text').value.trim(),
-            boatname:$('f_name2').value.trim(), state:$('f_state').value,
-            height:(val('height')||{value:'3'}).value, font:$('f_font').value,
+            boatname:$('f_name2').value.trim(), state:stateFromPrefix(),
+            height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),
             name:$('f_name').value.trim(), email:$('f_email').value.trim(),
             phone:$('f_phone').value.trim(), boat:$('f_boat').value.trim(),

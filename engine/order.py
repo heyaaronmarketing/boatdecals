@@ -67,12 +67,15 @@ def _colors(prefix):
 
 
 def form():
-    states = "".join('<option value="%s">%s</option>' % (s["name"], s["name"])
-                     for s in STATES)
-    fonts_block = "".join('<option value="%s">%s</option>' % (f, f)
-                          for f in FONTS if "Script" not in f and
-                          f not in ("Great Vibes", "Lobster", "Old English"))
-    fonts_all = "".join('<option value="%s">%s</option>' % (f, f) for f in FONTS)
+    # Each chip renders the customer's own lettering in that face, so the
+    # choice is made on the thing itself rather than on a font name.
+    fonts = "".join(
+        '<label class=fontchip data-block="%d"><input type=radio name=font value="%s"%s>'
+        '<span class=fontbox><span class=fontdemo style="font-family:%s">%s</span>'
+        '<em>%s</em></span></label>'
+        % (1 if block else 0, lbl, " checked" if i == 0 else "",
+           css.replace('"', "&quot;"), "Abc", lbl)
+        for i, (lbl, css, _g, block) in enumerate(FONTS))
     heights = "".join(
         '<label class=opt><input type=radio name=height value="%d" data-add="%d"%s>'
         '<span>%s<em>%s</em></span></label>'
@@ -137,15 +140,12 @@ def form():
       <div class=hint>Stuck? <a href="/tools/boat-name-generator/" target="_blank"
         rel="noopener">1,000 name ideas</a>.</div>
     </div>
-    <div id=statewrap style="margin-top:14px">
-      <label for=f_state>Your state</label>
-      <select id=f_state name=state>
-        <option value="">Select your state&hellip;</option>""" + states + """
-        <option value="Other">Other / not listed</option>
-        <option value="USCG documented">USCG documented vessel</option></select>
-      <div class=hint id=statehint>We check your prefix and spacing before it cuts.</div>
-    </div>
     <div class=err id=e2 role=alert></div>
+    <fieldset class=fontset style="margin-top:14px">
+      <legend>Pick a font</legend>
+      <div class=fontgrid>""" + fonts + """</div>
+      <div class=hint id=fonthint></div>
+    </fieldset>
   </section>
 
   <!-- 3 ------------------------------------------------------------- -->
@@ -159,12 +159,6 @@ def form():
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts>""" + heights + """</div>
-    </fieldset>
-    <fieldset style="margin-bottom:2px"><legend>Font</legend>
-      <select id=f_font name=font data-block='""" + fonts_block + """'
-              data-all='""" + fonts_all + """'>""" + fonts_block + """</select>
-      <div class=hint id=fonthint>Numbers must be block characters by law, so
-        script is not offered.</div>
     </fieldset>
   </section>
 
@@ -218,8 +212,12 @@ def form():
 
 
 def color_js():
-    return ("window.BNS_COL={%s};" %
-            ",".join('"%s":["%s",%d]' % (n, h, l) for n, h, l in COLORS))
+    cols = ",".join('"%s":["%s",%d]' % (n, h, l) for n, h, l in COLORS)
+    prefixes = ",".join('"%s":"%s"' % (st["ab"], st["name"]) for st in STATES)
+    fontcss = ",".join('"%s":"%s"' % (lbl, css.replace('"', "'"))
+                       for lbl, css, _g, _b in FONTS)
+    return ("window.BNS_COL={%s};window.BNS_PREFIX={%s};window.BNS_FONTCSS={%s};"
+            % (cols, prefixes, fontcss))
 
 
 JS = r"""
@@ -235,6 +233,14 @@ JS = r"""
       paying=false, sandbox=false;
 
   function kind(){var r=W.querySelector('[name=kind]:checked');return r?r.value:'Registration numbers';}
+
+  /** The registration number carries its own state prefix, so asking for the
+   *  state again was a field for data we already had. CF=California,
+   *  WN=Washington, otherwise the two-letter postal code. */
+  function stateFromPrefix(){
+    var m=($('f_text').value||'').trim().toUpperCase().match(/^([A-Z]{2})/);
+    return (m && (window.BNS_PREFIX||{})[m[1]]) || '';
+  }
   function isNum(){return kind()!=='Boat name';}
   function hasName(){return kind()!=='Registration numbers';}
   function val(n){var el=W.querySelector('[name='+n+']:checked');return el||null;}
@@ -248,43 +254,70 @@ JS = r"""
     return Math.round(n);
   }
 
-  var SCRIPTY=/script|vibes|lobster|old english/i;
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
     var meta=COL[cname]||['#111111',0];
     var h=val('height'), hv=h?h.value:'3';
-    var fn=$('f_font').value||'Block';
+    var fn=font();
     window.BNS_PREVIEW.render({
       hex: meta[0], light: !!meta[1], font: fn,
+      css: (window.BNS_FONTCSS||{})[fn] || '',
+      numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
       number: ($('f_text').value||'').trim(),
       name: ($('f_name2').value||'').trim()
     });
-    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn.replace(/ \(.*\)/,''))+
+    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
       ' &middot; <b>'+esc(cname)+'</b> &middot; '+
       (isNum() ? (hasName()? 'pair + name, pre-spaced' : 'one pair, pre-spaced')
                : 'one decal, pre-spaced');
   }
 
+  function font(){
+    var r=W.querySelector('[name=font]:checked');
+    return r ? r.value : 'Block';
+  }
+  function isBlockFont(name){
+    var c=W.querySelector('[name=font][value="'+name+'"]');
+    return !c || c.closest('.fontchip').dataset.block==='1';
+  }
+
   function syncFonts(){
-    var sel=$('f_font'), lock=isNum() && kind()!=='Both';
-    var want = lock ? sel.dataset.block : sel.dataset.all;
-    if(sel.dataset.state !== (lock?'b':'a')){
-      var keep=sel.value;
-      sel.innerHTML=want; sel.dataset.state=(lock?'b':'a');
-      var ok=[].slice.call(sel.options).some(function(o){return o.value===keep;});
-      sel.value = ok ? keep : sel.options[0].value;
+    // Registration numbers must be plain vertical block characters, so the
+    // non-block faces are disabled rather than hidden - people should see
+    // what they are not allowed to have, and why.
+    var lock = isNum() && kind()!=='Both';
+    var chips=W.querySelectorAll('.fontchip'), moved=false;
+    for(var i=0;i<chips.length;i++){
+      var c=chips[i], inp=c.querySelector('input'),
+          ok = !lock || c.dataset.block==='1';
+      inp.disabled=!ok;
+      c.classList.toggle('off', !ok);
+      if(!ok && inp.checked){ inp.checked=false; moved=true; }
     }
-    $('fonthint').textContent = lock
-      ? 'Registration numbers must be plain vertical block characters, so script fonts are not offered.'
-      : 'Script reads beautifully on a transom. Any registration numbers in this order stay block.';
+    if(moved){
+      var first=W.querySelector('.fontchip:not(.off) input');
+      if(first) first.checked=true;
+    }
+    var mixed = isNum() && hasName() && !isBlockFont(font());
+    $('fonthint').innerHTML = lock
+      ? 'Registration numbers must be <strong>plain vertical block characters</strong> '
+        + 'by law, so script and serif faces are greyed out.'
+      : mixed
+        ? 'This font goes on the <strong>name</strong>. Your registration numbers are '
+          + 'cut in Block either way &mdash; the law requires it.'
+        : 'Anything goes on a name. Script reads beautifully on a transom.';
+    // Chips preview the real lettering, not a stand-in.
+    var demo=(isNum()? $('f_text').value : $('f_name2').value).trim() || 'Abc';
+    if(demo.length>7) demo=demo.slice(0,7).trim();
+    var d=W.querySelectorAll('.fontdemo');
+    for(var j=0;j<d.length;j++) d[j].textContent=demo;
   }
 
   function syncStep2(){
     var num=isNum(), nm=hasName();
     $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
-    $('statewrap').hidden=!num;
     $('s2h').textContent = num&&nm ? 'What should they say?'
                          : num ? 'What is your registration number?'
                                : 'What is the boat called?';
@@ -313,7 +346,7 @@ JS = r"""
     box.innerHTML =
       '<div class=sumline><span>'+esc(txt.join('  ·  ')||'Your lettering')+'</span>'+
       '<span class=summeta>'+esc((val('height')||{value:'3'}).value)+'&quot; · '+
-      esc(c?c.value:'Black')+' · '+esc($('f_font').value)+' · free shipping</span></div>'+
+      esc(c?c.value:'Black')+' · '+esc(font())+' · free shipping</span></div>'+
       '<div class=sumitems>'+rows.map(function(r){
         return '<div class=sumrow><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>';
       }).join('')+'</div>'+
@@ -331,6 +364,7 @@ JS = r"""
   function render(){
     tot.textContent='$'+price();
     syncFonts(); renderPreview();
+    if(cur===2) syncStep2();
     if(cur===5) summary();
   }
 
@@ -378,8 +412,8 @@ JS = r"""
     var ups=[];
     W.querySelectorAll('[name=upgrade]:checked').forEach(function(u){ups.push(u.value);});
     return {kind:kind(), text:$('f_text').value.trim(),
-            boatname:$('f_name2').value.trim(), state:$('f_state').value,
-            height:(val('height')||{value:'3'}).value, font:$('f_font').value,
+            boatname:$('f_name2').value.trim(), state:stateFromPrefix(),
+            height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),
             name:$('f_name').value.trim(), email:$('f_email').value.trim(),
             phone:$('f_phone').value.trim(), boat:$('f_boat').value.trim(),
