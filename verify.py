@@ -90,6 +90,16 @@ else:
 if '"Registration numbers": %d' % PRICE["numbers"] not in wjs:
     fails.append("worker BASE disagrees with content.PRICE")
 
+# The radio VALUE is a contract between the form, the worker and every row in
+# D1; the LABEL beside it is free text. Catch a rename of the value that does
+# not reach worker/index.js.
+sys.path.insert(0, str(ROOT / "engine"))
+from order import KINDS as _KINDS
+for _val, _base, _c, _p, _f, _k, _label in _KINDS:
+    if '"%s": %d' % (_val, _base) not in wjs:
+        fails.append("order kind %r (base %d) missing from worker BASE - the radio "
+                     "value is a contract, rename the label instead" % (_val, _base))
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

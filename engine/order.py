@@ -30,10 +30,18 @@ HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better")
 
 # (label, base, caption, price, flag, key) - caption is one short line; the
 # thumbnail carries the explanation.
+# (value, base, caption, price, flag, key, label) - caption is one short line;
+# the thumbnail carries the explanation.
+#
+# `value` is what the radio submits and must not drift: worker/index.js prices
+# on it (BASE), gates script fonts on it, and every order already in D1 carries
+# it. `label` is only what the customer reads, and is worded to match the header
+# nav ("Boat Numbers", "Boat Letters") rather than the internal product names.
 KINDS = [
-    ("Registration numbers", 19, "On the bow, both sides", "$19", "", "numbers"),
-    ("Boat name", 29, "On the transom", "from $29", "", "name"),
-    ("Both", 44, "Bow and transom", "from $44", "Save $4", "both"),
+    ("Registration numbers", 19, "On the bow, both sides", "$19", "", "numbers",
+     "Boat Numbers"),
+    ("Boat name", 29, "On the transom", "from $29", "", "name", "Boat Name"),
+    ("Both", 44, "Bow and transom", "from $44", "Save $4", "both", "Both"),
 ]
 
 _KICON = {
@@ -89,10 +97,10 @@ def form():
     kinds = "".join(
         '<label class=kind><input type=radio name=kind value="%s" data-base="%d"%s>'
         '<span class=kindbox>%s%s<b>%s</b><em>%s</em><i>%s</i></span></label>'
-        % (lbl, base, " checked" if key == "numbers" else "",
+        % (val, base, " checked" if key == "numbers" else "",
            '<span class=flag>%s</span>' % flag if flag else "",
-           _thumb(key), lbl, blurb, price)
-        for lbl, base, blurb, price, flag, key in KINDS)
+           _thumb(key), label, blurb, price)
+        for val, base, blurb, price, flag, key, label in KINDS)
     cols = _colors("color")
 
     markup = ("""

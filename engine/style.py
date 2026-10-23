@@ -601,3 +601,16 @@ CSS += """
 
 import namegen as _NG
 CSS += _NG.CSS
+
+# ---- end-of-article CTA ------------------------------------------------
+CSS += """
+.ctaband .ctainner{text-align:center;max-width:620px}
+.ctaband h2{font-size:23px;margin-bottom:7px}
+.ctaband p{color:var(--mut);font-size:15.4px;margin:0 auto 18px;max-width:52ch}
+.ctarow{display:flex;flex-direction:column;align-items:center;gap:12px}
+.ctarow .btn.lg{width:100%;max-width:340px}
+@media(min-width:560px){.ctarow .btn.lg{width:auto;min-width:300px}}
+.ctalink{font-weight:700;font-size:14.6px;color:var(--nav2);text-decoration:none;
+white-space:nowrap}
+.ctalink:hover{text-decoration:underline}
+"""

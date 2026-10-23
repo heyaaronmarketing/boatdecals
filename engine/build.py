@@ -916,15 +916,11 @@ def build_state(s):
               '&ldquo;%s boat registration numbers.&rdquo; They are called '
               '<strong>%s</strong>, and that is what to search for and what the '
               'ramp conversation will use.</p>' % (nm, vern))
-    main = (hero(h1,
-            "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
-            "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
-            "the next business day." % ab,
-            trust=["$19 for Two Sets", "%s prefix" % ab, "Next Day Shipping",
-                   "100% Compliant"],
-            right=O.form())
-      + '<section><div class=w><div class=prose>'
-      + note
+    # The prose, as one body. alternating() splits it on <h2> and lays each
+    # section beside an image, so the pairing below is semantic rather than
+    # decorative: the state's own hull next to its format, the registration
+    # card next to "getting the number", what arrives next to "ordering".
+    body = (note
       + ('<h2>What a %s number looks like</h2>'
          '<p>A %s registration number is built from three parts: the state prefix '
          '<strong>%s</strong>, a block of digits, and a letter suffix. Written out with '
@@ -950,15 +946,21 @@ def build_state(s):
         '<p>Type the number as it appears on your card, pick a colour that contrasts with '
         'your hull, and leave the height at 3 inches unless you want it bolder. You will '
         'see your exact lettering in the preview before you pay &mdash; that is what '
-        'gets cut.</p>' % nm
-      + '</div>'
-      + (('<div style="margin:22px 0">%s%s</div>'
-          % (figure(PAGE_IMAGE["/registration-numbers/%s/" % s["slug"]],
-                    sizes="(min-width:900px) 70vw, 100vw", cls="shot wide"),
-             DISCLOSURE))
-         if ("/registration-numbers/%s/" % s["slug"]) in PAGE_IMAGE else '')
-      + '<a class="btn lg" href="/design/">Order %s numbers &middot; $19</a></div></section>' % ab
-      + '<section class=soft><div class=w><h2>Other states</h2>' + state_wheel(current=s["slug"])
+        'gets cut.</p>' % nm)
+
+    own = PAGE_IMAGE.get(path)
+    imgs = ([own] if own else []) + ["AL-01", "HB-4", "PR-1", "PR-6"]
+    band = Band()
+    main = (hero(h1,
+            "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
+            "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
+            "the next business day." % ab,
+            trust=["$19 for Two Sets", "%s prefix" % ab, "Next Day Shipping",
+                   "100% Compliant"],
+            right=O.form())
+      + alternating(body, imgs, band)
+      + cta_band(band)
+      + band.open() + '<div class=w><h2>Other states</h2>' + state_wheel(current=s["slug"])
       + '</div></section>')
     write(path, shell(title, desc, path, sch, main, trail=trail, faqs=faqs,
                       faq_heading="%s questions" % nm, js=ORDER_JS), "0.7")
@@ -1575,15 +1577,34 @@ GUIDE_BODY = {
    "decals and upgrades.</p>",
 }
 
+def cta_band(band=None):
+    """The end-of-article call to action.
+
+    A bare <a class="btn lg"> sitting alone in a full-width band reads as a
+    button someone forgot to finish: correctly aligned to the text column, but
+    floating with nothing around it. Centre it, give it a line of context and
+    the secondary route, and it reads as a deliberate close.
+    """
+    open_tag = band.open("ctaband") if band else '<section class="ctaband">'
+    return (open_tag + '<div class="w ctainner">'
+            '<h2>Ready to order?</h2>'
+            '<p>$%d a pair, free shipping, cut and shipped the next business day. '
+            'The preview shows your exact lettering before you pay.</p>'
+            '<div class=ctarow>'
+            '<a class="btn lg" href="/design/">Order your numbers &middot; $%d a pair</a>'
+            '<a class=ctalink href="/pricing/">See all pricing &rarr;</a>'
+            '</div></div></section>' % (PRICE["numbers"], PRICE["numbers"]))
+
+
 def build_guide(g):
     path = "/guides/%s/" % g["slug"]
     trail = [("Guides", "/guides/"), (g["nav"], None)]
-    faqs = [
-      ("How much do boat registration numbers cost here?",
-       "$19 a pair with free shipping, pre-spaced and cut from marine vinyl, shipped "
-       "the next business day."),
-      ("Do you ship to my state?",
-       "All 50 states and DC, free. We cut for every state's number format."),
+    # Topic FAQs first - they are what an answer engine quotes - then one shop
+    # question so the page still converts. See CB.GUIDE_FAQS for the house style.
+    faqs = CB.GUIDE_FAQS.get(g["slug"], []) + [
+      ("Do you ship boat lettering to my state?",
+       "All 50 states and DC, free. We cut for every state's registration number "
+       "format and ship the next business day."),
     ]
     art = {"@type": "Article", "@id": U(path) + "#article",
            "headline": html.unescape(g["title"]), "description": g["desc"],
@@ -1602,10 +1623,7 @@ def build_guide(g):
             + (alternating(gbody, secs, band) if secs
                else band.open() + '<div class=w><div class=prose>%s</div>'
                     '</div></section>' % gbody)
-            + '<section style="padding-top:0"><div class=w>'
-              '<a class="btn lg" href="/design/">'
-              'Order your numbers &middot; $19 a pair</a>'
-              '</div></section>'
+            + cta_band(band)
             # The seven frames belong to the install guide and nowhere else.
             + (steps_strip(["HT-%d" % i for i in range(1, 8)])
                if g["slug"] == "how-to-apply-boat-lettering" else "")
