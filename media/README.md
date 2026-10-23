@@ -15,17 +15,32 @@ python3 media/social.py              # derive 4 social crops per master
 never a named customer's boat. Breaking that turns an illustration into
 fabricated social proof.
 
-## Model
+## Models — pick by whether the set needs to match
 
-`gpt-image-2` via the OpenAI key at `~/.config/openai/key`. ~28s and roughly
-$0.19 a render at these sizes.
+| Set | Model | Why |
+|---|---|---|
+| `AL-*` standalone shots | `gpt-image-2` (`media/gen.py`) | Each frame is independent, so consistency doesn't matter |
+| `HT-*` the how-to sequence | **Nano Banana Pro** (`~/.claude/skills/tradephoto/scripts/nano_banana.py --ref`) | Seven frames of the *same* boat — only this model holds it |
 
-**The intended model is Nano Banana Pro** (`~/.claude/skills/tradephoto/scripts/nano_banana.py`),
-which holds reference-image consistency across a set far better — the same
-lettering, hull and light on every shot. It is unavailable right now: the
-Google AI Studio key returns `RESOURCE_EXHAUSTED`. **Top up at
-https://ai.studio/projects and switch back** for any set where consistency
-between shots matters.
+The reference image is what does it:
+
+```bash
+python3 ~/.claude/skills/tradephoto/scripts/nano_banana.py \
+  --batch media/howto-shots.json --outdir media/shots --ref media/shots/AL-01.jpg
+```
+
+Same hull, same trailer, same gravel, same overcast sky in all seven. `gpt-image-2`
+cannot do that.
+
+⚠️ **The reference leaks more than you want.** `AL-01` has finished lettering on
+it, and the model copied that into steps 1, 3 and 5 — producing a how-to where
+the job is already done in the first frame. Those needed an explicit
+*"the hull is completely BARE — ignore any lettering in the reference image"*.
+Then step 3 rendered the hinged sheet with **mirrored** text, which reads as an
+AI glitch, and needed *"blank white paper backing, no printing of any kind"*.
+
+Budget ~3 passes on any sequence shot. Check continuity across the set, not
+just each frame on its own.
 
 ## What makes these not look AI
 

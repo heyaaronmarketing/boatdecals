@@ -49,6 +49,86 @@ ICONS = {
  "state":'<path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8" fill="none"/>',
  "guide":'<path d="M5 4.5h9a3 3 0 013 3v12H8a3 3 0 00-3 3z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M8.5 9h6M8.5 12.5h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
 }
+# ---------------------------------------------------------------- imagery
+# Generated illustrative shots. The mapping and the captions live in
+# media/captions.json; this is the render side.
+#
+# CAPTIONS DESCRIBE THE SPEC, NEVER A NAMED CUSTOMER. See media/CAPTIONS.md -
+# a generated image captioned as somebody's boat is fabricated social proof.
+IMAGES = {}
+_cap = ROOT / "media" / "captions.json"
+if _cap.exists():
+    for _r in json.loads(_cap.read_text()):
+        IMAGES[_r["id"]] = _r
+
+# Which shot leads which page.
+PAGE_IMAGE = {
+    "/boat-registration-numbers/": "AL-01",
+    "/boat-lettering/":            "AL-03",
+    "/boat-name-decals/":          "AL-08",
+    "/for/jon-boats/":             "AL-04",
+    "/for/jet-skis-and-pwc/":      "AL-05",
+    "/for/kayaks-and-canoes/":     "AL-06",
+    "/for/pontoon-boats/":         "AL-07",
+    "/for/sailboats/":             "AL-08",
+    "/for/bass-boats/":            "AL-10",
+    "/guides/how-to-apply-boat-lettering/": "AL-09",
+    "/registration-numbers/iowa/":      "AL-01",
+    "/registration-numbers/michigan/":  "AL-02",
+    "/registration-numbers/wisconsin/": "AL-04",
+    "/registration-numbers/california/":"AL-05",
+    "/registration-numbers/texas/":     "AL-07",
+    "/registration-numbers/missouri/":  "AL-10",
+    "/registration-numbers/minnesota/": "AL-06",
+}
+
+DISCLOSURE = ('<p class=imgnote>Illustrative images. The lettering shown is '
+              'representative of what we cut &mdash; these are not photographs '
+              'of a particular customer&rsquo;s boat.</p>')
+
+
+def figure(img_id, sizes="(min-width:900px) 46vw, 100vw", cls="shot", lazy=True):
+    """One responsive <picture> with its spec caption."""
+    m = IMAGES.get(img_id)
+    if not m:
+        return ""
+    alt = "%s. %s." % (m["caption"], m["sub"])
+    return (
+      '<figure class="%s">'
+      '<picture>'
+      '<source type="image/webp" srcset="/assets/img/%s-800.webp 800w,'
+      '/assets/img/%s-1400.webp 1400w" sizes="%s">'
+      '<img src="/assets/img/%s-800.jpg" '
+      'srcset="/assets/img/%s-800.jpg 800w,/assets/img/%s-1400.jpg 1400w" '
+      'sizes="%s" alt="%s" width="1400" height="933"%s>'
+      '</picture>'
+      '<figcaption><b>%s</b><span>%s</span></figcaption></figure>'
+      % (cls, img_id, img_id, sizes, img_id, img_id, img_id, sizes, e(alt),
+         ' loading="lazy" decoding="async"' if lazy else '',
+         m["caption"], m["sub"]))
+
+
+def steps_strip(ids, heading="The whole job, start to finish"):
+    """The how-to sequence. One boat, seven frames, in order.
+
+    Reference-image consistency is the entire reason this is on Nano Banana
+    Pro: the same hull, trailer, gravel and overcast sky in every frame.
+    """
+    cards = "".join(figure(i, sizes="(min-width:900px) 31vw, 92vw", cls="gshot")
+                    for i in ids)
+    return ('<section class=soft><div class=w><h2>%s</h2>'
+            '<div class=gallery steps>%s</div>%s</div></section>'
+            % (heading, cards, DISCLOSURE))
+
+
+def gallery(ids, heading="What it looks like on the boat"):
+    cards = "".join(figure(i, sizes="(min-width:900px) 31vw, 92vw", cls="gshot")
+                    for i in ids)
+    return ('<section class=soft><div class=w><h2>%s</h2>'
+            '<div class=gallery>%s</div>%s</div></section>'
+            % (heading, cards, DISCLOSURE))
+
+
 def icon(k):
     return ('<span class=icw><svg viewBox="0 0 24 24" aria-hidden="true">%s</svg></span>'
             % ICONS.get(k, ICONS["decal"]))
@@ -402,6 +482,7 @@ def build_home():
            badge="Everyone else hides the price. Ours is right here.",
            right=right)
       + proof_band()
+      + gallery(["AL-01", "AL-02", "AL-08"])
       + '<section><div class=w><h2>Why buy here instead of the cheap set</h2>'
         '<p class=lede>There are $11 sets on marketplaces. Here is honestly what '
         'separates them from this.</p>' + why_grid() + '</div></section>'
@@ -714,7 +795,13 @@ def build_state(s):
         'your hull, and leave the height at 3 inches unless you want it bolder. You will '
         'get a proof by email showing the exact layout before anything is cut, and a '
         'full refund if you do not like what you see.</p>' % nm
-      + '</div><a class="btn lg" href="/design/">Order %s numbers &middot; $19</a></div></section>' % ab
+      + '</div>'
+      + (('<div style="margin:22px 0">%s%s</div>'
+          % (figure(PAGE_IMAGE["/registration-numbers/%s/" % s["slug"]],
+                    sizes="(min-width:900px) 70vw, 100vw", cls="shot wide"),
+             DISCLOSURE))
+         if ("/registration-numbers/%s/" % s["slug"]) in PAGE_IMAGE else '')
+      + '<a class="btn lg" href="/design/">Order %s numbers &middot; $19</a></div></section>' % ab
       + '<section class=soft><div class=w><h2>Other states</h2>' + state_wheel(current=s["slug"])
       + '</div></section>')
     write(path, shell(title, desc, path, sch, main, trail=trail, faqs=faqs,
@@ -796,6 +883,9 @@ def build_boat_type(b):
         'email before anything is cut.</p>'
         '</div><a class="btn lg" href="/design/">Start your order</a></div></section>'
         % (b["note"], b["nav"].lower())
+      + (gallery([PAGE_IMAGE["/for/%s/" % b["slug"]]],
+                  heading="On this kind of boat")
+         if ("/for/%s/" % b["slug"]) in PAGE_IMAGE else '')
       + product_grid(heading="Products for this boat"))
     write(path, shell(b["title"].replace("&amp;", "&")[:58],
           "%s - cut from 7-year marine vinyl, $19 a pair for registration numbers, free "
@@ -1346,15 +1436,21 @@ def build_guide(g):
     sch = graph(org_node(), crumb_node(trail, path), art, faq_node(faqs, path))
     others = "".join('<a href="/guides/%s/">%s</a>' % (x["slug"], x["nav"])
                      for x in GUIDES if x["slug"] != g["slug"])
+    lead = PAGE_IMAGE.get(path)
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;line-height:1.16;margin-bottom:14px">%s</h1>'
-            '<div class=prose>%s</div>'
-            '<a class="btn lg" style="margin-top:10px" href="/design/">'
-            'Order your numbers &middot; $19 a pair</a>'
-            '</div></section>'
-            '<section class=soft><div class=w><h2>More guides</h2>'
-            '<div class=wheel>%s</div></div></section>'
-            % (g["title"], GUIDE_BODY.get(g["slug"], ""), others))
+            % g["title"]
+            + ((figure(lead, sizes="(min-width:900px) 70vw, 100vw",
+                       cls="shot wide", lazy=False) + DISCLOSURE) if lead else "")
+            + '<div class=prose>%s</div>' % GUIDE_BODY.get(g["slug"], "")
+            + '<a class="btn lg" style="margin-top:10px" href="/design/">'
+              'Order your numbers &middot; $19 a pair</a>'
+              '</div></section>'
+            # The seven frames belong to the install guide and nowhere else.
+            + (steps_strip(["HT-%d" % i for i in range(1, 8)])
+               if g["slug"] == "how-to-apply-boat-lettering" else "")
+            + '<section class=soft><div class=w><h2>More guides</h2>'
+              '<div class=wheel>%s</div></div></section>' % others)
     write(path, shell(html.unescape(g["title"])[:58], g["desc"], path, sch, main,
                       trail=trail, faqs=faqs), "0.6")
 
@@ -1765,6 +1861,22 @@ def build_404():
               noindex=True), encoding="utf-8")
 
 # ---------------------------------------------------------- static files
+def build_web_images():
+    """Regenerate public/assets/img from the masters.
+
+    main() wipes public/ before rebuilding, so running media/web.py separately
+    beforehand silently lost every image. Owning the step here means one
+    command always produces a complete site.
+    """
+    web = ROOT / "media" / "web.py"
+    if not web.exists():
+        return
+    import subprocess
+    r = subprocess.run([sys.executable, str(web)], capture_output=True, text=True)
+    print("   images:", (r.stdout or r.stderr).strip().splitlines()[-1]
+          if (r.stdout or r.stderr).strip() else "none")
+
+
 def build_static():
     (OUT / "favicon.svg").write_text(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
@@ -1903,6 +2015,7 @@ def main():
     for g in GUIDES: build_guide(g)
     build_about(); build_contact(); build_warranty(); build_shipping()
     build_legal(); build_404()
+    build_web_images()
     build_static()
     print("built %d pages -> %s" % (len(PAGES), OUT))
     for p, _ in sorted(PAGES): print("  ", p)

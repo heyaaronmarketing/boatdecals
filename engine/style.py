@@ -473,3 +473,23 @@ CSS += _MP.CSS
 CSS += """
 .payel.sandbox{border:0;padding:0;background:none}
 """
+
+# ---- imagery ------------------------------------------------------------
+CSS += """
+figure.shot{margin:0 0 6px}
+figure.shot img{display:block;width:100%;height:auto;border-radius:12px;
+background:var(--soft);aspect-ratio:3/2;object-fit:cover}
+figure.shot.wide{max-width:760px}
+figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;
+margin-top:8px;font-size:13.6px;line-height:1.45}
+figcaption b{font-weight:800;color:var(--nav)}
+figcaption span{color:var(--mut)}
+.imgnote{font-size:11.8px;color:var(--mut);line-height:1.5;margin:6px 0 0;
+max-width:62ch}
+.gallery{display:grid;gap:18px;grid-template-columns:1fr;margin-bottom:14px}
+@media(min-width:720px){.gallery{grid-template-columns:repeat(3,1fr)}}
+figure.gshot{margin:0}
+figure.gshot img{display:block;width:100%;height:auto;border-radius:12px;
+background:var(--soft);aspect-ratio:3/2;object-fit:cover}
+figure.gshot figcaption{flex-direction:column;gap:1px;font-size:13px}
+"""

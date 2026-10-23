@@ -78,5 +78,61 @@
   "page": "/for/bass-boats/",
   "master": "media/shots/AL-10.png",
   "social": "media/social/AL-10/"
+ },
+ {
+  "id": "HT-1",
+  "caption": "Step 1 &middot; Wash, then wipe with alcohol",
+  "sub": "Soap leaves a film and wax is the enemy of adhesive",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-1.jpg",
+  "social": "media/social/HT-1/"
+ },
+ {
+  "id": "HT-2",
+  "caption": "Step 2 &middot; Tape the sheet in position, dry",
+  "sub": "Two strips of tape along the top edge, as a hinge",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-2.jpg",
+  "social": "media/social/HT-2/"
+ },
+ {
+  "id": "HT-3",
+  "caption": "Step 3 &middot; Wet the hull",
+  "sub": "A few drops of dish soap in a spray bottle of water",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-3.jpg",
+  "social": "media/social/HT-3/"
+ },
+ {
+  "id": "HT-4",
+  "caption": "Step 4 &middot; Peel the backing away",
+  "sub": "The characters stay on the clear tape",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-4.jpg",
+  "social": "media/social/HT-4/"
+ },
+ {
+  "id": "HT-5",
+  "caption": "Step 5 &middot; Squeegee from the centre out",
+  "sub": "Firmly, from the middle toward each edge",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-5.jpg",
+  "social": "media/social/HT-5/"
+ },
+ {
+  "id": "HT-6",
+  "caption": "Step 6 &middot; Pull the tape back on itself",
+  "sub": "Flat back against itself, not straight out",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-6.jpg",
+  "social": "media/social/HT-6/"
+ },
+ {
+  "id": "HT-7",
+  "caption": "Step 7 &middot; Leave it 24 hours",
+  "sub": "No pressure washing, no launching, for a day",
+  "page": "/guides/how-to-apply-boat-lettering/",
+  "master": "media/shots/HT-7.jpg",
+  "social": "media/social/HT-7/"
  }
 ]
