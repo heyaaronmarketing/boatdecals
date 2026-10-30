@@ -1,4 +1,4 @@
-# Boat Number Shop — boatnumbershop.com
+# Boat Number Shop — numbermyboat.com
 
 Custom boat registration numbers, names and marine vinyl decals. National
 e-commerce, not a local lead-gen site: the conversion element is an **order
@@ -303,7 +303,7 @@ takes no payment. `initPay()` therefore only mounts the sandbox on a
 **preview host** — `*.workers.dev`, `*.pages.dev`, `localhost`, `127.0.0.1`.
 On any real domain without Stripe keys it falls through to `degrade()` and the
 emailed-payment-link flow instead. **Do not loosen that host check**: without
-it, pointing boatnumbershop.com at this worker would put a dead card field in
+it, pointing numbermyboat.com at this worker would put a dead card field in
 front of real customers who would believe they had paid.
 
 (A build-time guard on `SITE_URL` was tried first and removed — the canonical
@@ -339,10 +339,12 @@ against an emailed payment link.
 
 ## Bindings & secrets
 
-- `DB` → D1 `boatnumbershop` (`43724d47-…`), schema in `schema.sql`
+- `DB` → D1 `boatnumbershop` (`43724d47-…`), schema in `schema.sql`. The
+  database keeps its original name on purpose — it is an existing CF resource
+  and renaming it here would point the worker at a database that does not exist.
 - `RESEND_API_KEY`, `ORDER_TO` → set ✅
-- `ORDER_FROM` → currently `onboarding@resend.dev`. **Verify boatnumbershop.com
-  in Resend and switch this to `orders@boatnumbershop.com` before launch.**
+- `ORDER_FROM` → currently `onboarding@resend.dev`. **Verify numbermyboat.com
+  in Resend and switch this to `orders@numbermyboat.com` before launch.**
 
 ## Before launch
 

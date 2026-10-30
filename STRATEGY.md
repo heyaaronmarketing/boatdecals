@@ -308,13 +308,13 @@ actual material and postage costs before launch.**
 **Blocking**
 - [ ] **Decide the GBP address posture** — street address public, or hidden with a
       service area? The address looks residential. Decide before claiming
-- [ ] Register **boatnumbershop.com**, add to Cloudflare, route the `boatdecals` Worker
+- [ ] Register **numbermyboat.com**, add to Cloudflare, route the `boatdecals` Worker
 - [ ] **Confirm pricing and COGS with your brother** — $19 and the whole ladder are my
       recommendation from market data, not his numbers
 - [x] **Film-life figures pulled from the whole site** (2026-10-23, Aaron's call).
       No year number is published for our film or for the cheap sets; `verify.py`
       gates it. Restore only with a spec sheet for the film actually in the shop.
-- [ ] Verify boatnumbershop.com in Resend, switch `ORDER_FROM` off `onboarding@resend.dev`
+- [ ] Verify numbermyboat.com in Resend, switch `ORDER_FROM` off `onboarding@resend.dev`
 - [ ] Payment: the flow is proof-then-payment-link today. Decide Stripe Checkout vs
       manual invoice before volume
 

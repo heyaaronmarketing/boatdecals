@@ -594,7 +594,7 @@ JS = r"""
       }).catch(function(){
         paying=false; nextBtn.disabled=false; nextBtn.textContent='Send my order';
         $('e5').innerHTML='That did not go through. Email '+
-          '<a href="mailto:orders@boatnumbershop.com">orders@boatnumbershop.com</a>'+
+          '<a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a>'+
           ' and we will pick it up by hand.';
       });
     }

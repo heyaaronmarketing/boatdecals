@@ -217,7 +217,7 @@ async function handleOrder(request, env) {
         headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`,
                    "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: env.ORDER_FROM || "orders@boatnumbershop.com",
+          from: env.ORDER_FROM || "orders@numbermyboat.com",
           to: [env.ORDER_TO], reply_to: o.email,
           subject: `${o.test_mode ? "[TEST] " : ""}Order ${o.ref} - ${o.kind} - $${o.total}`,
           html: body,

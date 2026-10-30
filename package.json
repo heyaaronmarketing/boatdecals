@@ -1,5 +1,5 @@
 {
-  "name": "boatnumbershop",
+  "name": "numbermyboat",
   "private": true,
   "scripts": {
     "build": "python3 engine/build.py",

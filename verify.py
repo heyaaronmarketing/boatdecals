@@ -201,6 +201,16 @@ for _f in OUT.rglob("*"):
         if re.search(_pat, _t, re.I):
             fails.append("PII: %s in %s" % (_what, _f.relative_to(OUT)))
 
+# The domain is numbermyboat.com. boatnumbershop.com was never registered and
+# must not survive in a canonical, a schema @id, a sitemap entry or an email
+# address - a stale canonical pointing at a domain nobody owns is the kind of
+# thing that quietly de-indexes a site.
+for _f in OUT.rglob("*"):
+    if _f.suffix in (".html", ".xml", ".txt") and _f.is_file():
+        if "boatnumbershop" in _f.read_text(errors="ignore"):
+            fails.append("stale domain boatnumbershop.com in %s"
+                         % _f.relative_to(OUT))
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

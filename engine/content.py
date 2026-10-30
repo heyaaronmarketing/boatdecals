@@ -10,10 +10,10 @@ instead of taste.
 SITE = {
     "brand": "Boat Number Shop",
     "short": "Boat Number Shop",
-    "url": "https://boatnumbershop.com",
-    "domain": "boatnumbershop.com",
+    "url": "https://numbermyboat.com",
+    "domain": "numbermyboat.com",
     "tagline": "Boat registration numbers, $19 a pair. Shipped next business day.",
-    "email": "orders@boatnumbershop.com",
+    "email": "orders@numbermyboat.com",
     "hours": "Mon-Fri 8-5 CT",
     # NO PHONE, NO STREET ADDRESS, NO COORDINATES - Aaron's call 2026-10-30.
     # The shop runs out of a private home, so the address and the landline are
