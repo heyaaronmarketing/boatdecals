@@ -355,7 +355,7 @@ def header():
     main = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_MAIN)
     sub = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_HELP)
     return ('<header><div class=w>'
-            '<a class=brand href="/">%s<span>NumberMyBoat<b>.com</b></span></a>'
+            '<a class=brand href="/">%s<span>NumberMy<br>Boat<b>.com</b></span></a>'
             '<button type=button class=menubtn id=menubtn aria-expanded="false" '
             'aria-controls="nav" aria-label="Menu">'
             '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" '
