@@ -23,8 +23,10 @@ padding:12px 18px;border-radius:0 0 8px 0;font-weight:700;text-decoration:none}
 .top strong{color:#fff}
 header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
 header .w{display:flex;align-items:center;gap:18px;padding:11px 18px}
-.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;
-line-height:1.08;color:var(--nav);text-decoration:none;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:10px;color:var(--nav);
+text-decoration:none;flex:0 0 auto}
+.brand span{font-family:'Archivo Black','Arial Black',sans-serif;font-weight:400;
+font-size:14.6px;line-height:1.1;letter-spacing:.005em;text-transform:uppercase}
 header nav{display:none;margin-left:auto;gap:15px;font-size:14.6px;font-weight:600;
 align-items:center}
 header nav a{color:var(--ink);text-decoration:none;white-space:nowrap}
@@ -60,7 +62,8 @@ padding:10px 15px;border-radius:9px;text-decoration:none;white-space:nowrap}
 @media(max-width:899px){
   /* brand ......... [Start your order] [menu]  on one row, nav wraps beneath */
   header .w{flex-wrap:wrap;gap:8px;padding:9px 14px}
-  .brand{margin-right:auto;font-size:15.5px}
+  .brand{margin-right:auto;gap:8px}
+  .brand span{font-size:13px}
   .brand svg{width:26px;height:26px}
   .hbtn{order:2;margin-left:0;font-size:13.6px;padding:9px 12px}
   .menubtn{order:3;margin-left:0;width:40px;height:40px}

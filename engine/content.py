@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Content model for Boat Number Shop.
+"""Content model for Number My Boat.
 
 Every number in VOL/CPC came from a live DataForSEO google_ads search_volume
 pull on 2026-10-22 (location_code 2840). FLEET counts are registered-vessel
@@ -8,8 +8,8 @@ instead of taste.
 """
 
 SITE = {
-    "brand": "Boat Number Shop",
-    "short": "Boat Number Shop",
+    "brand": "Number My Boat",
+    "short": "Number My Boat",
     "url": "https://numbermyboat.com",
     "domain": "numbermyboat.com",
     "tagline": "Boat registration numbers, $19 a pair. Shipped next business day.",

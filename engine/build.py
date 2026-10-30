@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Static site builder for Boat Number Shop."""
+"""Static site builder for Number My Boat."""
 import json, os, pathlib, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
@@ -29,14 +29,29 @@ PAGES = []
 
 def U(p): return URL + p
 
-WORDMARK = ('<svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">'
+# The mark is a number sign whose crossbars are water. "#" is literally the
+# word "number" and the waves are the boat, so one glyph carries both halves
+# of the name rather than parking two pictures next to each other. The waves
+# are the same scallop the old logo used, which keeps a thread back to it.
+#
+# Two colours, four strokes, and it still reads at 16px - which the old
+# "19"-in-a-box did not, and which matters because a favicon is where most
+# people meet a logo first.
+#
+# The wordmark is set in Archivo Black: the same face the shop cuts as "Block"
+# for registration numbers, and already loaded for the order form, so it costs
+# no extra request.
+LOGO_MARK = (
  '<rect width="32" height="32" rx="7" fill="#0e3a52"/>'
- '<path d="M4 22c2.4 0 2.4-2.3 4.8-2.3S11.2 22 13.6 22s2.4-2.3 4.8-2.3S20.8 22 23.2 22s2.4-2.3 4.8-2.3" '
- 'stroke="#5fc4f5" stroke-width="2.1" fill="none" stroke-linecap="round"/>'
- '<path d="M4 27c2.4 0 2.4-2.3 4.8-2.3S11.2 27 13.6 27s2.4-2.3 4.8-2.3S20.8 27 23.2 27s2.4-2.3 4.8-2.3" '
- 'stroke="#2f8fc4" stroke-width="2.1" fill="none" stroke-linecap="round"/>'
- '<text x="16" y="15.5" font-family="Arial Black,Arial" font-size="12" font-weight="900" '
- 'fill="#5fc4f5" text-anchor="middle">19</text></svg>')
+ '<path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" '
+ 'stroke-linecap="round"/>'
+ '<path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" '
+ 'stroke-width="2.8" fill="none" stroke-linecap="round"/>'
+ '<path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" '
+ 'stroke-width="2.8" fill="none" stroke-linecap="round"/>')
+
+WORDMARK = ('<svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">'
+            + LOGO_MARK + '</svg>')
 
 ICONS = {
  "numbers":'<path d="M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round"/>',
@@ -256,8 +271,10 @@ def icon(k):
             % ICONS.get(k, ICONS["decal"]))
 
 # ------------------------------------------------------------------- shell
+TITLE_SUFFIXES = (" | " + B, "")
+
 def _title(t):
-    for sfx in (" | " + B, " | Boat Numbers", ""):
+    for sfx in TITLE_SUFFIXES:
         if len(t) + len(sfx) <= 60: return t + sfx
     return t[:60]
 
@@ -337,7 +354,7 @@ def header():
     main = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_MAIN)
     sub = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_HELP)
     return ('<header><div class=w>'
-            '<a class=brand href="/">%s<span>Boat Number<br>Shop</span></a>'
+            '<a class=brand href="/">%s<span>Number<br>My Boat</span></a>'
             '<button type=button class=menubtn id=menubtn aria-expanded="false" '
             'aria-controls="nav" aria-label="Menu">'
             '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" '
@@ -1961,7 +1978,7 @@ def build_contact():
        "business day, so if you catch it the same day we can almost always change it "
        "before the plotter runs."),
     ]
-    simple("/contact/", "Contact Boat Number Shop",
+    simple("/contact/", "Contact Us",
       "Email us about an order, a change, artwork or a trade account. Boat "
       "registration numbers and lettering cut in Evansdale, Iowa.",
       "Contact us",
@@ -2102,7 +2119,7 @@ def build_shipping():
       [("Shipping &amp; returns", None)], faqs=faqs, prio="0.5")
 
 def build_legal():
-    simple("/privacy/", "Privacy Policy", "How Boat Number Shop handles your data.",
+    simple("/privacy/", "Privacy Policy", "How %s handles your data." % B,
       "Privacy policy", "Short, because we collect very little.",
       "<p><em>Last updated " + TODAY + ".</em></p>"
       "<h2>What we collect</h2>"
@@ -2122,7 +2139,7 @@ def build_legal():
       "<div class=note><p><b>Placeholder notice.</b> This policy will be replaced with a "
       "lawyer-reviewed version before launch. It describes our actual practice today.</p>"
       "</div>", [("Privacy", None)], prio="0.3")
-    simple("/terms/", "Terms of Service", "Terms for ordering from Boat Number Shop.",
+    simple("/terms/", "Terms of Service", "Terms for ordering from %s." % B,
       "Terms of service", "The short version of how ordering works.",
       "<p><em>Last updated " + TODAY + ".</em></p>"
       "<h2>Orders</h2>"
@@ -2193,10 +2210,7 @@ def build_web_images():
 def build_static():
     (OUT / "favicon.svg").write_text(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
-      '<rect width="32" height="32" rx="7" fill="#0e3a52"/>'
-      '<text x="16" y="21" font-family="Arial Black,Arial" font-size="15" '
-      'font-weight="900" fill="#5fc4f5" text-anchor="middle">19</text></svg>',
-      encoding="utf-8")
+      + LOGO_MARK + '</svg>', encoding="utf-8")
 
     (OUT / "robots.txt").write_text(
       "User-agent: *\nAllow: /\n\n"
@@ -2235,7 +2249,7 @@ def build_static():
     tl = "\n".join("- [%s](%s): %s"
                    % (html.unescape(t["title"]), U("/tools/%s/" % t["slug"]), t["desc"])
                    for t in TOOLS)
-    (OUT / "llms.txt").write_text("""# Boat Number Shop
+    (OUT / "llms.txt").write_text("""# %s
 
 > Custom boat registration numbers at $19 a pair with free shipping, plus boat names,
 > and custom cut-vinyl lettering. Cut from marine vinyl in the USA,
@@ -2254,7 +2268,7 @@ def build_static():
   Slab, Nautical, Brush Script, Formal Script) are available for names and decals.
 - Install guarantee: **free re-cut** if the customer's install goes wrong.
 - The order form **previews the customer's exact lettering** before payment; that is what gets cut.
-- **Boat Number Shop cuts in Evansdale, Black Hawk County, Iowa**, Mon-Fri 8-5 CT.
+- **%s cuts in Evansdale, Black Hawk County, Iowa**, Mon-Fri 8-5 CT.
   It is a private workshop, not a storefront: there is no published street address and
   no phone line. Contact is by email, answered the same working day. Ships to all 50
   states; local pickup around Waterloo / Cedar Falls is arranged by email.
@@ -2302,7 +2316,7 @@ and a state.
 ## Registration numbers by state
 
 %s
-""" % (SITE["email"], pr, tl, gd, st), encoding="utf-8")
+""" % (B, B, SITE["email"], pr, tl, gd, st), encoding="utf-8")
 
     # Workers Builds: serve /public with no build step needed.
     (OUT / "_headers").write_text(

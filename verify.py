@@ -168,7 +168,8 @@ for _s in _ST:
 # Numbers for Any Boat, Legal in All 50 St" because the H1 was being reused as
 # the title and sliced at 58. An H1 and a title do different jobs; give a page
 # its own title rather than cutting one to fit.
-_SUFFIXES = (" | Boat Number Shop", " | Boat Numbers")
+from content import SITE as _SITE
+_SUFFIXES = tuple(x for x in (" | " + _SITE["brand"],) if x)
 for _f in OUT.rglob("index.html"):
     _m = re.search(r"<title>(.*?)</title>", _f.read_text())
     if not _m:
@@ -176,6 +177,9 @@ for _f in OUT.rglob("index.html"):
     _t = _m.group(1)
     if len(_t) in (58, 59, 60) and not _t.endswith(_SUFFIXES):
         fails.append("title truncated mid-word in %s: %r" % (_f, _t))
+    if _t.count(_SITE["brand"]) > 1:
+        fails.append("brand appears twice in the title of %s: %r"
+                     % (_f.relative_to(OUT), _t))
 
 # No personal information, anywhere. The shop runs out of a private home, so
 # the street address, the landline and a rooftop coordinate are personal
@@ -210,6 +214,15 @@ for _f in OUT.rglob("*"):
         if "boatnumbershop" in _f.read_text(errors="ignore"):
             fails.append("stale domain boatnumbershop.com in %s"
                          % _f.relative_to(OUT))
+
+# The brand lives in SITE["brand"] and nowhere else. Four pages and llms.txt
+# had it hardcoded, so renaming the shop left the site half-renamed until a
+# manual sweep caught it. This fails the build if the old name survives.
+for _f in OUT.rglob("*"):
+    if _f.suffix in (".html", ".xml", ".txt") and _f.is_file():
+        if "Boat Number Shop" in _f.read_text(errors="ignore"):
+            fails.append("stale brand 'Boat Number Shop' in %s - read it from "
+                         "SITE[\"brand\"]" % _f.relative_to(OUT))
 
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.

@@ -12,7 +12,7 @@
   },
   "vars": {
     "SITE_URL": "https://numbermyboat.com",
-    "ORDER_FROM": "onboarding@resend.dev"
+    "ORDER_FROM": "orders@numbermyboat.com"
   },
   "d1_databases": [
     {
