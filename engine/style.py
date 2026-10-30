@@ -26,7 +26,8 @@ header .w{display:flex;align-items:center;gap:18px;padding:11px 18px}
 .brand{display:flex;align-items:center;gap:10px;color:var(--nav);
 text-decoration:none;flex:0 0 auto}
 .brand span{font-family:'Archivo Black','Arial Black',sans-serif;font-weight:400;
-font-size:14.6px;line-height:1.1;letter-spacing:.005em;text-transform:uppercase}
+font-size:15px;line-height:1;letter-spacing:-.005em;white-space:nowrap}
+.brand span b{font-weight:inherit;color:var(--sea)}
 header nav{display:none;margin-left:auto;gap:15px;font-size:14.6px;font-weight:600;
 align-items:center}
 header nav a{color:var(--ink);text-decoration:none;white-space:nowrap}
@@ -62,8 +63,8 @@ padding:10px 15px;border-radius:9px;text-decoration:none;white-space:nowrap}
 @media(max-width:899px){
   /* brand ......... [Start your order] [menu]  on one row, nav wraps beneath */
   header .w{flex-wrap:wrap;gap:8px;padding:9px 14px}
-  .brand{margin-right:auto;gap:8px}
-  .brand span{font-size:13px}
+  .brand{margin-right:auto;gap:7px}
+  .brand span{font-size:12.6px}
   .brand svg{width:26px;height:26px}
   .hbtn{order:2;margin-left:0;font-size:13.6px;padding:9px 12px}
   .menubtn{order:3;margin-left:0;width:40px;height:40px}
@@ -650,3 +651,22 @@ height:9px;border-radius:50%;background:var(--sbright,var(--sea))}
 """
 
 
+
+# ---- finish picker (the upsell) ----------------------------------------
+CSS += """
+.finrow{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:520px){.finrow{grid-template-columns:repeat(3,1fr)}}
+.fin{display:block;cursor:pointer}
+.fin input{position:absolute;opacity:0;width:0;height:0}
+.finbox{display:block;border:1.5px solid var(--line);border-radius:11px;
+padding:10px 11px;background:#fff;transition:border-color .14s,box-shadow .14s}
+.fin input:checked+.finbox{border-color:var(--cta);
+box-shadow:0 0 0 3px rgba(29,122,72,.14)}
+.fin input:focus-visible+.finbox{outline:2px solid var(--nav2);outline-offset:2px}
+.finbox b{display:block;font-size:14.4px;color:var(--ink);line-height:1.2}
+.finbox em{display:block;font-style:normal;font-size:12.2px;color:var(--mut);
+margin:3px 0 5px;line-height:1.35}
+.finbox i{display:inline-block;font-style:normal;font-size:12.4px;font-weight:800;
+color:var(--cta)}
+.csw[hidden]{display:none}
+"""

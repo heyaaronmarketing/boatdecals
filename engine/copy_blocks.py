@@ -164,9 +164,11 @@ GUIDE_FAQS = {
    "24 hours. The adhesive keeps curing after it looks finished, so no pressure "
    "washing and no launching for a day."),
   ("What happens if I get the lettering crooked?",
-   "Tell us and we cut it again free. One re-cut per order, no photographs and no "
-   "argument - a torn character, a creased sheet or a set that went on crooked all "
-   "count."),
+   "Use the wet method and you can slide it straight before it grabs: a few drops of "
+   "dish soap in a spray bottle of water, applied to the hull first, lets the vinyl "
+   "float until you squeegee it. Hinge the sheet with tape along the top edge and "
+   "stand back to check it is level before you commit. A replacement set is a new "
+   "order, so the five minutes of setup is worth it."),
   ("Do I need special tools to apply boat lettering?",
    "A felt squeegee, a spray bottle and masking tape. A set ships with a basic "
    "squeegee; the fluid and the tape you can assemble from a kitchen and a hardware "

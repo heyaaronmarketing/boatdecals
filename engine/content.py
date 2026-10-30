@@ -380,3 +380,35 @@ FAQ_HOME = [
      "already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the "
      "tape. If it goes wrong we re-cut it free."),
 ]
+
+# ---------------------------------------------------------------- finishes
+# The upsell. Standard is one colour of vinyl; the paid tiers are genuinely
+# more work rather than a surcharge for nothing:
+#
+#   colour   one layer, but out of the 20-colour stock rather than the two
+#            we keep cut-ready. Costs a part-roll and a colour change.
+#   outline  TWO layers - the characters, then a contrasting outline cut
+#            slightly larger and registered behind them. Twice the material,
+#            twice the weeding, and the layers have to line up.
+#
+# It sells because the order form previews it live: you click outline, you see
+# your own number in it, and the $14 stops being abstract. That is the whole
+# mechanic, which is why the preview had to learn to draw it.
+#
+# (key, label, add, blurb)
+FINISHES = [
+    ("standard", "Standard", 0,
+     "White or black, the two we keep cut-ready"),
+    ("colour", "Colour", 7,
+     "Any of twenty marine colours"),
+    ("outline", "Two-colour outline", 14,
+     "A contrasting outline cut behind every character"),
+]
+FINISH_ADD = {k: add for k, _l, add, _b in FINISHES}
+
+# Colours offered once a paid finish is picked. White and black stay first
+# because they are still the right answer on most hulls.
+PALETTE = ["White", "Black", "Navy", "Royal Blue", "Light Blue", "Teal",
+           "Forest", "Lime", "Yellow", "Orange", "Red", "Burgundy",
+           "Purple", "Pink", "Brown", "Tan", "Grey", "Silver Metallic",
+           "Gold Metallic", "Chrome"]

@@ -224,6 +224,29 @@ for _f in OUT.rglob("*"):
             fails.append("stale brand 'Boat Number Shop' in %s - read it from "
                          "SITE[\"brand\"]" % _f.relative_to(OUT))
 
+# The finish is the upsell, so the browser and the worker must agree on what
+# it costs. A price the customer sees and a price the server charges that
+# differ is the one bug nobody forgives.
+from content import FINISH_ADD as _FIN
+for _k, _add in _FIN.items():
+    if '"%s": %d' % (_k, _add) not in wjs:
+        fails.append("worker FINISH_ADD missing or mismatched: %s = %d"
+                     % (_k, _add))
+if "n += FINISH_ADD[" not in wjs:
+    fails.append("worker priceOf() no longer adds the finish")
+
+# Two `function x()` declarations in the same scope do not error - the later
+# one silently replaces the first. A second `function finish()` once replaced
+# the order-submission `finish(extra)`, so payload() called the finish
+# selector, which called payload(), and checkout died with a stack overflow
+# that nothing on the page surfaced.
+_order_js = (ROOT / "engine" / "order.py").read_text()
+_decls = re.findall(r"\n\s*function\s+(\w+)\s*\(", _order_js)
+for _name in sorted(set(_decls)):
+    if _decls.count(_name) > 1:
+        fails.append("order.py declares function %s() %d times - the later one "
+                     "silently replaces the earlier" % (_name, _decls.count(_name)))
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

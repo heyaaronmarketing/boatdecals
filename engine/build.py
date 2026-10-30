@@ -12,6 +12,7 @@ import namegen as NG
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
                         USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
+from content import FINISHES
 import order as O
 import mockpay as MP
 import preview as PV
@@ -304,12 +305,12 @@ def head(title, desc, path, schema, noindex=False):
 
 # The four headline claims, in one place. proof_band() spells each one out;
 # the hero badges are the short form. Both read from here so they cannot drift.
-FEATURES = ["$19 for Two Sets", "Next Day Shipping", "Marine Vinyl", "100% Compliant"]
+FEATURES = ["$19 for Two Sets", "Fast Shipping", "Marine Vinyl", "100% Compliant"]
 FEATURE_SUB = {
     "$19 for Two Sets":
         "One for each side of the hull, pre-spaced on a single sheet. "
         "Shipping included.",
-    "Next Day Shipping":
+    "Fast Shipping":
         "Cut and in the post the next business day.",
     "Marine Vinyl":
         "Marine film built for sun, salt and spray &mdash; not the craft stock "
@@ -354,7 +355,7 @@ def header():
     main = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_MAIN)
     sub = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_HELP)
     return ('<header><div class=w>'
-            '<a class=brand href="/">%s<span>Number<br>My Boat</span></a>'
+            '<a class=brand href="/">%s<span>NumberMyBoat<b>.com</b></span></a>'
             '<button type=button class=menubtn id=menubtn aria-expanded="false" '
             'aria-controls="nav" aria-label="Menu">'
             '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" '
@@ -619,7 +620,7 @@ def claims_band():
 
     - "Two Sets" has to say which two, because elsewhere on the site a "set"
       has meant a pair.
-    - "Next Day Shipping" has to say shipped, not delivered - standard post is
+    - "Fast Shipping" has to say shipped, not delivered - standard post is
       3-6 days in transit after that, and a reader who takes the headline at
       face value is a "where is my order" email.
     - "100% Compliant" has to scope itself to what we actually control. We cut
@@ -696,8 +697,8 @@ PRICE_PLANS = [
                 "3&quot; block characters, legal in all 50 states",
                 "Checked against your state&rsquo;s format before it cuts",
                 "Pre-spaced on one sheet",
-                "Marine vinyl, white or black",
-                "Free shipping, ships next business day"]),
+                "White or black included, 20 colours and outlines extra",
+                "Free shipping, cut and posted next business day"]),
     dict(slug="boat-lettering", name="Boat letters", featured=False,
          price="$29", unit="to start",
          line="Names, hailing ports and any transom text.",
@@ -706,8 +707,8 @@ PRICE_PLANS = [
                 "Pre-spaced with application tape over the top",
                 "Curved transoms laid out from your photo",
                 "Priced by finished size &mdash; most land $29&ndash;79",
-                "Marine vinyl, white or black",
-                "Free shipping, ships next business day"]),
+                "White or black included, 20 colours and outlines extra",
+                "Free shipping, cut and posted next business day"]),
 ]
 
 
@@ -727,6 +728,29 @@ def plan_table():
                '<span class=planflag>Most ordered</span>' if pl["featured"] else "",
                pl["name"], pl["line"], pl["price"], pl["unit"], feats, pl["slug"]))
     return '<div class=plangrid>%s</div>' % "".join(cards)
+
+
+def finish_rows():
+    """The upsell table. The copy has to justify the money or it reads as a
+    surcharge: colour is a part-roll and a colour change, an outline is a
+    whole second layer that has to register against the first."""
+    why = {
+      "standard": "White or black, cut from the rolls we keep loaded. What the "
+                  "law cares about is contrast, and on most hulls one of these "
+                  "two is the right answer.",
+      "colour": "Any of twenty marine colours &mdash; navy, red, burgundy, "
+                "teal, metallic silver and gold, chrome. One layer of vinyl, "
+                "cut from stock rather than the rolls already on the machine.",
+      "outline": "Two layers. The characters are cut in your colour, then a "
+                 "contrasting outline is cut slightly larger and registered "
+                 "behind them, so every letter carries a border. Twice the "
+                 "material and twice the weeding, and it is what makes a name "
+                 "read from the next slip.",
+    }
+    return "".join(
+      '<tr><td><strong>%s</strong></td><td>%s</td><td>%s</td></tr>'
+      % (label, why[key], "Included" if add == 0 else "+$%d" % add)
+      for key, label, add, _blurb in FINISHES)
 
 
 def build_pricing():
@@ -755,7 +779,16 @@ def build_pricing():
       '<p class=lede>No designer to click through before you see a number. '
       'Every price includes free standard shipping in the USA.</p>'
       + plan_table()
-      + '</div></section>')
+      + '</div></section>'
+      + '<section class=soft><div class=w><h2>Make it yours</h2>'
+        '<p class=lede>Every price above is for white or black, which is what most '
+        'hulls want. These two are the exceptions &mdash; and the order form draws '
+        'both live, in your own lettering, before you decide.</p>'
+        '<div class=tw><table><thead><tr><th>Finish</th><th>What it is</th>'
+        '<th>Cost</th></tr></thead><tbody>' + finish_rows() + '</tbody></table></div>'
+        '<p style="margin-top:14px"><a class=ctalink href="/design/">'
+        'See it on your own number &rarr;</a></p>'
+        '</div></section>')
     write("/pricing/", shell("Boat Lettering &amp; Registration Number Prices",
           "Boat registration numbers $19 a pair, boat names from $29, custom lettering "
           "from $29. Free shipping, next-business-day production.",
@@ -841,8 +874,10 @@ def build_product(p):
        "height, in your chosen colour. That is what gets cut, so read it twice before "
        "you pay."),
       ("What if I ruin it putting it on?",
-       "Tell us and we cut it again free. That covers a torn character, a creased sheet "
-       "or a set that went on crooked. We would rather send more vinyl than argue."),
+       "A replacement set is a new order. The install is the part we cannot do for you, "
+       "which is why everything ships pre-spaced on one sheet with application tape over "
+       "the top - it goes on in one pass rather than character by character. Read the "
+       "install guide before you start and take the twenty minutes."),
       ("How long will it last?",
        "Years, not seasons - it is marine-grade film, not craft vinyl, and it is the "
        "same stock sign shops put on vehicles. A dark colour in southern sun fades "
@@ -855,7 +890,7 @@ def build_product(p):
     band = Band()
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
-                   "Next Day Shipping", "Marine Vinyl", "100% Compliant"],
+                   "Fast Shipping", "Marine Vinyl", "100% Compliant"],
             right=O.form())
       + (alternating(body, secs, band) if secs
          else band.open() + '<div class=w><div class=prose>' + body
@@ -1071,7 +1106,7 @@ def build_state(s):
             "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
             "the next business day." % ab,
-            trust=["$19 for Two Sets", "%s prefix" % ab, "Next Day Shipping",
+            trust=["$19 for Two Sets", "%s prefix" % ab, "Fast Shipping",
                    "100% Compliant"],
             right=O.form())
       + state_identity(s, band)
@@ -1113,7 +1148,7 @@ def build_states_hub():
             "The 3-inch block rule is federal and the same everywhere. What changes is "
             "your prefix, who issues the number, and where the validation decal goes. "
             "$19 a pair, every state.",
-            trust=["$19 for Two Sets", "All 50 states", "Next Day Shipping",
+            trust=["$19 for Two Sets", "All 50 states", "Fast Shipping",
                    "100% Compliant"],
             right=O.form())
       + '<section><div class=w>' + lead_figure(path) + '<h2>Pick your state</h2>'
@@ -1152,7 +1187,7 @@ def build_boat_type(b):
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     main = (hero(b["title"], b["lead"],
             trust=["$19 for Two Sets", "High-tack when needed, free",
-                   "Next Day Shipping", "100% Compliant"], right=O.form())
+                   "Fast Shipping", "100% Compliant"], right=O.form())
       + '<section><div class=w><div class=prose>'
         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
         '<h2>What we cut for %s</h2>'
@@ -1532,9 +1567,10 @@ GUIDE_BODY = {
    "<p>Small bubbles in the first day will often disappear on their own as the solvent "
    "flashes off through the film. For one that stays, prick it at the edge with a pin "
    "&mdash; not the centre &mdash; and press the air out toward the hole with your thumb.</p>"
-   "<div class=note><p><b>If it goes wrong anyway, tell us.</b> We re-cut free. A torn "
-   "character or a creased sheet is a $1.50 piece of vinyl and a few minutes on the "
-   "plotter; it is not worth anyone&rsquo;s argument.</p></div>",
+   "<div class=note><p><b>Take your time with it.</b> Everything is pre-spaced on one "
+   "sheet with application tape over the top, so the whole set goes on in a single "
+   "pass &mdash; the spacing is already done and already legal. The twenty minutes "
+   "this takes is the whole job.</p></div>",
 
  "how-to-remove-boat-lettering":
    "<p>Old vinyl comes off with heat and patience. The adhesive is the hard part, and "
@@ -1631,9 +1667,10 @@ GUIDE_BODY = {
    "stated tolerance, cracking, and adhesive failure where the film was applied correctly "
    "to a suitable surface. It does not cover a decal applied over wax, applied in the "
    "cold, applied to a surface it was not specified for, or physically damaged.</p>"
-   "<p>Separately from the film warranty, we re-cut free if the install goes wrong. That "
-   "is our policy, not the manufacturer&rsquo;s, and it is the one most people actually "
-   "end up using.</p>",
+   "<p>Worth being clear about the gap that leaves: the film warranty is the film "
+   "maker&rsquo;s, and it covers the material. It does not cover the install, which is "
+   "the part you do. That is the argument for taking the twenty minutes and reading the "
+   "<a href=\"/guides/how-to-apply-boat-lettering/\">apply guide</a> first.</p>",
 
  "documented-vessel-name-and-hailing-port":
    "<p>If your vessel is documented with the US Coast Guard rather than registered with a "
@@ -1675,7 +1712,7 @@ GUIDE_BODY = {
    "<tr><td>Generic sign shops</td><td>$9&ndash;15</td><td>Cheap, competent, not boat "
    "specialists &mdash; you will be asked to specify everything</td></tr>"
    "<tr><td>Boat lettering specialists</td><td>$15&ndash;25</td><td>Pre-spaced, marine "
-   "film, a warranty, and an install guarantee. Most hide the price behind a design "
+   "film and a warranty. Most hide the price behind a design "
    "tool</td></tr>"
    "<tr><td><strong>Us</strong></td><td><strong>$19</strong></td><td>Pre-spaced, "
    "marine film, free shipping, your number checked against its state format before it "
@@ -2020,24 +2057,25 @@ def build_contact():
 def build_warranty():
     faqs = [
       ("What if I ruin it during installation?",
-       "We cut it again free. Email us what happened - a torn character, a creased sheet, "
-       "a set that went on crooked. We do not require photos or an argument."),
+       "A replacement is a new order. The install is the one part of this we cannot do "
+       "for you, which is why every set ships pre-spaced on a single sheet with "
+       "application tape over the top - it goes on in one pass. Our apply guide walks "
+       "through the wet method, which is very hard to get wrong."),
       ("How long is the warranty?",
        "The film carries its maker's own outdoor durability warranty, covering colour "
        "fade, cracking and adhesive failure where the decal was correctly applied to a "
        "suitable surface. We do not publish a year figure, because it belongs to the "
-       "film maker and varies by stock and climate. Separately, we re-cut free if your "
-       "install goes wrong."),
+       "film maker and varies by stock and climate."),
       ("Can I return a custom decal?",
        "Custom-cut vinyl cannot be resold, so it is not returnable once cut - which is "
        "why the order form previews your exact lettering before you pay. If what "
        "arrived does not match what you ordered, that is on us and we remake it."),
     ]
-    simple("/warranty/", "Warranty &amp; Install Guarantee",
-      "A manufacturer film warranty and a free re-cut if your install goes wrong. "
+    simple("/warranty/", "Warranty &amp; Returns",
+      "What the film warranty covers, what it does not, and what happens if an "
       "What is covered, what is not, and how to claim.",
-      "Warranty &amp; install guarantee",
-      "Two separate promises: one from the film manufacturer, one from us.",
+      "Warranty &amp; returns",
+      "What the film cover is, where it stops, and what happens if we get it wrong.",
       "<h2>1. The film warranty</h2>"
       "<p>We cut on marine-grade film that carries its maker&rsquo;s own outdoor "
       "durability warranty. That warranty covers colour fade beyond the manufacturer\'s "
@@ -2050,18 +2088,17 @@ def build_warranty():
       "hull; application below about 50&deg;F; standard film applied to polyethylene or "
       "textured surfaces that needed high-tack; physical damage, dock rash or abrasion; "
       "or removal damage.</p>"
-      "<h2>2. Our install guarantee</h2>"
-      "<p>Separate, simpler, and the one people actually use. <strong>If the install goes "
-      "wrong, we cut it again free.</strong> Tore a character pulling the tape. Creased "
-      "the sheet. Got it crooked and had to pull it off. Realised the colour disappears "
-      "against your hull once it was on.</p>"
-      "<p>Email us what happened. We do not ask for photographs, we do not assess blame, "
-      "and we do not charge for the replacement. Vinyl costs us very little; a customer "
-      "who feels cheated costs a lot.</p>"
-      "<p>Reasonable limits, stated plainly: one free re-cut per order, and it covers "
-      "remaking what you originally ordered. If you want a different size, colour or "
-      "wording, that is a new order.</p>"
-      "<h2>If we got it wrong</h2>"
+      "<h2>2. The install is yours</h2>"
+      "<p>We do not replace a set that went on wrong, and it is better to say so here "
+      "than to imply otherwise and argue about it later. Custom-cut vinyl cannot be "
+      "resold, so every set is made for one hull and one order.</p>"
+      "<p>What we do instead is make the install as hard to get wrong as we can: every "
+      "order ships <strong>pre-spaced on a single sheet</strong> with application tape "
+      "over the top, so it goes on in one pass with the spacing already correct, and "
+      "the <a href=\"/guides/how-to-apply-boat-lettering/\">apply guide</a> walks "
+      "through the wet method, which lets you slide it into position instead of "
+      "committing on contact. Take the twenty minutes.</p>"
+      "<h2>3. If we got it wrong</h2>"
       "<p>If what arrived does not match what you ordered, that is our error outright. "
       "We remake it at our cost and at the front of the queue, and you do not pay "
       "twice.</p>"
@@ -2111,11 +2148,12 @@ def build_shipping():
       "<ul><li><strong>It does not match what you ordered.</strong> Our error. We remake "
       "it free, at the front of the queue.</li>"
       "<li><strong>It arrived damaged.</strong> Tell us and we remake it free.</li>"
-      "<li><strong>The install went wrong.</strong> Covered by our "
-      "<a href=\"/warranty/\">install guarantee</a> &mdash; one free re-cut, no "
-      "questions.</li></ul>"
-      "<p>If you typed the wrong number, we will still re-cut it once under the install "
-      "guarantee. After that it is a new order.</p>",
+      "<li><strong>The install went wrong.</strong> Not covered &mdash; see the "
+      "<a href=\"/warranty/\">warranty page</a>. Every set ships pre-spaced on one "
+      "sheet so it goes on in a single pass, and the apply guide is worth five "
+      "minutes before you start.</li></ul>"
+      "<p>If you typed the wrong number, a replacement is a new order &mdash; which is "
+      "why the form previews your exact lettering before you pay. Read it twice.</p>",
       [("Shipping &amp; returns", None)], faqs=faqs, prio="0.5")
 
 def build_legal():
@@ -2151,7 +2189,7 @@ def build_legal():
       "<h2>Accuracy of what you type</h2>"
       "<p>We cut exactly what you typed. Check your registration number character by "
       "character against your card &mdash; the preview exists for that reason. If a "
-      "wrong number gets ordered we will re-cut once under the install guarantee.</p>"
+      "wrong number gets ordered, a replacement is a new order.</p>"
       "<h2>Compliance is yours</h2>"
       "<p>We make legal-size block characters and we state the federal rule accurately as "
       "we understand it. We are a vinyl shop, not your state agency or your lawyer: "
@@ -2261,12 +2299,13 @@ def build_static():
 - Boat letters - names, hailing ports, any transom text - from **$29**.
 - Production: cut and shipped **next business day**.
 - Warranty: the film maker\'s own outdoor durability warranty on colour and adhesion. We
-  do not publish a year figure. Separately, we re-cut free if the install goes wrong.
+  do not publish a year figure. The install itself is the customer's.
 - **10 fonts**, each previewed in the customer's own lettering before ordering. Five
   (Block, Condensed, Heavy Impact, Modern, Stencil) are plain vertical block faces and
   are the only ones offered for registration numbers; the other five (Classic Serif,
   Slab, Nautical, Brush Script, Formal Script) are available for names and decals.
-- Install guarantee: **free re-cut** if the customer's install goes wrong.
+- No free re-cut for a botched install: every set is pre-spaced on one sheet with
+  application tape so it goes on in one pass, and a replacement is a new order.
 - The order form **previews the customer's exact lettering** before payment; that is what gets cut.
 - **%s cuts in Evansdale, Black Hawk County, Iowa**, Mon-Fri 8-5 CT.
   It is a private workshop, not a storefront: there is no published street address and

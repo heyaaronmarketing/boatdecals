@@ -24,6 +24,10 @@ const UPGRADE_ADD = {
   "Hailing port line": 15,
   "Reflective finish": 10,
 };
+// The paid finishes. Must stay in step with content.FINISHES - verify.py
+// fails the build if they drift, because a browser and a server that disagree
+// about the price is the one bug a customer always notices.
+const FINISH_ADD = { "standard": 0, "colour": 7, "outline": 14 };
 const BASE_MIN = 19, BASE_MAX = 200;
 
 // 33 CFR 173.27 requires plain vertical block characters on a registration
@@ -43,6 +47,7 @@ function priceOf(d) {
   const ups = (raw.includes("|") ? raw.split("|") : raw.split(","))
     .map(s => s.trim()).filter(Boolean);
   for (const u of ups) n += UPGRADE_ADD[u] ?? 0;
+  n += FINISH_ADD[String(d.finish || "standard")] ?? 0;
   return Math.min(BASE_MAX, Math.max(BASE_MIN, Math.round(n)));
 }
 
@@ -104,6 +109,9 @@ async function handleOrder(request, env) {
     height: str(d.height, 4) || "3",
     font: str(d.font, 50),
     color: str(d.color, 40),
+    finish: ["standard","colour","outline"].includes(String(d.finish))
+              ? String(d.finish) : "standard",
+    outline_color: str(d.outline_color, 40),
     upgrades: str(d.upgrades, 300),
     name: str(d.name, 80),
     email: str(d.email, 120),
@@ -152,8 +160,8 @@ async function handleOrder(request, env) {
           `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,
              name,email,phone,boat,notes,page,total,quoted,mismatch,paid,payment,
              ua,country,ts
-           ,test_mode,card_brand,card_last4,status)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+           ,test_mode,card_brand,card_last4,status,finish,outline_color)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         ).bind(o.ref, o.kind, o.text, o.boatname, o.state, o.height, o.font, o.color,
                o.upgrades, o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total,
                o.quoted, o.mismatch, o.paid, o.payment, o.ua, o.country, o.ts,
@@ -161,7 +169,8 @@ async function handleOrder(request, env) {
                // `paid` stays the real-money flag, so SUM(total) WHERE paid=1 is
                // correct with no test-exclusion needed. Sandbox orders are never
                // paid=1; `status` is what makes them visible in the queue.
-               o.test_mode ? "test" : (o.paid ? "paid" : "new")).run();
+               o.test_mode ? "test" : (o.paid ? "paid" : "new"),
+               o.finish, o.outline_color).run();
       }
     } catch (err) {
       console.error("d1 insert failed", err && err.message);
@@ -187,6 +196,9 @@ async function handleOrder(request, env) {
           + `on a registration number. Corrected automatically; check before cutting.`
         : o.font],
       ["Colour", o.color],
+      ["Finish", o.finish === "outline"
+        ? `Two-colour outline (${o.outline_color || "?"} behind ${o.color})`
+        : o.finish === "colour" ? "Colour" : "Standard"],
       ["Upgrades", o.upgrades || "none"],
       ["Price", "$" + o.total],
       ["Payment", o.test_mode
