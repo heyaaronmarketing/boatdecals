@@ -248,6 +248,35 @@ _ojs = (ROOT / "engine" / "order.py").read_text()
 if "var OUTLINE_ADD=%d;" % _P["outline"] not in _ojs:
     fails.append("order form OUTLINE_ADD disagrees with content.PRICE['outline']")
 
+# Share cards. og_image() derives the URL from the page path before the PNG
+# has been rendered - the build wipes public/ first, so the cards are written
+# last. That ordering is fine right up until a page path changes and the card
+# silently 404s, which Facebook renders as a blank grey box. Check every
+# reference resolves, and that nothing is a placeholder-sized file.
+_og_pages = 0
+for _f in OUT.rglob("index.html"):
+    _m = re.search(r'og:image" content="[^"]*?(/assets/og/[^"]+)"', _f.read_text())
+    if not _m:
+        fails.append("no og:image on %s" % _f.relative_to(OUT)); continue
+    _og_pages += 1
+    _card = OUT / _m.group(1).lstrip("/")
+    if not _card.exists():
+        fails.append("og:image 404 on %s -> %s"
+                     % (_f.relative_to(OUT), _m.group(1)))
+    elif _card.stat().st_size < 6000:
+        fails.append("og card suspiciously small (%d bytes): %s"
+                     % (_card.stat().st_size, _m.group(1)))
+# Every card carries the lockup. Checking the PNG pixels is not practical,
+# so this asserts the renderer still composes one - the failure mode is a
+# refactor that drops the mark and ships 83 unbranded cards nobody notices,
+# because they all still look fine.
+_og_py = (ROOT / "media" / "og.py").read_text()
+if "lock = (mark(" not in _og_py or "NUMBERMYBOAT.COM" not in _og_py:
+    fails.append("media/og.py no longer composes the mark + URL lockup")
+
+if _og_pages < 50:
+    fails.append("only %d pages carry an og:image" % _og_pages)
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

@@ -394,3 +394,33 @@ until [ "$(ls media/shots | grep -c '^HB-')" -ge 6 ]; do sleep 12; done
 ```
 
 Wait on the producing process exiting, not on an artefact count.
+
+## Share cards
+
+Two sets, both rendered at build time by `media/og.py` into 1200x630 PNGs —
+the size Facebook crops to.
+
+**`public/assets/og/`** — one card per page, wired into `og:image`. The URL is
+derived from the page path by `build.og_image()`, and `verify.py` fails the
+build if any page's card is missing or suspiciously small. A broken share card
+renders on Facebook as a blank grey box, which is worse than no card.
+
+**`public/assets/share/`** — a standalone library for posting straight into
+boating groups. No link, no pitch: the domain is cut small into the bottom of
+the card and that is the whole advert. A group that deletes link posts will
+leave up a picture of a boat called *Payment 12 Of 240*.
+
+Copy lives in `media/og_lines.py` (per page) and `media/share.py` (the
+library). The funny names are read out of the generator's own bank in
+`engine/namegen.py`, so the library and the tool cannot drift apart.
+
+### Why the type is converted to paths
+
+librsvg on macOS renders through CoreText, not fontconfig, so a font that
+isn't installed system-wide falls back to Helvetica **silently** — the cards
+would ship in the wrong face with nothing failing. `media/ogtype.py` turns the
+glyphs into outlines with fontTools before rendering, so the PNG is identical
+on any machine and nothing has to be installed. It is also what a plotter
+does: it never sets type, it cuts a path.
+
+Fonts live in `media/fonts/` (Archivo Black, Pacifico — both OFL).

@@ -278,6 +278,18 @@ def _title(t):
         if len(t) + len(sfx) <= 60: return t + sfx
     return t[:60]
 
+def og_image(path):
+    """The share card for a page.
+
+    Computed from the path rather than looked up, so head() can emit the URL
+    before media/og.py has rendered the file - the build wipes public/ first,
+    so the cards are written near the end. verify.py checks every referenced
+    card actually exists, which is what stops that ordering from biting.
+    """
+    slug = path.strip("/").replace("/", "-") or "home"
+    return "/assets/og/%s.png" % slug
+
+
 def head(title, desc, path, schema, noindex=False):
     canon = U(path)
     robots = ('<meta name="robots" content="noindex,follow">' if noindex else
@@ -291,7 +303,10 @@ def head(title, desc, path, schema, noindex=False):
 <meta property="og:type" content="website"><meta property="og:title" content="%s">
 <meta property="og:description" content="%s"><meta property="og:url" content="%s">
 <meta property="og:site_name" content="%s"><meta property="og:locale" content="en_US">
+<meta property="og:image" content="%s"><meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630"><meta property="og:image:alt" content="%s">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="%s">
 <meta name="theme-color" content="#0e3a52">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>%s</style>
@@ -300,6 +315,7 @@ def head(title, desc, path, schema, noindex=False):
 <a class="skip" href="#main">Skip to the order form</a>""" % (
     e(_title(html.unescape(title))), e(html.unescape(desc)), canon, robots,
     e(html.unescape(title)), e(html.unescape(desc)), canon, e(B),
+    U(og_image(path)), e(html.unescape(title)), U(og_image(path)),
     CSS, json.dumps(schema, separators=(',', ':')))
 
 # The four headline claims, in one place. proof_band() spells each one out;
@@ -2199,6 +2215,15 @@ def build_404():
               noindex=True), encoding="utf-8")
 
 # ---------------------------------------------------------- static files
+def build_og():
+    """Share cards. Same reason build_web_images() lives here: main() wipes
+    public/ before rebuilding, so anything written to it beforehand is lost."""
+    sys.path.insert(0, str(ROOT / "media"))
+    import og, share
+    og.build_all()
+    share.build_all()      # the standalone library for posting into groups
+
+
 def build_web_images():
     """Regenerate public/assets/img from the masters.
 
@@ -2355,6 +2380,7 @@ def main():
     build_contact(); build_warranty(); build_shipping()
     build_legal(); build_404()
     build_web_images()
+    build_og()
     build_static()
     print("built %d pages -> %s" % (len(PAGES), OUT))
     for p, _ in sorted(PAGES): print("  ", p)
