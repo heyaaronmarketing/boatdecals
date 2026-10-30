@@ -287,6 +287,7 @@ const RETIRED = {
   "/domed-lettering/": "/boat-lettering/",
   "/boat-decals/": "/boat-lettering/",
   "/boat-name-decals/": "/boat-lettering/",
+  "/about/": "/",
 };
 
 /**

@@ -15,23 +15,20 @@ SITE = {
     "tagline": "Boat registration numbers, $19 a pair. Shipped next business day.",
     "email": "orders@boatnumbershop.com",
     "hours": "Mon-Fri 8-5 CT",
-    # Real NAP, supplied 2026-10-22. Must match the Google Business Profile and
-    # every citation character-for-character - NAP consistency is the whole game
-    # in local pack ranking.
-    "phone_display": "(319) 239-3793",
-    "phone_tel": "+13192393793",
-    "street": "475 River Forest Road",
+    # NO PHONE, NO STREET ADDRESS, NO COORDINATES - Aaron's call 2026-10-30.
+    # The shop runs out of a private home, so the address and the landline are
+    # personal information, not business information. Town and state stay:
+    # "cut in Evansdale, Iowa" is a real differentiator and gives away nothing.
+    #
+    # This is also why the schema is OnlineStore + Organization and NOT
+    # LocalBusiness. A LocalBusiness entity without a street address is a
+    # half-filled listing that Google treats as low quality, and the site does
+    # not want walk-ins anyway - it ships to all 50 states.
     "city": "Evansdale",
     "region": "IA",
     "region_name": "Iowa",
-    "postal": "50707",
     "county": "Black Hawk County",
     "metro": "the Cedar Valley",
-    # City-centre coordinates (Evansdale, IA per Wikipedia). Deliberately
-    # city-level, not a rooftop pin - once the GBP is claimed, Google's own
-    # pin is authoritative and this is only a hint.
-    "lat": 42.4583,
-    "lng": -92.2608,
 }
 
 # Towns inside a sensible drive of the shop. Used for ONE local page, not a
@@ -383,47 +380,3 @@ FAQ_HOME = [
      "already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the "
      "tape. If it goes wrong we re-cut it free."),
 ]
-
-# ---------------------------------------------------------------- about page
-# Two parts of the About brief are gated on a person's consent, not on taste,
-# and the brief's own pre-publish checklist leaves both unticked. They are
-# switches rather than prose so either can come down in one edit without
-# touching the page.
-#
-#   name_stacy   publishes Ryan's wife by name as a member of the department.
-#                The brief says "Stacy approves being named" - until she has,
-#                this should arguably be False.
-#   rentals      the landlord section. The brief says to cut it outright if
-#                Ryan would rather not mix the rental business with the shop.
-ABOUT = {
-    "name_stacy": True,
-    "rentals": True,
-    # Turnaround in the brief is a literal [X]. The site already promises next
-    # business day everywhere else, so the page says that rather than shipping
-    # a placeholder - but if the real answer is two days, change it HERE and
-    # the whole site stays consistent.
-    "turnaround": "the next business day",
-}
-
-OWNER = dict(
-    first="Ryan",
-    full="Ryan Phillips",
-    spouse="Stacy",
-    role="Chief of Evansdale Fire and Rescue",
-    years="15+",
-    series="NCC MX Iowa Moto Series",
-)
-
-# Only links that actually resolve. The brief listed five; Radio Iowa and the
-# Iowa Firefighters Association roster both 403 to anything that is not a
-# browser, and a dead authority link is worse than no authority link.
-OWNER_LINKS = dict(
-    department=("https://evansdale.govoffice.com/"
-                "?SEC=19BE35A8-1550-4231-A087-5D94F495D08D"),
-    news=("https://www.kwwl.com/townnews/social_services/"
-          "man-pet-die-in-sunday-morning-house-fire-in-evansdale/"
-          "article_6c094300-6e76-11ed-a131-937b10746acd.html"),
-    council=("https://evansdale.govoffice.com/vertical/sites/"
-             "%7B2505E64E-BAD1-4EF6-BB07-A8C974051728%7D/uploads/"
-             "06-03-2026_AGENDA(1).pdf"),
-)

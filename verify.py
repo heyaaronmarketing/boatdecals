@@ -177,6 +177,30 @@ for _f in OUT.rglob("index.html"):
     if len(_t) in (58, 59, 60) and not _t.endswith(_SUFFIXES):
         fails.append("title truncated mid-word in %s: %r" % (_f, _t))
 
+# No personal information, anywhere. The shop runs out of a private home, so
+# the street address, the landline and a rooftop coordinate are personal
+# details rather than business ones - Aaron's call, 2026-10-30. Town and state
+# stay. This gate exists because that kind of thing creeps back in one
+# well-meaning edit at a time.
+_PII = [
+    (r"\b\(?319\)?[\s.-]?239[\s.-]?3793\b", "the old phone number"),
+    (r"\btel:\+?1?319", "a tel: link"),
+    (r"475\s+River\s+Forest", "the street address"),
+    (r'"streetAddress"', "a streetAddress in schema"),
+    (r"GeoCoordinates", "geo coordinates in schema"),
+    (r'"LocalBusiness"', "a LocalBusiness entity (no public address to back it)"),
+    (r"maps\.google|google\.com/maps", "a Google Maps link"),
+    (r"\bfire chief\b", "the owner's other job"),
+    (r"Ryan\s+Phillips", "the owner by name"),
+]
+for _f in OUT.rglob("*"):
+    if _f.suffix not in (".html", ".xml", ".txt") or not _f.is_file():
+        continue
+    _t = _f.read_text(errors="ignore")
+    for _pat, _what in _PII:
+        if re.search(_pat, _t, re.I):
+            fails.append("PII: %s in %s" % (_what, _f.relative_to(OUT)))
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

@@ -57,19 +57,13 @@ shots get demoted to hero/atmosphere only. AI is the bridge, not the
 destination - the sites that win this category long-term are the ones with 161
 pages of real customers.
 
+## There are no real photographs on this site
 
-## RP-* is different: those are real photographs
+There was briefly an `RP-` prefix for genuine photographs - the owner's own
+picture and shots of the fire department. Both came down on 2026-10-30 when
+the About page was removed and personal information came off the site.
 
-Every prefix on this site except `RP-` is a generated, illustrative image, and
-the rule above applies to all of them: never caption one as a specific
-person's boat or a specific person's work.
-
-`RP-*` are genuine photographs - Ryan's own profile picture and original
-full-resolution phone photos of Evansdale Fire & Rescue, straight from him.
-They can carry a factual caption, because they are factual.
-
-They are also NOT generatively upscaled. An AI upscaler does not recover
-detail, it invents it, and on a photograph of a real named person that
-produces a synthetic face presented as a photograph of him. RP-1 is resampled
-with Lanczos only. If a photo is too small for its slot, the fix is a better
-photo. See media/owner.py.
+Everything here is now generated and illustrative, without exception, so the
+rule above applies everywhere with no carve-out: never caption an image as a
+specific person's boat, a specific person's workshop, or a specific person's
+job.

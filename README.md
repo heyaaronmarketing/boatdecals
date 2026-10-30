@@ -347,3 +347,48 @@ against an emailed payment link.
 ## Before launch
 
 See the "Before this takes a real order" checklist in `STRATEGY.md`.
+
+## No personal information on this site
+
+The shop runs out of a private home, so **there is no street address, no phone
+number and no coordinates anywhere** — site, schema, `llms.txt` or otherwise.
+Town and state stay: "cut in Evansdale, Iowa" is a real differentiator and
+gives nothing away. Contact is email only; local pickup is arranged by email
+and the address is sent privately.
+
+Two consequences worth knowing before you "helpfully" add a NAP block back:
+
+* The schema is **`OnlineStore` + `Organization`, never `LocalBusiness`**. A
+  LocalBusiness entity with no street address is a half-filled listing, and
+  this site ships to all 50 states rather than wanting walk-ins.
+* `SITE` no longer carries `street`, `postal`, `phone_display`, `phone_tel`,
+  `lat` or `lng`. They were deleted rather than blanked, so a NAP block cannot
+  be reassembled by reaching for a key that is still sitting there.
+
+`verify.py` fails the build on the old phone number, the old street, a `tel:`
+link, `streetAddress`, `GeoCoordinates`, a `LocalBusiness` entity, a Google
+Maps link, or the owner's name.
+
+## Writing background waiters: two traps
+
+Both of these cost a day of a stuck process, so they are written down.
+
+```bash
+# WRONG - the shell's own command line contains "nano_banana", so pgrep
+# matches itself and the loop never exits.
+until ! pgrep -f nano_banana; do sleep 6; done
+
+# RIGHT - exclude self, and match the actual interpreter invocation.
+until ! pgrep -f "python3 .*nano_banana\.py" | grep -qv "^$$\b"; do sleep 6; done
+```
+
+And never gate a wait on a **count of files** that a later decision might
+reduce:
+
+```bash
+# WRONG - waits for 6 hub images. One got deleted for being bad, so this
+# waited forever.
+until [ "$(ls media/shots | grep -c '^HB-')" -ge 6 ]; do sleep 12; done
+```
+
+Wait on the producing process exiting, not on an artefact count.

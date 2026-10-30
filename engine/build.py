@@ -12,7 +12,6 @@ import namegen as NG
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
                         USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
-from content import ABOUT, OWNER, OWNER_LINKS
 import order as O
 import mockpay as MP
 import preview as PV
@@ -25,7 +24,6 @@ OUT = ROOT / "public"
 URL = os.environ.get("SITE_URL", SITE["url"]).rstrip("/")
 TODAY = os.environ.get("BUILD_DATE", datetime.date.today().isoformat())
 B = SITE["brand"]
-PH, PT = SITE["phone_display"], SITE["phone_tel"]
 e = html.escape
 PAGES = []
 
@@ -106,7 +104,6 @@ PAGE_IMAGE = {
     "/registration-numbers/": "HB-2",
     "/for/":                  "HB-1",
     "/guides/":               "HB-4",
-    "/about/":                "HB-3",
     "/boat-lettering-waterloo-cedar-falls/": "HB-5",
     "/warranty/":             "AC-3",
     "/shipping-and-returns/": "AC-2",
@@ -313,7 +310,7 @@ NAV_MAIN = [
     ("Pricing",      "/pricing/"),
     ("By State",     "/registration-numbers/"),
 ]
-NAV_ABOUT = [
+NAV_HELP = [
     ("Guides",     "/guides/"),
     ("Guarantee",  "/warranty/"),
     ("Name Ideas", "/tools/boat-name-generator/"),
@@ -324,8 +321,8 @@ def topbar():
             '<span><strong>$19 for two sets</strong> &middot; free shipping &middot; '
             'ships next business day</span>'
             '<span>Cut in %s, %s &middot; '
-            '<a href="tel:%s" data-call style="color:#fff">%s</a></span>'
-            '</div></div>' % (SITE["city"], SITE["region"], PT, PH))
+            '<a href="/design/" style="color:#fff">Start your order</a></span>'
+            '</div></div>' % (SITE["city"], SITE["region"]))
 
 def header():
     """Header nav.
@@ -338,7 +335,7 @@ def header():
     needs JS, and the footer carries every link if it fails.
     """
     main = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_MAIN)
-    sub = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_ABOUT)
+    sub = "".join('<a href="%s">%s</a>' % (href, lbl) for lbl, href in NAV_HELP)
     return ('<header><div class=w>'
             '<a class=brand href="/">%s<span>Boat Number<br>Shop</span></a>'
             '<button type=button class=menubtn id=menubtn aria-expanded="false" '
@@ -346,7 +343,7 @@ def header():
             '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" '
             'stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>'
             '<nav id=nav>%s'
-            '<span class=navgroup><a class=navtop href="/about/">About'
+            '<span class=navgroup><a class=navtop href="/guides/">Help'
             '<svg class=caret viewBox="0 0 12 12" aria-hidden="true">'
             '<path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" '
             'fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'
@@ -403,27 +400,21 @@ def footer():
             '<li><a href="/pricing/">Pricing</a></li>'
             '<li><a href="/registration-numbers/">Numbers by state</a></li>'
             '<li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li>'
-            '<li><a href="/about/">About us</a></li>'
             '<li><a href="/contact/">Contact</a></li>'
             '<li><a href="/warranty/">Warranty &amp; guarantee</a></li>'
             '<li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li>'
             '</ul></div></div>'
             '<div class=nap><strong>%s</strong><br>'
-            '<a href="https://www.google.com/maps/search/?api=1&amp;query=%s" '
-            'rel="noopener">%s, %s, %s %s</a><br>'
-            '<a href="tel:%s" data-call>%s</a> &middot; '
-            '<a href="mailto:%s">%s</a><br>%s</div>'
-            '<div class=fbot><span>&copy; %s %s. Cut by hand in %s, Iowa by a fire chief '
-            'with a dirt bike problem.</span>'
+            'Cut and shipped from %s, %s<br>'
+            '<a href="mailto:%s">%s</a> &middot; %s</div>'
+            '<div class=fbot><span>&copy; %s %s. Cut by hand in %s, Iowa and shipped '
+            'to all 50 states.</span>'
             '<span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a>'
             ' &middot; <a href="/sitemap.xml">Sitemap</a></span></div>'
             '</div></footer>'
             % (pl, tl, bl, gl,
-               e(B),
-               "+".join((SITE["street"] + " " + SITE["city"] + " " + SITE["region"]
-                         + " " + SITE["postal"]).split()),
-               SITE["street"], SITE["city"], SITE["region"], SITE["postal"],
-               PT, PH, SITE["email"], SITE["email"], SITE["hours"],
+               e(B), SITE["city"], SITE["region_name"],
+               SITE["email"], SITE["email"], SITE["hours"],
                datetime.date.today().year, e(B), SITE["city"]))
 
 def bc(trail):
@@ -440,24 +431,19 @@ def org_node():
     it as a single @id (rather than two nodes) means every Product, FAQ and
     Article on the site resolves to the same entity.
     """
-    return {"@type": ["OnlineStore", "LocalBusiness"], "@id": U("/#org"),
+    return {"@type": ["OnlineStore", "Organization"], "@id": U("/#org"),
             "name": B, "url": U("/"),
-            "email": SITE["email"], "telephone": PH,
+            "email": SITE["email"],
             "description": "Custom boat registration numbers, boat names and marine "
                            "vinyl decals cut to order in %s, %s and shipped "
                            "nationwide." % (SITE["city"], SITE["region_name"]),
+            # Locality and region only. No streetAddress, no geo, no
+            # openingHours - this is a mail-order shop run from a private
+            # home, and none of that is public information.
             "address": {"@type": "PostalAddress",
-                        "streetAddress": SITE["street"],
                         "addressLocality": SITE["city"],
                         "addressRegion": SITE["region"],
-                        "postalCode": SITE["postal"],
                         "addressCountry": "US"},
-            "geo": {"@type": "GeoCoordinates",
-                    "latitude": SITE["lat"], "longitude": SITE["lng"]},
-            "openingHoursSpecification": [{
-                "@type": "OpeningHoursSpecification",
-                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                "opens": "08:00", "closes": "17:00"}],
             "areaServed": [{"@type": "Country", "name": "United States"},
                            {"@type": "AdministrativeArea", "name": SITE["county"]}],
             "priceRange": "$15-$120",
@@ -641,12 +627,6 @@ def build_home():
            badge="Everyone else hides the price. Ours is right here.",
            right=right)
       + claims_band()
-      + '<section class=tight><div class=w><p class=ownerline>'
-        '<strong>Ryan Phillips</strong> has cut vinyl in %s, %s for 15+ years. '
-        'He is also the town&rsquo;s fire chief and a motocross racer, which tells '
-        'you two things: he shows up, and your decal money is funding something '
-        'fast. <a href="/about/">Meet Ryan &rarr;</a></p></div></section>'
-        % (SITE["city"], SITE["region_name"])
       + gallery(["AL-01", "AL-02", "AL-08"])
       + '<section><div class=w><h2>Why buy here instead of the cheap set</h2>'
         '<p class=lede>There are $11 sets on marketplaces. Here is honestly what '
@@ -1874,10 +1854,11 @@ def build_local():
     waters = ", ".join(LOCAL_WATERS[:-1]) + " and " + LOCAL_WATERS[-1]
     faqs = [
       ("Can I pick up instead of having it shipped?",
-       "Yes. We are at %s in %s, %s %s. Choose local pickup in the notes box on the "
-       "order form and we will have it ready - usually same day on registration "
-       "numbers. Call %s first so somebody is here."
-       % (SITE["street"], SITE["city"], SITE["region"], SITE["postal"], PH)),
+       "Yes, in %s. Email %s before you order and we will set a time and tell you "
+       "where to come - usually same day on registration numbers. It is a private "
+       "workshop rather than a storefront, so the address is not published and we "
+       "cannot take walk-ins."
+       % (SITE["city"], SITE["email"])),
       ("Do you do Iowa registration numbers?",
        "That is our home state. Iowa numbers run IA, four digits, two letters - "
        "IA 3717 ZW. Iowa registers through your county recorder rather than the DNR "
@@ -1886,29 +1867,28 @@ def build_local():
       ("Do you install them for me?",
        "They are designed to go on yourself in about twenty minutes - pre-spaced on "
        "one sheet, with a squeegee and instructions in the envelope. If you would "
-       "rather we did it, call and ask; it depends on the week."),
+       "rather we did it, email and ask; it depends on the week."),
       ("How much is it?",
        "$19 a pair for registration numbers, the same price locally as online. Names "
        "from $29, including shipping. What the preview shows is what gets cut."),
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
-    gmap = ("https://www.google.com/maps?q=%s&output=embed"
-            % "+".join((SITE["street"] + " " + SITE["city"] + " " + SITE["region"]
-                        + " " + SITE["postal"]).split()))
     main = (hero("Boat Lettering in Waterloo, Cedar Falls &amp; the Cedar Valley",
             "We cut every order right here in %s. Order online and we ship it free, "
             "or pick it up at the shop - usually the same day on registration numbers."
             % SITE["city"],
-            trust=["$19 for Two Sets", "Local pickup available",
-                   "Iowa IA numbers", "Call %s" % PH],
+            trust=["$19 for Two Sets", "Local pickup by arrangement",
+                   "Iowa IA numbers", "Free shipping"],
             right=O.form())
       + '<section><div class=w><div class=prose>'
-        '<h2>Where we are</h2>'
-        '<p><strong>%s</strong><br>%s<br>%s, %s %s<br>'
-        '<a href="tel:%s" data-call>%s</a> &middot; %s</p>'
+        '<h2>Picking up instead of shipping</h2>'
+        '<p><strong>%s</strong> cuts everything in <strong>%s, %s</strong>, in %s. '
+        'It is a private workshop rather than a storefront, so there is no counter '
+        'to walk up to and no address published here &mdash; but if you are local '
+        'and would rather collect than wait on the post, email '
+        '<a href="mailto:%s">%s</a> before you order. We will set a time and tell '
+        'you where to come. Hours are %s.</p>'
         '</div>'
-        '<div class=mapwrap><iframe src="%s" loading="lazy" title="Map to %s" '
-        'referrerpolicy="no-referrer-when-downgrade"></iframe></div>'
         '<div class=prose>'
         '<h2>Towns we see most</h2></div>'
         '<div class=localgrid>%s</div>'
@@ -1931,13 +1911,13 @@ def build_local():
         '<h2>Why a local shop sells nationwide</h2>'
         '<p>A plotter does not care where the boat is. We cut the same vinyl for a '
         'pontoon on %s as for a sportfish in Florida, and the post office does the '
-        'rest. Being small and local is why we answer the phone and why a mistake '
-        'gets re-cut instead of argued about.</p>'
+        'rest. Being small is why your email is answered by the person who cut it, '
+        'and why a mistake gets re-cut instead of argued about.</p>'
         '</div><a class="btn lg" href="/design/">Start your order &middot; $19 a pair</a>'
         '</div></section>'
-        % (e(B), SITE["street"], SITE["city"], SITE["region"], SITE["postal"],
-           PT, PH, SITE["hours"], gmap, e(B), towns, waters, SITE["county"],
-           LOCAL_WATERS[0])
+        % (e(B), SITE["city"], SITE["region_name"], SITE["county"],
+           SITE["email"], SITE["email"], SITE["hours"],
+           towns, waters, SITE["county"], LOCAL_WATERS[0])
       + lead_figure(path, band=Band(1))
       + '<section class=soft><div class=w><h2>What we cut</h2>'
         + '<div class=grid>' + "".join(
@@ -1947,7 +1927,7 @@ def build_local():
             for x in PRODUCTS) + '</div></div></section>')
     write(path, shell("Boat Lettering Waterloo &amp; Cedar Falls, Iowa",
           "Boat registration numbers and custom lettering cut in Evansdale, Iowa. "
-          "$19 a pair, local pickup in the Cedar Valley or free shipping nationwide.",
+          "$19 a pair, free shipping nationwide, local pickup by arrangement.",
           path, sch, main, trail=trail, faqs=faqs, js=ORDER_JS), "0.8")
 
 
@@ -1963,169 +1943,6 @@ def simple(path, title, desc, h1, lede, body, trail, faqs=None, prio="0.5",
     write(path, shell(title, desc, path, sch, main, trail=trail, faqs=faqs,
                       noindex=noindex), prio)
 
-def build_about():
-    """Ryan's page, from Aaron's brief.
-
-    Built WITHOUT the photographs on purpose. Every image the brief calls for
-    is either a Facebook screenshot (it says plainly: get the originals, FB
-    compresses hard) or a shot that does not exist yet. The one thing I will
-    not do is fill the gaps with the site's AI product imagery: those are
-    illustrative shots of nobody's boat, and captioning one as Ryan's bench or
-    Ryan's hull would be presenting a generated image as a real named person's
-    work. media/CAPTIONS.md already forbids that for customers; it matters
-    more, not less, for the owner.
-
-    So each section is written to stand up as type. The shot list lives in the
-    brief and the slots drop in without a rewrite.
-    """
-    o, L = OWNER, OWNER_LINKS
-    band = Band(1)
-
-    def sec(heading, body, extra=""):
-        return (band.open() + '<div class=w><div class=prose><h2>%s</h2>%s</div>%s'
-                '</div></section>' % (heading, body, extra))
-
-    # --- 1. hero -----------------------------------------------------------
-    main = (hero("Fire chief. Landlord. Motocross racer. Sticker guy.",
-            "%s has been cutting vinyl in %s, %s for %s years. Every decal you "
-            "buy funds something loud with a motor."
-            % (o["full"], SITE["city"], SITE["region_name"], o["years"]),
-            trust=["$19 for Two Sets", "Cut in Evansdale", "Next Day Shipping",
-                   "100%% Compliant"],
-            right=O.form(),
-            cta2=("/tools/boat-name-generator/", "Try the name generator"))
-      + band.open() + '<div class=w>'
-      + figure("RP-1", sizes="(min-width:900px) 70vw, 100vw", cls="shot wide",
-               lazy=False)
-      + '</div></section>')
-
-    # --- 2. the sticker guy ------------------------------------------------
-    main += sec("Fifteen years of making vinyl stick",
-      "<p>%s started cutting vinyl in his garage more than fifteen years ago and "
-      "never really stopped. Boat names and registration numbers. Semi doors and "
-      "trailer lettering. Race-car number plates. Motorcycle tanks and helmets. If "
-      "it moves and needs a name, a number or a little attitude, there is a decent "
-      "chance he has already done one like it for somebody in the Cedar Valley.</p>"
-      "<p>He is the one people text when they need it <em>right</em>, not just "
-      "<em>fast</em>. It is usually both. He has lettered boats that live on the "
-      "Cedar River and boats that see the water two weekends a year, and he sizes "
-      "every one by hand so the numbers read from the dock, not just from the "
-      "trailer.</p>" % o["first"])
-
-    # --- 3. the day job ----------------------------------------------------
-    stacy = ("<p>His wife %s serves on the department right alongside him. In a town "
-             "of about 4,700 people, that is the kind of thing folks notice and "
-             "remember.</p>" % o["spouse"]) if ABOUT["name_stacy"] else ""
-    main += sec("When the pager goes off, he goes",
-      '<p>The sticker business is the fun part. The serious part is that %s is '
-      '<a href="%s" rel="noopener" target="_blank">%s</a>, a volunteer department '
-      'that answers calls 24 hours a day, every day of the year. He has held the '
-      'job for years. He is the one <a href="%s" rel="noopener nofollow" '
-      'target="_blank">talking to the news</a> after a bad night, and the one '
-      '<a href="%s" rel="noopener nofollow" target="_blank">standing in front of '
-      'city council</a> asking for new turnout gear so his crew goes in '
-      'protected.</p>'
-      '%s'
-      '<p>%s does not bring it up much. We are bringing it up because it tells you '
-      'how he treats people who are counting on him, and you are about to be one '
-      'of them.</p>'
-      % (o["first"], L["department"], o["role"], L["news"], L["council"],
-         stacy, o["first"]),
-      extra='<div class=note style="margin:20px 0 22px">'
-            '<p><b>Fire chief. Volunteer. Shows up at 3am for strangers.</b> '
-            'He will show up for your decal too.</p></div>')
-
-    # --- 4. the landlord (gated) -------------------------------------------
-    if ABOUT["rentals"]:
-        main += sec("He fixes things. His own, mostly.",
-          "<p>%s also owns and rents a handful of homes around %s and Elk Run "
-          "Heights, and he is the hands-on kind &mdash; new siding, fresh paint, a "
-          "kitchen torn out and put back better. The point for you is simple: he "
-          "knows what it takes to make something hold up to Iowa weather, Iowa "
-          "tenants and Iowa winters. Vinyl on a hull is easy by comparison.</p>"
-          % (o["first"], SITE["city"]))
-
-    # --- 5. the fast toys fund --------------------------------------------
-    main += sec("Where your money actually goes",
-      "<p>We could tell you the proceeds go toward growing the business. Some do. "
-      "The rest go toward %s&rsquo;s well-documented addiction to anything with a "
-      "motor that goes faster than it probably should.</p>"
-      "<p>He races motocross in the %s, which means lining up at the gate on Sunday "
-      "mornings with people half his age and pretending his back does not hurt. He "
-      "rides a Harley and has made the pilgrimage to the rally. In the fall he is "
-      "in camo somewhere in a tree stand. In the summer he is on the water, which "
-      "is how this whole decal thing started in the first place.</p>"
-      "<p>So when you order a set of registration numbers, understand what you are "
-      "really buying: one more set of knobbies, one more tank of race gas, one more "
-      "weekend at the track. Thank you for your service.</p>"
-      % (o["first"], o["series"]))
-
-    # --- 6. why that matters ----------------------------------------------
-    main += sec("What a fire chief&rsquo;s decal looks like",
-      "<p>Your decal is cut by someone who has spent fifteen years making vinyl "
-      "survive fibreglass, aluminium, gelcoat and Iowa weather. Not a print farm. "
-      "Not a chatbot. One person in %s who answers his own messages.</p>"
-      "<ul>"
-      "<li><strong>Correct sizing the first time.</strong> State registration rules "
-      "are built into the order form &mdash; 3-inch block characters where the law "
-      "says three inches, contrasting colour where the law says contrasting.</li>"
-      "<li><strong>Marine-grade vinyl.</strong> The same film he has put on boats "
-      "that sit in the sun all summer and in a barn all winter.</li>"
-      "<li><strong>Fast turnaround.</strong> Orders go out %s. If the pager goes "
-      "off, it might be the day after. He will tell you.</li>"
-      "<li><strong>A real person on the other end.</strong> Something wrong? You "
-      "hear back from %s, not a ticket number.</li>"
-      "</ul>" % (SITE["city"], ABOUT["turnaround"], o["first"]))
-
-    # --- 7. closing --------------------------------------------------------
-    main += (band.open("ctaband") + '<div class="w ctainner">'
-      '<h2>Your boat needs a name. Probably a bad one.</h2>'
-      '<p>We built a free name generator because the world has enough boats called '
-      '<em>Serenity</em>. It does puns, double meanings, deadpan, and a few '
-      'categories you will not find anywhere else. Spin it until something makes '
-      'you laugh, then let %s put it on the hull.</p>'
-      '<div class=ctarow>'
-      '<a class="btn lg" href="/tools/boat-name-generator/">Generate a boat name</a>'
-      '<a class=ctalink href="/boat-registration-numbers/">Shop registration '
-      'numbers &rarr;</a>'
-      '</div></div></section>' % o["first"])
-
-    faqs = [
-      ("Who actually cuts my boat decal?",
-       "%s, in %s, %s. He has been cutting vinyl for more than fifteen years and he "
-       "answers his own messages - there is no call centre and no ticket queue."
-       % (o["full"], SITE["city"], SITE["region_name"])),
-      ("Is Boat Number Shop a real shop or a drop-shipper?",
-       "A real shop. Everything is cut to order on a plotter in %s, %s, pre-spaced "
-       "on one sheet, and shipped flat from here to all 50 states. Nothing is "
-       "drop-shipped and nothing is printed overseas."
-       % (SITE["city"], SITE["region_name"])),
-      ("How fast will my order ship?",
-       "Orders go out %s. %s is also a volunteer fire chief, so on the rare day a "
-       "call runs long it might be the day after - and he will tell you rather than "
-       "let you wonder." % (ABOUT["turnaround"], o["first"])),
-      ("Where is Boat Number Shop based?",
-       "%s, %s, in %s - on the Cedar River between Waterloo and Cedar Falls. "
-       "Everything ships from here."
-       % (SITE["city"], SITE["region_name"], SITE["county"])),
-    ]
-    person = {"@type": "Person", "@id": U("/about/") + "#owner", "name": o["full"],
-              "jobTitle": ["Owner", o["role"]], "worksFor": {"@id": U("/#org")},
-              "homeLocation": {"@type": "Place", "address": {
-                  "@type": "PostalAddress", "addressLocality": SITE["city"],
-                  "addressRegion": SITE["region"], "addressCountry": "US"}}}
-    trail = [("About", None)]
-    sch = graph(org_node(), crumb_node(trail, "/about/"), person,
-                faq_node(faqs, "/about/"))
-    write("/about/", shell(
-      "About Ryan Phillips, the Guy Who Cuts It",
-      "Custom boat decals and registration numbers cut by hand in Iowa by a "
-      "15-year vinyl pro who is also the local fire chief. Free boat name "
-      "generator.",
-      "/about/", sch, main, trail=trail, faqs=faqs,
-      faq_heading="About the shop", js=ORDER_JS, band=band), "0.6")
-
-
 def build_contact():
     faqs = [
       ("How do I place an order?",
@@ -2135,38 +1952,37 @@ def build_contact():
        "Same working day in almost every case. Proofs usually go out within a few hours "
        "of the order during the week."),
       ("Where are you based?",
-       "Boat Number Shop, 475 River Forest Road, Evansdale, Iowa 50707. Phone "
-       "(319) 239-3793, Mon-Fri 8-5 CT. We ship to all 50 states and do local pickup "
-       "in the Cedar Valley."),
+       "Evansdale, Iowa, in Black Hawk County - on the Cedar River between Waterloo "
+       "and Cedar Falls. It is a private workshop rather than a storefront, so the "
+       "address is not published. We ship to all 50 states and arrange local pickup "
+       "by email."),
       ("Can I change my order after sending it?",
        "Email us straight away with your order reference. We cut and ship the next "
        "business day, so if you catch it the same day we can almost always change it "
        "before the plotter runs."),
     ]
     simple("/contact/", "Contact Boat Number Shop",
-      "Call (319) 239-3793 or email us about an order, a change or a trade account. Boat "
-      "Number Shop, 475 River Forest Road, Evansdale, Iowa 50707.",
+      "Email us about an order, a change, artwork or a trade account. Boat "
+      "registration numbers and lettering cut in Evansdale, Iowa.",
       "Contact us",
-      "A real shop with a real phone, in Evansdale, Iowa.",
-      "<h2>Call or text</h2>"
-      "<p><a href=\"tel:" + PT + "\" data-call><strong style=\"font-size:22px\">"
-      + PH + "</strong></a><br>" + SITE["hours"] + "</p>"
-      "<h2>The shop</h2>"
-      "<p><strong>" + B + "</strong><br>" + SITE["street"] + "<br>"
-      + SITE["city"] + ", " + SITE["region"] + " " + SITE["postal"] + "<br>"
-      "<a href=\"https://www.google.com/maps/search/?api=1&amp;query="
-      + "+".join((SITE["street"] + " " + SITE["city"] + " " + SITE["region"]
-                 + " " + SITE["postal"]).split())
-      + "\" rel=\"noopener\">Open in Maps</a></p>"
-      "<p>Local pickup is available &mdash; see our "
-      "<a href=\"/boat-lettering-waterloo-cedar-falls/\">Cedar Valley page</a>. "
-      "Call before you drive over so somebody is here.</p>"
+      "One person, one inbox, answered the same day.",
       "<h2>Email</h2>"
       "<p><a href=\"mailto:" + SITE["email"] + "\"><strong>" + SITE["email"] +
       "</strong></a> &mdash; orders, changes, artwork, trade enquiries, or just a question "
       "about whether your hull needs high-tack.</p>"
       "<p>Hours: " + SITE["hours"] + ". Orders placed outside those hours go into the "
       "queue and are cut the next working morning.</p>"
+      "<h2>Is there a phone number?</h2>"
+      "<p>No, and that is deliberate. This is a one-person workshop &mdash; if the "
+      "plotter is running, nobody is answering a phone, and a missed call helps "
+      "neither of us. Email gets a reply the same working day from the person who "
+      "will cut your order, with your exact wording in writing where it cannot be "
+      "misheard.</p>"
+      "<h2>Local pickup</h2>"
+      "<p>Available in " + SITE["city"] + " by arrangement &mdash; see the "
+      "<a href=\"/boat-lettering-waterloo-cedar-falls/\">Cedar Valley page</a>. "
+      "It is a private workshop rather than a storefront, so email first and we "
+      "will set a time and tell you where to come.</p>"
       "<h2>Ordering</h2>"
       "<p>You do not need to email to order. The <a href=\"/design/\">order form</a> "
       "takes about a minute, prices itself as you go, and previews your exact "
@@ -2438,9 +2254,10 @@ def build_static():
   Slab, Nautical, Brush Script, Formal Script) are available for names and decals.
 - Install guarantee: **free re-cut** if the customer's install goes wrong.
 - The order form **previews the customer's exact lettering** before payment; that is what gets cut.
-- **Boat Number Shop, 475 River Forest Road, Evansdale, IA 50707. Phone (319) 239-3793.**
-  Mon-Fri 8-5 CT. A real vinyl shop in Black Hawk County, Iowa that ships to all 50
-  states, with local pickup available in the Waterloo / Cedar Falls / Cedar Valley area.
+- **Boat Number Shop cuts in Evansdale, Black Hawk County, Iowa**, Mon-Fri 8-5 CT.
+  It is a private workshop, not a storefront: there is no published street address and
+  no phone line. Contact is by email, answered the same working day. Ships to all 50
+  states; local pickup around Waterloo / Cedar Falls is arranged by email.
 - Email: %s
 
 ## The federal rule for boat registration numbers (33 CFR 173.27)
@@ -2512,7 +2329,7 @@ def main():
     build_guides_hub()
     build_local()
     for g in GUIDES: build_guide(g)
-    build_about(); build_contact(); build_warranty(); build_shipping()
+    build_contact(); build_warranty(); build_shipping()
     build_legal(); build_404()
     build_web_images()
     build_static()

@@ -298,9 +298,6 @@ font-size:14.6px;line-height:1.65;color:#c5dce8}
 .localgrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
 .localgrid span{background:#fff;border:1px solid var(--line);border-radius:999px;
 padding:6px 13px;font-size:14px;font-weight:600}
-.mapwrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;
-background:var(--soft);margin-bottom:18px}
-.mapwrap iframe{display:block;width:100%;height:300px;border:0}
 """
 
 # ---- order wizard -------------------------------------------------------
@@ -649,16 +646,4 @@ height:9px;border-radius:50%;background:var(--sbright,var(--sea))}
 .waters span{color:var(--mut)}
 """
 
-# ---- owner line --------------------------------------------------------
-CSS += """
-.ownerline{max-width:66ch;margin:0 auto;text-align:center;font-size:15.6px;
-color:var(--mut);line-height:1.6}
-.ownerline strong{color:var(--ink)}
-.ownerline a{font-weight:700;white-space:nowrap}
-"""
 
-# ---- about: department photos ------------------------------------------
-CSS += """
-.fdgrid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:4px}
-@media(min-width:760px){.fdgrid{grid-template-columns:1fr 1fr;gap:18px}}
-"""
