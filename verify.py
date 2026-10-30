@@ -236,6 +236,18 @@ for _name in sorted(set(_decls)):
         fails.append("order.py declares function %s() %d times - the later one "
                      "silently replaces the earlier" % (_name, _decls.count(_name)))
 
+# The outline is the only paid add-on in the form, so the browser and the
+# worker must agree on what it costs. Three places have to say 12.
+from content import PRICE as _P
+if "const OUTLINE_ADD = %d;" % _P["outline"] not in wjs:
+    fails.append("worker OUTLINE_ADD disagrees with content.PRICE['outline'] (%d)"
+                 % _P["outline"])
+if 'd.finish === "outline" || d.outline' not in wjs:
+    fails.append("worker priceOf() must read BOTH d.finish and d.outline - it\n                  is called with the raw payload AND with the sanitised order")
+_ojs = (ROOT / "engine" / "order.py").read_text()
+if "var OUTLINE_ADD=%d;" % _P["outline"] not in _ojs:
+    fails.append("order form OUTLINE_ADD disagrees with content.PRICE['outline']")
+
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.
 mp = (ROOT / "engine" / "mockpay.py").read_text()

@@ -63,7 +63,7 @@ def _thumb(key):
             % _KICON[key])
 
 
-def _colors(prefix="color"):
+def _colors(prefix="color", checked="Black"):
     """Eight chips in a row. That is the whole control.
 
     The name is NOT printed under every chip - eight labels is eight things to
@@ -79,7 +79,7 @@ def _colors(prefix="color"):
         'data-hex="%s" data-light="%d" aria-label="%s"%s>'
         '<span class=cswdot style="background:%s"></span></label>'
         % (name, prefix, name, hexv, light, name,
-           " checked" if name == "Black" else "", hexv)
+           " checked" if name == checked else "", hexv)
         for name, hexv, light in picks)
 
 
@@ -166,6 +166,21 @@ def form():
       <div class=swrow id=swrow>""" + cols + """</div>
       <div class=hint><b id=colorname>Black</b> &mdash; white on a dark hull,
         black on a light one. The law wants contrast, nothing more.</div>
+
+      <label class=outline-opt>
+        <input type=checkbox id=f_outline name=outline value="1">
+        <span class=outbox>
+          <span class=outswatch aria-hidden="true"><i></i></span>
+          <b>Add a contrasting outline</b>
+          <em>A second layer of vinyl cut behind every character</em>
+        </span>
+        <i class=outprice>+$""" + str(PRICE["outline"]) + """</i>
+      </label>
+
+      <div id=outrow class=outrow hidden>
+        <div class=outlabel>Outline colour</div>
+        <div class=swrow>""" + _colors("outline_color", "White") + """</div>
+      </div>
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts>""" + heights + """</div>
@@ -276,6 +291,7 @@ JS = r"""
     var k=W.querySelector('[name=kind]:checked');
     var n=k?parseFloat(k.dataset.base):19;
     var h=val('height'); if(h) n+=parseFloat(h.dataset.add||0);
+    if(hasOutline()) n+=OUTLINE_ADD;
     var ups=W.querySelectorAll('[name=upgrade]:checked');
     for(var i=0;i<ups.length;i++) n+=parseFloat(ups[i].dataset.add||0);
     return Math.round(n);
@@ -289,10 +305,35 @@ JS = r"""
     return v.fixed || raw;
   }
 
+  var OUTLINE_ADD=12;
+  function hasOutline(){ var b=$('f_outline'); return !!(b && b.checked); }
+
+  /** The outline colour is a SECOND decision, so it answers itself first.
+   *
+   *  Turning the checkbox on picks the obvious contrast - white behind dark
+   *  letters, black behind light ones - so a customer who never touches the
+   *  second row still gets the right answer. The row is there to override,
+   *  not to be filled in.
+   */
+  function syncOutline(){
+    var on=hasOutline();
+    $('outrow').hidden=!on;
+    if(!on) return;
+    var picked=W.querySelector('[name=outline_color]:checked');
+    if(picked && picked.dataset.auto!=='1') return;      // customer chose
+    var c=val('color'), meta=COL[c?c.value:'Black']||['#111111',0];
+    var want=meta[1] ? 'Black' : 'White';                // light fill -> dark
+    var el=W.querySelector('[name=outline_color][value="'+want+'"]');
+    if(el){ el.checked=true; el.dataset.auto='1'; }
+  }
+
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
     var cn=$('colorname'); if(cn) cn.textContent=cname;
+    var isOut=hasOutline();
+    var oc=val('outline_color'), ocn=oc?oc.value:'White';
+    var ometa=COL[ocn]||['#ffffff',1];
     var meta=COL[cname]||['#111111',0];
     var h=val('height'), hv=h?h.value:'3';
     var fn=font();
@@ -302,10 +343,12 @@ JS = r"""
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
       number: numberForPreview(), placeholder: PLACEHOLDER,
-      name: ($('f_name2').value||'').trim()
+      name: ($('f_name2').value||'').trim(),
+      outline: isOut, outlineHex: ometa[0], outlineLight: !!ometa[1]
     });
     lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
-      ' &middot; <b>'+esc(cname)+'</b> &middot; '+
+      ' &middot; <b>'+esc(cname)+'</b>'+
+      (isOut ? ' with <b>'+esc(ocn)+'</b> outline' : '')+' &middot; '+
       (isNum() ? (hasName()? 'pair + name, pre-spaced' : 'one pair, pre-spaced')
                : 'one decal, pre-spaced');
   }
@@ -411,7 +454,7 @@ JS = r"""
 
   function render(){
     tot.textContent='$'+price();
-    syncFonts(); renderPreview();
+    syncFonts(); syncOutline(); renderPreview();
     if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX) summary();
   }
@@ -470,6 +513,9 @@ JS = r"""
             boatname:$('f_name2').value.trim(), state:stateFromPrefix(),
             height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),
+            outline:hasOutline()?1:0,
+            outline_color:hasOutline()
+              ? (val('outline_color')||{value:'White'}).value : '',
             name:$('f_name').value.trim(), email:$('f_email').value.trim(),
             quoted_total:price(), page:location.pathname};
   }
@@ -622,6 +668,18 @@ JS = r"""
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
   setTimeout(function(){ if(cur===MAX && !mounted) degrade(); },4000);
   seedStatePrefix();
+  syncOutline();   // hide the outline row before first paint
+  // The server renders White checked as a sensible default. Without this it
+  // looks like a deliberate customer choice, so syncOutline() bails out and
+  // never corrects it - pick a white fill and you get a white outline on
+  // white letters, which is nothing at all.
+  (function(){
+    var d=W.querySelector('[name=outline_color]:checked');
+    if(d) d.dataset.auto='1';
+  })();
+  W.querySelectorAll('[name=outline_color]').forEach(function(r){
+    r.addEventListener('click', function(){ r.dataset.auto='0'; });
+  });
 
   // /design/?name=Wet+Couch&port=Evansdale%2C+IA - the name generator's CTA.
   // Without this the name is dropped and the customer retypes what they just

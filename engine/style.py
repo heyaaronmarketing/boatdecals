@@ -657,3 +657,32 @@ height:9px;border-radius:50%;background:var(--sbright,var(--sea))}
 
 
 
+
+# ---- outline upsell -----------------------------------------------------
+CSS += """
+.outline-opt{display:flex;align-items:center;gap:11px;margin-top:14px;
+border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;
+background:#fff;cursor:pointer;transition:border-color .14s,box-shadow .14s}
+.outline-opt:hover{border-color:var(--nav2)}
+.outline-opt input{position:absolute;opacity:0;width:1px;height:1px}
+.outline-opt:has(input:checked){border-color:var(--cta);
+box-shadow:0 0 0 3px rgba(29,122,72,.14)}
+.outline-opt:has(input:checked) .outswatch{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),0 0 0 2px #fff,0 0 0 4px var(--cta)}
+.outline-opt:has(input:focus-visible){outline:2px solid var(--nav2);
+outline-offset:2px}
+.outbox{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.outswatch{width:30px;height:30px;border-radius:50%;background:#fff;
+box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);display:flex;align-items:center;
+justify-content:center;flex:0 0 auto}
+.outswatch i{width:17px;height:17px;border-radius:50%;background:var(--ink);
+display:block}
+.outbox b{display:block;font-size:14.4px;color:var(--ink);line-height:1.2}
+.outbox em{display:block;font-style:normal;font-size:12.2px;color:var(--mut);
+margin-top:2px;line-height:1.3}
+.outprice{font-style:normal;font-size:14px;font-weight:800;color:var(--cta);
+flex:0 0 auto}
+.outrow{margin-top:12px}
+.outrow[hidden]{display:none}
+.outlabel{font-size:12px;font-weight:800;letter-spacing:.04em;
+text-transform:uppercase;color:var(--mut);margin-bottom:7px}
+"""

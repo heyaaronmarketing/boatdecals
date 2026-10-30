@@ -24,6 +24,10 @@ const UPGRADE_ADD = {
   "Hailing port line": 15,
   "Reflective finish": 10,
 };
+// A contrasting outline is a second layer of vinyl. Must match
+// content.PRICE["outline"] - verify.py fails the build if it drifts, because
+// a browser and a server that disagree on price is the one bug customers see.
+const OUTLINE_ADD = 12;
 const BASE_MIN = 19, BASE_MAX = 200;
 
 // 33 CFR 173.27 requires plain vertical block characters on a registration
@@ -43,6 +47,7 @@ function priceOf(d) {
   const ups = (raw.includes("|") ? raw.split("|") : raw.split(","))
     .map(s => s.trim()).filter(Boolean);
   for (const u of ups) n += UPGRADE_ADD[u] ?? 0;
+  if (d.finish === "outline" || d.outline) n += OUTLINE_ADD;
   return Math.min(BASE_MAX, Math.max(BASE_MIN, Math.round(n)));
 }
 
@@ -104,6 +109,10 @@ async function handleOrder(request, env) {
     height: str(d.height, 4) || "3",
     font: str(d.font, 50),
     color: str(d.color, 40),
+    // `finish` and `outline_color` already exist in D1 from the tiered
+    // version; reusing them means no migration.
+    finish: d.outline ? "outline" : "standard",
+    outline_color: d.outline ? str(d.outline_color, 40) : "",
     upgrades: str(d.upgrades, 300),
     name: str(d.name, 80),
     email: str(d.email, 120),
@@ -152,8 +161,8 @@ async function handleOrder(request, env) {
           `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,
              name,email,phone,boat,notes,page,total,quoted,mismatch,paid,payment,
              ua,country,ts
-           ,test_mode,card_brand,card_last4,status)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+           ,test_mode,card_brand,card_last4,status,finish,outline_color)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         ).bind(o.ref, o.kind, o.text, o.boatname, o.state, o.height, o.font, o.color,
                o.upgrades, o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total,
                o.quoted, o.mismatch, o.paid, o.payment, o.ua, o.country, o.ts,
@@ -161,7 +170,8 @@ async function handleOrder(request, env) {
                // `paid` stays the real-money flag, so SUM(total) WHERE paid=1 is
                // correct with no test-exclusion needed. Sandbox orders are never
                // paid=1; `status` is what makes them visible in the queue.
-               o.test_mode ? "test" : (o.paid ? "paid" : "new")).run();
+               o.test_mode ? "test" : (o.paid ? "paid" : "new"),
+               o.finish, o.outline_color).run();
       }
     } catch (err) {
       console.error("d1 insert failed", err && err.message);
@@ -187,6 +197,8 @@ async function handleOrder(request, env) {
           + `on a registration number. Corrected automatically; check before cutting.`
         : o.font],
       ["Colour", o.color],
+      ["Outline", o.finish === "outline"
+        ? `${o.outline_color} behind ${o.color} (+$${OUTLINE_ADD})` : "None"],
       ["Upgrades", o.upgrades || "none"],
       ["Price", "$" + o.total],
       ["Payment", o.test_mode

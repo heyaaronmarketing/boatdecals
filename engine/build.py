@@ -697,6 +697,7 @@ PRICE_PLANS = [
                 "Checked against your state&rsquo;s format before it cuts",
                 "Pre-spaced on one sheet",
                 "Eight colours, all included",
+                "Contrasting outline, +$%d" % PRICE["outline"],
                 "Free shipping, cut and posted next business day"]),
     dict(slug="boat-lettering", name="Boat letters", featured=False,
          price="$29", unit="to start",
@@ -707,6 +708,7 @@ PRICE_PLANS = [
                 "Curved transoms laid out from your photo",
                 "Priced by finished size &mdash; most land $29&ndash;79",
                 "Eight colours, all included",
+                "Contrasting outline, +$%d" % PRICE["outline"],
                 "Free shipping, cut and posted next business day"]),
 ]
 

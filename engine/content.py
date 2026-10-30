@@ -44,6 +44,10 @@ LOCAL_WATERS = ["the Cedar River", "George Wyth Lake", "Big Woods Lake",
 # ---------------------------------------------------------------- the offer
 PRICE = {
     "numbers": 19,
+    # A contrasting outline is a SECOND layer of vinyl: cut separately,
+    # weeded separately, and registered against the first by hand. Roughly
+    # double the work, which is what the price reflects.
+    "outline": 12,
     "numbers_premium": 27,
     "name_from": 29,
     "rush": 12,

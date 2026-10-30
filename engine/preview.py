@@ -46,7 +46,9 @@ window.BNS_PREVIEW = (function(){
 
   function render(o){
     var svg=$('prevsvg'); if(!svg) return;
-    $('prev').classList.toggle('night', !!o.light);
+    // With an outline it is the OUTLINE that touches the hull, so that is the
+    // colour the panel has to contrast with, not the fill.
+    $('prev').classList.toggle('night', o.outline ? !!o.outlineLight : !!o.light);
 
     // The chosen face, so the big preview and the chip agree.
     var fam = o.css || 'Arial Black, Impact, Haettenschweiler, sans-serif';
@@ -61,8 +63,21 @@ window.BNS_PREVIEW = (function(){
     var tn=$('p_num'), nm=$('p_name');
     var both = o.showNum && o.showName;
 
+    // The outline is drawn as a stroke BEHIND the glyph (paint-order), which
+    // is exactly what the second layer of vinyl does on the hull - cut a
+    // little larger and sat under the characters.
     [tn,nm].forEach(function(t){
       t.setAttribute('fill', o.hex);
+      if(o.outline){
+        t.setAttribute('stroke', o.outlineHex);
+        t.setAttribute('stroke-width', 5);
+        t.setAttribute('paint-order', 'stroke fill');
+        t.setAttribute('stroke-linejoin', 'round');
+      } else {
+        t.removeAttribute('stroke');
+        t.removeAttribute('stroke-width');
+        t.removeAttribute('paint-order');
+      }
       t.setAttribute('font-family', t===tn ? numFam : fam);
       t.setAttribute('font-style', style);
       t.setAttribute('letter-spacing', (t===tn && o.numBlock) ? '1.2' : track);
