@@ -2,7 +2,7 @@
 """Pre-deploy gate. Runs after every build - a silent build failure shipped a
 stale public/ once, so this refuses to pass unless the output is genuinely fresh
 and internally consistent."""
-import json, pathlib, re, subprocess, sys
+import html, json, pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "public"
@@ -27,7 +27,9 @@ for f in pages:
 
 _YR_N = (r"(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|"
          r"twelve|fifteen|twenty)")
-_YR_SPAN = _YR_N + r"(?:\s*(?:to|-|&ndash;|&mdash;)\s*\d+)?"
+# "+" and "or more" are the two shapes that got past a first version:
+# "holds color 7+ years" matched none of the patterns and shipped.
+_YR_SPAN = _YR_N + r"(?:\s*(?:to|-|&ndash;|&mdash;)\s*\d+)?\+?"
 _DUR = r"(?:warrant\w*|durabilit\w*|outdoor life|rated for|lasts?|adhesion|chalks)"
 _MATERIAL = r"(?:film|vinyl|stock)"
 # (pattern, may a person-noun excuse it)
@@ -36,14 +38,19 @@ _FILM_LIFE_PATTERNS = [
     (_YR_SPAN + r"\s+years?\s+on\s+(?:\w+\s+){0,3}" + _MATERIAL, False),
     (_DUR + r"[^<.]{0,40}?" + _YR_SPAN + r"[\s-]*years?", False),
     (_YR_SPAN + r"[\s-]*years?[^<.]{0,40}?" + _DUR, False),
-    (_MATERIAL + r"\s+(?:runs?|lasts?)[^<.]{0,20}?" + _YR_SPAN + r"[\s-]*years?", False),
+    (_MATERIAL + r"[^<.]{0,90}?(?:runs?|lasts?|holds?)[^<.]{0,40}?" + _YR_SPAN
+     + r"[\s-]*years?", False),
 ]
 
 broken, blocks, bad_json, titles, descs = set(), 0, 0, [], []
 for f in OUT.rglob("*.html"):
     t = f.read_text()
     for h in re.findall(r'href="(/[^"#?]*)"', t):
-        if not h.startswith("/api") and h not in have: broken.add(h)
+        # a page, an API route, or a real file on disk (the share block links
+        # straight at a downloadable card)
+        if h.startswith("/api") or h in have: continue
+        if (OUT / h.lstrip("/")).is_file(): continue
+        broken.add(h)
     for m in re.findall(r'<script type="application/ld\+json">(.*?)</script>', t, re.S):
         blocks += 1
         try: json.loads(m)
@@ -276,6 +283,119 @@ if "lock = (mark(" not in _og_py or "NUMBERMYBOAT.COM" not in _og_py:
 
 if _og_pages < 50:
     fails.append("only %d pages carry an og:image" % _og_pages)
+
+# No two nav rows may point at the same page. "Help" and "Guides" both went
+# to /guides/ for a fortnight and nothing complained.
+_nav = re.search(r"<nav id=nav>(.*?)</nav>", (OUT / "index.html").read_text(), re.S)
+if _nav:
+    _hrefs = re.findall(r'href="([^"]+)"', _nav.group(1))
+    _dupe = {h for h in _hrefs if _hrefs.count(h) > 1}
+    if _dupe:
+        fails.append("duplicate nav links: %s" % sorted(_dupe))
+
+# Social tags, to the spec in the share plan. A card that renders wrong on
+# Facebook fails silently - there is no error anywhere, it just looks cheap in
+# a feed - so every one of these is checked rather than trusted.
+_REQ_OG = ["og:type", "og:site_name", "og:locale", "og:url", "og:title",
+           "og:description", "og:image", "og:image:secure_url",
+           "og:image:type", "og:image:width", "og:image:height",
+           "og:image:alt"]
+_REQ_TW = ["twitter:card", "twitter:title", "twitter:description",
+           "twitter:image", "twitter:image:alt"]
+for _f in OUT.rglob("index.html"):
+    _h = _f.read_text()
+    _rel = _f.relative_to(OUT)
+    for _t in _REQ_OG:
+        if 'property="%s"' % _t not in _h:
+            fails.append("missing %s on %s" % (_t, _rel))
+    for _t in _REQ_TW:
+        if 'name="%s"' % _t not in _h:
+            fails.append("missing %s on %s" % (_t, _rel))
+    # exactly one image, absolute, and matching the canonical host
+    _imgs = re.findall(r'property="og:image" content="([^"]+)"', _h)
+    if len(_imgs) != 1:
+        fails.append("%d og:image tags on %s (Facebook takes the first)"
+                     % (len(_imgs), _rel))
+    for _u in _imgs:
+        if not _u.startswith("https://"):
+            fails.append("relative og:image on %s: %s" % (_rel, _u))
+        if "workers.dev" in _u:
+            fails.append("staging URL in og:image on %s" % _rel)
+    _ou = re.search(r'property="og:url" content="([^"]+)"', _h)
+    _cn = re.search(r'rel="canonical" href="([^"]+)"', _h)
+    if _ou and _cn and _ou.group(1) != _cn.group(1):
+        fails.append("og:url != canonical on %s" % _rel)
+    # Facebook shows ~60 chars of title on a phone and hides most descriptions
+    _ot = re.search(r'property="og:title" content="([^"]+)"', _h)
+    if _ot and len(html.unescape(_ot.group(1))) > 60:
+        fails.append("og:title over 60 chars on %s (%d)"
+                     % (_rel, len(html.unescape(_ot.group(1)))))
+    _od = re.search(r'property="og:description" content="([^"]+)"', _h)
+    if _od and len(html.unescape(_od.group(1))) > 110:
+        fails.append("og:description over 110 chars on %s (%d)"
+                     % (_rel, len(html.unescape(_od.group(1)))))
+
+# Every card must be exactly 1200x630 - Facebook crops anything else, and a
+# PNG header is cheap to read.
+def _dims(path):
+    """Width/height from a PNG or JPEG header, without a decoder."""
+    b = path.read_bytes()
+    if b[:8] == b"\x89PNG\r\n\x1a\n":
+        return int.from_bytes(b[16:20], "big"), int.from_bytes(b[20:24], "big")
+    if b[:2] == b"\xff\xd8":
+        i = 2
+        while i < len(b) - 9:
+            if b[i] != 0xFF:
+                i += 1; continue
+            m = b[i + 1]
+            if m in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
+                     0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                return (int.from_bytes(b[i + 7:i + 9], "big"),
+                        int.from_bytes(b[i + 5:i + 7], "big"))
+            i += 2 + int.from_bytes(b[i + 2:i + 4], "big")
+    return None
+
+
+for _d in ("og", "share"):
+    for _c in sorted((OUT / "assets" / _d).glob("*")):
+        if _c.suffix not in (".png", ".jpg"):
+            continue
+        _wh = _dims(_c)
+        if _wh is None:
+            fails.append("unreadable share card: %s" % _c.name); continue
+        if _d == "og" and _wh != (1200, 630):
+            fails.append("og card %s is %dx%d, not 1200x630"
+                         % (_c.name, _wh[0], _wh[1]))
+        if _c.stat().st_size > 600_000:
+            fails.append("share card over 600KB (%dKB): %s"
+                         % (_c.stat().st_size // 1024, _c.name))
+
+# og:image:type must match the file it points at
+for _f in OUT.rglob("index.html"):
+    _h = _f.read_text()
+    _i = re.search(r'property="og:image" content="([^"]+)"', _h)
+    _t = re.search(r'property="og:image:type" content="([^"]+)"', _h)
+    if _i and _t:
+        _want = "image/jpeg" if _i.group(1).endswith(".jpg") else "image/png"
+        if _t.group(1) != _want:
+            fails.append("og:image:type %s but image is %s on %s"
+                         % (_t.group(1), _i.group(1)[-4:], _f.relative_to(OUT)))
+
+sys.path.insert(0, str(ROOT / "engine"))
+from sharebox import posts_for as _posts
+from content import STATES as _ST2
+_DISCLOSE = re.compile(r"brother|family|my shop|we cut|disclosure", re.I)
+for _ctx, _args in (("site-wide", {}), ("state", {"state": _ST2[0]})):
+    for _label, _text in _posts("/", **_args):
+        if not _DISCLOSE.search(_text):
+            fails.append("share post %r (%s) has no disclosure - an "
+                         "undisclosed promo post gets the account banned"
+                         % (_label, _ctx))
+        if len(_text) > 300:
+            fails.append("share post %r is %d chars, over the 300 limit"
+                         % (_label, len(_text)))
+        if "link in comment" not in _text.lower():
+            fails.append("share post %r does not say link in comments" % _label)
 
 # Sandbox checkout invariants. The card form must never hand a full number to
 # the payload, and the worker must refuse one if a future edit ever does.

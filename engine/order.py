@@ -67,7 +67,7 @@ def _colors(prefix="color", checked="Black"):
     """Eight chips in a row. That is the whole control.
 
     The name is NOT printed under every chip - eight labels is eight things to
-    read before picking a colour. The chip you have selected is named once, in
+    read before picking a color. The chip you have selected is named once, in
     the line underneath, and the preview above is already showing it on your
     own lettering. Each input still carries an aria-label so a screen reader
     gets the name without the sighted layout paying for it.
@@ -162,7 +162,7 @@ def form():
   <section class=step data-step="3">
     <h2>How should it look?</h2>
     
-    <fieldset><legend>Colour</legend>
+    <fieldset><legend>Color</legend>
       <div class=swrow id=swrow>""" + cols + """</div>
       <div class=hint><b id=colorname>Black</b> &mdash; white on a dark hull,
         black on a light one. The law wants contrast, nothing more.</div>
@@ -178,7 +178,7 @@ def form():
       </label>
 
       <div id=outrow class=outrow hidden>
-        <div class=outlabel>Outline colour</div>
+        <div class=outlabel>Outline color</div>
         <div class=swrow>""" + _colors("outline_color", "White") + """</div>
       </div>
     </fieldset>
@@ -308,7 +308,7 @@ JS = r"""
   var OUTLINE_ADD=12;
   function hasOutline(){ var b=$('f_outline'); return !!(b && b.checked); }
 
-  /** The outline colour is a SECOND decision, so it answers itself first.
+  /** The outline color is a SECOND decision, so it answers itself first.
    *
    *  Turning the checkbox on picks the obvious contrast - white behind dark
    *  letters, black behind light ones - so a customer who never touches the

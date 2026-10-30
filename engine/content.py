@@ -57,8 +57,8 @@ PRICE = {
 
 UPGRADES = [
     ("Premium 8-year cast vinyl", 8,
-     "Cast film instead of calendared - holds colour about three years longer.",
-     "Most popular", "Worth it if the boat lives outside or you picked a dark colour."),
+     "Cast film instead of calendared - holds color about three years longer.",
+     "Most popular", "Worth it if the boat lives outside or you picked a dark color."),
     ("Spare set - a second pair at half price", 9,
      "A whole second pair in the envelope for when one gets dock-rashed.",
      "Best value", "Cheaper now than reordering later, and shipping is already paid."),
@@ -88,7 +88,7 @@ PRODUCTS = [
          title="Boat Letters &amp; Name Decals, Any Font",
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
-         blurb="Boat names, hailing ports and any other transom text. You pick the font and the colour, we cut it, pre-space it and tape it.",
+         blurb="Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.",
          desc="Boat name decals and custom vinyl lettering from $29. 10 marine fonts previewed live, white or black, free shipping, next-day production."),
 ]
 
@@ -100,8 +100,8 @@ BOAT_TYPES = [
          note="A sailboat transom is rarely flat. Send a straight-on photo with a tape measure in frame and we will lay the name out to the actual curve."),
     dict(slug="pontoon-boats", nav="Pontoon boats", title="Pontoon Boat Decals &amp; Lettering",
          kw="pontoon boat decals", vol=480, cpc=0.59,
-         lead="Fence-panel graphics, deck names and registration numbers sized for aluminium rails.",
-         note="Pontoon fencing is usually brushed or painted aluminium. We ship high-tack vinyl for it by default, because standard adhesive lifts off a textured rail."),
+         lead="Fence-panel graphics, deck names and registration numbers sized for aluminum rails.",
+         note="Pontoon fencing is usually brushed or painted aluminum. We ship high-tack vinyl for it by default, because standard adhesive lifts off a textured rail."),
     dict(slug="jet-skis-and-pwc", nav="Jet skis &amp; PWC", title="Jet Ski &amp; PWC Registration Numbers and Graphics",
          kw="jet ski decals", vol=210, cpc=0.90,
          lead="PWC hulls are moulded plastic with tight compound curves and almost no flat panel.",
@@ -116,7 +116,7 @@ BOAT_TYPES = [
          note="Metalflake is glossy and very forgiving - the wet method works perfectly, and vinyl holds on it better than on almost any other hull finish."),
     dict(slug="jon-boats", nav="Jon boats", title="Jon Boat Decals &amp; Registration Numbers",
          kw="jon boat decals", vol=140, cpc=0.58,
-         lead="Bare or painted aluminium, usually riveted, usually textured.",
+         lead="Bare or painted aluminum, usually riveted, usually textured.",
          note="Rivets and ribs break the adhesive line. Keep numbers on a flat panel between ribs, or step down to a smaller character height that still clears the 3-inch minimum."),
 ]
 
@@ -145,7 +145,7 @@ GUIDES = [
     dict(slug="boat-registration-number-rules", nav="The rules",
          title="Boat Registration Number Rules, Plainly Stated",
          kw="boat registration number requirements", vol=140,
-         desc="The federal rule for boat registration numbers - 3-inch block characters, contrasting colour, correct spacing, forward half of each side - in plain English."),
+         desc="The federal rule for boat registration numbers - 3-inch block characters, contrasting color, correct spacing, forward half of each side - in plain English."),
     dict(slug="where-to-put-boat-registration-numbers", nav="Where they go",
          title="Where Do Boat Registration Numbers Go?",
          kw="where to place boat registration numbers", vol=430,
@@ -334,16 +334,16 @@ FORMAT_EXCEPTIONS = {
 NO_LETTERS = {"CF": "IOQ"}
 
 
-# (name, hex, is_light) - is_light drives which hull colour the preview sits on.
+# (name, hex, is_light) - is_light drives which hull color the preview sits on.
 COLORS = [("White","#ffffff",1),("Black","#111111",0),("Navy","#12243f",0),
           ("Royal Blue","#1b4fa8",0),("Light Blue","#5fc4f5",1),("Teal","#0d7f7f",0),
           ("Forest","#15512c",0),("Lime","#7ac70c",1),("Yellow","#f5d000",1),
           ("Orange","#f07c00",1),("Red","#c8102e",0),("Burgundy","#6d1026",0),
           ("Purple","#5b2a86",0),("Pink","#e8669e",1),("Brown","#5a3a22",0),
-          ("Tan","#c9a979",1),("Grey","#8b949c",1),("Silver Metallic","#c6ccd1",1),
+          ("Tan","#c9a979",1),("Gray","#8b949c",1),("Silver Metallic","#c6ccd1",1),
           ("Gold Metallic","#c9a227",1),("Chrome","#dfe6ea",1),
           ("Reflective White","#f2f4f5",1),("Reflective Red","#d02b3f",0)]
-# What the order form offers. Two colours cover the overwhelming majority of
+# What the order form offers. Two colors cover the overwhelming majority of
 # boat lettering, they are always in stock, and between them they satisfy the
 # contrast rule against any hull. Everything else in COLORS is quoted by email.
 ORDER_COLORS = ["White", "Black", "Red", "Navy", "Royal Blue", "Forest",
@@ -356,8 +356,8 @@ FAQ_HOME = [
      "Ours are $19 a pair with free shipping, cut and shipped the next business day. "
      "Online prices across the market run about $10 to $25 a pair. Cheap sets are usually "
      "calendared craft vinyl, cut as loose characters you space yourself."),
-    ("Do boat registration numbers have to be a certain colour?",
-     "Not a specific colour - but federal rule 33 CFR 173.27 requires the characters to "
+    ("Do boat registration numbers have to be a certain color?",
+     "Not a specific color - but federal rule 33 CFR 173.27 requires the characters to "
      "contrast with the background and be distinctly visible and legible. White numbers on "
      "a white hull fail. Dark hull, light numbers; light hull, dark numbers."),
     ("How tall do boat registration numbers have to be?",
@@ -368,20 +368,22 @@ FAQ_HOME = [
      "visible from the water. The validation decal placement varies by state - usually "
      "within a few inches of the number."),
     ("Where can I get boat lettering made?",
-     "Here. You pick the characters, font and colour, we cut them from marine vinyl, "
+     "Here. You pick the characters, font and color, we cut them from marine vinyl, "
      "pre-space them on one sheet with application tape, and ship next business day. "
      "We cut registration numbers, boat names and custom lettering - not printed "
      "graphics or logo artwork."),
     ("What kind of vinyl is best for boat lettering?",
-     "Cast vinyl for anything that lives outside - it conforms to curves and holds colour "
-     "7+ years. High-tack is mandatory on plastic: kayaks, PWC hulls and pontoon rails. "
+     "Cast vinyl for anything that lives outside - it conforms to curves and holds color "
+     "longer outdoors than calendared. High-tack is mandatory on plastic: kayaks, "
+     "PWC hulls and pontoon rails. "
      "Calendared vinyl is cheaper and shorter-lived."),
     ("What is the difference between vinyl stickers and vinyl decals?",
      "A sticker is printed on a vinyl square and you see the background. A decal is cut "
-     "from coloured vinyl, so only the letter shape sticks to the hull and there is no "
+     "from colored vinyl, so only the letter shape sticks to the hull and there is no "
      "visible edge or square. Everything we make is cut vinyl."),
     ("Can I apply these myself?",
      "Yes - they arrive as one pre-spaced sheet under application tape, so the spacing is "
      "already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the "
-     "tape. If it goes wrong we re-cut it free."),
+     "tape. The wet method lets you slide it straight before it grabs, so take the "
+     "twenty minutes and it goes on in one pass."),
 ]

@@ -120,3 +120,73 @@ def state_card(i, name, ab, postal):
                     kicker="yes, really", hull=hull)
     return dict(main="%s BOATS|START WITH %s" % (name.upper(), ab),
                 kicker="%s registration numbers, $19" % name, hull=hull)
+
+
+# ------------------------------------------------------- photo cards
+# Commercial pages get the product ON something. A text card says what we
+# sell; a card with the vinyl on a hull shows it, which is the question a
+# buyer actually has. Teaching pages keep the typographic card, because there
+# the LINE is the thing being shared.
+#
+# path -> (photo id, headline, sub-line, badge top, badge bottom)
+_PHOTOS = {
+    "/": ("AL-01", "LEGAL BOAT|NUMBERS",
+          "BOTH SIDES - PRE-SPACED - POSTED NEXT DAY", "$19", "A PAIR"),
+    "/design/": ("AL-10", "DESIGN YOURS|IN A MINUTE",
+                 "TYPE IT - SEE IT - SEND IT", "$19", "A PAIR"),
+    "/boat-registration-numbers/": ("AL-02", "3-INCH BLOCK|BOTH SIDES",
+                 "PRE-SPACED ON ONE SHEET", "$19", "A PAIR"),
+    "/boat-lettering/": ("AL-03", "NAME IT|PROPERLY",
+                 "TEN FONTS - PRE-SPACED - FREE SHIPPING", "$29", "TO START"),
+    "/pricing/": ("PR-1", "THE PRICE IS|ON THE PAGE",
+                 "SHIPPING INCLUDED, ALL 50 STATES", "$19", "A PAIR"),
+    "/for/jon-boats/": ("AL-04", "JON BOAT|NUMBERS",
+                 "BARE ALUMINUM, NO PROBLEM", "$19", "A PAIR"),
+    "/for/jet-skis-and-pwc/": ("AL-05", "PWC|NUMBERS",
+                 "HIGH-TACK FILM, FREE ON EVERY PWC ORDER", "$19", "A PAIR"),
+    "/for/kayaks-and-canoes/": ("AL-06", "KAYAK|NUMBERS",
+                 "HIGH-TACK, BECAUSE PLASTIC FIGHTS BACK", "$19", "A PAIR"),
+    "/for/pontoon-boats/": ("AL-07", "PONTOON|NUMBERS",
+                 "TEXTURED RAILS NEED HIGH-TACK", "$19", "A PAIR"),
+    "/for/sailboats/": ("AL-08", "SAILBOAT|LETTERING",
+                 "CURVED TRANSOMS LAID OUT FROM YOUR PHOTO", "$29", "TO START"),
+    "/for/bass-boats/": ("AL-10", "BASS BOAT|NUMBERS",
+                 "METALFLAKE IS THE EASY ONE", "$19", "A PAIR"),
+}
+
+
+import pathlib as _pathlib
+import re as _re
+
+_STATE_AB = {}          # filled by og.py once content.STATES is importable
+
+
+_SHOTS = _pathlib.Path(__file__).resolve().parent / "shots"
+
+
+def has_photo(path):
+    """True when a page gets a photo card AND its master actually exists.
+
+    Both the renderer and the page builder call this, so the file extension
+    they each decide on cannot disagree - and a page whose photo was never
+    shot (Texas has no ST-TX) quietly falls back to the typographic card.
+    """
+    spec = photo_spec(path)
+    return bool(spec) and (_SHOTS / (spec[0] + ".jpg")).exists()
+
+
+def photo_spec(path):
+    """The photo card for a page, or None to use the typographic one."""
+    if path in _PHOTOS:
+        return _PHOTOS[path]
+    m = _re.match(r"^/registration-numbers/([a-z-]+)/$", path)
+    if m and m.group(1) in _STATE_AB:
+        name, ab = _STATE_AB[m.group(1)]
+        return ("ST-" + ab, "%s BOAT|NUMBERS" % name.upper(),
+                "%s PREFIX - 3-INCH BLOCK - BOTH SIDES" % ab, "$19", "A PAIR")
+    return None
+
+
+def register_states(states):
+    for st in states:
+        _STATE_AB[st["slug"]] = (st["name"], st["ab"])

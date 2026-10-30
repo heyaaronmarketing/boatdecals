@@ -134,7 +134,7 @@ def state_badge(slug, ab, name):
     deep, bright, motif = STATE_ACCENT.get(slug, ("#0e3a52", "#5fc4f5", ""))
     bx, by, bw, bh = _bbox(d)
     size = _prefix_size(d, ab)
-    cx, cy = bx + bw / 2.0, by + bh / 2.0      # centre on the shape, not the box
+    cx, cy = bx + bw / 2.0, by + bh / 2.0      # center on the shape, not the box
     return (
       '<svg class=sbadge viewBox="-6 -6 112 112" role="img" aria-label="%s, '
       'vessel prefix %s" focusable="false" style="--sdeep:%s;--sbright:%s">'
@@ -145,7 +145,7 @@ def state_badge(slug, ab, name):
 
 
 # ---------------------------------------------------------------- accents
-# One recognisable pair per state, drawn from what the state is actually
+# One recognizable pair per state, drawn from what the state is actually
 # known for. `deep` fills the silhouette and must carry white text; `bright`
 # is the outline and the small accents.
 #
@@ -164,7 +164,7 @@ def state_badge(slug, ab, name):
 #   Florida   citrus orange with green is Miami. Used the deco/flamingo
 #             palette, which is just as instantly Florida.
 #   Ohio      the buckeye is the state tree and predates the football team;
-#             the NUT is brown and gold, which is nothing like scarlet-grey.
+#             the NUT is brown and gold, which is nothing like scarlet-gray.
 #   Virginia  the blue crab is orange and blue, i.e. UVA. Used the bay and
 #             oyster shell.
 #

@@ -686,3 +686,30 @@ flex:0 0 auto}
 .outlabel{font-size:12px;font-weight:800;letter-spacing:.04em;
 text-transform:uppercase;color:var(--mut);margin-bottom:7px}
 """
+
+# ---- share block ---------------------------------------------------------
+CSS += """
+#share .sbgrid{display:grid;gap:22px;grid-template-columns:1fr;margin-top:18px}
+@media(min-width:860px){#share .sbgrid{grid-template-columns:1.35fr 1fr;gap:30px}}
+.sbposts{display:grid;gap:12px}
+.sbpost{background:#fff;border:1px solid var(--line);border-radius:12px;
+padding:13px 15px}
+.sbhead{display:flex;align-items:center;justify-content:space-between;gap:12px;
+margin-bottom:7px}
+.sbhead b{font-size:12px;font-weight:800;letter-spacing:.05em;
+text-transform:uppercase;color:var(--mut)}
+.sbcopy{font:inherit;font-size:13px;font-weight:800;color:#fff;
+background:var(--nav);border:0;border-radius:8px;padding:7px 13px;cursor:pointer}
+.sbcopy:hover{background:var(--nav2)}
+.sbtext{margin:0;font-size:15px;line-height:1.5;color:var(--ink)}
+.sbside{display:flex;flex-direction:column;gap:11px}
+.sbimg{width:100%;border-radius:11px;border:1px solid var(--line);display:block}
+.btn.sbdl{text-align:center}
+.sblink{font-weight:700;font-size:14.4px;color:var(--nav2);text-decoration:none;
+text-align:center}
+.sblink:hover{text-decoration:underline}
+.sbnote{font-size:12.4px;color:var(--mut);margin:0;line-height:1.45}
+.sbtoast{margin-top:14px;font-size:14px;font-weight:700;color:var(--cta);
+opacity:0;transition:opacity .2s}
+.sbtoast.on{opacity:1}
+"""

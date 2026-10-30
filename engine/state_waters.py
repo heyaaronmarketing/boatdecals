@@ -62,7 +62,7 @@ WATERS = {
     "runs the length of both coasts. For a huge share of Florida owners the "
     "ICW is the home water, not any named lake."),
    ("The Florida Keys",
-    "Islamorada, Marathon and Key West - flats skiffs, centre consoles and the "
+    "Islamorada, Marathon and Key West - flats skiffs, center consoles and the "
     "heaviest sport-fishing concentration in the state."),
    ("Tampa Bay and Charlotte Harbor",
     "the Gulf-coast estuaries, with Boca Grande Pass as the tarpon address "
@@ -91,7 +91,7 @@ WATERS = {
     "poker-run scene."),
    ("Houghton Lake",
     "just over 20,000 acres, the largest inland lake in Michigan, and the "
-    "centre of the state's trailer-boat culture."),
+    "center of the state's trailer-boat culture."),
    ("Torch Lake and the Chain of Lakes",
     "Antrim County - 19 miles long, deep, and the postcard water everyone "
     "photographs."),
@@ -110,7 +110,7 @@ WATERS = {
        "system you can still legally cross the state on.",
   waters=[
    ("Lake George",
-    "32 miles of clear Adirondack water, and the single most recognisable "
+    "32 miles of clear Adirondack water, and the single most recognizable "
     "recreational boating address in the state."),
    ("The Finger Lakes",
     "Seneca and Cayuga are the long deep ones; Canandaigua and Keuka carry the "
@@ -144,7 +144,7 @@ WATERS = {
     "the houseboat reservoirs. Shasta has over 350 miles of shoreline when "
     "it is full, and the water level is the whole conversation."),
    ("Lake Havasu and the lower Colorado",
-    "shared with Arizona, and the centre of the desert performance-boat scene."),
+    "shared with Arizona, and the center of the desert performance-boat scene."),
    ("Clear Lake",
     "the largest natural freshwater lake entirely inside California, and a "
     "national-calibre bass fishery."),
@@ -331,7 +331,7 @@ WATERS = {
   waters=[
    ("Chesapeake Bay",
     "the largest estuary in the United States, with more than 11,000 miles of "
-    "shoreline counting the tributaries. Crab boats, centre consoles and "
+    "shoreline counting the tributaries. Crab boats, center consoles and "
     "cruising sailboats all at once."),
    ("Smith Mountain Lake",
     "20,000 acres and 500 miles of shoreline near Roanoke, the state's busiest "
@@ -401,7 +401,7 @@ WATERS = {
   waters=[
    ("Lake of the Ozarks",
     "roughly 1,150 miles of shoreline - more than the California coast - on "
-    "about 54,000 acres. The most recognisable recreational lake in the "
+    "about 54,000 acres. The most recognizable recreational lake in the "
     "Midwest and a genuine party water."),
    ("Table Rock Lake",
     "43,000 acres near Branson, clear and deep, and the serious bass lake of "

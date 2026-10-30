@@ -47,7 +47,7 @@ window.BNS_PREVIEW = (function(){
   function render(o){
     var svg=$('prevsvg'); if(!svg) return;
     // With an outline it is the OUTLINE that touches the hull, so that is the
-    // colour the panel has to contrast with, not the fill.
+    // color the panel has to contrast with, not the fill.
     $('prev').classList.toggle('night', o.outline ? !!o.outlineLight : !!o.light);
 
     // The chosen face, so the big preview and the chip agree.

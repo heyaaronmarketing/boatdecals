@@ -67,6 +67,27 @@ LINES = [
 ]
 
 
+# Native photo posts are the point of this set: a photo post out-reaches a
+# link post, and a group that deletes links will leave a picture up. Feeds
+# crop differently, so each card ships in three shapes.
+SIZES = [("", 1200, 630), ("-sq", 1080, 1080), ("-tall", 1080, 1350)]
+
+
+def _resize(src, suffix, w, h):
+    """Letterbox onto the target canvas rather than crop.
+
+    Cropping a 1.91:1 card to a square eats the headline, which is the only
+    thing on it. Padding with the card's own background keeps every word.
+    """
+    import subprocess
+    dst = src.with_name(src.stem + suffix + ".png")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src),
+                    "-vf", "scale=%d:-1:flags=lanczos,pad=%d:%d:(ow-iw)/2:"
+                           "(oh-ih)/2:color=0x0e3a52" % (w, w, h),
+                    "-frames:v", "1", str(dst)], check=True)
+    return dst
+
+
 def build_all():
     OUT.mkdir(parents=True, exist_ok=True)
     og.OUT = OUT                       # same renderer, different shelf
@@ -81,8 +102,15 @@ def build_all():
                                 main.split("|")[0].lower()).strip("-")
         og.render(slug, main=main, kicker=kicker, hull=hull)
         made += 1
+    # square and portrait crops for Instagram-shaped feeds and Stories
+    base = [f for f in sorted(OUT.glob("*.png"))
+            if not f.stem.endswith(("-sq", "-tall"))]
+    for f in base:
+        for suffix, w, h in SIZES[1:]:
+            _resize(f, suffix, w, h)
     total = sum(f.stat().st_size for f in OUT.glob("*.png"))
-    print(" share: %d cards -> %s (%.1f MB)" % (made, OUT, total / 1e6))
+    print(" share: %d cards x3 sizes -> %s (%.1f MB)"
+          % (made, OUT, total / 1e6))
     return made
 
 

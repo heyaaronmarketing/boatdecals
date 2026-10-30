@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Static site builder for Number My Boat."""
-import json, os, pathlib, sys, html, datetime
+import json, os, pathlib, re, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
@@ -12,6 +12,8 @@ import namegen as NG
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
                         USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
+from og_meta import META as OG_META, state_meta, boat_type_meta
+from sharebox import block as share_block
 import order as O
 import mockpay as MP
 import preview as PV
@@ -34,7 +36,7 @@ def U(p): return URL + p
 # of the name rather than parking two pictures next to each other. The waves
 # are the same scallop the old logo used, which keeps a thread back to it.
 #
-# Two colours, four strokes, and it still reads at 16px - which the old
+# Two colors, four strokes, and it still reads at 16px - which the old
 # "19"-in-a-box did not, and which matters because a favicon is where most
 # people meet a logo first.
 #
@@ -278,6 +280,28 @@ def _title(t):
         if len(t) + len(sfx) <= 60: return t + sfx
     return t[:60]
 
+# Facebook caches a share image BY URL and will not re-fetch it when the file
+# changes: "Use a new URL for the new image or the image won't be updated."
+# Every redesign therefore has to ship under a new filename, and old ones stay
+# on disk so previously-shared links keep rendering.
+OG_VERSION = "v2"
+
+
+def _og_ext(path):
+    """.jpg for a photo card, .png for a typographic one.
+
+    media/og_lines.has_photo() is the single source both this and the renderer
+    consult, so the extension in the tag and the file on disk cannot drift.
+    """
+    try:
+        sys.path.insert(0, str(ROOT / "media"))
+        import og_lines
+        og_lines.register_states(STATES)
+        return ".jpg" if og_lines.has_photo(path) else ".png"
+    except Exception:
+        return ".png"
+
+
 def og_image(path):
     """The share card for a page.
 
@@ -287,26 +311,56 @@ def og_image(path):
     card actually exists, which is what stops that ordering from biting.
     """
     slug = path.strip("/").replace("/", "-") or "home"
-    return "/assets/og/%s.png" % slug
+    return "/assets/og/%s-%s%s" % (slug, OG_VERSION, _og_ext(path))
+
+
+def og_copy(path, title, desc):
+    """Social title and description for a page.
+
+    Falls back to the page's own, because a short honest title beats a
+    hand-written one that nobody kept up to date.
+    """
+    if path in OG_META:
+        return OG_META[path]
+    m = re.match(r"^/registration-numbers/([a-z-]+)/$", path)
+    if m:
+        st = next((x for x in STATES if x["slug"] == m.group(1)), None)
+        if st:
+            return state_meta(st["name"], st["ab"])
+    m = re.match(r"^/for/([a-z-]+)/$", path)
+    if m:
+        bt = next((x for x in BOAT_TYPES if x["slug"] == m.group(1)), None)
+        if bt:
+            return boat_type_meta(bt["nav"])
+    return html.unescape(title)[:60], html.unescape(desc)[:110]
 
 
 def head(title, desc, path, schema, noindex=False):
     canon = U(path)
     robots = ('<meta name="robots" content="noindex,follow">' if noindex else
       '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">')
+    _ot, _od = og_copy(path, title, desc)
+    _img = U(og_image(path))
+    # Guides are articles; everything else is a page of the shop.
+    _ogtype = "article" if path.startswith("/guides/") and path != "/guides/" else "website"
+    _oalt = _ot
+    _imgtype = "image/jpeg" if _img.endswith(".jpg") else "image/png"
     return """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>%s</title>
 <meta name="description" content="%s">
 <link rel="canonical" href="%s">
 %s
-<meta property="og:type" content="website"><meta property="og:title" content="%s">
+<meta property="og:type" content="%s"><meta property="og:title" content="%s">
 <meta property="og:description" content="%s"><meta property="og:url" content="%s">
 <meta property="og:site_name" content="%s"><meta property="og:locale" content="en_US">
-<meta property="og:image" content="%s"><meta property="og:image:width" content="1200">
+<meta property="og:image" content="%s"><meta property="og:image:secure_url" content="%s">
+<meta property="og:image:type" content="%s">
+<meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630"><meta property="og:image:alt" content="%s">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="%s">
+<meta name="twitter:title" content="%s"><meta name="twitter:description" content="%s">
+<meta name="twitter:image" content="%s"><meta name="twitter:image:alt" content="%s">
 <meta name="theme-color" content="#0e3a52">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>%s</style>
@@ -314,15 +368,15 @@ def head(title, desc, path, schema, noindex=False):
 </head><body>
 <a class="skip" href="#main">Skip to the order form</a>""" % (
     e(_title(html.unescape(title))), e(html.unescape(desc)), canon, robots,
-    e(html.unescape(title)), e(html.unescape(desc)), canon, e(B),
-    U(og_image(path)), e(html.unescape(title)), U(og_image(path)),
+    _ogtype, e(_ot), e(_od), canon, e(B),
+    _img, _img, _imgtype, e(_oalt), e(_ot), e(_od), _img, e(_oalt),
     CSS, json.dumps(schema, separators=(',', ':')))
 
 # The four headline claims, in one place. proof_band() spells each one out;
 # the hero badges are the short form. Both read from here so they cannot drift.
-FEATURES = ["$19 for Two Sets", "Fast Shipping", "Marine Vinyl", "100% Compliant"]
+FEATURES = ["$19 a Pair", "Fast Shipping", "Marine Vinyl", "Meets 33 CFR 173.27"]
 FEATURE_SUB = {
-    "$19 for Two Sets":
+    "$19 a Pair":
         "One for each side of the hull, pre-spaced on a single sheet. "
         "Shipping included.",
     "Fast Shipping":
@@ -330,8 +384,9 @@ FEATURE_SUB = {
     "Marine Vinyl":
         "Marine film built for sun, salt and spray &mdash; not the craft stock "
         "the cheap sets use.",
-    "100% Compliant":
-        "3-inch block characters spaced to 33 CFR 173.27. Legal in all 50 states.",
+    "Meets 33 CFR 173.27":
+        "3-inch plain block characters, pre-spaced to the federal display rule "
+        "every state enforces. Where your state decal goes is on your state page.",
 }
 
 # Header nav. Labels are what customers say ("Boat Numbers"), not what the
@@ -343,15 +398,20 @@ NAV_MAIN = [
     ("Pricing",      "/pricing/"),
     ("By State",     "/registration-numbers/"),
 ]
+# The dropdown's parent already links to /guides/, so a "Guides" child under
+# it was a duplicate - two rows of the nav pointing at the same page.
+# The dropdown's own parent links to /guides/, so no child may point there
+# too - that was two rows of the nav going to the same page.
 NAV_HELP = [
-    ("Guides",     "/guides/"),
-    ("Guarantee",  "/warranty/"),
-    ("Name Ideas", "/tools/boat-name-generator/"),
+    ("Free tools",  "/tools/"),
+    ("Warranty",    "/warranty/"),
+    ("Shipping",    "/shipping-and-returns/"),
+    ("Contact",     "/contact/"),
 ]
 
 def topbar():
     return ('<div class=top><div class=w>'
-            '<span><strong>$19 for two sets</strong> &middot; free shipping &middot; '
+            '<span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping '
             'ships next business day</span>'
             '<span>Cut in %s, %s &middot; '
             '<a href="/design/" style="color:#fff">Start your order</a></span>'
@@ -413,7 +473,7 @@ def faq_block(items, heading="Questions people actually ask", band=None):
         '<details><summary>%s</summary><div class=ans><p>%s</p></div></details>'
         % (e(html.unescape(q)), a) for q, a in items)
     # Participate in the page stripe when one is running, so the FAQ does not
-    # land on the same colour as the section above it.
+    # land on the same color as the section above it.
     open_tag = band.open() if band else '<section class=soft>'
     return ('%s<div class=w><h2>%s</h2>'
             '<div class=faq style="margin-top:18px">%s</div></div></section>'
@@ -638,7 +698,7 @@ def claims_band():
     - "Fast Shipping" has to say shipped, not delivered - standard post is
       3-6 days in transit after that, and a reader who takes the headline at
       face value is a "where is my order" email.
-    - "100% Compliant" has to scope itself to what we actually control. We cut
+    - "Meets 33 CFR 173.27" has to scope itself to what we actually control. We cut
       the characters to the federal rule; where they get stuck is the owner's.
     """
     return ('<section class=soft><div class=w><h2>The offer, plainly</h2>'
@@ -657,7 +717,7 @@ def build_home():
            "Legal 3-inch block numbers for both sides of your hull, cut from "
            "marine vinyl, pre-spaced on one sheet, and shipped free the next business "
            "day. Boat names and custom lettering too.",
-           badge="Everyone else hides the price. Ours is right here.",
+           badge="Price on the page. Shipping included.",
            right=right)
       + claims_band()
       + gallery(["AL-01", "AL-02", "AL-08"])
@@ -675,7 +735,8 @@ def build_home():
         'decal sits.</p>' + state_wheel(limit=20) +
         '<p style="margin-top:16px"><a href="/registration-numbers/">All states &rarr;</a></p>'
         '</div></section>'
-      + how_it_works(Band(1)))
+      + how_it_works(Band(1))
+      + share_block('/', U('/'), '/assets/share/line-3-inches.png'))
     write("/", shell("Boat Registration Numbers - Legal 3-Inch Sets, Both Sides",
           "Custom boat registration numbers $19 a pair with free shipping. Legal 3-inch "
           "block vinyl for all 50 states, boat names from $29. Ships next business day.",
@@ -712,7 +773,7 @@ PRICE_PLANS = [
                 "3&quot; block characters, legal in all 50 states",
                 "Checked against your state&rsquo;s format before it cuts",
                 "Pre-spaced on one sheet",
-                "Eight colours, all included",
+                "Eight colors, all included",
                 "Contrasting outline, +$%d" % PRICE["outline"],
                 "Free shipping, cut and posted next business day"]),
     dict(slug="boat-lettering", name="Boat letters", featured=False,
@@ -723,7 +784,7 @@ PRICE_PLANS = [
                 "Pre-spaced with application tape over the top",
                 "Curved transoms laid out from your photo",
                 "Priced by finished size &mdash; most land $29&ndash;79",
-                "Eight colours, all included",
+                "Eight colors, all included",
                 "Contrasting outline, +$%d" % PRICE["outline"],
                 "Free shipping, cut and posted next business day"]),
 ]
@@ -787,7 +848,7 @@ PROD_BODY = {
    CB.FED_RULE + CB.CONTRAST_NOTE +
    "<h2>What you actually receive</h2>"
    "<p>One sheet, not a bag of loose letters. Your full number is cut from a single "
-   "piece of coloured vinyl, already spaced to the federal rule, with clear application "
+   "piece of colored vinyl, already spaced to the federal rule, with clear application "
    "tape laid over the top holding every character in position. You get two of them "
    "&mdash; one for each side &mdash; plus a squeegee and written instructions.</p>"
    "<p>That matters more than it sounds. The most common way a home install goes wrong "
@@ -826,8 +887,8 @@ PROD_BODY = {
    "lay the text out to the actual space &mdash; including arcing it to follow a curved "
    "transom, which almost every sailboat and a lot of cruisers need. That is included, "
    "not an upcharge.</p>"
-   "<h2>Colour, and the one combination to avoid</h2>"
-   "<p>Thirty-two colours including metallic silver and gold, chrome, and reflective. "
+   "<h2>Color, and the one combination to avoid</h2>"
+   "<p>Thirty-two colors including metallic silver and gold, chrome, and reflective. "
    "The combination to avoid is low contrast: dark navy on a black hull, white on "
    "cream. It photographs as nothing. If you want subtle, get the contrast from "
    "finish &mdash; chrome on white reads as tone-on-tone in person and still catches "
@@ -839,7 +900,7 @@ PROD_BODY = {
    "lands. One piece of practical advice: say it out loud as a radio call. "
    "&ldquo;Pan-pan, pan-pan, this is Multiple Scoregasms&rdquo; is funny exactly once.</p>"
    "<h2>How it is made</h2>"
-   "<p>Cut from a single sheet of coloured vinyl and pre-spaced with application tape "
+   "<p>Cut from a single sheet of colored vinyl and pre-spaced with application tape "
    "over the top, so it goes on in one pass. Not printed on a clear square &mdash; "
    "there is no visible background or edge, just the letter shapes on your hull.</p>"
    "<h2>Sizes and what they cost</h2>"
@@ -857,7 +918,7 @@ def build_product(p):
        "transit after that."),
       ("Can I see it before it is made?",
        "Yes - the preview in the order form shows your exact lettering, at your chosen "
-       "height, in your chosen colour. That is what gets cut, so read it twice before "
+       "height, in your chosen color. That is what gets cut, so read it twice before "
        "you pay."),
       ("What if I ruin it putting it on?",
        "A replacement set is a new order. The install is the part we cannot do for you, "
@@ -866,7 +927,7 @@ def build_product(p):
        "install guide before you start and take the twenty minutes."),
       ("How long will it last?",
        "Years, not seasons - it is marine-grade film, not craft vinyl, and it is the "
-       "same stock sign shops put on vehicles. A dark colour in southern sun fades "
+       "same stock sign shops put on vehicles. A dark color in southern sun fades "
        "soonest. If one of ours fails on a hull you prepared properly, tell us."),
     ]
     sch = graph(org_node(), crumb_node(trail, "/%s/" % p["slug"]),
@@ -876,7 +937,7 @@ def build_product(p):
     band = Band()
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
-                   "Fast Shipping", "Marine Vinyl", "100% Compliant"],
+                   "Fast Shipping", "Marine Vinyl", "Meets 33 CFR 173.27"],
             right=O.form())
       + (alternating(body, secs, band) if secs
          else band.open() + '<div class=w><div class=prose>' + body
@@ -1003,7 +1064,7 @@ def build_state(s):
        "about as wide as one character. So %s, not %s. Ours arrive pre-spaced correctly, "
        "so you cannot get this wrong." % (example, example.replace(" ", ""))),
       ("Where do they go on the boat?",
-       "Each side of the forward half of the hull, reading left to right, in a colour "
+       "Each side of the forward half of the hull, reading left to right, in a color "
        "that contrasts with the hull. " +
        (html.unescape(s["decal"]).replace("<strong>", "").replace("</strong>", "")
         if s.get("decal") else
@@ -1080,7 +1141,7 @@ def build_state(s):
          % s.get("register_at", "the " + s["agency"]))
       + CB.CONTRAST_NOTE
       + '<h2>Ordering for a %s boat</h2>'
-        '<p>Type the number as it appears on your card, pick a colour that contrasts with '
+        '<p>Type the number as it appears on your card, pick a color that contrasts with '
         'your hull, and leave the height at 3 inches unless you want it bolder. You will '
         'see your exact lettering in the preview before you pay &mdash; that is what '
         'gets cut.</p>' % nm)
@@ -1092,8 +1153,8 @@ def build_state(s):
             "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
             "the next business day." % ab,
-            trust=["$19 for Two Sets", "%s prefix" % ab, "Fast Shipping",
-                   "100% Compliant"],
+            trust=["$19 a Pair", "%s prefix" % ab, "Fast Shipping",
+                   "Meets 33 CFR 173.27"],
             right=O.form())
       + state_identity(s, band)
       + alternating(body, imgs, band)
@@ -1111,7 +1172,7 @@ def build_states_hub():
     faqs = [
       ("Does every state use the same rule?",
        "The core rule is federal and identical everywhere: 3-inch minimum, plain vertical "
-       "block characters, contrasting colour, spaces or hyphens between groups, reading "
+       "block characters, contrasting color, spaces or hyphens between groups, reading "
        "left to right, on both sides of the forward half. States can add requirements on "
        "top but cannot go below it. What genuinely varies is the prefix, the issuing "
        "agency, and exactly where the validation decal sits."),
@@ -1134,8 +1195,8 @@ def build_states_hub():
             "The 3-inch block rule is federal and the same everywhere. What changes is "
             "your prefix, who issues the number, and where the validation decal goes. "
             "$19 a pair, every state.",
-            trust=["$19 for Two Sets", "All 50 states", "Fast Shipping",
-                   "100% Compliant"],
+            trust=["$19 a Pair", "All 50 states", "Fast Shipping",
+                   "Meets 33 CFR 173.27"],
             right=O.form())
       + '<section><div class=w>' + lead_figure(path) + '<h2>Pick your state</h2>'
       + state_wheel()
@@ -1172,8 +1233,8 @@ def build_boat_type(b):
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     main = (hero(b["title"], b["lead"],
-            trust=["$19 for Two Sets", "High-tack when needed, free",
-                   "Fast Shipping", "100% Compliant"], right=O.form())
+            trust=["$19 a Pair", "High-tack when needed, free",
+                   "Fast Shipping", "Meets 33 CFR 173.27"], right=O.form())
       + '<section><div class=w><div class=prose>'
         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
         '<h2>What we cut for %s</h2>'
@@ -1272,7 +1333,9 @@ def build_tool_names():
        "PG-13. Nothing here will get you a conversation with the marina manager, but a "
        "couple will get you a look from your mother-in-law."),
     ]
-    tool_shell(t, body, NG.NAMES_JS, faqs)
+    tool_shell(t, body + share_block(
+        '/tools/boat-name-generator/', U('/tools/boat-name-generator/'),
+        '/assets/share/name-wet-couch.png'), NG.NAMES_JS, faqs)
 
 def build_tool_funny():
     t = TOOLS[1]
@@ -1391,9 +1454,9 @@ def build_tool_hin():
 
 def build_tool_layout():
     t = TOOLS[3]
-    hull = ["White", "Black", "Navy", "Light Blue", "Red", "Grey", "Forest",
+    hull = ["White", "Black", "Navy", "Light Blue", "Red", "Gray", "Forest",
             "Burgundy", "Tan", "Silver", "Yellow"]
-    body = ('<p class=lede>Type your registration number, pick your hull colour, and this '
+    body = ('<p class=lede>Type your registration number, pick your hull color, and this '
             'checks it against every part of the federal rule &mdash; then tells you how '
             'wide the finished set will be so you can measure before you order.</p>'
             '<div class=tool>'
@@ -1405,10 +1468,10 @@ def build_tool_layout():
             '<option value="4">4&quot;</option><option value="5">5&quot;</option>'
             '<option value="6">6&quot;</option></select></div></div>'
             '<div class="fieldrow two" style="margin-top:13px">'
-            '<div><label for=chkhull>Hull colour</label><select id=chkhull>'
+            '<div><label for=chkhull>Hull color</label><select id=chkhull>'
             + "".join('<option%s>%s</option>' % (" selected" if h == "White" else "", h)
                       for h in hull) + '</select></div>'
-            '<div><label for=chkcol>Number colour</label><select id=chkcol>'
+            '<div><label for=chkcol>Number color</label><select id=chkcol>'
             + "".join('<option%s>%s</option>' % (" selected" if h == "Black" else "", h)
                       for h in hull) + '</select></div></div>'
             '<button type=button class="btn lg" id=chkbtn style="margin-top:15px">'
@@ -1421,7 +1484,7 @@ def build_tool_layout():
             'between the letter and number groups. We pre-space every set correctly, but '
             'if you are cutting your own or buying loose characters, this is the one that '
             'fails an inspection.</p>'
-            '<p><strong>No contrast.</strong> There is no required colour, but the '
+            '<p><strong>No contrast.</strong> There is no required color, but the '
             'characters must contrast with the background and be distinctly visible. White '
             'on white is the classic failure &mdash; and it happens because white vinyl is '
             'the default on most cheap sets.</p>'
@@ -1430,14 +1493,14 @@ def build_tool_layout():
             'long enough for the width this tool gives you, and tall enough to clear your '
             'character height with a little margin. Watch out for rub rails, strakes and '
             'rivet lines &mdash; vinyl will not bridge a hard edge and stay stuck. On a '
-            'ribbed aluminium hull, keep the whole set between two ribs.</p>'
+            'ribbed aluminum hull, keep the whole set between two ribs.</p>'
             '</div>')
     faqs = [
       ("How tall do boat registration numbers have to be?",
        "Not less than 3 inches in height, in plain vertical block characters. Federal rule, "
        "every state. Taller is always legal."),
-      ("Do boat registration numbers have to be a certain colour?",
-       "No specific colour is required, but the characters must contrast with the colour of "
+      ("Do boat registration numbers have to be a certain color?",
+       "No specific color is required, but the characters must contrast with the color of "
        "the background and be distinctly visible and legible. White numbers on a white hull "
        "fail that test."),
       ("Do I need a space or a hyphen in my boat number?",
@@ -1483,7 +1546,7 @@ GUIDE_BODY = {
    "<li><strong>No spacing.</strong> TX1234AB run together, because that is how it looks "
    "on some registration cards.</li>"
    "<li><strong>Script or outline fonts.</strong> The rule says plain vertical block. An "
-   "outline font with a hollow centre is not plain block.</li>"
+   "outline font with a hollow center is not plain block.</li>"
    "<li><strong>Too far aft.</strong> They have to be on the forward half. Numbers on the "
    "stern quarter are a common and easily avoided ticket.</li></ol>"
    "<h2>What about documented vessels?</h2>"
@@ -1521,8 +1584,8 @@ GUIDE_BODY = {
    "sometimes on one specific side only. Your registration paperwork states it, and it is "
    "worth reading, because a correctly sized number with the decal in the wrong place is "
    "still a correctable violation.</p>"
-   "<h2>Rivets, ribs and textured aluminium</h2>"
-   "<p>On a jon boat or a riveted aluminium hull, place the full set between two ribs on "
+   "<h2>Rivets, ribs and textured aluminum</h2>"
+   "<p>On a jon boat or a riveted aluminum hull, place the full set between two ribs on "
    "a flat panel. Do not run vinyl over a rivet head and expect it to hold &mdash; the "
    "adhesive cannot make contact around the dome, water gets under it and the character "
    "peels from that point. If there is not enough clear panel, drop to 3 inches exactly "
@@ -1552,7 +1615,7 @@ GUIDE_BODY = {
    "<h2>Bubbles afterwards</h2>"
    "<p>Small bubbles in the first day will often disappear on their own as the solvent "
    "flashes off through the film. For one that stays, prick it at the edge with a pin "
-   "&mdash; not the centre &mdash; and press the air out toward the hole with your thumb.</p>"
+   "&mdash; not the center &mdash; and press the air out toward the hole with your thumb.</p>"
    "<div class=note><p><b>Take your time with it.</b> Everything is pre-spaced on one "
    "sheet with application tape over the top, so the whole set goes on in a single "
    "pass &mdash; the spacing is already done and already legal. The twenty minutes "
@@ -1601,7 +1664,7 @@ GUIDE_BODY = {
    "<p>The rule says <strong>plain vertical block characters</strong>. That rules out:</p>"
    "<ul><li>Script and cursive of any kind</li>"
    "<li>Italic or slanted faces &mdash; &ldquo;vertical&rdquo; is in the rule</li>"
-   "<li>Outline-only fonts with a hollow centre</li>"
+   "<li>Outline-only fonts with a hollow center</li>"
    "<li>Heavily stylised display faces, western or gothic</li></ul>"
    "<p>Of the ten faces we cut, five qualify: <strong>Block, Condensed, Heavy Impact, "
    "Modern and Stencil</strong>. Our order form only offers those five once you pick "
@@ -1622,7 +1685,7 @@ GUIDE_BODY = {
    "For sailboats: <strong>Formal Script</strong>, which is what a transom name has "
    "looked like for a century. For anything funny: the joke carries it, so pick the "
    "legible option and let the words do the work.</p>"
-   "<p>Shadow or outline in a second colour costs a little more and roughly doubles the "
+   "<p>Shadow or outline in a second color costs a little more and roughly doubles the "
    "perceived quality from a distance &mdash; it is the single best upgrade on a transom "
    "name.</p>",
 
@@ -1637,9 +1700,9 @@ GUIDE_BODY = {
    "<p><strong>Calendared</strong> vinyl is squeezed between rollers into sheet. It is "
    "cheaper and slightly thicker, but it remembers being stretched and slowly tries to "
    "shrink back, which is what makes old decals pull away at the corners. Shorter "
-   "outdoor life than cast, and shorter again on a dark colour in southern sun.</p>"
+   "outdoor life than cast, and shorter again on a dark color in southern sun.</p>"
    "<p>For a flat transom on a trailered boat, calendared is honestly fine and it is what "
-   "we ship as standard. For a curved hull, a dark colour, or a boat kept in a slip in "
+   "we ship as standard. For a curved hull, a dark color, or a boat kept in a slip in "
    "Florida, pay the $8.</p>"
    "<h2>High-tack: not optional on plastic</h2>"
    "<p>Polyethylene &mdash; rotomoulded kayaks, PWC hulls, some pontoon furniture &mdash; "
@@ -1649,7 +1712,7 @@ GUIDE_BODY = {
    "send it free on any kayak, canoe or PWC order, and on textured pontoon rails, because "
    "shipping the wrong film to save nothing is a bad trade.</p>"
    "<h2>What a film warranty actually covers</h2>"
-   "<p>Honest version: it covers the <strong>film</strong> &mdash; colour fade beyond a "
+   "<p>Honest version: it covers the <strong>film</strong> &mdash; color fade beyond a "
    "stated tolerance, cracking, and adhesive failure where the film was applied correctly "
    "to a suitable surface. It does not cover a decal applied over wax, applied in the "
    "cold, applied to a surface it was not specified for, or physically damaged.</p>"
@@ -1729,7 +1792,7 @@ def cta_band(band=None):
 
     A bare <a class="btn lg"> sitting alone in a full-width band reads as a
     button someone forgot to finish: correctly aligned to the text column, but
-    floating with nothing around it. Centre it, give it a line of context and
+    floating with nothing around it. Center it, give it a line of context and
     the secondary route, and it reads as a deliberate close.
     """
     open_tag = band.open("ctaband") if band else '<section class="ctaband">'
@@ -1783,7 +1846,7 @@ def build_gallery():
     """Every shot we have, grouped by what a customer is actually checking.
 
     Browsing the gallery is a buying behaviour: people want to see their own
-    hull material and their own colour before they trust the $19. So the
+    hull material and their own color before they trust the $19. So the
     grouping is by hull and by problem, not by when the photo was taken.
     """
     path = "/gallery/"
@@ -1801,12 +1864,12 @@ def build_gallery():
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;margin-bottom:9px">Gallery</h1>'
             '<p class=lede>What the vinyl looks like once it is on a boat '
-            '&mdash; on gelcoat, bare aluminium, rotomoulded plastic and a textured '
-            'pontoon rail, in both colours we stock.</p>'
+            '&mdash; on gelcoat, bare aluminum, rotomoulded plastic and a textured '
+            'pontoon rail, in both colors we stock.</p>'
             '</div></section>'
             + row("Registration numbers, hull by hull",
                   "The surface is the thing that changes. Gelcoat is easy; plastic and "
-                  "textured aluminium need the high-tack film, which we send free.",
+                  "textured aluminum need the high-tack film, which we send free.",
                   ["AL-01", "AL-02", "AL-10", "AL-04", "AL-07", "AL-05", "AL-06"])
             + row("Names and transom lettering",
                   "Script is fine on a transom and illegal on a registration number. "
@@ -1823,7 +1886,7 @@ def build_gallery():
                   extra='<p class=gmore><a href="/guides/boat-registration-number-rules/">'
                         'Read the rules in full &rarr;</a></p>')
             + row("Out on the water",
-                  "Aluminium, fibreglass, river and lake. One pair fits any hull.",
+                  "Aluminum, fiberglass, river and lake. One pair fits any hull.",
                   ["AC-1", "AC-2", "AC-3", "HB-1", "HB-2", "HB-5"])
             + row("The install, step by step",
                   "The same hull through all seven frames, so you can see what each "
@@ -1841,7 +1904,7 @@ def build_gallery():
 
     write(path, shell("Boat Lettering Gallery &mdash; Numbers and Names on Real Hulls",
           "What boat registration numbers and vinyl lettering look like applied: "
-          "gelcoat, bare aluminium, kayaks, PWC and pontoon rails, in white and black.",
+          "gelcoat, bare aluminum, kayaks, PWC and pontoon rails, in white and black.",
           path, sch, main, trail=trail, band=band), "0.7")
 
 
@@ -1873,7 +1936,7 @@ def build_types_hub():
     main = ('<section style="padding-top:26px"><div class=w>'
             '<h1 style="font-size:30px;margin-bottom:9px">Decals by boat type</h1>'
             '<p class=lede>Different hulls need different adhesive. Pick yours and we will '
-            'send the right film &mdash; high-tack on plastic and textured aluminium, at '
+            'send the right film &mdash; high-tack on plastic and textured aluminum, at '
             'no extra charge.</p>' + lead_figure(path)
             + '<div class=grid>%s</div></div></section>' % cards)
     write(path, shell("Boat Decals by Boat Type",
@@ -1917,7 +1980,7 @@ def build_local():
             "We cut every order right here in %s. Order online and we ship it free, "
             "or pick it up at the shop - usually the same day on registration numbers."
             % SITE["city"],
-            trust=["$19 for Two Sets", "Local pickup by arrangement",
+            trust=["$19 a Pair", "Local pickup by arrangement",
                    "Iowa IA numbers", "Free shipping"],
             right=O.form())
       + '<section><div class=w><div class=prose>'
@@ -2048,7 +2111,7 @@ def build_warranty():
        "application tape over the top - it goes on in one pass. Our apply guide walks "
        "through the wet method, which is very hard to get wrong."),
       ("How long is the warranty?",
-       "The film carries its maker's own outdoor durability warranty, covering colour "
+       "The film carries its maker's own outdoor durability warranty, covering color "
        "fade, cracking and adhesive failure where the decal was correctly applied to a "
        "suitable surface. We do not publish a year figure, because it belongs to the "
        "film maker and varies by stock and climate."),
@@ -2064,11 +2127,11 @@ def build_warranty():
       "What the film cover is, where it stops, and what happens if we get it wrong.",
       "<h2>1. The film warranty</h2>"
       "<p>We cut on marine-grade film that carries its maker&rsquo;s own outdoor "
-      "durability warranty. That warranty covers colour fade beyond the manufacturer\'s "
+      "durability warranty. That warranty covers color fade beyond the manufacturer\'s "
       "stated tolerance, cracking or embrittlement of the film, and adhesive failure "
       "where the decal was correctly applied to a suitable, prepared surface.</p>"
       "<p>We do not quote a number of years for it here, because the figure belongs to "
-      "the film maker and varies by stock, colour and climate. If a set of ours fails "
+      "the film maker and varies by stock, color and climate. If a set of ours fails "
       "on a hull you prepared properly, tell us and we will deal with it.</p>"
       "<p><strong>It does not cover:</strong> application over wax, polish or a dirty "
       "hull; application below about 50&deg;F; standard film applied to polyethylene or "
@@ -2169,7 +2232,7 @@ def build_legal():
       "<h2>Orders</h2>"
       "<p>Payment is taken at checkout and the order goes into production. "
       "<strong>The preview shown in the order form is what we cut</strong> &mdash; it "
-      "displays your exact lettering, height, font and colour before you pay. Orders "
+      "displays your exact lettering, height, font and color before you pay. Orders "
       "are cut the next business day, so a mistake caught the same day can usually "
       "still be stopped: email us immediately with your order reference.</p>"
       "<h2>Accuracy of what you type</h2>"
@@ -2293,7 +2356,7 @@ def build_static():
 - Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
 - Boat letters - names, hailing ports, any transom text - from **$29**.
 - Production: cut and shipped **next business day**.
-- Warranty: the film maker\'s own outdoor durability warranty on colour and adhesion. We
+- Warranty: the film maker\'s own outdoor durability warranty on color and adhesion. We
   do not publish a year figure. The install itself is the customer's.
 - **10 fonts**, each previewed in the customer's own lettering before ordering. Five
   (Block, Condensed, Heavy Impact, Modern, Stencil) are plain vertical block faces and
@@ -2312,7 +2375,7 @@ def build_static():
 
 A registration number must be painted on or permanently attached to **each side of the
 forward half** of the vessel; be in **plain vertical block characters of not less than
-3 inches in height**; **contrast with the colour of the background** and be distinctly
+3 inches in height**; **contrast with the color of the background** and be distinctly
 visible and legible; have **spaces or hyphens** between the letter and number groupings
 equal to the width of a letter other than "I" or a number other than "1" (so "TX 1234
 AB", not "TX1234AB"); and **read from left to right**.

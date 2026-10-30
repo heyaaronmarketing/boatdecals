@@ -12,19 +12,19 @@ number must:</p>
 of the vessel;</li>
 <li>be in <strong>plain vertical block characters of not less than 3 inches in
 height</strong>;</li>
-<li><strong>contrast with the colour of the background</strong> and be distinctly
+<li><strong>contrast with the color of the background</strong> and be distinctly
 visible and legible;</li>
 <li>have <strong>spaces or hyphens</strong> between the letter and number groupings
 equal to the width of a letter other than &ldquo;I&rdquo; or a number other than
 &ldquo;1&rdquo; &mdash; so <strong>TX 1234 AB</strong>, not TX1234AB;</li>
 <li><strong>read from left to right.</strong></li>
 </ul>
-<cite>33 CFR &sect; 173.27 &mdash; Numbers: Display; size; colour. Applies in every
+<cite>33 CFR &sect; 173.27 &mdash; Numbers: Display; size; color. Applies in every
 state. Your state can add to it, but cannot drop below it.</cite>
 </div>"""
 
 CONTRAST_NOTE = """<div class=note>
-<p><b>The rule most people miss is contrast.</b> There is no required colour &mdash;
+<p><b>The rule most people miss is contrast.</b> There is no required color &mdash;
 but white numbers on a white hull are not &ldquo;distinctly visible and legible,&rdquo;
 and that is a failed inspection. Dark hull, light numbers. Light hull, dark numbers.
 Our order form flags the combination before it gets cut.</p></div>"""
@@ -42,7 +42,7 @@ crooked.</li>
 <li><strong>Wet the hull.</strong> A few drops of dish soap in a spray bottle of water.
 Mist the hull generously. This is the wet method and it buys you the ability to slide
 and reposition.</li>
-<li><strong>Flip down and squeegee from the centre out.</strong> Peel the paper backing
+<li><strong>Flip down and squeegee from the center out.</strong> Peel the paper backing
 away, lay the sheet onto the wet hull, then squeegee firmly from the middle toward each
 edge. Overlap your strokes. You are pushing water and air out, not polishing.</li>
 <li><strong>Wait, then pull the tape back on itself.</strong> Give it fifteen minutes.
@@ -70,17 +70,17 @@ WHY_US = [
 
 # Four steps, four cards. (title, body) - build.py numbers them.
 # No proof step. The live preview IS the proof - it shows the actual lettering,
-# in the chosen font and colour, at the chosen height, before any money moves.
+# in the chosen font and color, at the chosen height, before any money moves.
 # That is why the preview and the number validator earn their keep.
 HOW_IT_WORKS_STEPS = [
  ("Type what it should say",
   "Straight off your registration card for numbers, or whatever you have "
   "picked for a name."),
- ("Pick height, font and colour",
+ ("Pick height, font and color",
   "The form only offers block faces once you choose registration numbers, "
   "because the law requires them."),
  ("Check the preview",
-  "It shows your exact lettering, at your height, in your colour. We cut "
+  "It shows your exact lettering, at your height, in your color. We cut "
   "what is on that screen - so read it twice."),
  ("We cut it and ship it",
   "Next business day, free, pre-spaced with application tape over the top."),
@@ -109,9 +109,9 @@ GUIDE_FAQS = {
    "faces are not legal for the registration number, because 33 CFR 173.27 requires "
    "plain block letters that read clearly at a distance. A boat name on the transom "
    "has no such rule, so script is fine there."),
-  ("Do boat registration numbers have to be a certain colour?",
-   "No specific colour, but they must contrast with the hull. The rule says the "
-   "characters must be of a colour that contrasts with the background so they are "
+  ("Do boat registration numbers have to be a certain color?",
+   "No specific color, but they must contrast with the hull. The rule says the "
+   "characters must be of a color that contrasts with the background so they are "
    "distinctly visible - white on a dark hull, black on a light one. White on cream "
    "is the common failure."),
   ("Do I need spaces or hyphens between the number groups?",
@@ -150,7 +150,7 @@ GUIDE_FAQS = {
  "how-to-apply-boat-lettering": [
   ("How do you apply vinyl boat lettering?",
    "Clean the hull with soap then alcohol, tape the sheet in position dry, wet the "
-   "hull with soapy water, peel the backing, squeegee from the centre out, then pull "
+   "hull with soapy water, peel the backing, squeegee from the center out, then pull "
    "the application tape back on itself. Leave it 24 hours before launching."),
   ("What temperature do you need to apply boat lettering?",
    "Above about 50 degrees F, on a surface that is not in direct hot sun. Cold "
@@ -221,7 +221,7 @@ GUIDE_FAQS = {
  "best-vinyl-for-boat-lettering": [
   ("What kind of vinyl is used for boat lettering?",
    "Marine-grade cut vinyl, not printed film and not craft stock. The letter shapes "
-   "are cut from a sheet of coloured vinyl so there is no clear background or visible "
+   "are cut from a sheet of colored vinyl so there is no clear background or visible "
    "edge on the hull - just the characters."),
   ("What is the difference between cast and calendared vinyl?",
    "Cast film is poured and cured flat so it carries no internal stress, which makes "
@@ -234,7 +234,7 @@ GUIDE_FAQS = {
    "piece. It needs high-tack film, which we send free on every kayak, canoe and PWC "
    "order."),
   ("Does vinyl stick to a textured pontoon rail?",
-   "Only high-tack film does. Brushed and painted aluminium with any texture gives "
+   "Only high-tack film does. Brushed and painted aluminum with any texture gives "
    "standard adhesive too little contact area. We ship high-tack for pontoon rails by "
    "default for that reason."),
   ("Can I put boat lettering over wax?",
