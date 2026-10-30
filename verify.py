@@ -224,17 +224,6 @@ for _f in OUT.rglob("*"):
             fails.append("stale brand 'Boat Number Shop' in %s - read it from "
                          "SITE[\"brand\"]" % _f.relative_to(OUT))
 
-# The finish is the upsell, so the browser and the worker must agree on what
-# it costs. A price the customer sees and a price the server charges that
-# differ is the one bug nobody forgives.
-from content import FINISH_ADD as _FIN
-for _k, _add in _FIN.items():
-    if '"%s": %d' % (_k, _add) not in wjs:
-        fails.append("worker FINISH_ADD missing or mismatched: %s = %d"
-                     % (_k, _add))
-if "n += FINISH_ADD[" not in wjs:
-    fails.append("worker priceOf() no longer adds the finish")
-
 # Two `function x()` declarations in the same scope do not error - the later
 # one silently replaces the first. A second `function finish()` once replaced
 # the order-submission `finish(extra)`, so payload() called the finish

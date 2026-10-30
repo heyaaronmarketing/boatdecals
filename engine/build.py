@@ -12,7 +12,6 @@ import namegen as NG
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
                         USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
-from content import FINISHES
 import order as O
 import mockpay as MP
 import preview as PV
@@ -697,7 +696,7 @@ PRICE_PLANS = [
                 "3&quot; block characters, legal in all 50 states",
                 "Checked against your state&rsquo;s format before it cuts",
                 "Pre-spaced on one sheet",
-                "White or black included, 20 colours and outlines extra",
+                "Eight colours, all included",
                 "Free shipping, cut and posted next business day"]),
     dict(slug="boat-lettering", name="Boat letters", featured=False,
          price="$29", unit="to start",
@@ -707,7 +706,7 @@ PRICE_PLANS = [
                 "Pre-spaced with application tape over the top",
                 "Curved transoms laid out from your photo",
                 "Priced by finished size &mdash; most land $29&ndash;79",
-                "White or black included, 20 colours and outlines extra",
+                "Eight colours, all included",
                 "Free shipping, cut and posted next business day"]),
 ]
 
@@ -728,29 +727,6 @@ def plan_table():
                '<span class=planflag>Most ordered</span>' if pl["featured"] else "",
                pl["name"], pl["line"], pl["price"], pl["unit"], feats, pl["slug"]))
     return '<div class=plangrid>%s</div>' % "".join(cards)
-
-
-def finish_rows():
-    """The upsell table. The copy has to justify the money or it reads as a
-    surcharge: colour is a part-roll and a colour change, an outline is a
-    whole second layer that has to register against the first."""
-    why = {
-      "standard": "White or black, cut from the rolls we keep loaded. What the "
-                  "law cares about is contrast, and on most hulls one of these "
-                  "two is the right answer.",
-      "colour": "Any of twenty marine colours &mdash; navy, red, burgundy, "
-                "teal, metallic silver and gold, chrome. One layer of vinyl, "
-                "cut from stock rather than the rolls already on the machine.",
-      "outline": "Two layers. The characters are cut in your colour, then a "
-                 "contrasting outline is cut slightly larger and registered "
-                 "behind them, so every letter carries a border. Twice the "
-                 "material and twice the weeding, and it is what makes a name "
-                 "read from the next slip.",
-    }
-    return "".join(
-      '<tr><td><strong>%s</strong></td><td>%s</td><td>%s</td></tr>'
-      % (label, why[key], "Included" if add == 0 else "+$%d" % add)
-      for key, label, add, _blurb in FINISHES)
 
 
 def build_pricing():
@@ -780,15 +756,7 @@ def build_pricing():
       'Every price includes free standard shipping in the USA.</p>'
       + plan_table()
       + '</div></section>'
-      + '<section class=soft><div class=w><h2>Make it yours</h2>'
-        '<p class=lede>Every price above is for white or black, which is what most '
-        'hulls want. These two are the exceptions &mdash; and the order form draws '
-        'both live, in your own lettering, before you decide.</p>'
-        '<div class=tw><table><thead><tr><th>Finish</th><th>What it is</th>'
-        '<th>Cost</th></tr></thead><tbody>' + finish_rows() + '</tbody></table></div>'
-        '<p style="margin-top:14px"><a class=ctalink href="/design/">'
-        'See it on your own number &rarr;</a></p>'
-        '</div></section>')
+      + '</div></section>')
     write("/pricing/", shell("Boat Lettering &amp; Registration Number Prices",
           "Boat registration numbers $19 a pair, boat names from $29, custom lettering "
           "from $29. Free shipping, next-business-day production.",

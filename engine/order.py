@@ -22,8 +22,7 @@ Anti-fatigue rules this file holds to:
 Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
-from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES,
-                     FINISHES, PALETTE)
+from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES)
 import preview as PV
 
 HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better"),
@@ -64,38 +63,24 @@ def _thumb(key):
             % _KICON[key])
 
 
-def _colors(prefix, names=None, checked="Black"):
-    """Named swatches rather than bare chips - at this size a white chip and a
-    light-grey chip are hard to tell apart.
+def _colors(prefix="color"):
+    """Eight chips in a row. That is the whole control.
 
-    `names` controls which colours appear. The first two (white and black) are
-    always shown; the rest carry data-paid so the form can hide them until a
-    paid finish is picked, rather than offering twenty colours and then
-    charging for eighteen of them at the end.
+    The name is NOT printed under every chip - eight labels is eight things to
+    read before picking a colour. The chip you have selected is named once, in
+    the line underneath, and the preview above is already showing it on your
+    own lettering. Each input still carries an aria-label so a screen reader
+    gets the name without the sighted layout paying for it.
     """
-    order = names or ORDER_COLORS
-    picks = [c for c in COLORS if c[0] in order]
-    picks.sort(key=lambda c: order.index(c[0]))
-    out = []
-    for name, hexv, light in picks:
-        paid = name not in ORDER_COLORS
-        out.append(
-          '<label class="csw%s"%s><input type=radio name="%s" value="%s" '
-          'data-hex="%s" data-light="%d"%s><span class=cswbox>'
-          '<i style="background:%s"></i>%s</span></label>'
-          % (" paidsw" if paid else "", " data-paid=1" if paid else "",
-             prefix, name, hexv, light,
-             " checked" if name == checked else "", hexv, name))
-    return "".join(out)
-
-
-def _finishes():
+    picks = [c for c in COLORS if c[0] in ORDER_COLORS]
+    picks.sort(key=lambda c: ORDER_COLORS.index(c[0]))
     return "".join(
-      '<label class=fin><input type=radio name=finish value="%s" data-add="%d"%s>'
-      '<span class=finbox><b>%s</b><em>%s</em><i>%s</i></span></label>'
-      % (key, add, " checked" if add == 0 else "", label, blurb,
-         "Included" if add == 0 else "+$%d" % add)
-      for key, label, add, blurb in FINISHES)
+        '<label class=csw title="%s"><input type=radio name="%s" value="%s" '
+        'data-hex="%s" data-light="%d" aria-label="%s"%s>'
+        '<span class=cswdot style="background:%s"></span></label>'
+        % (name, prefix, name, hexv, light, name,
+           " checked" if name == "Black" else "", hexv)
+        for name, hexv, light in picks)
 
 
 def form():
@@ -122,7 +107,7 @@ def form():
            '<span class=flag>%s</span>' % flag if flag else "",
            _thumb(key), label, blurb, price)
         for val, base, blurb, price, flag, key, label in KINDS)
-    cols = _colors("color", PALETTE)
+    cols = _colors()
 
     markup = ("""
 <div id=order class="panel wiz">
@@ -177,20 +162,10 @@ def form():
   <section class=step data-step="3">
     <h2>How should it look?</h2>
     
-    <fieldset><legend>Finish</legend>
-      <div class=finrow>""" + _finishes() + """</div>
-    </fieldset>
     <fieldset><legend>Colour</legend>
       <div class=swrow id=swrow>""" + cols + """</div>
-      <div class=hint>White on a dark hull, black on a light one &mdash; the law
-        wants contrast.</div>
-    </fieldset>
-    <fieldset id=outwrap hidden><legend>Outline colour</legend>
-      <div class=swrow id=outrow>""" + _colors("outline_color", PALETTE, "White")
-      + """</div>
-      <div class=hint>Cut behind the characters and slightly larger, so it
-        reads as a border. Pick something that fights the hull, not the
-        letters.</div>
+      <div class=hint><b id=colorname>Black</b> &mdash; white on a dark hull,
+        black on a light one. The law wants contrast, nothing more.</div>
     </fieldset>
     <fieldset><legend>Character height</legend>
       <div class=opts>""" + heights + """</div>
@@ -303,7 +278,6 @@ JS = r"""
     var h=val('height'); if(h) n+=parseFloat(h.dataset.add||0);
     var ups=W.querySelectorAll('[name=upgrade]:checked');
     for(var i=0;i<ups.length;i++) n+=parseFloat(ups[i].dataset.add||0);
-    var f=val('finish'); if(f) n+=parseFloat(f.dataset.add||0);
     return Math.round(n);
   }
 
@@ -315,51 +289,23 @@ JS = r"""
     return v.fixed || raw;
   }
 
-  function finishKind(){ var f=val('finish'); return f?f.value:'standard'; }
-
-  /** Paid colours stay hidden on the standard finish.
-   *
-   *  Showing twenty swatches and then adding $7 at checkout because the
-   *  customer happened to pick teal is the kind of thing that gets a card
-   *  abandoned. The price is attached to the choice that costs money, and the
-   *  swatches appear the moment that choice is made.
-   */
-  function syncFinish(){
-    var paid = finishKind()!=='standard';
-    W.querySelectorAll('#swrow [data-paid]').forEach(function(l){ l.hidden=!paid; });
-    $('outwrap').hidden = finishKind()!=='outline';
-    // falling back to a free finish must not leave a paid colour selected
-    if(!paid){
-      var c=val('color');
-      if(c && c.parentNode.dataset.paid){
-        var blk=W.querySelector('[name=color][value="Black"]');
-        if(blk) blk.checked=true;
-      }
-    }
-  }
-
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
+    var cn=$('colorname'); if(cn) cn.textContent=cname;
     var meta=COL[cname]||['#111111',0];
     var h=val('height'), hv=h?h.value:'3';
     var fn=font();
-    var isOut=finishKind()==='outline';
-    var oc=val('outline_color'), ocn=oc?oc.value:'White';
-    var ometa=COL[ocn]||['#ffffff',1];
     window.BNS_PREVIEW.render({
       hex: meta[0], light: !!meta[1], font: fn, height: hv,
       css: (window.BNS_FONTCSS||{})[fn] || '',
       numBlock: isNum() && hasName() && !isBlockFont(fn),
       showNum: isNum(), showName: hasName(),
       number: numberForPreview(), placeholder: PLACEHOLDER,
-      name: ($('f_name2').value||'').trim(),
-      outline: isOut, outlineHex: ometa[0], outlineLight: !!ometa[1]
+      name: ($('f_name2').value||'').trim()
     });
     lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
-      ' &middot; <b>'+esc(cname)+'</b>'+
-      (isOut ? ' with <b>'+esc(ocn)+'</b> outline' : '')+
-      ' &middot; '+
+      ' &middot; <b>'+esc(cname)+'</b> &middot; '+
       (isNum() ? (hasName()? 'pair + name, pre-spaced' : 'one pair, pre-spaced')
                : 'one decal, pre-spaced');
   }
@@ -465,7 +411,7 @@ JS = r"""
 
   function render(){
     tot.textContent='$'+price();
-    syncFonts(); syncFinish(); renderPreview();
+    syncFonts(); renderPreview();
     if(cur===2){ syncStep2(); runValidate(); }
     if(cur===MAX) summary();
   }
@@ -524,9 +470,6 @@ JS = r"""
             boatname:$('f_name2').value.trim(), state:stateFromPrefix(),
             height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),
-            finish:finishKind(),
-            outline_color:(finishKind()==='outline'
-              ? (val('outline_color')||{value:'White'}).value : ''),
             name:$('f_name').value.trim(), email:$('f_email').value.trim(),
             quoted_total:price(), page:location.pathname};
   }
@@ -679,7 +622,6 @@ JS = r"""
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
   setTimeout(function(){ if(cur===MAX && !mounted) degrade(); },4000);
   seedStatePrefix();
-  syncFinish();   // hide the paid swatches before first paint
 
   // /design/?name=Wet+Couch&port=Evansdale%2C+IA - the name generator's CTA.
   // Without this the name is dropped and the customer retypes what they just

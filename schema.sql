@@ -21,8 +21,10 @@ ALTER TABLE orders ADD COLUMN test_mode INTEGER DEFAULT 0;
 ALTER TABLE orders ADD COLUMN card_brand TEXT;
 ALTER TABLE orders ADD COLUMN card_last4 TEXT;
 
--- The paid finishes. `finish` is one of standard / colour / outline and is
--- what priceOf() charges for; `outline_color` is the second layer of vinyl
--- and is only set when finish = 'outline'.
+-- DORMANT. Added for a paid finish tier (colour / two-colour outline) that
+-- was removed on 2026-10-30 when the colour picker was simplified to eight
+-- colours, all included. Nothing writes these now. They are left in place
+-- because dropping a column in SQLite means rebuilding the table, and the
+-- rows written while the feature was live still carry real values.
 ALTER TABLE orders ADD COLUMN finish TEXT DEFAULT 'standard';
 ALTER TABLE orders ADD COLUMN outline_color TEXT;

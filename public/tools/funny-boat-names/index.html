@@ -384,17 +384,20 @@ font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 7px;border-radiu
 text-transform:uppercase}
 
 /* colour swatches */
-.swrow{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.csw{position:relative;cursor:pointer}
+/* Eight chips in a row. No boxes, no labels, no second column - the name of
+   the one you picked is in the hint line underneath and the preview above is
+   already showing it on your own lettering. */
+.swrow{display:flex;flex-wrap:wrap;gap:10px}
+.csw{position:relative;cursor:pointer;line-height:0}
 .csw input{position:absolute;opacity:0;width:1px;height:1px}
-.cswbox{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);
-border-radius:9px;padding:9px 12px;background:#fff;font-size:14.6px;font-weight:700;
-transition:border-color .12s,background .12s}
-.cswbox i{width:19px;height:19px;border-radius:5px;flex:0 0 auto;
-border:1px solid rgba(0,0,0,.24);display:block}
-.csw input:checked+.cswbox{border-color:var(--nav2);background:var(--selbg);
-box-shadow:inset 0 0 0 1px var(--nav2)}
-.csw input:focus-visible+.cswbox{outline:2px solid var(--sea);outline-offset:2px}
+.cswdot{display:block;width:36px;height:36px;border-radius:50%;
+box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);transition:box-shadow .12s}
+.csw:hover .cswdot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),
+0 0 0 3px var(--selbg)}
+.csw input:checked+.cswdot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),
+0 0 0 2px #fff,0 0 0 4.5px var(--nav)}
+.csw input:focus-visible+.cswdot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),
+0 0 0 2px #fff,0 0 0 4.5px var(--sea)}
 
 /* font picker - step 2 */
 .fontset{margin-bottom:4px}
@@ -778,22 +781,6 @@ letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
 height:9px;border-radius:50%;background:var(--sbright,var(--sea))}
 .waters b{display:block;color:var(--nav);font-size:15.6px}
 .waters span{color:var(--mut)}
-
-.finrow{display:grid;gap:8px;grid-template-columns:1fr}
-@media(min-width:520px){.finrow{grid-template-columns:repeat(3,1fr)}}
-.fin{display:block;cursor:pointer}
-.fin input{position:absolute;opacity:0;width:0;height:0}
-.finbox{display:block;border:1.5px solid var(--line);border-radius:11px;
-padding:10px 11px;background:#fff;transition:border-color .14s,box-shadow .14s}
-.fin input:checked+.finbox{border-color:var(--cta);
-box-shadow:0 0 0 3px rgba(29,122,72,.14)}
-.fin input:focus-visible+.finbox{outline:2px solid var(--nav2);outline-offset:2px}
-.finbox b{display:block;font-size:14.4px;color:var(--ink);line-height:1.2}
-.finbox em{display:block;font-style:normal;font-size:12.2px;color:var(--mut);
-margin:3px 0 5px;line-height:1.35}
-.finbox i{display:inline-block;font-style:normal;font-size:12.4px;font-weight:800;
-color:var(--cta)}
-.csw[hidden]{display:none}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/tools/funny-boat-names/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"Free tools","item":"https://numbermyboat.com/tools/funny-boat-names/"},{"@type":"ListItem","position":3,"name":"Funny names","item":"https://numbermyboat.com/tools/funny-boat-names/"}]},{"@type":"WebApplication","@id":"https://numbermyboat.com/tools/funny-boat-names/#app","name":"400 Funny Boat Names That Actually Land","url":"https://numbermyboat.com/tools/funny-boat-names/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@id":"https://numbermyboat.com/#org"}},{"@type":"FAQPage","@id":"https://numbermyboat.com/tools/funny-boat-names/#faq","mainEntity":[{"@type":"Question","name":"What is the most common funny boat name?","acceptedAnswer":{"@type":"Answer","text":"Variations on 'Knot' - Knot Working, Knot Guilty, Knot Paid For - and 'Seas the Day'. They are common because they are genuinely good puns, which is also the argument against using them."}},{"@type":"Question","name":"Can I put a rude name on my boat?","acceptedAnswer":{"@type":"Answer","text":"Legally, in US waters, there is no decency rule on a state-registered boat name. Marinas can have their own rules, and the Coast Guard will refuse to document a vessel with an obscene name. We will cut it; we would just point out you have to say it on the radio."}},{"@type":"Question","name":"How much is a boat name decal?","acceptedAnswer":{"@type":"Answer","text":"From $29 with free shipping, pre-spaced and ready to apply. Most land between $29 and $79 depending on finished size."}}]}]}</script>
 </head><body>
