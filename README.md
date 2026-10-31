@@ -183,34 +183,87 @@ for numbers, a letterform for names, two stacked plates for both.
 
 ### Fonts
 
-Ten faces, defined once in `content.py: FONTS` as
-`(label, css family, Google spec, block_legal)`.
+72 faces, defined once in `content.py: FONTS` as
+`(label, css family, Google spec, block_legal, category)`, split by
+`FONT_CATEGORIES` into three tabs:
 
-**All ten are free Google Fonts on purpose.** A plotter cuts any TTF, so the shop
+| tab | faces | what it is for |
+|---|---|---|
+| Block | 20 | the only set legal on a registration number |
+| Display | 28 | slab, western, nautical, neon, collegiate |
+| Script | 24 | brush, calligraphy, marker, handwritten |
+
+It was ten faces, all variations of the same condensed block — no real choice
+for a boat name. Three tabs beat one long grid of 72 and beat trimming to 25,
+because the categories are the axis a customer is actually choosing on.
+
+**Labels are descriptive, not foundry names.** "Brush Script", not the
+commercial face off a sign-shop chart. We are not licensing those faces, so we
+should not advertise them by name.
+
+**All 72 are free Google Fonts on purpose.** A plotter cuts any TTF, so the shop
 installs these and cuts *exactly* what the customer previewed. Substituting a
 lookalike for the preview would make it a lie.
 
 Each chip renders the customer's own lettering (first 7 characters) in that face,
-so the choice is made on the thing itself rather than a font name. The stylesheet
-loads async (`media="print"` → `onload`), so it never blocks first paint and the
-chips fall back to the stack's system fonts until it lands.
+so the choice is made on the thing itself rather than a font name. The specimen
+**follows the active tab** — the number under Block, the name under Display and
+Script — because previewing a script face as "IA 3717" contradicts the hint
+saying that face goes on the name.
 
-`block_legal` marks the five faces satisfying 33 CFR 173.27's "plain vertical
+**Only the Block stylesheet is in the page head.** It holds the default face and
+is the only set a registration number may use. Display and script are injected
+by `order.py` the first time their tab is opened, which for most orders is
+never: ~180KB of webfont on the step instead of ~670KB. `loadedCats` makes the
+injection once-only — without it every tab click appends another `<link>`.
+Loading stays async (`media="print"` → `onload`, with a `<noscript>` fallback),
+so type never blocks first paint.
+
+`block_legal` marks the 20 faces satisfying 33 CFR 173.27's "plain vertical
 block characters":
 
-- **Registration numbers** — the other five are **removed from the grid**, so it
-  shows one tidy row of five. No explanatory hint; an order that cannot legally
-  be placed isn't worth describing.
-- **"Both"** — all ten unlock, because the font applies to the *name*. The big
-  preview then renders the **number line in Block regardless** (`numBlock` →
-  `numFam` in `preview.py`), because showing script registration numbers we would
-  never cut would make the preview a lie. The hint says so explicitly — it is the
-  only font hint left, because it is the only case that isn't self-evident.
+- **Registration numbers** — the Display and Script tabs are **removed**, not
+  greyed out, and the non-block chips leave the grid. No explanatory hint; an
+  order that cannot legally be placed isn't worth describing.
+- **"Both"** — all three tabs unlock, because the font applies to the *name*.
+  The big preview then renders the **number line in Block regardless**
+  (`numBlock` → `numFam` in `preview.py`), because showing script registration
+  numbers we would never cut would make the preview a lie. The hint says so
+  explicitly — it is the only font hint left, because it is the only case that
+  isn't self-evident.
 
 `worker/index.js` keeps its own `BLOCK_FONTS` copy and **coerces** a non-block
 font to Block on a registration-numbers order. It coerces rather than rejects:
 losing a real order to a stale cached page is worse than correcting the font and
 flagging it in the shop email, on a proof the customer approves anyway.
+
+That copy is the obvious thing to forget. It sat at five names while the site
+offered twenty legal ones, so fifteen legal faces would have been silently
+rewritten to Block and reported to Ryan as *"customer asked for something
+illegal"* — wrong font cut, and the email blames the customer. `verify.py` now
+fails the build if the two lists drift in either direction.
+
+Three more gates came out of this change, each proven against a deliberate
+break:
+
+- **FONTS tuple shape.** Going 4-tuple → 5-tuple broke two unpack sites. Python
+  raised, `build.py` died, and the stale page already in `public/` still looked
+  fine — so the break shipped twice before a hand diff caught it. This is the
+  general hazard of a generator with a committed output directory: **a failed
+  build is invisible.** Never run `build.py` with its output piped to
+  `/dev/null`.
+- **Per-category `data-href`.** A tab that loses its href loads nothing and its
+  faces render in a fallback — the same silent-substitution problem the glyph
+  outlining work in `media/ogtype.py` was about.
+- **`window.BNS_*` cached before assignment.** `ORDER_JS` is
+  `preview + validate + color_js + order_js` concatenated, so anything in the
+  preview half that caches one of those globals at IIFE scope caches `{}`. No
+  error, the lookup just always misses. Read them at call time.
+
+The last one hid a real bug: the preview picked letter-spacing by regex-matching
+the label for `script|brush|formal|vibes`, which misses 16 of the 24 connected
+faces (Calligraphy, Wedding, Swash…) and tracked their joins apart. It is now
+driven off the real category via `BNS_FONTCAT`.
 
 ### Colours
 
