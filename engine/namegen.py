@@ -117,7 +117,7 @@ var CATS = [
 # most names end up in - and the script faces last.
 def font_buttons():
     out = []
-    for i, (lbl, css, _spec, _block) in enumerate(FONTS):
+    for i, (lbl, css, _spec, _block, _cat) in enumerate(FONTS):
         out.append('<button type=button data-css="%s"%s>%s</button>'
                    % (css.replace('"', "&quot;"), " class=on" if i == 0 else "", lbl))
     return "".join(out)

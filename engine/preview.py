@@ -39,7 +39,6 @@ color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
 JS = r"""
 window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
-  var SCRIPTY=/script|vibes|formal|brush/i;
   var PAD=7;           // viewBox units of breathing room around the glyphs
   var BASE_H=94;       // panel height at the 3" baseline, in px
   var LINEGAP=9;
@@ -52,7 +51,9 @@ window.BNS_PREVIEW = (function(){
 
     // The chosen face, so the big preview and the chip agree.
     var fam = o.css || 'Arial Black, Impact, Haettenschweiler, sans-serif';
-    var script = SCRIPTY.test(o.font);
+    // Looked up at call time, not at init: BNS_FONTCAT is assigned further
+    // down the page than this IIFE, so caching it here would cache {}.
+    var script = (window.BNS_FONTCAT||{})[o.font]==='script';
     var style = 'normal';
     var track = script ? '0' : '1.2';
     // On a "Both" order the name can be script but the numbers legally cannot,

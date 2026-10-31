@@ -733,3 +733,19 @@ border-radius:10px;overflow:hidden;background:#fff}
 .cardcell span{display:block;padding:7px 10px;font-size:12px;color:var(--mut)}
 .cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
 """
+
+# ---- font category tabs -------------------------------------------------
+CSS += """
+.fonttabs{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+.fonttabs[hidden]{display:none}
+.fonttab{flex:1;min-width:92px;font:inherit;text-align:center;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:10px;
+padding:8px 9px;font-size:14px;font-weight:800;color:var(--ink);
+transition:border-color .12s,background .12s}
+.fonttab em{display:block;font-style:normal;font-size:10.8px;font-weight:600;
+color:var(--mut);margin-top:2px;line-height:1.25}
+.fonttab:hover{border-color:var(--nav2)}
+.fonttab.on{background:var(--nav);border-color:var(--nav);color:#fff}
+.fonttab.on em{color:#bcd9e8}
+.fonttab[hidden]{display:none}
+"""

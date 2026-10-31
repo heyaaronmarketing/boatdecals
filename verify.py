@@ -448,6 +448,80 @@ if "window.BNS_PAY_MODE==='sandbox' && preview" not in design:
 if "workers\\.dev" not in design and "workers.dev" not in design:
     fails.append("the preview-host allowlist is gone from the order JS")
 
+# ---- the font picker ----------------------------------------------------
+# FONTS went from 4-tuples to 5-tuples (label, css, spec, block_legal,
+# category) and two call sites unpacked four names. Python raised, build.py
+# died, and the stale page in public/ still looked fine - so nothing noticed
+# until a page was diffed by hand. Unpack every entry here instead.
+import importlib, sys as _sys
+_sys.path.insert(0, "engine")
+_C = importlib.import_module("content")
+_cats = {k for k, _l, _h in _C.FONT_CATEGORIES}
+_shape = [f for f in _C.FONTS if len(f) != 5]
+if _shape:
+    # Report and stop here: every check below indexes f[4], so a shape failure
+    # would crash verify.py instead of printing something a human can act on.
+    fails.append("%d FONTS entries are not 5-tuples (first: %r) - a build-time "
+                 "unpack will raise and ship a stale page"
+                 % (len(_shape), _shape[0][0]))
+else:
+    for _f in _C.FONTS:
+        if _f[4] not in _cats:
+            fails.append("font %r has category %r, which is not in "
+                         "FONT_CATEGORIES - its chip renders but no tab ever "
+                         "shows it" % (_f[0], _f[4]))
+    _lbls = [f[0] for f in _C.FONTS]
+    if len(set(_lbls)) != len(_lbls):
+        fails.append("two fonts share a label - `font` is submitted by label, "
+                     "so the order would be ambiguous")
+    if not [f for f in _C.FONTS if f[4] == "block" and f[3]]:
+        fails.append("no block-legal face left in the block category - a "
+                     "registration number could not be ordered at all")
+# worker/index.js keeps its own copy of the block-legal faces, because it
+# cannot import Python. If a legal face is missing there the worker rewrites
+# the order to BLOCK_FONTS[0] and tells Ryan the customer asked for something
+# illegal - so the wrong font gets cut and the email blames the customer.
+import re as _re, json as _json
+_m = _re.search(r"const BLOCK_FONTS = \[(.*?)\];",
+                pathlib.Path("worker/index.js").read_text(), _re.S)
+if not _m:
+    fails.append("worker/index.js has no BLOCK_FONTS list")
+elif not _shape:
+    _wk = set(_json.loads("[" + _re.sub(r",(\s*\])", r"\1", _m.group(1)) + "]"))
+    _py = {f[0] for f in _C.FONTS if f[3]}
+    if _wk != _py:
+        fails.append("BLOCK_FONTS in worker/index.js has drifted from "
+                     "content.py: missing %s, extra %s"
+                     % (sorted(_py - _wk) or "none", sorted(_wk - _py) or "none"))
+
+# The order JS is concatenated preview + validate + color_js + order_js, so
+# anything in the preview half that caches a window.BNS_* global at IIFE scope
+# caches {} - color_js() has not run yet. It fails silently: no error, the
+# lookup just always misses. Any such global must be read at call time.
+for _hit in _re.finditer(r"var \w+\s*=\s*window\.(BNS_\w+)\s*\|\|", design):
+    _g, _cache = _hit.group(1), _hit.start()
+    _assign = design.find("window.%s={" % _g)
+    if _assign == -1:
+        fails.append("the order JS caches window.%s, which is never assigned" % _g)
+    elif _cache < _assign:
+        fails.append("window.%s is cached at offset %d but not assigned until "
+                     "offset %d - the cached copy is always empty; read it at "
+                     "call time instead" % (_g, _cache, _assign))
+
+# Only the block sheet is in the head; the other two are injected on first tab
+# open. If a category's tab loses its href those faces silently render in
+# Helvetica, which is exactly the bug the glyph-outlining work was about.
+for _key, _lbl, _h in _C.FONT_CATEGORIES:
+    if 'data-cat="%s" data-href="https://fonts.googleapis.com' % _key not in design:
+        fails.append("the %s tab has no data-href - its faces would never "
+                     "load and would render in a fallback face" % _key)
+if "loadedCats[cat]) return" not in design:
+    fails.append("the font stylesheet loader lost its once-only guard - every "
+                 "tab click would append another <link>")
+if "google_fonts_href(\"block\")" not in pathlib.Path("engine/build.py").read_text():
+    fails.append("the page head is loading every font category again - that is "
+                 "~670KB of webfont for a step most orders pick one face from")
+
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))
 if fails:

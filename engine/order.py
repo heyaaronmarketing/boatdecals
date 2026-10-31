@@ -22,7 +22,8 @@ Anti-fatigue rules this file holds to:
 Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
-from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES)
+from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES,
+                     FONT_CATEGORIES, google_fonts_href)
 import preview as PV
 
 HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better"),
@@ -87,12 +88,20 @@ def form():
     # Each chip renders the customer's own lettering in that face, so the
     # choice is made on the thing itself rather than on a font name.
     fonts = "".join(
-        '<label class=fontchip data-block="%d"><input type=radio name=font value="%s"%s>'
+        '<label class=fontchip data-block="%d" data-cat="%s"><input type=radio '
+        'name=font value="%s"%s>'
         '<span class=fontbox><span class=fontdemo style="font-family:%s">%s</span>'
         '<em>%s</em></span></label>'
-        % (1 if block else 0, lbl, " checked" if i == 0 else "",
+        % (1 if block else 0, cat, lbl, " checked" if i == 0 else "",
            css.replace('"', "&quot;"), "Abc", lbl)
-        for i, (lbl, css, _g, block) in enumerate(FONTS))
+        for i, (lbl, css, _g, block, cat) in enumerate(FONTS))
+    # Tabs, so 72 faces read as three manageable sets rather than one wall -
+    # and so only the set you are looking at has to download.
+    fonttabs = "".join(
+        '<button type=button class="fonttab%s" data-cat="%s" data-href="%s">'
+        '%s<em>%s</em></button>'
+        % (" on" if i == 0 else "", key, google_fonts_href(key), label, hint)
+        for i, (key, label, hint) in enumerate(FONT_CATEGORIES))
     heights = "".join(
         '<label class=opt><input type=radio name=height value="%d" data-add="%d"%s>'
         '<span class=optbox>%s</span>'
@@ -159,7 +168,8 @@ def form():
   <!-- 4 - font ------------------------------------------------------- -->
   <section class=step data-step="4" data-when="">
     <h2>Pick a font</h2>
-    <div class=fontgrid>""" + fonts + """</div>
+    <div class=fonttabs id=fonttabs>""" + fonttabs + """</div>
+    <div class=fontgrid id=fontgrid>""" + fonts + """</div>
     <div class=hint id=fonthint></div>
   </section>
 
@@ -232,9 +242,15 @@ def color_js():
     cols = ",".join('"%s":["%s",%d]' % (n, h, l) for n, h, l in COLORS)
     prefixes = ",".join('"%s":"%s"' % (st["ab"], st["name"]) for st in STATES)
     fontcss = ",".join('"%s":"%s"' % (lbl, css.replace('"', "'"))
-                       for lbl, css, _g, _b in FONTS)
+                       for lbl, css, _g, _b, _cat in FONTS)
+    # The preview used to sniff the label for "script"/"brush" to decide
+    # letter-spacing, which missed 16 of the 24 connected faces (Calligraphy,
+    # Wedding, Swash...) and tracked their joins apart. Ship the real category.
+    fontcat = ",".join('"%s":"%s"' % (lbl, cat)
+                       for lbl, _c, _g, _b, cat in FONTS)
     return ("window.BNS_COL={%s};window.BNS_PREFIX={%s};window.BNS_FONTCSS={%s};"
-            % (cols, prefixes, fontcss))
+            "window.BNS_FONTCAT={%s};"
+            % (cols, prefixes, fontcss, fontcat))
 
 
 JS = r"""
@@ -395,18 +411,46 @@ JS = r"""
     return !c || c.closest('.fontchip').dataset.block==='1';
   }
 
+  // Each category's stylesheet is injected the first time its tab is opened.
+  // Block ships in the page head because it holds the default face and is the
+  // only set a registration number may use; display and script are 28 and 24
+  // faces that most orders never look at.
+  var fontCat='block', loadedCats={block:1};
+  function loadCat(cat, href){
+    if(loadedCats[cat]) return;
+    loadedCats[cat]=1;
+    var l=document.createElement('link');
+    l.rel='stylesheet'; l.href=href; document.head.appendChild(l);
+  }
+
+  function syncFontTabs(){
+    // On a registration number only block is lawful, so the other two tabs go
+    // away rather than sitting there greyed out.
+    var lock = isNum() && kind()!=='Both';
+    var tabs=W.querySelectorAll('.fonttab');
+    if(lock && fontCat!=='block') fontCat='block';
+    tabs.forEach(function(t){
+      t.hidden = lock && t.dataset.cat!=='block';
+      t.classList.toggle('on', t.dataset.cat===fontCat);
+    });
+    $('fonttabs').hidden = lock;
+  }
+
   function syncFonts(){
     // Registration numbers must be plain vertical block characters, so the
     // non-block faces are removed from the grid entirely - an order that
     // cannot legally be placed is not worth showing.
     var lock = isNum() && kind()!=='Both';
+    syncFontTabs();
     var chips=W.querySelectorAll('.fontchip'), moved=false;
     for(var i=0;i<chips.length;i++){
       var c=chips[i], inp=c.querySelector('input'),
-          ok = !lock || c.dataset.block==='1';
-      inp.disabled=!ok;
-      c.classList.toggle('off', !ok);
-      if(!ok && inp.checked){ inp.checked=false; moved=true; }
+          legal = !lock || c.dataset.block==='1',
+          shown = legal && c.dataset.cat===fontCat;
+      inp.disabled=!legal;
+      // `off` hides it; an illegal face stays unchecked even if its tab is up
+      c.classList.toggle('off', !shown);
+      if(!legal && inp.checked){ inp.checked=false; moved=true; }
     }
     if(moved){
       var first=W.querySelector('.fontchip:not(.off) input');
@@ -421,8 +465,12 @@ JS = r"""
         + 'cut in Block either way &mdash; the law requires it.'
       : '';
     // Chips preview the real lettering, not a stand-in.
-    var demo=(isNum()? ($('f_text').value.trim() || PLACEHOLDER)
-                     : $('f_name2').value.trim()) || 'Abc';
+    // The specimen shows whatever that tab's faces will actually be cut on:
+    // the number under Block, the name under Display and Script. Otherwise a
+    // script face previews as "IA 3717" while the hint says it goes on the name.
+    var num=isNum() && ($('f_text').value.trim() || PLACEHOLDER),
+        nm=hasName() && $('f_name2').value.trim();
+    var demo=(fontCat==='block' ? (num || nm) : (nm || num)) || 'Abc';
     if(demo.length>7) demo=demo.slice(0,7).trim();
     var d=W.querySelectorAll('.fontdemo');
     for(var j=0;j<d.length;j++) d[j].textContent=demo;
@@ -700,6 +748,14 @@ JS = r"""
 
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
   setTimeout(function(){ if(isLast() && !mounted) degrade(); },4000);
+  W.querySelectorAll('.fonttab').forEach(function(t){
+    t.addEventListener('click', function(){
+      fontCat = t.dataset.cat;
+      loadCat(fontCat, t.dataset.href);
+      render();
+    });
+  });
+
   seedStatePrefix();
   syncOutline();   // hide the outline row before first paint
   // The server renders White checked as a sensible default. Without this it

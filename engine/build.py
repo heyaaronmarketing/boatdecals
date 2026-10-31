@@ -612,9 +612,12 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
                  'b.setAttribute("aria-expanded",o?"true":"false");});})();</script>')
     if js:
         if "BNS_STRIPE_PK" in js:
-            # Fonts load async so they never block first paint; the chips fall
-            # back to the stack's system fonts until they arrive.
-            gf = google_fonts_href()
+            # Only the BLOCK set loads with the page: it holds the default
+            # face and is the only set a registration number may legally use.
+            # Display (28) and script (24) are injected by order.py the first
+            # time their tab is opened, which for most orders is never.
+            # Async either way, so type never blocks first paint.
+            gf = google_fonts_href("block")
             parts.append(
                 '<link rel="preconnect" href="https://fonts.googleapis.com">'
                 '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'

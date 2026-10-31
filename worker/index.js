@@ -36,7 +36,14 @@ const BASE_MIN = 19, BASE_MAX = 200;
 // be illegal. Coerce rather than reject: losing a real order over a cached
 // page is worse than quietly correcting the font and flagging it on the
 // proof the customer has to approve anyway.
-const BLOCK_FONTS = ["Block", "Condensed", "Heavy Impact", "Modern", "Stencil"];
+// Mirrors the block_legal flag in engine/content.py; verify.py fails the
+// build if the two drift. A face missing here is silently rewritten to
+// BLOCK_FONTS[0] and reported to Ryan as an illegal request, so a legal
+// face left off this list gets the wrong font cut.
+const BLOCK_FONTS = ["Block", "Heavy Impact", "Condensed", "Tall Block", 
+  "Poster", "Narrow", "Square", "Rounded", "Modern", "Stencil", "Sport", 
+  "Compact", "Tall Narrow", "Wide Block", "Grotesque", "Billboard", 
+  "Machine", "Varsity", "Tech", "Orbit"];
 
 function priceOf(d) {
   let n = BASE[d.kind] ?? 19;
