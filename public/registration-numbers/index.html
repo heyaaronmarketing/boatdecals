@@ -837,6 +837,16 @@ text-align:center}
 .sbtoast{margin-top:14px;font-size:14px;font-weight:700;color:var(--cta);
 opacity:0;transition:opacity .2s}
 .sbtoast.on{opacity:1}
+
+.cardgrid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
+@media(min-width:680px){.cardgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.cardgrid{grid-template-columns:repeat(3,1fr)}}
+.cardcell{display:block;text-decoration:none;border:1px solid var(--line);
+border-radius:10px;overflow:hidden;background:#fff}
+.cardcell:hover{border-color:var(--nav2)}
+.cardcell img{display:block;width:100%;height:auto}
+.cardcell span{display:block;padding:7px 10px;font-size:12px;color:var(--mut)}
+.cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/registration-numbers/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"Numbers by state","item":"https://numbermyboat.com/registration-numbers/"}]},{"@type":"FAQPage","@id":"https://numbermyboat.com/registration-numbers/#faq","mainEntity":[{"@type":"Question","name":"Does every state use the same rule?","acceptedAnswer":{"@type":"Answer","text":"The core rule is federal and identical everywhere: 3-inch minimum, plain vertical block characters, contrasting color, spaces or hyphens between groups, reading left to right, on both sides of the forward half. States can add requirements on top but cannot go below it. What genuinely varies is the prefix, the issuing agency, and exactly where the validation decal sits."}},{"@type":"Question","name":"Which states do not use their postal abbreviation?","acceptedAnswer":{"@type":"Answer","text":"California is the big one - California boat numbers start with CF, not CA, and everyone there calls them CF numbers. Washington uses WN rather than WA. Always copy the prefix off your own registration card rather than assuming."}},{"@type":"Question","name":"My state is not listed. Can you still cut my numbers?","acceptedAnswer":{"@type":"Answer","text":"Yes. We cut for all 50 states and DC - these are just the pages we have written up so far. Pick 'Other / not listed' on the order form and type your number."}}]}]}</script>
 </head><body>

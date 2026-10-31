@@ -311,6 +311,10 @@ def og_image(path):
     card actually exists, which is what stops that ordering from biting.
     """
     slug = path.strip("/").replace("/", "-") or "home"
+    # Internal pages (leading underscore) are noindex and never shared, so
+    # they borrow the home card rather than burn a render on one nobody sees.
+    if slug.startswith("_"):
+        slug, path = "home", "/"
     return "/assets/og/%s-%s%s" % (slug, OG_VERSION, _og_ext(path))
 
 
@@ -2303,6 +2307,51 @@ def build_web_images():
           if (r.stdout or r.stderr).strip() else "none")
 
 
+def build_cards_index():
+    """A contact sheet of every share card, at /_cards/.
+
+    noindex, and linked from nothing - it exists so Aaron and Ryan can look at
+    all 83 cards in one place and click through to full size, which is far
+    easier than opening a folder of PNGs one at a time.
+    """
+    og = sorted((OUT / "assets" / "og").glob("*"))
+    sh = sorted(f for f in (OUT / "assets" / "share").glob("*")
+                if not f.stem.endswith(("-sq", "-tall")))
+
+    def grid(files, base):
+        out = []
+        for f in files:
+            if f.suffix not in (".png", ".jpg"):
+                continue
+            u = "/assets/%s/%s" % (base, f.name)
+            kb = f.stat().st_size // 1024
+            out.append(
+              '<a class=cardcell href="%s" target="_blank" rel="noopener">'
+              '<img src="%s" alt="%s" loading="lazy" width="1200" height="630">'
+              '<span><b>%s</b>%s &middot; %dKB</span></a>'
+              % (u, u, f.stem, f.stem, f.suffix[1:].upper(), kb))
+        return '<div class=cardgrid>%s</div>' % "".join(out)
+
+    sq = len([f for f in (OUT / "assets" / "share").glob("*-sq.png")])
+    main = ('<section style="padding-top:26px"><div class=w>'
+            '<h1 style="font-size:30px;margin-bottom:8px">Share cards</h1>'
+            '<p class=lede>Every card the build makes. Click one to open it '
+            'full size, then right-click to save. Each library card also has '
+            'a <b>-sq</b> (1080&times;1080) and <b>-tall</b> (1080&times;1350) '
+            'version at the same path, for phone-shaped feeds.</p>'
+            '<h2 style="margin-top:26px">Page cards &mdash; %d</h2>'
+            '<p class=lede>One per page. This is what renders when the link is '
+            'pasted anywhere.</p>%s'
+            '<h2 style="margin-top:34px">Library &mdash; %d, plus %d crops</h2>'
+            '<p class=lede>For posting straight into a group with no link. '
+            'Upload as a photo, put the link in the first comment.</p>%s'
+            '</div></section>'
+            % (len([f for f in og if f.suffix in (".png", ".jpg")]), grid(og, "og"),
+               len(sh), sq, grid(sh, "share")))
+    write("/_cards/", shell("Share cards", "Internal contact sheet.",
+          "/_cards/", graph(org_node()), main, noindex=True), "0.1")
+
+
 def build_static():
     (OUT / "favicon.svg").write_text(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
@@ -2444,6 +2493,7 @@ def main():
     build_legal(); build_404()
     build_web_images()
     build_og()
+    build_cards_index()
     build_static()
     print("built %d pages -> %s" % (len(PAGES), OUT))
     for p, _ in sorted(PAGES): print("  ", p)

@@ -837,6 +837,16 @@ text-align:center}
 .sbtoast{margin-top:14px;font-size:14px;font-weight:700;color:var(--cta);
 opacity:0;transition:opacity .2s}
 .sbtoast.on{opacity:1}
+
+.cardgrid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
+@media(min-width:680px){.cardgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.cardgrid{grid-template-columns:repeat(3,1fr)}}
+.cardcell{display:block;text-decoration:none;border:1px solid var(--line);
+border-radius:10px;overflow:hidden;background:#fff}
+.cardcell:hover{border-color:var(--nav2)}
+.cardcell img{display:block;width:100%;height:auto}
+.cardcell span{display:block;padding:7px 10px;font-size:12px;color:var(--mut)}
+.cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/warranty/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"Warranty","item":"https://numbermyboat.com/warranty/"}]},{"@type":"FAQPage","@id":"https://numbermyboat.com/warranty/#faq","mainEntity":[{"@type":"Question","name":"What if I ruin it during installation?","acceptedAnswer":{"@type":"Answer","text":"A replacement is a new order. The install is the one part of this we cannot do for you, which is why every set ships pre-spaced on a single sheet with application tape over the top - it goes on in one pass. Our apply guide walks through the wet method, which is very hard to get wrong."}},{"@type":"Question","name":"How long is the warranty?","acceptedAnswer":{"@type":"Answer","text":"The film carries its maker's own outdoor durability warranty, covering color fade, cracking and adhesive failure where the decal was correctly applied to a suitable surface. We do not publish a year figure, because it belongs to the film maker and varies by stock and climate."}},{"@type":"Question","name":"Can I return a custom decal?","acceptedAnswer":{"@type":"Answer","text":"Custom-cut vinyl cannot be resold, so it is not returnable once cut - which is why the order form previews your exact lettering before you pay. If what arrived does not match what you ordered, that is on us and we remake it."}}]}]}</script>
 </head><body>

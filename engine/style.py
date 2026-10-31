@@ -713,3 +713,16 @@ text-align:center}
 opacity:0;transition:opacity .2s}
 .sbtoast.on{opacity:1}
 """
+
+# ---- internal card index ------------------------------------------------
+CSS += """
+.cardgrid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
+@media(min-width:680px){.cardgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.cardgrid{grid-template-columns:repeat(3,1fr)}}
+.cardcell{display:block;text-decoration:none;border:1px solid var(--line);
+border-radius:10px;overflow:hidden;background:#fff}
+.cardcell:hover{border-color:var(--nav2)}
+.cardcell img{display:block;width:100%;height:auto}
+.cardcell span{display:block;padding:7px 10px;font-size:12px;color:var(--mut)}
+.cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
+"""
