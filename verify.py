@@ -85,10 +85,20 @@ for label, vals in (("title", titles), ("description", descs)):
 
 # The wizard is the only conversion path; if it loses a step, nothing converts.
 design = (OUT / "design" / "index.html").read_text()
-# Step count asserted explicitly so a section cannot vanish unnoticed.
+# Step count asserted explicitly so a section cannot vanish unnoticed. Two of
+# the seven only apply to some orders, so the markup always carries all seven
+# and data-when decides which are shown.
 _steps = len(re.findall(r'data-step="\d"', design))
-if _steps != 4:
-    fails.append("order wizard has %d steps, expected 4" % _steps)
+if _steps != 7:
+    fails.append("order wizard has %d steps, expected 7" % _steps)
+_when = re.findall(r'data-step="(\d)" data-when="(\w*)"', design)
+if dict(_when) != {"1": "", "2": "num", "3": "name", "4": "", "5": "", "6": "", "7": ""}:
+    fails.append("wizard step conditions changed: %s" % _when)
+# The number and name steps must be conditional, or a numbers-only order is
+# asked for a boat name it does not have.
+for _need in ('data-when="num"', 'data-when="name"'):
+    if _need not in design:
+        fails.append("wizard lost a conditional step: %s" % _need)
 for need in ("data-step=\"1\"", "data-step=\"4\"", "id=payelement", "BNS_COL=",
              "id=prevsvg", "id=p_num", "name=kind"):
     if need not in design: fails.append("order wizard missing %s" % need)

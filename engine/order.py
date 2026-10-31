@@ -128,68 +128,74 @@ def form():
   <div class=wizbody>
 
   <!-- 1 ------------------------------------------------------------- -->
-  <section class="step on" data-step="1">
+  <section class="step on" data-step="1" data-when="">
     <h2>What do you need?</h2>
     
     <div class=kinds>""" + kinds + """</div>
   </section>
 
-  <!-- 2 ------------------------------------------------------------- -->
-  <section class=step data-step="2">
-    <h2 class=vh id=s2h>What should it say?</h2>
-    <div id=numwrap>
-      <label for=f_text>Registration number</label>
-      <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
-             autocomplete=off maxlength=40 autocapitalize=characters spellcheck=false>
-      <div class=vcheck id=vcheck role=status aria-live=polite></div>
-    </div>
-    <div id=namewrap hidden style="margin-top:14px">
-      <label for=f_name2>Boat name</label>
-      <input type=text id=f_name2 name=boatname value="" placeholder="Second Wind"
-             autocomplete=off maxlength=40 spellcheck=false>
-      <div class=hint>Stuck? <a href="/tools/boat-name-generator/" target="_blank"
-        rel="noopener">1,000 name ideas</a>.</div>
-    </div>
+  <!-- 2 - the registration number, only when one is being cut -------- -->
+  <section class=step data-step="2" data-when="num">
+    <h2>What is the number?</h2>
+    <label for=f_text>Registration number</label>
+    <input type=text id=f_text name=text value="" placeholder="IA 3717 ZW"
+           autocomplete=off maxlength=40 autocapitalize=characters spellcheck=false>
+    <div class=vcheck id=vcheck role=status aria-live=polite></div>
     <div class=err id=e2 role=alert></div>
-    <fieldset class=fontset style="margin-top:14px">
-      <legend>Pick a font</legend>
-      <div class=fontgrid>""" + fonts + """</div>
-      <div class=hint id=fonthint></div>
-    </fieldset>
   </section>
 
-  <!-- 3 ------------------------------------------------------------- -->
-  <section class=step data-step="3">
-    <h2>How should it look?</h2>
-    
-    <fieldset><legend>Color</legend>
-      <div class=swrow id=swrow>""" + cols + """</div>
-      <div class=hint><b id=colorname>Black</b> &mdash; white on a dark hull,
-        black on a light one. The law wants contrast, nothing more.</div>
-
-      <label class=outline-opt>
-        <input type=checkbox id=f_outline name=outline value="1">
-        <span class=outbox>
-          <span class=outswatch aria-hidden="true"><i></i></span>
-          <b>Add a contrasting outline</b>
-          <em>A second layer of vinyl cut behind every character</em>
-        </span>
-        <i class=outprice>+$""" + str(PRICE["outline"]) + """</i>
-      </label>
-
-      <div id=outrow class=outrow hidden>
-        <div class=outlabel>Outline color</div>
-        <div class=swrow>""" + _colors("outline_color", "White") + """</div>
-      </div>
-    </fieldset>
-    <fieldset><legend>Character height</legend>
-      <div class=opts>""" + heights + """</div>
-    </fieldset>
+  <!-- 3 - the boat name, only when one is being cut ------------------ -->
+  <section class=step data-step="3" data-when="name">
+    <h2>What is she called?</h2>
+    <label for=f_name2>Boat name</label>
+    <input type=text id=f_name2 name=boatname value="" placeholder="Second Wind"
+           autocomplete=off maxlength=40 spellcheck=false>
+    <div class=hint>We cut it exactly as typed, so capitals matter. Stuck?
+      <a href="/tools/boat-name-generator/" target="_blank"
+         rel="noopener">1,000 name ideas</a>.</div>
+    <div class=err id=e3 role=alert></div>
   </section>
 
+  <!-- 4 - font ------------------------------------------------------- -->
+  <section class=step data-step="4" data-when="">
+    <h2>Pick a font</h2>
+    <div class=fontgrid>""" + fonts + """</div>
+    <div class=hint id=fonthint></div>
+  </section>
 
-  <!-- 4 ------------------------------------------------------------- -->
-  <section class=step data-step="4">
+  <!-- 5 - color, and the outline upsell ------------------------------ -->
+  <section class=step data-step="5" data-when="">
+    <h2>Pick a color</h2>
+    <div class=swrow id=swrow>""" + cols + """</div>
+    <div class=hint><b id=colorname>Black</b> &mdash; white on a dark hull,
+      black on a light one. The law wants contrast, nothing more.</div>
+
+    <label class=outline-opt>
+      <input type=checkbox id=f_outline name=outline value="1">
+      <span class=outbox>
+        <span class=outswatch aria-hidden="true"><i></i></span>
+        <b>Add a contrasting outline</b>
+        <em>A second layer of vinyl cut behind every character</em>
+      </span>
+      <i class=outprice>+$""" + str(PRICE["outline"]) + """</i>
+    </label>
+
+    <div id=outrow class=outrow hidden>
+      <div class=outlabel>Outline color</div>
+      <div class=swrow>""" + _colors("outline_color", "White") + """</div>
+    </div>
+  </section>
+
+  <!-- 6 - character height ------------------------------------------- -->
+  <section class=step data-step="6" data-when="">
+    <h2>How tall?</h2>
+    <div class=opts>""" + heights + """</div>
+    <div class=hint>3 inches is the federal minimum and legal everywhere.
+      Taller reads further off the water.</div>
+  </section>
+
+  <!-- 7 - checkout --------------------------------------------------- -->
+  <section class=step data-step="7" data-when="">
     <h2>Checkout</h2>
     <div class=sumbox id=summary></div>
     <div class="fieldrow two">
@@ -236,7 +242,25 @@ JS = r"""
   var W=document.getElementById('order'); if(!W) return;
   var COL=window.BNS_COL||{};
   var steps=[].slice.call(W.querySelectorAll('.step'));
-  var cur=1, MAX=steps.length;
+  // `cur` is the step's stable data-step id, NOT its position. Two of the
+  // seven steps appear only when they apply - there is no "what is the
+  // number" step on a name-only order - so a positional index would point at
+  // a different question every time the kind changed. Position is derived.
+  var cur=1;
+
+  function visible(){
+    return steps.filter(function(s){
+      var w=s.dataset.when;
+      return !w || (w==='num' ? isNum() : hasName());
+    });
+  }
+  function ids(){ return visible().map(function(s){ return +s.dataset.step; }); }
+  function pos(){ var i=ids().indexOf(cur); return i<0 ? 1 : i+1; }
+  function total(){ return visible().length; }
+  function lastId(){ var a=ids(); return a[a.length-1]; }
+  function isLast(){ return cur===lastId(); }
+  function stepAfter(n){ var a=ids(), i=a.indexOf(n); return a[Math.min(i+1,a.length-1)]; }
+  function stepBefore(n){ var a=ids(), i=a.indexOf(n); return a[Math.max(i-1,0)]; }
   var PLACEHOLDER='IA 3717 ZW';   // replaced by the visitor's own state
   var $=function(id){return document.getElementById(id);};
   var nextBtn=$('next'), backBtn=$('back'), fill=$('wizfill'),
@@ -409,14 +433,6 @@ JS = r"""
     box.innerHTML=v.msg;
   }
 
-  function syncStep2(){
-    var num=isNum(), nm=hasName();
-    $('numwrap').hidden=!num; $('namewrap').hidden=!nm;
-    $('s2h').textContent = num&&nm ? 'What should they say?'
-                         : num ? 'What is your registration number?'
-                               : 'What is the boat called?';
-  }
-
   function summary(){
     var rows=[], k=kind();
     var kb=W.querySelector('[name=kind]:checked');
@@ -455,21 +471,23 @@ JS = r"""
   function render(){
     tot.textContent='$'+price();
     syncFonts(); syncOutline(); renderPreview();
-    if(cur===2){ syncStep2(); runValidate(); }
-    if(cur===MAX) summary();
+    if(cur===2){ runValidate(); }
+    if(isLast()) summary();
   }
 
   function show(n){
-    cur=Math.max(1,Math.min(MAX,n));
+    // clamp to a step that is actually applicable right now
+    cur = ids().indexOf(n)>=0 ? n : ids()[0];
     steps.forEach(function(s){ s.classList.toggle('on', +s.dataset.step===cur); });
-    fill.style.width=(cur/MAX*100)+'%';
-    stepnum.textContent='Step '+cur+' of '+MAX;
-    backBtn.hidden = cur===1;
-    nextBtn.textContent = cur===MAX ? 'Pay $'+price() : 'Continue';
-    nextBtn.classList.toggle('paybtn', cur===MAX);
-    document.getElementById('prevwrap').hidden = (cur===MAX);
-    if(cur===2){ syncStep2(); runValidate(); }
-    if(cur===MAX){ summary(); initPay(); }
+    var p=pos(), t=total(), last=isLast();
+    fill.style.width=(p/t*100)+'%';
+    stepnum.textContent='Step '+p+' of '+t;
+    backBtn.hidden = p===1;
+    nextBtn.textContent = last ? 'Pay $'+price() : 'Continue';
+    nextBtn.classList.toggle('paybtn', last);
+    document.getElementById('prevwrap').hidden = last;
+    if(cur===2){ runValidate(); }
+    if(last){ summary(); initPay(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
     if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
@@ -486,14 +504,18 @@ JS = r"""
 
   function validate(){
     if(cur===2){
-      var bad=[];
-      if(isNum() && !$('f_text').value.trim()) bad.push('your registration number');
-      if(hasName() && !$('f_name2').value.trim()) bad.push('your boat name');
-      if(bad.length){ $('e2').textContent='We need '+bad.join(' and ')+' to cut it.';
+      if(!$('f_text').value.trim()){
+        $('e2').textContent='We need your registration number to cut it.';
         return false; }
       $('e2').textContent=''; return true;
     }
-    if(cur===MAX){
+    if(cur===3){
+      if(!$('f_name2').value.trim()){
+        $('e3').textContent='We need the name to cut it.';
+        return false; }
+      $('e3').textContent=''; return true;
+    }
+    if(isLast()){
       var em=$('f_email').value.trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
         $('e5').textContent='We need a valid email for your receipt.';
@@ -598,7 +620,7 @@ JS = r"""
   // ---- wiring ----------------------------------------------------------
   nextBtn.addEventListener('click',function(){
     if(!validate()) return;
-    if(cur<MAX){ show(cur+1); return; }
+    if(!isLast()){ show(stepAfter(cur)); return; }
     if(paying) return;
     paying=true; nextBtn.disabled=true; nextBtn.textContent='Working…';
 
@@ -652,11 +674,12 @@ JS = r"""
       });
     }
   });
-  backBtn.addEventListener('click',function(){ show(cur-1); });
+  backBtn.addEventListener('click',function(){ show(stepBefore(cur)); });
 
   // Step 1 auto-advances: one tap, no Continue. Biggest single fatigue win.
   W.querySelectorAll('[name=kind]').forEach(function(r){
-    r.addEventListener('change',function(){ render(); setTimeout(function(){show(2);},140); });
+    r.addEventListener('change',function(){ render();
+      setTimeout(function(){ show(stepAfter(1)); },140); });
   });
 
   W.addEventListener('input',render);
@@ -666,7 +689,7 @@ JS = r"""
   });
 
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
-  setTimeout(function(){ if(cur===MAX && !mounted) degrade(); },4000);
+  setTimeout(function(){ if(isLast() && !mounted) degrade(); },4000);
   seedStatePrefix();
   syncOutline();   // hide the outline row before first paint
   // The server renders White checked as a sensible default. Without this it
