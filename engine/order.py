@@ -173,7 +173,7 @@ def form():
     <label class=outline-opt>
       <input type=checkbox id=f_outline name=outline value="1">
       <span class=outbox>
-        <span class=outswatch aria-hidden="true"><i></i></span>
+        <span class=outbox-check aria-hidden="true"></span>
         <b>Add a contrasting outline</b>
         <em>A second layer of vinyl cut behind every character</em>
       </span>
@@ -255,6 +255,15 @@ JS = r"""
     });
   }
   function ids(){ return visible().map(function(s){ return +s.dataset.step; }); }
+  // What the NEXT step asks, so the button says where it goes rather than
+  // just "Continue". A form whose end you cannot see gets abandoned.
+  function nextLabel(){
+    var n = stepAfter(cur);
+    if(n === cur) return 'Continue';
+    var map = {2:'Next: the number', 3:'Next: the name', 4:'Next: pick a font',
+               5:'Next: pick a color', 6:'Next: how tall', 7:'Next: checkout'};
+    return map[n] || 'Continue';
+  }
   function pos(){ var i=ids().indexOf(cur); return i<0 ? 1 : i+1; }
   function total(){ return visible().length; }
   function lastId(){ var a=ids(); return a[a.length-1]; }
@@ -470,6 +479,7 @@ JS = r"""
 
   function render(){
     tot.textContent='$'+price();
+    if(!isLast()) nextBtn.textContent=nextLabel();
     syncFonts(); syncOutline(); renderPreview();
     if(cur===2){ runValidate(); }
     if(isLast()) summary();
@@ -483,7 +493,7 @@ JS = r"""
     fill.style.width=(p/t*100)+'%';
     stepnum.textContent='Step '+p+' of '+t;
     backBtn.hidden = p===1;
-    nextBtn.textContent = last ? 'Pay $'+price() : 'Continue';
+    nextBtn.textContent = last ? 'Pay $'+price() : nextLabel();
     nextBtn.classList.toggle('paybtn', last);
     document.getElementById('prevwrap').hidden = last;
     if(cur===2){ runValidate(); }

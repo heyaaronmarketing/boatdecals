@@ -247,23 +247,63 @@ STATES = [
 # block=True marks the faces that satisfy 33 CFR 173.27's "plain vertical block
 # characters" - only those are offered for registration numbers.
 #   (label, css family, Google spec, block-legal)
+# (label, CSS family, Google Fonts spec, legal on a registration number)
+#
+# Twenty-two faces covering the range a sign shop's font chart does: upright
+# blocks, condensed, slabs, display, casual brush and formal script.
+#
+# `block_legal` is NOT a style opinion. 33 CFR 173.27 requires plain vertical
+# block characters on a registration number, so script, italic, outline and
+# heavily decorated faces are excluded there and the order form hides them the
+# moment registration numbers are picked. They stay available for a boat name,
+# where no font rule exists at all.
 FONTS = [
-    ("Block",          "'Archivo Black', 'Arial Black', sans-serif", "Archivo+Black",            True),
-    ("Condensed",      "'Oswald', 'Arial Narrow', sans-serif",       "Oswald:wght@700",          True),
-    ("Heavy Impact",   "'Anton', Impact, sans-serif",                "Anton",                    True),
-    ("Modern",         "'Montserrat', Helvetica, sans-serif",        "Montserrat:wght@800",      True),
-    ("Stencil",        "'Black Ops One', Impact, sans-serif",        "Black+Ops+One",            True),
-    ("Classic Serif",  "'Playfair Display', Georgia, serif",         "Playfair+Display:wght@900", False),
-    ("Slab",           "'Alfa Slab One', Georgia, serif",            "Alfa+Slab+One",            False),
-    ("Nautical",       "'Bungee', Impact, sans-serif",               "Bungee",                   False),
-    ("Brush Script",   "'Pacifico', cursive",                        "Pacifico",                 False),
-    ("Formal Script",  "'Great Vibes', cursive",                     "Great+Vibes",              False),
+    # --- plain vertical block: legal on a number ---------------------------
+    ("Block",          "'Archivo Black', 'Arial Black', sans-serif",
+     "Archivo+Black", True),
+    ("Condensed",      "'Oswald', 'Arial Narrow', sans-serif",
+     "Oswald:wght@700", True),
+    ("Tall Block",     "'Bebas Neue', 'Arial Narrow', sans-serif",
+     "Bebas+Neue", True),
+    ("Heavy Impact",   "'Anton', Impact, sans-serif", "Anton", True),
+    ("Modern",         "'Montserrat', Helvetica, sans-serif",
+     "Montserrat:wght@800", True),
+    ("Square",         "'Russo One', Impact, sans-serif", "Russo+One", True),
+    ("Poster",         "'Staatliches', Impact, sans-serif", "Staatliches", True),
+    ("Narrow",         "'Fjalla One', 'Arial Narrow', sans-serif",
+     "Fjalla+One", True),
+    ("Rounded",        "'Titan One', Impact, sans-serif", "Titan+One", True),
+    ("Stencil",        "'Black Ops One', Impact, sans-serif",
+     "Black+Ops+One", True),
+    # --- display and serif: names and lettering ---------------------------
+    ("Classic Serif",  "'Playfair Display', Georgia, serif",
+     "Playfair+Display:wght@900", False),
+    ("Slab",           "'Alfa Slab One', Georgia, serif", "Alfa+Slab+One", False),
+    ("Fat Serif",      "'Abril Fatface', Georgia, serif", "Abril+Fatface", False),
+    ("Western",        "'Rye', Georgia, serif", "Rye", False),
+    ("Nautical",       "'Bungee', Impact, sans-serif", "Bungee", False),
+    ("Retro",          "'Righteous', Impact, sans-serif", "Righteous", False),
+    ("Speed",          "'Audiowide', Impact, sans-serif", "Audiowide", False),
+    # --- script ------------------------------------------------------------
+    ("Brush Script",   "'Pacifico', cursive", "Pacifico", False),
+    ("Bold Script",    "'Lobster', cursive", "Lobster", False),
+    ("Casual Script",  "'Yellowtail', cursive", "Yellowtail", False),
+    ("Flowing Script", "'Dancing Script', cursive",
+     "Dancing+Script:wght@700", False),
+    ("Formal Script",  "'Great Vibes', cursive", "Great+Vibes", False),
 ]
 FONT_NAMES = [f[0] for f in FONTS]
 BLOCK_FONTS = [f[0] for f in FONTS if f[3]]
 
 def google_fonts_href():
-    """One stylesheet request for all ten faces."""
+    """One stylesheet request for every face the picker offers.
+
+    22 families is a lot of @font-face rules, but it is still ONE request and
+    a browser only downloads the files it actually paints. The font chips live
+    inside a step that is display:none until the customer reaches it, so a
+    visitor who never opens the font step downloads one face, not 22.
+    display=swap keeps text visible while any of them arrive.
+    """
     fams = "&".join("family=" + f[2] for f in FONTS)
     return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
 
