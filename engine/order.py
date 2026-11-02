@@ -23,11 +23,14 @@ Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
 from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES,
-                     FONT_CATEGORIES, google_fonts_href)
+                     FONT_CATEGORIES, google_fonts_href, tab_face)
 import preview as PV
 
-HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better"),
-           (5, 8, "5&quot;", "bold"), (6, 13, "6&quot;", "big transom")]
+# (inches, price add, label). The old fourth field held a one-word pitch
+# ("legal minimum", "reads better") under each box; the size and the price are
+# the whole decision, so the boxes got bigger and the captions went.
+HEIGHTS = [(3, 0, "3&quot;"), (4, 4, "4&quot;"), (5, 8, "5&quot;"),
+           (6, 13, "6&quot;")]
 
 # (label, base, caption, price, flag, key) - caption is one short line; the
 # thumbnail carries the explanation.
@@ -41,8 +44,8 @@ HEIGHTS = [(3, 0, "3&quot;", "legal minimum"), (4, 4, "4&quot;", "reads better")
 KINDS = [
     ("Registration numbers", 19, "On the bow, both sides", "$19", "", "numbers",
      "Boat Numbers"),
-    ("Boat name", 29, "On the transom", "from $29", "", "name", "Boat Name"),
-    ("Both", 44, "Bow and transom", "from $44", "Save $4", "both", "Both"),
+    ("Boat name", 29, "On the transom", "$29+", "", "name", "Boat Name"),
+    ("Both", 44, "Bow and transom", "$44+", "Save $4", "both", "Both"),
 ]
 
 _KICON = {
@@ -88,27 +91,30 @@ def form():
     # Each chip renders the customer's own lettering in that face, so the
     # choice is made on the thing itself rather than on a font name.
     fonts = "".join(
-        '<label class=fontchip data-block="%d" data-cat="%s"><input type=radio '
-        'name=font value="%s"%s>'
+        '<label class=fontchip data-block="%d" data-cat="%s" title="%s">'
+        '<input type=radio name=font value="%s"%s aria-label="%s">'
         '<span class=fontbox><span class=fontdemo style="font-family:%s">%s</span>'
-        '<em>%s</em></span></label>'
-        % (1 if block else 0, cat, lbl, " checked" if i == 0 else "",
-           css.replace('"', "&quot;"), "Abc", lbl)
+        '</span></label>'
+        % (1 if block else 0, cat, lbl, lbl, " checked" if i == 0 else "", lbl,
+           css.replace('"', "&quot;"), "Abc")
         for i, (lbl, css, _g, block, cat) in enumerate(FONTS))
     # Tabs, so 72 faces read as three manageable sets rather than one wall -
     # and so only the set you are looking at has to download.
+    # Each tab is set in a face from its own category, so "Script" reads as
+    # script. That says what the tab holds better than a caption under it did.
     fonttabs = "".join(
-        '<button type=button class="fonttab%s" data-cat="%s" data-href="%s">'
-        '%s<em>%s</em></button>'
-        % (" on" if i == 0 else "", key, google_fonts_href(key), label, hint)
-        for i, (key, label, hint) in enumerate(FONT_CATEGORIES))
+        '<button type=button class="fonttab%s" data-cat="%s" data-href="%s" '
+        'style="font-family:%s">%s</button>'
+        % (" on" if i == 0 else "", key, google_fonts_href(key),
+           tab_face(key)[1].replace('"', "&quot;"), label)
+        for i, (key, label, _hint) in enumerate(FONT_CATEGORIES))
     heights = "".join(
         '<label class=opt><input type=radio name=height value="%d" data-add="%d"%s>'
         '<span class=optbox>%s</span>'
-        '<em class=optcap>%s<b>%s</b></em></label>'
-        % (h, add, " checked" if h == 3 else "", lbl, note,
+        '<em class=optcap><b>%s</b></em></label>'
+        % (h, add, " checked" if h == 3 else "", lbl,
            "included" if add == 0 else "+$%d" % add)
-        for h, add, lbl, note in HEIGHTS)
+        for h, add, lbl in HEIGHTS)
     kinds = "".join(
         '<label class=kind><input type=radio name=kind value="%s" data-base="%d"%s>'
         '<span class=kindbox>%s%s<b>%s</b><em>%s</em><i>%s</i></span></label>'
@@ -177,14 +183,12 @@ def form():
   <section class=step data-step="5" data-when="">
     <h2>Pick a color</h2>
     <div class=swrow id=swrow>""" + cols + """</div>
-    <div class=hint><b id=colorname>Black</b> &mdash; white on a dark hull,
-      black on a light one. The law wants contrast, nothing more.</div>
 
     <label class=outline-opt>
       <input type=checkbox id=f_outline name=outline value="1">
       <span class=outbox>
         <span class=outbox-check aria-hidden="true"></span>
-        <b>Add a contrasting outline</b>
+        <b>Add outline</b>
         <em>A second layer of vinyl cut behind every character</em>
       </span>
       <i class=outprice>+$""" + str(PRICE["outline"]) + """</i>
@@ -200,8 +204,7 @@ def form():
   <section class=step data-step="6" data-when="">
     <h2>How tall?</h2>
     <div class=opts>""" + heights + """</div>
-    <div class=hint>3 inches is the federal minimum and legal everywhere.
-      Taller reads further off the water.</div>
+
   </section>
 
   <!-- 7 - checkout --------------------------------------------------- -->
@@ -379,7 +382,6 @@ JS = r"""
   function renderPreview(){
     var lbl=$('prevlbl'); if(!lbl || !window.BNS_PREVIEW) return;
     var c=val('color'), cname=c?c.value:'Black';
-    var cn=$('colorname'); if(cn) cn.textContent=cname;
     var isOut=hasOutline();
     var oc=val('outline_color'), ocn=oc?oc.value:'White';
     var ometa=COL[ocn]||['#ffffff',1];
@@ -525,8 +527,23 @@ JS = r"""
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 
+  // Null until the first render, so arriving on the page is not a "price went
+  // up" event. Only an increase animates - watching the total flash while it
+  // drops would read as a penalty.
+  var lastTot=null;
+
+  function bumpTotal(){
+    var box=tot.parentNode;
+    box.classList.remove('bump');
+    void box.offsetWidth;   // reflow, or re-adding in the same frame no-ops
+    box.classList.add('bump');
+  }
+
   function render(){
-    tot.textContent='$'+price();
+    var p=price();
+    if(lastTot!==null && p>lastTot) bumpTotal();
+    lastTot=p;
+    tot.textContent='$'+p;
     if(!isLast()) nextBtn.textContent=nextLabel();
     syncFonts(); syncOutline(); renderPreview();
     if(cur===2){ runValidate(); }

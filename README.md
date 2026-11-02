@@ -66,13 +66,40 @@ the shop email. `verify.py` now rejects any label containing the delimiter.
 
 ## The order wizard
 
-Four steps, one decision each, in a fixed-height shell (`min-height` on `.wizbody`)
-so the panel never jumps. Anti-fatigue rules, all load-bearing:
+Seven steps, one decision each, in a fixed-height shell (`min-height` on
+`.wizbody`) so the panel never jumps. Two of the seven are conditional — there
+is no "what is the number" step on a name-only order — so any given order sees
+five or six. `cur` is the step's **stable `data-step` id, not its position**;
+position is derived. Anti-fatigue rules, all load-bearing:
 
 - step 1 **auto-advances on click** — no Continue press to start
-- only steps 2 and 5 require typing; 1, 3 and 4 are pure clicking
+- only the number and name steps require typing; the rest are pure clicking
+- every step's Next button names the next one ("Next: pick a color"), so the
+  customer always knows how much is left
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
+
+**The total sits in its own box and animates on every increase** (`bumpTotal()`,
+`@keyframes totbump`). Two guards: `lastTot` starts `null`, so arriving on the
+page is not a "price went up" event, and the bump is gated on `p > lastTot` —
+flashing the total while it *drops* would read as a penalty for deselecting
+something. Every colour the flash uses lives in the keyframes rather than in
+`.bump`, so the box returns to its resting state on its own and the class can
+be left on the element; re-triggering is remove + reflow + add.
+
+**The order page is the one page with no sticky CTA bar** (`sticky_bar=False`).
+That bar prints a flat "$19 · Registration numbers" and links to `/design/`, so
+on `/design/` it would sit under a live total reading $44 and point at the page
+you are already on. Gated both ways: the bar must be absent, and the body must
+not still be padded for one.
+
+Each step shows the decision and its price, and nothing else. The height step
+used to carry a one-word pitch under every box ("legal minimum", "reads
+better", "big transom") plus a two-line hint about the federal minimum; the
+size and the price are the whole decision, so the captions went and the boxes
+got bigger. Same for the colour step, which used to explain contrast law under
+the swatches. The legal detail lives in the guides, which is where someone
+actually reading about it will be.
 - **there is no upsell step, and no notes field.** The add-ons on `/pricing/`
   are requested by replying to the proof email instead. The worker still prices every entry in
   `UPGRADE_ADD`, so a note-added upgrade costs exactly what a clicked one would
@@ -205,9 +232,23 @@ should not advertise them by name.
 installs these and cuts *exactly* what the customer previewed. Substituting a
 lookalike for the preview would make it a lie.
 
-Each chip renders the customer's own lettering (first 7 characters) in that face,
-so the choice is made on the thing itself rather than a font name. The specimen
-**follows the active tab** — the number under Block, the name under Display and
+Each tab is **set in a face from its own category** — "Script" in Pacifico,
+"Display" in Alfa Slab One — which shows what the tab holds better than the
+caption under it did. Those two specimen faces are the only non-block families
+in the page head: their category stylesheet is not injected until the tab is
+opened, so a tab labelled in its own face would sit in a fallback until
+clicked, which is the whole point missed (`head_fonts_href()`).
+
+Each chip renders the customer's own lettering (first 7 characters) in that face
+and **carries no name line** — the face is the thing being chosen, and 72 of
+them read faster as one dense grid. The name is not lost: it is on the chip as
+`title` and `aria-label` (a radio with no accessible name is a screen-reader
+dead end), and the label under the big preview always names the current pick
+(`3" Calligraphy · Black`). Script faces are set larger than the rest, because
+their much smaller x-height makes them read faint and near-identical at a
+shared point size.
+
+The specimen **follows the active tab** — the number under Block, the name under Display and
 Script — because previewing a script face as "IA 3717" contradicts the hint
 saying that face goes on the name.
 

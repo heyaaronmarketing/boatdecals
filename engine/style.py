@@ -184,15 +184,15 @@ legend{font-size:12.8px;font-weight:700;margin-bottom:5px;color:var(--ink)}
 .opts{display:grid;gap:6px;grid-template-columns:repeat(4,1fr)}
 .opt{position:relative;display:block;cursor:pointer;text-align:center}
 .opt input{position:absolute;opacity:0;width:1px;height:1px}
-.optbox{display:block;border:1.5px solid var(--line);border-radius:9px;
-padding:10px 6px;font-size:17px;font-weight:800;background:#fff;line-height:1.1;
+.optbox{display:flex;align-items:center;justify-content:center;
+border:1.5px solid var(--line);border-radius:11px;min-height:64px;
+padding:14px 6px;font-size:25px;font-weight:800;background:#fff;line-height:1;
 transition:border-color .12s,background .12s}
 .opt input:checked+.optbox{border-color:var(--nav2);background:var(--selbg);
 box-shadow:inset 0 0 0 1px var(--nav2)}
 .opt input:focus-visible+.optbox{outline:2px solid var(--sea);outline-offset:2px}
-.optcap{display:block;font-style:normal;font-size:10.6px;font-weight:600;
-color:var(--mut);line-height:1.3;margin-top:5px}
-.optcap b{display:block;font-weight:800;color:var(--nav);font-size:11.4px;margin-top:1px}
+.optcap{display:block;font-style:normal;line-height:1.3;margin-top:5px}
+.optcap b{display:block;font-weight:800;color:var(--nav);font-size:11.8px}
 .opt input:checked~.optcap b{color:var(--cta)}
 .checks{display:grid;gap:7px}
 .chk{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);
@@ -318,8 +318,26 @@ font-weight:700;color:var(--mut)}
 .wizback{background:none;border:0;font:inherit;font-weight:700;color:var(--nav2);
 cursor:pointer;padding:3px 0}
 .wizback:hover{text-decoration:underline}
-.wiztot{margin-left:auto;font-weight:600}
-.wiztot b{font-size:17.5px;color:var(--nav);margin-left:3px}
+.wiztot{margin-left:auto;display:inline-flex;align-items:baseline;gap:5px;
+font-size:11.6px;font-weight:700;color:var(--mut);text-transform:uppercase;
+letter-spacing:.04em;background:#fff;border:1.5px solid var(--line);
+border-radius:9px;padding:4px 10px 5px}
+.wiztot b{font-size:18px;color:var(--nav);margin:0;font-weight:800;
+letter-spacing:0;text-transform:none}
+/* Every colour the flash uses lives in the keyframes, not in .bump, so the
+   box returns to its resting state on its own and the class can be left on
+   the element. Re-triggering is a remove + reflow + add in bumpTotal(). */
+.wiztot.bump{animation:totbump .55s cubic-bezier(.2,1.5,.35,1) 1}
+@keyframes totbump{
+  0%{transform:scale(1)}
+  22%{transform:scale(1.13);border-color:var(--cta);background:#fff4ea}
+  60%{border-color:var(--cta);background:#fff4ea}
+  100%{transform:scale(1)}}
+.wiztot.bump b{animation:totbumpb .55s ease 1}
+@keyframes totbumpb{0%,70%{color:var(--cta)}100%{color:var(--nav)}}
+@media(prefers-reduced-motion:reduce){
+  .wiztot.bump,.wiztot.bump b{animation-name:totflash}
+  @keyframes totflash{0%,60%{border-color:var(--cta)}100%{}}}
 .wizbody{padding:12px 16px 0;min-height:176px}
 @media(min-width:620px){.wizbody{min-height:186px}}
 .step{display:none;padding:0;animation:stepin .22s ease both}
@@ -374,8 +392,10 @@ box-shadow:inset 0 0 0 1px var(--nav2)}
 .kind input:focus-visible+.kindbox{outline:2px solid var(--sea);outline-offset:2px}
 .kindbox b{display:block;font-size:13.8px;font-weight:800;line-height:1.2;margin-bottom:2px}
 .kindbox em{display:block;font-style:normal;font-size:11.8px;color:var(--mut);line-height:1.3}
-.kindbox i{display:block;font-style:normal;font-size:13.4px;font-weight:800;
-color:var(--cta);margin-top:4px}
+.kindbox i{display:inline-block;font-style:normal;font-size:13.4px;
+font-weight:800;color:var(--cta);margin-top:7px;padding:2px 10px 3px;
+border:1.5px solid var(--cta);border-radius:999px;background:#fff6ed;
+line-height:1.25}
 .flag{position:absolute;top:-8px;right:7px;background:var(--cta);color:#fff;
 font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 7px;border-radius:99px;
 text-transform:uppercase}
@@ -404,14 +424,19 @@ box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);transition:box-shadow .12s}
 @media(min-width:420px){.fontgrid{grid-template-columns:repeat(5,1fr)}}
 .fontchip{position:relative;cursor:pointer}
 .fontchip input{position:absolute;opacity:0;width:1px;height:1px}
-.fontbox{display:flex;flex-direction:column;align-items:center;justify-content:center;
-gap:1px;border:1.5px solid var(--line);border-radius:8px;padding:6px 3px 4px;
-background:#fff;height:100%;min-height:46px;overflow:hidden;
+/* No name line under the specimen - the face is the thing being chosen, and
+   72 of them read faster as one dense grid. The name stays in `title` and
+   `aria-label` on the chip, and the checkout summary names the pick. */
+.fontbox{display:flex;align-items:center;justify-content:center;
+border:1.5px solid var(--line);border-radius:8px;padding:7px 3px;
+background:#fff;height:100%;min-height:36px;overflow:hidden;
 transition:border-color .12s,background .12s}
 .fontdemo{display:block;font-size:15px;line-height:1.15;color:var(--ink);
 white-space:nowrap;max-width:100%;overflow:hidden}
-.fontbox em{font-style:normal;font-size:9.4px;font-weight:700;color:var(--mut);
-letter-spacing:.01em;white-space:nowrap;overflow:hidden;max-width:100%}
+/* Script faces have a much smaller x-height than the block and display sets,
+   so at a shared point size they read as faint and near-identical. Set them
+   larger; the chip still fits because the ascenders are what grew. */
+.fontchip[data-cat=script] .fontdemo{font-size:20px;line-height:1}
 .fontchip input:checked+.fontbox{border-color:var(--nav2);background:var(--selbg);
 box-shadow:inset 0 0 0 1px var(--nav2)}
 .fontchip input:focus-visible+.fontbox{outline:2px solid var(--sea);outline-offset:2px}
@@ -738,12 +763,12 @@ border-radius:10px;overflow:hidden;background:#fff}
 CSS += """
 .fonttabs{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
 .fonttabs[hidden]{display:none}
-.fonttab{flex:1;min-width:92px;font:inherit;text-align:center;cursor:pointer;
+/* The label is set in a face from its own category (inline font-family from
+   order.py), so the tab shows what it holds instead of describing it. */
+.fonttab{flex:1;min-width:92px;text-align:center;cursor:pointer;
 background:#fff;border:1.5px solid var(--line);border-radius:10px;
-padding:8px 9px;font-size:14px;font-weight:800;color:var(--ink);
-transition:border-color .12s,background .12s}
-.fonttab em{display:block;font-style:normal;font-size:10.8px;font-weight:600;
-color:var(--mut);margin-top:2px;line-height:1.25}
+padding:9px 9px 10px;font-size:19px;font-weight:400;color:var(--ink);
+line-height:1.15;transition:border-color .12s,background .12s}
 .fonttab:hover{border-color:var(--nav2)}
 .fonttab.on{background:var(--nav);border-color:var(--nav);color:#fff}
 .fonttab.on em{color:#bcd9e8}

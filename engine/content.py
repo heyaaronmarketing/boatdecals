@@ -356,6 +356,26 @@ def fonts_in(cat):
     return [f for f in FONTS if f[4] == cat]
 
 
+def tab_face(cat):
+    """The face a category tab renders its own name in."""
+    f = fonts_in(cat)
+    return f[0] if f else None
+
+
+def head_fonts_href():
+    """Block, plus one specimen face per other tab.
+
+    The display and script stylesheets are not injected until their tab is
+    opened, so a tab labelled in its own face would sit in a fallback until
+    clicked - which is the whole point missed. Two extra faces (~18KB) buys
+    all three tabs reading correctly on arrival.
+    """
+    src = fonts_in("block") + [tab_face(c) for c, _l, _h in FONT_CATEGORIES
+                               if c != "block"]
+    fams = "&".join("family=" + f[2] for f in src)
+    return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
+
+
 def google_fonts_href(cat=None):
     """One stylesheet per CATEGORY, not one for all 72.
 

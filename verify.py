@@ -494,6 +494,27 @@ elif not _shape:
                      "content.py: missing %s, extra %s"
                      % (sorted(_py - _wk) or "none", sorted(_wk - _py) or "none"))
 
+# The order page must not carry the site-wide sticky CTA. It prints a flat
+# "$19 Registration numbers" and links to /design/ - so on /design/ it sits
+# under a live total that may read $44 and points at the page you are on.
+if "class=sticky" in design:
+    fails.append("the sticky CTA bar is back on the order page - its flat $19 "
+                 "contradicts the wizard's live total, on the one page whose "
+                 "job is that total")
+elif 'classList.add("has-sticky")' in design:
+    # Only reachable with the bar itself gone, so this is the narrower case:
+    # no bar, but the body still padded for one.
+    fails.append("the order page still reserves footer space for a sticky bar "
+                 "it no longer renders")
+# Only an increase animates. Flashing the total while it DROPS reads as a
+# penalty for deselecting something, which is the opposite of the intent.
+if "p>lastTot" not in design.replace(" ", ""):
+    fails.append("the total's bump animation lost its direction guard - it "
+                 "would flash on price decreases too")
+if "lastTot=null" not in design.replace(" ", ""):
+    fails.append("lastTot no longer starts null, so merely arriving on the "
+                 "page animates the total as though the price went up")
+
 # The order JS is concatenated preview + validate + color_js + order_js, so
 # anything in the preview half that caches a window.BNS_* global at IIFE scope
 # caches {} - color_js() has not run yet. It fails silently: no error, the
@@ -518,9 +539,22 @@ for _key, _lbl, _h in _C.FONT_CATEGORIES:
 if "loadedCats[cat]) return" not in design:
     fails.append("the font stylesheet loader lost its once-only guard - every "
                  "tab click would append another <link>")
-if "google_fonts_href(\"block\")" not in pathlib.Path("engine/build.py").read_text():
-    fails.append("the page head is loading every font category again - that is "
-                 "~670KB of webfont for a step most orders pick one face from")
+# The head must carry the block set plus one specimen face per other tab -
+# nothing more. Counting families beats grepping for a function name: it keeps
+# holding when the helper is renamed, and it is the number that actually costs
+# the customer bandwidth.
+_head = _re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis'
+                   r'\.com/css2\?[^"]+)"', design)
+if not _head:
+    fails.append("the order page head has no font stylesheet")
+elif not _shape:
+    _want = len([f for f in _C.FONTS if f[4] == "block"]) + len(_C.FONT_CATEGORIES) - 1
+    _got = len(_re.findall(r"family=", _head.group(1)))
+    if _got != _want:
+        fails.append("the head font stylesheet carries %d families, expected %d "
+                     "(block set + one tab specimen per other category). Loading "
+                     "all %d is ~670KB for a step most orders pick one face from"
+                     % (_got, _want, len(_C.FONTS)))
 
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))

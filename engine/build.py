@@ -5,7 +5,7 @@ import json, os, pathlib, re, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
-                     LOCAL_TOWNS, LOCAL_WATERS, google_fonts_href,
+                     LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL)
 from style import CSS
 import namegen as NG
@@ -595,7 +595,8 @@ def write(path, body, prio="0.7"):
     PAGES.append((path, prio))
 
 def shell(title, desc, path, schema, main, trail=None, noindex=False,
-          faqs=None, faq_heading=None, sticky_label=None, sticky_price=19, js="",
+          faqs=None, faq_heading=None, sticky_label=None, sticky_price=19,
+          sticky_bar=True, js="",
           band=None):
     parts = [head(title, desc, path, schema, noindex), topbar(), header()]
     if trail: parts.append(bc(trail))
@@ -603,8 +604,14 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
     if faqs: parts.append(faq_block(faqs, faq_heading or "Questions people actually ask", band))
     parts.append('</main>')
     parts.append(footer())
-    parts.append(sticky(sticky_label or "Registration numbers", sticky_price))
-    parts.append('<script>document.body.classList.add("has-sticky");'
+    # The order page suppresses it: the wizard already carries a live total in
+    # its header, and a second bar reading a flat "$19 Registration numbers"
+    # under a total saying $29 Boat name contradicts it - on a page whose whole
+    # job is that total. Its button also links to the page you are already on.
+    if sticky_bar:
+        parts.append(sticky(sticky_label or "Registration numbers", sticky_price))
+        parts.append('<script>document.body.classList.add("has-sticky");</script>')
+    parts.append('<script>'
                  '(function(){var b=document.getElementById("menubtn"),'
                  'n=document.getElementById("nav");if(!b||!n)return;'
                  'b.addEventListener("click",function(){'
@@ -617,7 +624,7 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
             # Display (28) and script (24) are injected by order.py the first
             # time their tab is opened, which for most orders is never.
             # Async either way, so type never blocks first paint.
-            gf = google_fonts_href("block")
+            gf = head_fonts_href()
             parts.append(
                 '<link rel="preconnect" href="https://fonts.googleapis.com">'
                 '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
@@ -767,7 +774,8 @@ def build_design():
     write("/design/", shell("Start Your Order - Boat Lettering &amp; Numbers",
           "Build your boat registration numbers or custom lettering order. Live pricing, "
           "live pricing, a live preview of your exact lettering, and next-day shipping.",
-          "/design/", sch, main, trail=trail, js=ORDER_JS), "0.9")
+          "/design/", sch, main, trail=trail, js=ORDER_JS,
+                sticky_bar=False), "0.9")
 
 # -------------------------------------------------------------- /pricing/
 # A traditional three-up pricing table. Features are claims we can stand behind
