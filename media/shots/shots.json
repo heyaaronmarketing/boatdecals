@@ -48,5 +48,25 @@
   "id": "AL-10",
   "spec": "White on metalflake \u00b7 bass boat",
   "aspect": "1536x1024"
+ },
+ {
+  "id": "PV-01",
+  "spec": "PREVIEW PLATE - bare white hull, bow, square-on",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "PV-02",
+  "spec": "PREVIEW PLATE - bare navy hull, bow, square-on",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "PV-03",
+  "spec": "PREVIEW PLATE - bare white transom, square-on",
+  "aspect": "1536x1024"
+ },
+ {
+  "id": "PV-04",
+  "spec": "PREVIEW PLATE - bare navy transom, square-on",
+  "aspect": "1536x1024"
  }
 ]

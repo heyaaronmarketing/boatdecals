@@ -1,0 +1,54 @@
+[
+ {
+  "id": "PV-01",
+  "view": "side",
+  "dark": false,
+  "inches": 72,
+  "anchor": [
+   0.12,
+   0.4
+  ],
+  "align": "left",
+  "deg": 0,
+  "nominal": "17 ft runabout"
+ },
+ {
+  "id": "PV-02",
+  "view": "side",
+  "dark": true,
+  "inches": 72,
+  "anchor": [
+   0.18,
+   0.21
+  ],
+  "align": "left",
+  "deg": 1.0,
+  "nominal": "19 ft bowrider"
+ },
+ {
+  "id": "PV-03",
+  "view": "transom",
+  "dark": false,
+  "inches": 82,
+  "anchor": [
+   0.5,
+   0.33
+  ],
+  "align": "center",
+  "deg": 0,
+  "nominal": "78 in transom"
+ },
+ {
+  "id": "PV-04",
+  "view": "transom",
+  "dark": true,
+  "inches": 90,
+  "anchor": [
+   0.5,
+   0.3
+  ],
+  "align": "center",
+  "deg": 0,
+  "nominal": "78 in transom"
+ }
+]

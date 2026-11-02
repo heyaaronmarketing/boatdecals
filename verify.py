@@ -502,6 +502,63 @@ elif not _shape:
                      "content.py: missing %s, extra %s"
                      % (sorted(_py - _wk) or "none", sorted(_wk - _py) or "none"))
 
+# ---- the on-the-boat preview -------------------------------------------
+# The plate table is what makes "shown to scale" true. Each plate declares how
+# many inches of real hull its WIDTH spans, and the browser derives character
+# height from that - so a plate whose image is missing, or whose calibration
+# drifted from the crop it was measured against, puts the customer's lettering
+# at a scale the photograph does not support. That is a claim, not a layout
+# glitch, which is why it fails the build.
+_plates = _json.loads((ROOT / "engine" / "plates.json").read_text())
+if len(_plates) < 4:
+    fails.append("engine/plates.json has %d plates - the preview needs a light "
+                 "and a dark one for both the side and transom views, or some "
+                 "colour/product combination silently has no plate at all"
+                 % len(_plates))
+_seen = set()
+for _pl in _plates:
+    _seen.add((_pl["view"], bool(_pl["dark"])))
+    for _w in (800, 1400):
+        _f = ROOT / "public" / "assets" / "img" / ("%s-%d.webp" % (_pl["id"], _w))
+        if not _f.exists():
+            fails.append("plate %s has no %dpx asset - the preview would show "
+                         "an empty frame" % (_pl["id"], _w))
+    if not isinstance(_pl.get("inches"), (int, float)) or _pl["inches"] <= 0:
+        fails.append("plate %s has no usable `inches` calibration, so "
+                     "character height cannot be derived from it" % _pl["id"])
+    if not _pl.get("nominal"):
+        fails.append("plate %s has no `nominal` - the preview prints it as the "
+                     "stated scale, and scaling lettering onto a hull without "
+                     "saying what hull is an unstated claim about boat size"
+                     % _pl["id"])
+    if _pl.get("align") not in ("left", "center"):
+        fails.append("plate %s has align=%r" % (_pl["id"], _pl.get("align")))
+for _want in (("side", False), ("side", True),
+              ("transom", False), ("transom", True)):
+    if _want not in _seen:
+        fails.append("no %s plate for a %s hull - %s vinyl on that view would "
+                     "fall back to a hull it cannot be seen against, which is "
+                     "the opposite of what 33 CFR 173.27 asks for"
+                     % (_want[0], "dark" if _want[1] else "light",
+                        "light" if _want[1] else "dark"))
+# The stated scale has to actually reach the screen.
+if "shown to scale on a " not in design:
+    fails.append("the preview no longer prints the hull it is scaled against")
+if "About <b>" not in design:
+    fails.append("the finished-size note is gone from the preview")
+# Derived, never asserted: the width comes from whatever glyphs are on screen,
+# so it is an estimate and has to read as one.
+if "About <b>'+long+'&quot; long" not in design.replace("' + '", "'+'"):
+    fails.append("the finished size is no longer hedged with \"About\" - it is "
+                 "derived from font metrics and is not an exact promise")
+# Both views must exist: the boat view at honest scale puts a 3" character at
+# about 16px, which is right for context and wrong for proofreading a
+# registration number - and a typo there makes the decal worthless.
+for _id in ("boatview", "viewboat", "viewflat", "platespan", "plateimg"):
+    if 'id=' + _id not in design:
+        fails.append("the preview lost #%s - the boat/flat view toggle is "
+                     "broken" % _id)
+
 # The order page must not carry the site-wide sticky CTA. It prints a flat
 # "$19 Registration numbers" and links to /design/ - so on /design/ it sits
 # under a live total that may read $44 and points at the page you are on.

@@ -645,7 +645,7 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
         parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
-ORDER_JS = PV.JS + VAL.data_js() + VAL.JS + O.color_js() + O.JS
+ORDER_JS = PV.data_js() + PV.JS + VAL.data_js() + VAL.JS + O.color_js() + O.JS
 
 # =================================================================== PAGES
 def why_grid(limit=6):

@@ -521,6 +521,30 @@ border:1px solid #cfdde6;transition:background .22s,border-color .22s}
 color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
 .prevlbl b{color:var(--ink);font-weight:800}
 
+.prevtabs{display:flex;gap:5px;margin-bottom:7px}
+.prevtab{flex:1;font:inherit;font-size:11.4px;font-weight:800;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;
+color:var(--mut);transition:border-color .12s,background .12s,color .12s}
+.prevtab.on{background:var(--nav);border-color:var(--nav);color:#fff}
+
+/* The photo and the lettering share one positioning context, so the text can
+   be placed in fractions of the plate rather than in pixels - the same numbers
+   hold at every panel width. */
+.boatview{position:relative;border-radius:10px;overflow:hidden;
+border:1px solid #cfdde6;background:#e9f0f4;line-height:0}
+.boatview img{display:block;width:100%;height:auto}
+.platetext{position:absolute;left:0;top:0;width:100%;height:100%;
+pointer-events:none}
+#platespan{position:absolute;white-space:nowrap;line-height:1;
+transform-origin:left top}
+/* Dark vinyl multiplies so the hull's scuffs and shading read through it, the
+   way film on gelcoat actually looks. Light vinyl is opaque, so it does not. */
+#platespan.ink{mix-blend-mode:multiply}
+.platenote{font-size:10.6px;color:var(--mut);margin-top:5px;text-align:center;
+font-weight:650}
+.platenote b{color:var(--ink);font-weight:800}
+.platenote[hidden]{display:none}
+
 .sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
 .sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
 .srow{display:flex;gap:7px}
@@ -918,6 +942,19 @@ line-height:1.15;transition:border-color .12s,background .12s}
   </div>
 
   <div class=prevwrap id=prevwrap>
+
+<div class=prevtabs role=tablist>
+  <button type=button class="prevtab on" id=viewboat role=tab
+          aria-selected=true>On the boat</button>
+  <button type=button class=prevtab id=viewflat role=tab
+          aria-selected=false>Just the letters</button>
+</div>
+<div class=boatview id=boatview>
+  <img id=plateimg alt="" decoding=async>
+  <div class=platetext id=platetext><span id=platespan></span></div>
+</div>
+<div class=platenote id=platenote></div>
+
     <div class=prev id=prev aria-live=polite>
 <svg id=prevsvg viewBox="0 0 300 64" role="img" aria-labelledby="prevtitle"
      preserveAspectRatio="xMidYMid meet">
@@ -1146,7 +1183,7 @@ window.BNS_MOCKPAY = (function(){
   return {wire: wire, collect: collect,
           fail: function(m){ return fail(null, m); }};
 })();
-</script><script>
+</script><script>window.BNS_PLATES=[{"id":"PV-01","view":"side","dark":false,"inches":72,"anchor":[0.12,0.4],"align":"left","deg":0,"nominal":"17 ft runabout"},{"id":"PV-02","view":"side","dark":true,"inches":72,"anchor":[0.18,0.21],"align":"left","deg":1.0,"nominal":"19 ft bowrider"},{"id":"PV-03","view":"transom","dark":false,"inches":82,"anchor":[0.5,0.33],"align":"center","deg":0,"nominal":"78 in transom"},{"id":"PV-04","view":"transom","dark":true,"inches":90,"anchor":[0.5,0.3],"align":"center","deg":0,"nominal":"78 in transom"}];
 window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
   var PAD=7;           // viewBox units of breathing room around the glyphs
@@ -1209,6 +1246,113 @@ window.BNS_PREVIEW = (function(){
     else { tn.setAttribute('y', 40); nm.setAttribute('y', 40); }
 
     fit(svg, [o.showNum && tn, o.showName && nm].filter(Boolean), o.height);
+    boat(o);
+  }
+
+  /**
+   * The same lettering, on a photograph of a hull, at honest scale.
+   *
+   * Each plate declares how many inches of real hull its WIDTH spans, so
+   * character height is a fraction of the plate - `inches / plate.inches` -
+   * and holds at any panel width without a second calibration. The plates are
+   * shot square-on and their rub rails are level to within a degree, so a flat
+   * rotate + translate is enough; there is no perspective to undo.
+   */
+  function boat(o){
+    var wrap=$('boatview'), img=$('plateimg'), span=$('platespan');
+    if(!wrap || !img || !span) return;
+    var plates=window.BNS_PLATES;
+    if(!plates || !plates.length){ wrap.hidden=true; return; }
+
+    // Registration numbers go on the bow, a name goes on the transom. A "Both"
+    // order shows the side: the numbers are the half with a legal placement
+    // rule, and the font hint already explains where the name lands.
+    var view = (o.showName && !o.showNum) ? 'transom' : 'side';
+    // The hull has to contrast with the vinyl, which is the whole point of
+    // 33 CFR 173.27 - white film needs the dark plate to be visible at all.
+    // With an outline it is the OUTLINE that touches the hull.
+    var lightFilm = o.outline ? !!o.outlineLight : !!o.light;
+    var p=null;
+    for(var i=0;i<plates.length;i++){
+      if(plates[i].view===view && !!plates[i].dark===lightFilm){ p=plates[i]; break; }
+    }
+    if(!p){ wrap.hidden=true; return; }
+    wrap.hidden=false;
+
+    if(img.getAttribute('data-plate')!==p.id){
+      img.setAttribute('data-plate', p.id);
+      img.src='/assets/img/'+p.id+'-800.webp';
+    }
+
+    var text = view==='transom' ? (o.name || 'Second Wind')
+                                : (o.number || o.placeholder || 'IA 3717 ZW');
+    span.textContent=text;
+
+    var inches = Math.max(3, Math.min(6, parseFloat(o.height) || 3));
+    var boxW = wrap.clientWidth || 1;
+    // Cap height, not font-size: the law measures the characters themselves,
+    // and a face's cap height is a fraction of its em that varies per family.
+    var capPx = inches / p.inches * boxW;
+    span.style.fontFamily = o.css || "'Archivo Black',sans-serif";
+    span.style.fontWeight = (view==='side' && o.numBlock) ? '900' : '';
+    span.style.fontSize = (capPx / capRatio(span, o.css)) + 'px';
+    span.style.color = o.hex;
+    span.style.letterSpacing = (view==='side' ? capPx*0.06 : 0) + 'px';
+    span.style.webkitTextStroke = o.outline
+      ? (capPx*0.09)+'px '+o.outlineHex : '';
+    span.style.paintOrder = 'stroke fill';
+    // Vector type on a photograph reads as pasted on; real film has a hair of
+    // edge softness and the plate has sensor noise. Scaled to cap height so it
+    // stays the same relative softness at any panel width, and capped - past
+    // about half a pixel it stops looking like vinyl and starts looking
+    // out of focus.
+    span.style.filter = 'blur(' + Math.min(0.55, capPx * 0.012) + 'px)';
+    span.classList.toggle('ink', !lightFilm);
+
+    // Anchor is a fraction of the plate; `left` aligns bow numbers forward,
+    // `center` centres a transom name.
+    var ax=p.anchor[0]*boxW, ay=p.anchor[1]*(wrap.clientHeight||1);
+    span.style.left=ax+'px'; span.style.top=ay+'px';
+    span.style.transform='rotate('+(p.deg||0)+'deg)'
+      + (p.align==='center' ? ' translateX(-50%)' : '');
+
+    note(p, span, inches, boxW);
+  }
+
+  /**
+   * Cap height as a fraction of font-size, measured rather than assumed.
+   *
+   * A name with ascenders and descenders ("Sea Ya Later") has a bounding box
+   * taller than its capitals, so sizing from the rendered box would make every
+   * script face read small. Measuring a lone "H" in the same family gives the
+   * real cap ratio, and it is cached per family.
+   */
+  var CAPS={};
+  function capRatio(span, css){
+    var k=css||'default';
+    if(CAPS[k]) return CAPS[k];
+    var probe=document.createElement('span');
+    probe.textContent='H';
+    probe.style.cssText='position:absolute;visibility:hidden;font-size:200px;'
+      + 'line-height:1;white-space:nowrap;font-family:'+(css||'sans-serif');
+    document.body.appendChild(probe);
+    var r=probe.getBoundingClientRect().height/200;
+    probe.remove();
+    // A face that has not downloaded yet measures against the fallback, so do
+    // not cache an obviously wrong ratio - it would stick for the session.
+    if(!(r>0.4 && r<1.2)) return 0.72;
+    CAPS[k]=r; return r;
+  }
+
+  /** Finished size, derived from the glyphs actually on screen. */
+  function note(p, span, inches, boxW){
+    var el=$('platenote'); if(!el) return;
+    var w=span.getBoundingClientRect().width;
+    if(!w){ el.hidden=true; return; }
+    el.hidden=false;
+    var long=Math.round(w / boxW * p.inches);
+    el.innerHTML='About <b>'+long+'&quot; long &times; '+inches
+      +'&quot; tall</b> &middot; shown to scale on a '+p.nominal;
   }
 
   /**
@@ -1256,7 +1400,31 @@ window.BNS_PREVIEW = (function(){
       (cx - vw / 2)+' '+(cy - vh / 2)+' '+vw+' '+vh);
   }
 
-  return {render: render};
+  function showView(boatOn){
+    var b=$('boatview'), f=$('prev'), n=$('platenote');
+    if(!b||!f) return;
+    b.hidden=!boatOn; f.hidden=!!boatOn;
+    if(n) n.hidden=!boatOn;
+    var vb=$('viewboat'), vf=$('viewflat');
+    if(vb){ vb.classList.toggle('on', boatOn);
+            vb.setAttribute('aria-selected', boatOn?'true':'false'); }
+    if(vf){ vf.classList.toggle('on', !boatOn);
+            vf.setAttribute('aria-selected', boatOn?'false':'true'); }
+  }
+
+  var vb=$('viewboat'), vf=$('viewflat');
+  if(vb) vb.addEventListener('click', function(){ showView(true); });
+  if(vf) vf.addEventListener('click', function(){ showView(false); });
+  showView(true);
+
+  // The plate image arrives after first paint, and the lettering is positioned
+  // against the plate's rendered height - so place it again once that is real.
+  var pi=$('plateimg');
+  if(pi) pi.addEventListener('load', function(){ if(LAST) boat(LAST); });
+  var LAST=null;
+  addEventListener('resize', function(){ if(LAST) boat(LAST); });
+
+  return {render: function(o){ LAST=o; render(o); }};
 })();
 window.BNS_PREFIX_STATE={"AK":"Alaska","AL":"Alabama","AR":"Arkansas","AS":"American Samoa","AZ":"Arizona","CF":"California","CL":"Colorado","CM":"Northern Mariana Islands","CT":"Connecticut","DC":"District of Columbia","DL":"Delaware","FL":"Florida","GA":"Georgia","GU":"Guam","HA":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KA":"Kansas","KY":"Kentucky","LA":"Louisiana","MC":"Michigan","MD":"Maryland","ME":"Maine","MI":"Mississippi","MN":"Minnesota","MO":"Missouri","MS":"Massachusetts","MT":"Montana","NB":"Nebraska","NC":"North Carolina","ND":"North Dakota","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VI":"US Virgin Islands","VT":"Vermont","WN":"Washington","WS":"Wisconsin","WV":"West Virginia","WY":"Wyoming"};window.BNS_NOLETTERS={"CF":"IOQ"};window.BNS_POSTAL_MISTAKE={"CA":["California","CF"],"CO":["Colorado","CL"],"DE":["Delaware","DL"],"HI":["Hawaii","HA"],"KS":["Kansas","KA"],"MA":["Massachusetts","MS"],"NE":["Nebraska","NB"],"WA":["Washington","WN"],"WI":["Wisconsin","WS"]};
 window.BNS_VALIDATE = (function(){

@@ -139,6 +139,7 @@ def form():
   </div>
 
   <div class=prevwrap id=prevwrap>
+__VIEWS__
     <div class=prev id=prev aria-live=polite>__HULL__</div>
     <div class=prevlbl id=prevlbl></div>
   </div>
@@ -241,7 +242,9 @@ def form():
     # class=step> blocks are actually in the markup. A hand-kept "of 5" is how
     # the header went on claiming five steps a month after step 4 was removed.
     steps = markup.count('class=step ') + markup.count('class="step on"')
-    return markup.replace("__HULL__", PV.SVG).replace("__STEPS__", str(steps))
+    return (markup.replace("__VIEWS__", PV.VIEWS)
+                  .replace("__HULL__", PV.SVG)
+                  .replace("__STEPS__", str(steps)))
 
 
 def color_js():

@@ -122,6 +122,95 @@ look like a working wizard.
 
 ### The preview (`engine/preview.py`)
 
+Two views behind a toggle: **the lettering on a photograph of a hull** (the
+default) and **just the letters** (one click away).
+
+Both exist on purpose. At honest scale a 3" character on six feet of hull is
+about 16px on screen — right for *"what will this look like on my boat"* and
+wrong for *"is my registration number correct"*, and a typo there makes the
+decal worthless. The flat view is where someone proofreads; the boat view is
+where they judge it.
+
+#### The plates (`media/plates.py`, `engine/plates.json`)
+
+Four photographs — light and dark hull, side and transom — are the **only
+images on the site with no lettering on them**. Every other hull shot was
+generated with a registration number already applied, which is why none of them
+could be reused: the customer's own text would double up on top. There is no
+patching over the existing ones either; the hulls carry scuffs, water spots and
+shading, so a flat patch reads as a smudge.
+
+Two things a plate has to be:
+
+- **Square-on.** PV-01's rub rail is level to within 6px across 1400, so the
+  lettering plane is fronto-parallel and a plain rotate-and-translate is
+  enough. No homography, nothing to peel off a curve. The dock-side bow shots
+  in the `ST-*` set are three-quarter views and would not take an overlay.
+- **Cropped tight.** This is the one that is easy to get wrong. On the full
+  PV-01 frame the hull spans about 13 feet, so a 3" character renders 29px on
+  the master and ~15px at the panel's real width — true to scale and
+  illegible. Six feet of hull doubles it without touching the proportions.
+  The crop also has to keep the bow in frame: cropped to flat topside alone the
+  plate reads as a white wall rather than a boat.
+
+`inches` — how much real hull the plate's **width** spans — is the one number
+that makes "shown to scale" true. Character height is `inches / plate.inches`
+of the plate width, so it holds at any panel size without a second calibration,
+and the finished-size note is the rendered glyph width converted back through
+the same ratio.
+
+**The boats are not real, so no dimension here is measured.** Each is declared
+from the hull geometry in frame (rub rail to waterline on the side plates,
+corner to corner on the transoms) against normal dimensions for a boat that
+size, and the preview prints the matching `nominal` — *"shown to scale on a
+17 ft runabout"* — so the assumption is on screen rather than implied. Scaling
+lettering onto a hull without saying what hull is an unstated claim about boat
+size, which is why `verify.py` fails the build if `nominal` goes missing.
+
+Captions stay the same as everywhere else: **by spec, never as a customer's
+boat** (`media/CAPTIONS.md`).
+
+#### Making it look applied rather than pasted
+
+- Dark vinyl uses `mix-blend-mode: multiply`, so the hull's scuffs and shading
+  read through the film the way they do on real gelcoat. Light vinyl is opaque,
+  so it does not.
+- A blur of `capPx * 0.012`, capped at 0.55px. Vector type on a photograph
+  reads as pasted on; real film has a hair of edge softness. Past about half a
+  pixel it stops looking like vinyl and starts looking out of focus.
+- `paint-order: stroke fill` on the outline, so the fill paints over the
+  stroke and the outline sits outside the character — which is what a second
+  layer of vinyl cut slightly larger actually does.
+
+#### Which plate
+
+The view follows the product: **registration numbers go on the bow** (side
+view), **a name goes on the transom**. A "Both" order shows the side, because
+the numbers are the half with a legal placement rule.
+
+The hull is then picked to contrast with the film — white vinyl gets the dark
+plate, black gets the light one. That is 33 CFR 173.27's contrast requirement
+demonstrated rather than described, and it replaces what the flat panel's
+night-flip was doing abstractly. **With an outline it is the outline colour
+that decides**, because the outline is what touches the hull.
+
+`verify.py` requires a plate for all four view/hull combinations: without one,
+some colour and product combination silently falls back to a hull its vinyl
+cannot be seen against.
+
+#### Cap height, measured not assumed
+
+Character height in the regulation means **cap height**, and a face's cap
+height is a fraction of its em that varies per family. A name with ascenders
+and descenders ("Sea Ya Later") has a bounding box taller than its capitals, so
+sizing from the rendered box would make every script face read small.
+`capRatio()` measures a lone "H" in the same family and caches it — but
+**refuses to cache a ratio outside 0.4–1.2**, because a face that has not
+downloaded yet measures against the fallback and that wrong number would stick
+for the whole session.
+
+#### The flat view
+
 Just the letters, as large as the box allows. The text is drawn into an SVG
 whose **viewBox is recomputed from the rendered bounding box** on every change
 (`fit()`), so the glyphs fill the panel edge to edge regardless of length or

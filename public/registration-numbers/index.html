@@ -521,6 +521,30 @@ border:1px solid #cfdde6;transition:background .22s,border-color .22s}
 color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
 .prevlbl b{color:var(--ink);font-weight:800}
 
+.prevtabs{display:flex;gap:5px;margin-bottom:7px}
+.prevtab{flex:1;font:inherit;font-size:11.4px;font-weight:800;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;
+color:var(--mut);transition:border-color .12s,background .12s,color .12s}
+.prevtab.on{background:var(--nav);border-color:var(--nav);color:#fff}
+
+/* The photo and the lettering share one positioning context, so the text can
+   be placed in fractions of the plate rather than in pixels - the same numbers
+   hold at every panel width. */
+.boatview{position:relative;border-radius:10px;overflow:hidden;
+border:1px solid #cfdde6;background:#e9f0f4;line-height:0}
+.boatview img{display:block;width:100%;height:auto}
+.platetext{position:absolute;left:0;top:0;width:100%;height:100%;
+pointer-events:none}
+#platespan{position:absolute;white-space:nowrap;line-height:1;
+transform-origin:left top}
+/* Dark vinyl multiplies so the hull's scuffs and shading read through it, the
+   way film on gelcoat actually looks. Light vinyl is opaque, so it does not. */
+#platespan.ink{mix-blend-mode:multiply}
+.platenote{font-size:10.6px;color:var(--mut);margin-top:5px;text-align:center;
+font-weight:650}
+.platenote b{color:var(--ink);font-weight:800}
+.platenote[hidden]{display:none}
+
 .sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
 .sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
 .srow{display:flex;gap:7px}
@@ -918,6 +942,19 @@ line-height:1.15;transition:border-color .12s,background .12s}
   </div>
 
   <div class=prevwrap id=prevwrap>
+
+<div class=prevtabs role=tablist>
+  <button type=button class="prevtab on" id=viewboat role=tab
+          aria-selected=true>On the boat</button>
+  <button type=button class=prevtab id=viewflat role=tab
+          aria-selected=false>Just the letters</button>
+</div>
+<div class=boatview id=boatview>
+  <img id=plateimg alt="" decoding=async>
+  <div class=platetext id=platetext><span id=platespan></span></div>
+</div>
+<div class=platenote id=platenote></div>
+
     <div class=prev id=prev aria-live=polite>
 <svg id=prevsvg viewBox="0 0 300 64" role="img" aria-labelledby="prevtitle"
      preserveAspectRatio="xMidYMid meet">

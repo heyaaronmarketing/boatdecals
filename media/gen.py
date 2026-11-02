@@ -137,6 +137,66 @@ def shots():
         'stripe.',
         'White on metalflake · bass boat', "1536x1024")
 
+    # ---- clean plates for the live order preview -----------------------
+    # These four are structurally different from everything above: they carry
+    # NO lettering at all. The order form draws the customer's own text onto
+    # them, so any baked-in registration number would double up - which is why
+    # none of the existing hull shots can be reused here.
+    #
+    # Two hard requirements for a plate that can take an overlay:
+    #   square-on to the hull, so the lettering panel is a flat plane a CSS
+    #   homography can map onto without the text peeling off a curve; and
+    #   cropped tight enough that a 3" character is legible on screen. On a
+    #   whole 16ft broadside a 3" character lands at about 5px - true to scale
+    #   and useless. Roughly five feet of hull in frame fixes that.
+    BARE = (" There is absolutely no lettering anywhere in this photograph: no "
+            "registration numbers, no boat name, no validation or registration "
+            "decal, no hull identification number, no manufacturer badge and no "
+            "stickers of any kind. The hull side is completely bare paint or "
+            "gelcoat. This is a blank hull photographed before any lettering "
+            "has been applied.")
+
+    def add_bare(sid, subject, spec, aspect="1536x1024"):
+        # Deliberately NOT routed through add(): that appends the "registration
+        # lettering must be upright block capitals" rule, which on a plate meant
+        # to be empty reads as an instruction to put lettering on it.
+        S.append({"id": sid, "spec": spec, "aspect": aspect,
+                  "prompt": subject + BARE + REAL + NEG})
+
+    add_bare("PV-01",
+        'The forward port side of a white fibreglass runabout on a trailer in a '
+        'gravel driveway, photographed square-on and perpendicular to the hull '
+        'from about six feet away, so roughly the forward five feet of hull '
+        'fills the frame and the hull side reads as a flat surface rather than '
+        'curving away. The rub rail runs horizontally across the upper third. '
+        'The broad flat topside panel below the rub rail is empty.',
+        'PREVIEW PLATE - bare white hull, bow, square-on')
+
+    add_bare("PV-02",
+        'The forward port side of a dark navy blue fibreglass bowrider floating '
+        'beside a wooden dock, photographed square-on and perpendicular to the '
+        'hull from about six feet away, so roughly the forward five feet of '
+        'hull fills the frame and the hull side reads as a flat surface rather '
+        'than curving away. A white rub rail runs horizontally across the upper '
+        'third. The broad flat navy topside panel below it is empty.',
+        'PREVIEW PLATE - bare navy hull, bow, square-on')
+
+    add_bare("PV-03",
+        'The flat white fibreglass transom of a small boat on a trailer, '
+        'photographed straight on and square to the transom from about five '
+        'feet back, so the transom fills most of the frame as a flat rectangle. '
+        'An outboard motor is partly in frame at the bottom edge. The transom '
+        'face itself is completely empty weathered gelcoat.',
+        'PREVIEW PLATE - bare white transom, square-on')
+
+    add_bare("PV-04",
+        'The flat dark navy blue transom of a small boat tied at a dock, '
+        'photographed straight on and square to the transom from about five '
+        'feet back, so the transom fills most of the frame as a flat rectangle. '
+        'An outboard motor is partly in frame at the bottom edge. The transom '
+        'face itself is completely empty.',
+        'PREVIEW PLATE - bare navy transom, square-on')
+
     return S
 
 
