@@ -32,20 +32,20 @@ import preview as PV
 HEIGHTS = [(3, 0, "3&quot;"), (4, 4, "4&quot;"), (5, 8, "5&quot;"),
            (6, 13, "6&quot;")]
 
-# (label, base, caption, price, flag, key) - caption is one short line; the
-# thumbnail carries the explanation.
-# (value, base, caption, price, flag, key, label) - caption is one short line;
-# the thumbnail carries the explanation.
+# (value, base, price, flag, key, label)
 #
 # `value` is what the radio submits and must not drift: worker/index.js prices
 # on it (BASE), gates script fonts on it, and every order already in D1 carries
 # it. `label` is only what the customer reads, and is worded to match the header
 # nav ("Boat Numbers", "Boat Letters") rather than the internal product names.
+#
+# There was a caption line too ("On the bow, both sides", "On the transom").
+# The thumbnail already shows where the lettering goes, so it was the icon in
+# words - the name and the price are the whole decision.
 KINDS = [
-    ("Registration numbers", 19, "On the bow, both sides", "$19", "", "numbers",
-     "Boat Numbers"),
-    ("Boat name", 29, "On the transom", "$29+", "", "name", "Boat Name"),
-    ("Both", 44, "Bow and transom", "$44+", "Save $4", "both", "Both"),
+    ("Registration numbers", 19, "$19", "", "numbers", "Boat Numbers"),
+    ("Boat name", 29, "$29+", "", "name", "Boat Name"),
+    ("Both", 44, "$44+", "Save $4", "both", "Both"),
 ]
 
 _KICON = {
@@ -111,17 +111,17 @@ def form():
     heights = "".join(
         '<label class=opt><input type=radio name=height value="%d" data-add="%d"%s>'
         '<span class=optbox>%s</span>'
-        '<em class=optcap><b>%s</b></em></label>'
+        '<em class=optcap><i>%s</i></em></label>'
         % (h, add, " checked" if h == 3 else "", lbl,
            "included" if add == 0 else "+$%d" % add)
         for h, add, lbl in HEIGHTS)
     kinds = "".join(
         '<label class=kind><input type=radio name=kind value="%s" data-base="%d"%s>'
-        '<span class=kindbox>%s%s<b>%s</b><em>%s</em><i>%s</i></span></label>'
+        '<span class=kindbox>%s%s<b>%s</b><i>%s</i></span></label>'
         % (val, base, " checked" if key == "numbers" else "",
            '<span class=flag>%s</span>' % flag if flag else "",
-           _thumb(key), label, blurb, price)
-        for val, base, blurb, price, flag, key, label in KINDS)
+           _thumb(key), label, price)
+        for val, base, price, flag, key, label in KINDS)
     cols = _colors()
 
     markup = ("""
@@ -131,7 +131,10 @@ def form():
     <div class=wizmeta>
       <button type=button class=wizback id=back hidden>&larr; Back</button>
       <span id=stepnum>Step 1 of __STEPS__</span>
-      <span class=wiztot>Total <b id=total>$19</b></span>
+      <span class=wiztot>
+        <span class=wiztotrow>Total <b id=total>$19</b></span>
+        <em>Free shipping</em>
+      </span>
     </div>
   </div>
 

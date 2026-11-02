@@ -137,7 +137,7 @@ if '"Registration numbers": %d' % PRICE["numbers"] not in wjs:
 # not reach worker/index.js.
 sys.path.insert(0, str(ROOT / "engine"))
 from order import KINDS as _KINDS
-for _val, _base, _c, _p, _f, _k, _label in _KINDS:
+for _val, _base, _p, _f, _k, _label in _KINDS:
     if '"%s": %d' % (_val, _base) not in wjs:
         fails.append("order kind %r (base %d) missing from worker BASE - the radio "
                      "value is a contract, rename the label instead" % (_val, _base))
@@ -474,6 +474,14 @@ else:
     if len(set(_lbls)) != len(_lbls):
         fails.append("two fonts share a label - `font` is submitted by label, "
                      "so the order would be ambiguous")
+    for _k, _l, _h in _C.FONT_CATEGORIES:
+        _n = len(_C.fonts_in(_k))
+        if _n != _C.FONTS_PER_CAT:
+            fails.append("the %s tab holds %d faces, not %d - the grid is %d "
+                         "columns, so that is %.1f rows instead of %d and the "
+                         "tabs no longer match height"
+                         % (_k, _n, _C.FONTS_PER_CAT, _C.FONT_COLS,
+                            _n / _C.FONT_COLS, _C.FONT_ROWS))
     if not [f for f in _C.FONTS if f[4] == "block" and f[3]]:
         fails.append("no block-legal face left in the block category - a "
                      "registration number could not be ordered at all")
@@ -536,6 +544,10 @@ for _key, _lbl, _h in _C.FONT_CATEGORIES:
     if 'data-cat="%s" data-href="https://fonts.googleapis.com' % _key not in design:
         fails.append("the %s tab has no data-href - its faces would never "
                      "load and would render in a fallback face" % _key)
+if "grid-template-columns:repeat(%d,1fr)" % _C.FONT_COLS not in design:
+    fails.append("the font grid is no longer %d columns wide, so %d faces per "
+                 "tab stops being %d rows - update FONT_COLS and the per-tab "
+                 "count together" % (_C.FONT_COLS, _C.FONTS_PER_CAT, _C.FONT_ROWS))
 if "loadedCats[cat]) return" not in design:
     fails.append("the font stylesheet loader lost its once-only guard - every "
                  "tab click would append another <link>")

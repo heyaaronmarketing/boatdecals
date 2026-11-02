@@ -79,7 +79,9 @@ position is derived. Anti-fatigue rules, all load-bearing:
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
 
-**The total sits in its own box and animates on every increase** (`bumpTotal()`,
+**The total sits in a dark box with light type**, with "Free shipping" under the
+figure — the one claim worth repeating at the moment someone is looking at a
+price. **It animates on every increase** (`bumpTotal()`,
 `@keyframes totbump`). Two guards: `lastTot` starts `null`, so arriving on the
 page is not a "price went up" event, and the bump is gated on `p > lastTot` —
 flashing the total while it *drops* would read as a penalty for deselecting
@@ -93,7 +95,15 @@ on `/design/` it would sit under a live total reading $44 and point at the page
 you are already on. Gated both ways: the bar must be absent, and the body must
 not still be padded for one.
 
-Each step shows the decision and its price, and nothing else. The height step
+**A price looks like a price wherever it appears.** `.kindbox i` and
+`.optcap i` share one pill — same 20px figure, same outline, same tint — so
+step 1's "$19 / $29+ / $44+" and the height step's "included / +$4 / +$8 /
++$13" read as the same kind of thing. 20px is 1.5x where that pill started.
+
+Each step shows the decision and its price, and nothing else. Step 1 used to
+carry a caption under every option ("On the bow, both sides", "On the transom")
+— but the thumbnail already shows where the lettering goes, so it was the icon
+in words. The height step
 used to carry a one-word pitch under every box ("legal minimum", "reads
 better", "big transom") plus a two-line hint about the federal minimum; the
 size and the price are the whole decision, so the captions went and the boxes
@@ -210,25 +220,40 @@ for numbers, a letterform for names, two stacked plates for both.
 
 ### Fonts
 
-72 faces, defined once in `content.py: FONTS` as
+45 faces, defined once in `content.py: FONTS` as
 `(label, css family, Google spec, block_legal, category)`, split by
-`FONT_CATEGORIES` into three tabs:
+`FONT_CATEGORIES` into three tabs of fifteen:
 
 | tab | faces | what it is for |
 |---|---|---|
-| Block | 20 | the only set legal on a registration number |
-| Display | 28 | slab, western, nautical, neon, collegiate |
-| Script | 24 | brush, calligraphy, marker, handwritten |
+| Block | 15 | the only set legal on a registration number |
+| Display | 15 | slab, western, nautical, neon, collegiate |
+| Script | 15 | brush, calligraphy, marker, handwritten |
 
 It was ten faces, all variations of the same condensed block — no real choice
-for a boat name. Three tabs beat one long grid of 72 and beat trimming to 25,
-because the categories are the axis a customer is actually choosing on.
+for a boat name. Three tabs beat one long grid, because the categories are the
+axis a customer is actually choosing on.
+
+**Fifteen is a layout constant, not a taste call.** `FONT_COLS = 5` and
+`FONT_ROWS = 3` in `content.py`, so `FONTS_PER_CAT = 15`. Every tab is exactly
+three rows deep: no tab is taller than another, and the grid never pushes the
+wizard's Next button off the screen. It briefly did — Display ran 28 faces, six
+rows, and the panel grew past the viewport on the one step where the customer
+has to press Next to continue. `verify.py` fails the build if any category
+drifts off fifteen **or** if the CSS stops being five columns, because those two
+numbers only mean anything together.
+
+Below 420px the grid drops to three columns, which makes it five rows. That is
+deliberate: five columns on a 375px phone leaves a 65px chip, and a worst-case
+seven-character name needs 105px, so the specimen would be clipped — and the
+specimen is the entire point of the chip. All three tabs still match each other
+at every width; only the row count changes.
 
 **Labels are descriptive, not foundry names.** "Brush Script", not the
 commercial face off a sign-shop chart. We are not licensing those faces, so we
 should not advertise them by name.
 
-**All 72 are free Google Fonts on purpose.** A plotter cuts any TTF, so the shop
+**All 45 are free Google Fonts on purpose.** A plotter cuts any TTF, so the shop
 installs these and cuts *exactly* what the customer previewed. Substituting a
 lookalike for the preview would make it a lie.
 
@@ -240,8 +265,8 @@ opened, so a tab labelled in its own face would sit in a fallback until
 clicked, which is the whole point missed (`head_fonts_href()`).
 
 Each chip renders the customer's own lettering (first 7 characters) in that face
-and **carries no name line** — the face is the thing being chosen, and 72 of
-them read faster as one dense grid. The name is not lost: it is on the chip as
+and **carries no name line** — the face is the thing being chosen, and they
+read faster as one dense grid. The name is not lost: it is on the chip as
 `title` and `aria-label` (a radio with no accessible name is a screen-reader
 dead end), and the label under the big preview always names the current pick
 (`3" Calligraphy · Black`). Script faces are set larger than the rest, because
@@ -255,12 +280,12 @@ saying that face goes on the name.
 **Only the Block stylesheet is in the page head.** It holds the default face and
 is the only set a registration number may use. Display and script are injected
 by `order.py` the first time their tab is opened, which for most orders is
-never: ~180KB of webfont on the step instead of ~670KB. `loadedCats` makes the
+never: ~135KB of webfont on the step instead of ~410KB. `loadedCats` makes the
 injection once-only — without it every tab click appends another `<link>`.
 Loading stays async (`media="print"` → `onload`, with a `<noscript>` fallback),
 so type never blocks first paint.
 
-`block_legal` marks the 20 faces satisfying 33 CFR 173.27's "plain vertical
+`block_legal` marks the 15 faces satisfying 33 CFR 173.27's "plain vertical
 block characters":
 
 - **Registration numbers** — the Display and Script tabs are **removed**, not
@@ -279,7 +304,8 @@ losing a real order to a stale cached page is worse than correcting the font and
 flagging it in the shop email, on a proof the customer approves anyway.
 
 That copy is the obvious thing to forget. It sat at five names while the site
-offered twenty legal ones, so fifteen legal faces would have been silently
+offered twenty legal ones, and it went stale again the moment the block set was
+trimmed to fifteen — so fifteen legal faces would have been silently
 rewritten to Block and reported to Ryan as *"customer asked for something
 illegal"* — wrong font cut, and the email blames the customer. `verify.py` now
 fails the build if the two lists drift in either direction.

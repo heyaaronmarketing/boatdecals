@@ -205,9 +205,7 @@ transition:border-color .12s,background .12s}
 .opt input:checked+.optbox{border-color:var(--nav2);background:var(--selbg);
 box-shadow:inset 0 0 0 1px var(--nav2)}
 .opt input:focus-visible+.optbox{outline:2px solid var(--sea);outline-offset:2px}
-.optcap{display:block;font-style:normal;line-height:1.3;margin-top:5px}
-.optcap b{display:block;font-weight:800;color:var(--nav);font-size:11.8px}
-.opt input:checked~.optcap b{color:var(--cta)}
+.optcap{display:block;font-style:normal;line-height:1.3;margin-top:6px}
 .checks{display:grid;gap:7px}
 .chk{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);
 border-radius:10px;padding:11px 12px;cursor:pointer;background:#fff}
@@ -327,23 +325,26 @@ font-weight:700;color:var(--mut)}
 .wizback{background:none;border:0;font:inherit;font-weight:700;color:var(--nav2);
 cursor:pointer;padding:3px 0}
 .wizback:hover{text-decoration:underline}
-.wiztot{margin-left:auto;display:inline-flex;align-items:baseline;gap:5px;
-font-size:11.6px;font-weight:700;color:var(--mut);text-transform:uppercase;
-letter-spacing:.04em;background:#fff;border:1.5px solid var(--line);
-border-radius:9px;padding:4px 10px 5px}
-.wiztot b{font-size:18px;color:var(--nav);margin:0;font-weight:800;
+.wiztot{margin-left:auto;display:inline-flex;flex-direction:column;
+align-items:center;gap:1px;background:var(--nav);border:1.5px solid var(--nav);
+border-radius:9px;padding:4px 11px 5px;text-align:center}
+.wiztotrow{display:flex;align-items:baseline;gap:5px;font-size:11.6px;
+font-weight:700;color:#b9d4e3;text-transform:uppercase;letter-spacing:.04em}
+.wiztot b{font-size:19px;color:#fff;margin:0;font-weight:800;
 letter-spacing:0;text-transform:none}
+.wiztot em{font-style:normal;font-size:10px;font-weight:700;color:#8fc4de;
+letter-spacing:.03em;line-height:1.1}
 /* Every colour the flash uses lives in the keyframes, not in .bump, so the
    box returns to its resting state on its own and the class can be left on
    the element. Re-triggering is a remove + reflow + add in bumpTotal(). */
 .wiztot.bump{animation:totbump .55s cubic-bezier(.2,1.5,.35,1) 1}
 @keyframes totbump{
   0%{transform:scale(1)}
-  22%{transform:scale(1.13);border-color:var(--cta);background:#fff4ea}
-  60%{border-color:var(--cta);background:#fff4ea}
+  22%{transform:scale(1.13);border-color:var(--cta);background:#15506f}
+  60%{border-color:var(--cta);background:#15506f}
   100%{transform:scale(1)}}
 .wiztot.bump b{animation:totbumpb .55s ease 1}
-@keyframes totbumpb{0%,70%{color:var(--cta)}100%{color:var(--nav)}}
+@keyframes totbumpb{0%,70%{color:#ffd9b0}100%{color:#fff}}
 @media(prefers-reduced-motion:reduce){
   .wiztot.bump,.wiztot.bump b{animation-name:totflash}
   @keyframes totflash{0%,60%{border-color:var(--cta)}100%{}}}
@@ -401,10 +402,13 @@ box-shadow:inset 0 0 0 1px var(--nav2)}
 .kind input:focus-visible+.kindbox{outline:2px solid var(--sea);outline-offset:2px}
 .kindbox b{display:block;font-size:13.8px;font-weight:800;line-height:1.2;margin-bottom:2px}
 .kindbox em{display:block;font-style:normal;font-size:11.8px;color:var(--mut);line-height:1.3}
-.kindbox i{display:inline-block;font-style:normal;font-size:13.4px;
-font-weight:800;color:var(--cta);margin-top:7px;padding:2px 10px 3px;
+/* One price pill, shared by step 1 and the height step so a price looks like
+   a price wherever it appears. 20px is 1.5x the 13.4px it started at. */
+.kindbox i,.optcap i{display:inline-block;font-style:normal;font-size:20px;
+font-weight:800;color:var(--cta);padding:2px 12px 3px;
 border:1.5px solid var(--cta);border-radius:999px;background:#fff6ed;
 line-height:1.25}
+.kindbox i{margin-top:8px}
 .flag{position:absolute;top:-8px;right:7px;background:var(--cta);color:#fff;
 font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 7px;border-radius:99px;
 text-transform:uppercase}
@@ -436,9 +440,13 @@ box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);transition:box-shadow .12s}
 /* No name line under the specimen - the face is the thing being chosen, and
    72 of them read faster as one dense grid. The name stays in `title` and
    `aria-label` on the chip, and the checkout summary names the pick. */
+/* A fixed height, not a min-height: the script specimens are set larger, so
+   content-driven rows made the script tab 3px taller than the other two and
+   the panel twitched on every tab change. Three rows is now the same number
+   of pixels whichever tab is open. */
 .fontbox{display:flex;align-items:center;justify-content:center;
-border:1.5px solid var(--line);border-radius:8px;padding:7px 3px;
-background:#fff;height:100%;min-height:36px;overflow:hidden;
+border:1.5px solid var(--line);border-radius:8px;padding:4px 3px;
+background:#fff;height:40px;overflow:hidden;
 transition:border-color .12s,background .12s}
 .fontdemo{display:block;font-size:15px;line-height:1.15;color:var(--ink);
 white-space:nowrap;max-width:100%;overflow:hidden}
@@ -957,7 +965,7 @@ line-height:1.15;transition:border-color .12s,background .12s}
     <div class=ngtransom id=ngtransom>
       <div><div class=ngtxt id=ngttxt></div><div class=ngport id=ngtport></div></div>
     </div>
-    <div class=ngfonts id=ngfonts><button type=button data-css="'Archivo Black','Arial Black',sans-serif" class=on>Block</button><button type=button data-css="'Anton',Impact,sans-serif">Heavy Impact</button><button type=button data-css="'Oswald','Arial Narrow',sans-serif">Condensed</button><button type=button data-css="'Bebas Neue','Arial Narrow',sans-serif">Tall Block</button><button type=button data-css="'Staatliches',Impact,sans-serif">Poster</button><button type=button data-css="'Fjalla One','Arial Narrow',sans-serif">Narrow</button><button type=button data-css="'Russo One',Impact,sans-serif">Square</button><button type=button data-css="'Titan One',Impact,sans-serif">Rounded</button><button type=button data-css="'Montserrat',Helvetica,sans-serif">Modern</button><button type=button data-css="'Black Ops One',Impact,sans-serif">Stencil</button><button type=button data-css="'Teko',sans-serif">Sport</button><button type=button data-css="'Khand',sans-serif">Compact</button><button type=button data-css="'Antonio',sans-serif">Tall Narrow</button><button type=button data-css="'Chivo',sans-serif">Wide Block</button><button type=button data-css="'Archivo Narrow',sans-serif">Grotesque</button><button type=button data-css="'Big Shoulders Display',sans-serif">Billboard</button><button type=button data-css="'Saira Condensed',sans-serif">Machine</button><button type=button data-css="'Alumni Sans',sans-serif">Varsity</button><button type=button data-css="'Michroma',sans-serif">Tech</button><button type=button data-css="'Orbitron',sans-serif">Orbit</button><button type=button data-css="'Alfa Slab One',Georgia,serif">Slab</button><button type=button data-css="'Abril Fatface',Georgia,serif">Fat Serif</button><button type=button data-css="'Playfair Display',Georgia,serif">Classic Serif</button><button type=button data-css="'Rye',Georgia,serif">Western</button><button type=button data-css="'Bungee',Impact,sans-serif">Nautical</button><button type=button data-css="'Righteous',Impact,sans-serif">Retro</button><button type=button data-css="'Audiowide',Impact,sans-serif">Speed</button><button type=button data-css="'Bowlby One',Impact,sans-serif">Chunky</button><button type=button data-css="'Ultra',Georgia,serif">Fat Block</button><button type=button data-css="'Bevan',Georgia,serif">Circus</button><button type=button data-css="'Patua One',Georgia,serif">Workhorse</button><button type=button data-css="'Rozha One',Georgia,serif">Didone</button><button type=button data-css="'Shrikhand',Georgia,serif">Scoop</button><button type=button data-css="'Bungee Shade',Impact,sans-serif">Shadowed</button><button type=button data-css="'Bungee Inline',Impact,sans-serif">Inline</button><button type=button data-css="'Bungee Outline',Impact,sans-serif">Hollow</button><button type=button data-css="'Monoton',Impact,sans-serif">Neon</button><button type=button data-css="'Faster One',Impact,sans-serif">Racing</button><button type=button data-css="'Rammetto One',Impact,sans-serif">Cartoon</button><button type=button data-css="'Passion One',Impact,sans-serif">Headline</button><button type=button data-css="'Fredoka',sans-serif">Soft</button><button type=button data-css="'Lilita One',Impact,sans-serif">Comic</button><button type=button data-css="'Chango',Impact,sans-serif">Groovy</button><button type=button data-css="'Sigmar One',Impact,sans-serif">Bold Round</button><button type=button data-css="'Squada One',Impact,sans-serif">Tall Display</button><button type=button data-css="'Cinzel Decorative',Georgia,serif">Engraved</button><button type=button data-css="'Special Elite',Courier,monospace">Typewriter</button><button type=button data-css="'Graduate',Georgia,serif">Collegiate</button><button type=button data-css="'Pacifico',cursive">Brush Script</button><button type=button data-css="'Lobster',cursive">Bold Script</button><button type=button data-css="'Yellowtail',cursive">Casual Script</button><button type=button data-css="'Dancing Script',cursive">Flowing</button><button type=button data-css="'Great Vibes',cursive">Formal Script</button><button type=button data-css="'Satisfy',cursive">Relaxed</button><button type=button data-css="'Sacramento',cursive">Fine Script</button><button type=button data-css="'Allura',cursive">Elegant</button><button type=button data-css="'Parisienne',cursive">Parisian</button><button type=button data-css="'Kaushan Script',cursive">Signwriter</button><button type=button data-css="'Courgette',cursive">Friendly</button><button type=button data-css="'Cookie',cursive">Playful</button><button type=button data-css="'Tangerine',cursive">Copperplate</button><button type=button data-css="'Pinyon Script',cursive">Wedding</button><button type=button data-css="'Alex Brush',cursive">Calligraphy</button><button type=button data-css="'Marck Script',cursive">Pen</button><button type=button data-css="'Mr Dafoe',cursive">Swash</button><button type=button data-css="'Italianno',cursive">Italic Script</button><button type=button data-css="'Norican',cursive">Upright Script</button><button type=button data-css="'Rochester',cursive">Victorian</button><button type=button data-css="'League Script',cursive">Vintage</button><button type=button data-css="'Permanent Marker',cursive">Marker</button><button type=button data-css="'Caveat',cursive">Handwritten</button><button type=button data-css="'Shadows Into Light',cursive">Notebook</button></div>
+    <div class=ngfonts id=ngfonts><button type=button data-css="'Archivo Black','Arial Black',sans-serif" class=on>Block</button><button type=button data-css="'Anton',Impact,sans-serif">Heavy Impact</button><button type=button data-css="'Oswald','Arial Narrow',sans-serif">Condensed</button><button type=button data-css="'Bebas Neue','Arial Narrow',sans-serif">Tall Block</button><button type=button data-css="'Staatliches',Impact,sans-serif">Poster</button><button type=button data-css="'Fjalla One','Arial Narrow',sans-serif">Narrow</button><button type=button data-css="'Russo One',Impact,sans-serif">Square</button><button type=button data-css="'Titan One',Impact,sans-serif">Rounded</button><button type=button data-css="'Montserrat',Helvetica,sans-serif">Modern</button><button type=button data-css="'Black Ops One',Impact,sans-serif">Stencil</button><button type=button data-css="'Teko',sans-serif">Sport</button><button type=button data-css="'Chivo',sans-serif">Wide Block</button><button type=button data-css="'Big Shoulders Display',sans-serif">Billboard</button><button type=button data-css="'Alumni Sans',sans-serif">Varsity</button><button type=button data-css="'Orbitron',sans-serif">Orbit</button><button type=button data-css="'Alfa Slab One',Georgia,serif">Slab</button><button type=button data-css="'Abril Fatface',Georgia,serif">Fat Serif</button><button type=button data-css="'Playfair Display',Georgia,serif">Classic Serif</button><button type=button data-css="'Rye',Georgia,serif">Western</button><button type=button data-css="'Bungee',Impact,sans-serif">Nautical</button><button type=button data-css="'Righteous',Impact,sans-serif">Retro</button><button type=button data-css="'Audiowide',Impact,sans-serif">Speed</button><button type=button data-css="'Bowlby One',Impact,sans-serif">Chunky</button><button type=button data-css="'Bevan',Georgia,serif">Circus</button><button type=button data-css="'Bungee Shade',Impact,sans-serif">Shadowed</button><button type=button data-css="'Monoton',Impact,sans-serif">Neon</button><button type=button data-css="'Faster One',Impact,sans-serif">Racing</button><button type=button data-css="'Rammetto One',Impact,sans-serif">Cartoon</button><button type=button data-css="'Special Elite',Courier,monospace">Typewriter</button><button type=button data-css="'Graduate',Georgia,serif">Collegiate</button><button type=button data-css="'Pacifico',cursive">Brush Script</button><button type=button data-css="'Lobster',cursive">Bold Script</button><button type=button data-css="'Yellowtail',cursive">Casual Script</button><button type=button data-css="'Dancing Script',cursive">Flowing</button><button type=button data-css="'Great Vibes',cursive">Formal Script</button><button type=button data-css="'Sacramento',cursive">Fine Script</button><button type=button data-css="'Kaushan Script',cursive">Signwriter</button><button type=button data-css="'Cookie',cursive">Playful</button><button type=button data-css="'Pinyon Script',cursive">Wedding</button><button type=button data-css="'Alex Brush',cursive">Calligraphy</button><button type=button data-css="'Mr Dafoe',cursive">Swash</button><button type=button data-css="'Rochester',cursive">Victorian</button><button type=button data-css="'Permanent Marker',cursive">Marker</button><button type=button data-css="'Caveat',cursive">Handwritten</button><button type=button data-css="'Shadows Into Light',cursive">Notebook</button></div>
 
     <div class=ngradio id=ngmradio></div>
     <div class=ngtests id=ngmtests></div>

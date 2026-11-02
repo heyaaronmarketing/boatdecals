@@ -276,14 +276,9 @@ FONTS = [
     ("Modern",        "'Montserrat',Helvetica,sans-serif", "Montserrat:wght@800", True, "block"),
     ("Stencil",       "'Black Ops One',Impact,sans-serif", "Black+Ops+One", True, "block"),
     ("Sport",         "'Teko',sans-serif", "Teko:wght@700", True, "block"),
-    ("Compact",       "'Khand',sans-serif", "Khand:wght@700", True, "block"),
-    ("Tall Narrow",   "'Antonio',sans-serif", "Antonio:wght@700", True, "block"),
     ("Wide Block",    "'Chivo',sans-serif", "Chivo:wght@900", True, "block"),
-    ("Grotesque",     "'Archivo Narrow',sans-serif", "Archivo+Narrow:wght@700", True, "block"),
     ("Billboard",     "'Big Shoulders Display',sans-serif", "Big+Shoulders+Display:wght@800", True, "block"),
-    ("Machine",       "'Saira Condensed',sans-serif", "Saira+Condensed:wght@800", True, "block"),
     ("Varsity",       "'Alumni Sans',sans-serif", "Alumni+Sans:wght@800", True, "block"),
-    ("Tech",          "'Michroma',sans-serif", "Michroma", True, "block"),
     ("Orbit",         "'Orbitron',sans-serif", "Orbitron:wght@800", True, "block"),
 
     # ---- display: names and lettering ------------------------------------
@@ -295,24 +290,11 @@ FONTS = [
     ("Retro",         "'Righteous',Impact,sans-serif", "Righteous", False, "display"),
     ("Speed",         "'Audiowide',Impact,sans-serif", "Audiowide", False, "display"),
     ("Chunky",        "'Bowlby One',Impact,sans-serif", "Bowlby+One", False, "display"),
-    ("Fat Block",     "'Ultra',Georgia,serif", "Ultra", False, "display"),
     ("Circus",        "'Bevan',Georgia,serif", "Bevan", False, "display"),
-    ("Workhorse",     "'Patua One',Georgia,serif", "Patua+One", False, "display"),
-    ("Didone",        "'Rozha One',Georgia,serif", "Rozha+One", False, "display"),
-    ("Scoop",         "'Shrikhand',Georgia,serif", "Shrikhand", False, "display"),
     ("Shadowed",      "'Bungee Shade',Impact,sans-serif", "Bungee+Shade", False, "display"),
-    ("Inline",        "'Bungee Inline',Impact,sans-serif", "Bungee+Inline", False, "display"),
-    ("Hollow",       "'Bungee Outline',Impact,sans-serif", "Bungee+Outline", False, "display"),
     ("Neon",          "'Monoton',Impact,sans-serif", "Monoton", False, "display"),
     ("Racing",        "'Faster One',Impact,sans-serif", "Faster+One", False, "display"),
     ("Cartoon",       "'Rammetto One',Impact,sans-serif", "Rammetto+One", False, "display"),
-    ("Headline",      "'Passion One',Impact,sans-serif", "Passion+One:wght@900", False, "display"),
-    ("Soft",          "'Fredoka',sans-serif", "Fredoka:wght@700", False, "display"),
-    ("Comic",         "'Lilita One',Impact,sans-serif", "Lilita+One", False, "display"),
-    ("Groovy",        "'Chango',Impact,sans-serif", "Chango", False, "display"),
-    ("Bold Round",    "'Sigmar One',Impact,sans-serif", "Sigmar+One", False, "display"),
-    ("Tall Display",  "'Squada One',Impact,sans-serif", "Squada+One", False, "display"),
-    ("Engraved",      "'Cinzel Decorative',Georgia,serif", "Cinzel+Decorative:wght@700", False, "display"),
     ("Typewriter",    "'Special Elite',Courier,monospace", "Special+Elite", False, "display"),
     ("Collegiate",    "'Graduate',Georgia,serif", "Graduate", False, "display"),
 
@@ -322,22 +304,13 @@ FONTS = [
     ("Casual Script", "'Yellowtail',cursive", "Yellowtail", False, "script"),
     ("Flowing",       "'Dancing Script',cursive", "Dancing+Script:wght@700", False, "script"),
     ("Formal Script", "'Great Vibes',cursive", "Great+Vibes", False, "script"),
-    ("Relaxed",       "'Satisfy',cursive", "Satisfy", False, "script"),
     ("Fine Script",   "'Sacramento',cursive", "Sacramento", False, "script"),
-    ("Elegant",       "'Allura',cursive", "Allura", False, "script"),
-    ("Parisian",      "'Parisienne',cursive", "Parisienne", False, "script"),
     ("Signwriter",    "'Kaushan Script',cursive", "Kaushan+Script", False, "script"),
-    ("Friendly",      "'Courgette',cursive", "Courgette", False, "script"),
     ("Playful",       "'Cookie',cursive", "Cookie", False, "script"),
-    ("Copperplate",   "'Tangerine',cursive", "Tangerine:wght@700", False, "script"),
     ("Wedding",       "'Pinyon Script',cursive", "Pinyon+Script", False, "script"),
     ("Calligraphy",   "'Alex Brush',cursive", "Alex+Brush", False, "script"),
-    ("Pen",           "'Marck Script',cursive", "Marck+Script", False, "script"),
     ("Swash",         "'Mr Dafoe',cursive", "Mr+Dafoe", False, "script"),
-    ("Italic Script", "'Italianno',cursive", "Italianno", False, "script"),
-    ("Upright Script","'Norican',cursive", "Norican", False, "script"),
     ("Victorian",     "'Rochester',cursive", "Rochester", False, "script"),
-    ("Vintage",       "'League Script',cursive", "League+Script", False, "script"),
     ("Marker",        "'Permanent Marker',cursive", "Permanent+Marker", False, "script"),
     ("Handwritten",   "'Caveat',cursive", "Caveat:wght@700", False, "script"),
     ("Notebook",      "'Shadows Into Light',cursive", "Shadows+Into+Light", False, "script"),
@@ -354,6 +327,15 @@ FONT_CATEGORIES = [
 
 def fonts_in(cat):
     return [f for f in FONTS if f[4] == cat]
+
+
+# The font grid is 5 columns wide from 420px up, and every tab is meant to be
+# exactly FONT_ROWS deep so no category is taller than another and none of them
+# push the wizard's Next button off the screen. Display used to run 28 faces -
+# six rows - which did exactly that. 5 x 3 = 15 per category is the budget.
+FONT_COLS = 5
+FONT_ROWS = 3
+FONTS_PER_CAT = FONT_COLS * FONT_ROWS
 
 
 def tab_face(cat):

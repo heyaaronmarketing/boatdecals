@@ -40,10 +40,9 @@ const BASE_MIN = 19, BASE_MAX = 200;
 // build if the two drift. A face missing here is silently rewritten to
 // BLOCK_FONTS[0] and reported to Ryan as an illegal request, so a legal
 // face left off this list gets the wrong font cut.
-const BLOCK_FONTS = ["Block", "Heavy Impact", "Condensed", "Tall Block", 
-  "Poster", "Narrow", "Square", "Rounded", "Modern", "Stencil", "Sport", 
-  "Compact", "Tall Narrow", "Wide Block", "Grotesque", "Billboard", 
-  "Machine", "Varsity", "Tech", "Orbit"];
+const BLOCK_FONTS = ["Block", "Heavy Impact", "Condensed", "Tall Block",
+  "Poster", "Narrow", "Square", "Rounded", "Modern", "Stencil", "Sport",
+  "Wide Block", "Billboard", "Varsity", "Orbit"];
 
 function priceOf(d) {
   let n = BASE[d.kind] ?? 19;
