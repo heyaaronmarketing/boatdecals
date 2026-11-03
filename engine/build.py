@@ -483,15 +483,39 @@ def swipe_deck():
             continue
         alt = html.unescape("%s. %s." % (m["caption"], m["sub"]))
         cards.append(
-            '<li class=deckcard>'
+            # The card carries the same photo twice: a blurred copy filling
+            # the card, and the sharp one centred at its own 3:2. The deck
+            # fills a phone screen and these are landscape photographs, so a
+            # card stretched to a tall viewport would crop them to a slab of
+            # hull with the lettering running off both edges. The blurred
+            # copy fills the space without touching the crop - what music
+            # apps do with square artwork on a tall screen.
+            #
+            # The backdrop is a real <img>, not a CSS background: a
+            # background-image does not honour loading=lazy, so every card's
+            # backdrop was fetched on load and the whole deck came down at
+            # once. Same URL as the sharp copy, so it is one fetch per card.
+            # First card real, the rest behind data- attributes that the
+            # IntersectionObserver in order.py swaps in as you swipe.
+            #
+            # loading=lazy does NOT work here. In a horizontally scrolling
+            # container Chrome treats everything on the inline axis as near
+            # the viewport and fetches the lot - measured: all nine came down
+            # on load, ~580KB before a single swipe.
+            '<li class="deckcard%s">'
+            '<img class=deckbg %s="/assets/img/%s-800.jpg" alt="" '
+            'aria-hidden=true decoding=async>'
             '<picture>'
-            '<source type="image/webp" srcset="/assets/img/%s-800.webp">'
-            '<img src="/assets/img/%s-800.jpg" alt="%s" width="1400" '
-            'height="933" decoding=async%s>'
+            '<source type="image/webp" %s="/assets/img/%s-800.webp">'
+            '<img %s="/assets/img/%s-800.jpg" alt="%s" width="1400" '
+            'height="933" decoding=async>'
             '</picture>'
             '<div class=deckcap><b>%s</b><em>%s</em></div>'
             '</li>'
-            % (iid, iid, e(alt), "" if i == 0 else " loading=lazy",
+            % ("" if i == 0 else " pending",
+               "src" if i == 0 else "data-src", iid,
+               "srcset" if i == 0 else "data-srcset", iid,
+               "src" if i == 0 else "data-src", iid, e(alt),
                m["caption"], m["sub"]))
     dots = "".join('<button type=button class="deckdot%s" data-i="%d" '
                    'aria-label="Show example %d of %d"></button>'

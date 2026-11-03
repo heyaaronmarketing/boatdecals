@@ -634,7 +634,7 @@ if ".deck .deckcta{display:block" not in design:
 
 for _h in [q for q in pages if "class=heroF" in q.read_text()]:
     _d = _h.read_text()
-    _cards = _d.count("<li class=deckcard>")
+    _cards = len(_re.findall(r'<li class="?deckcard', _d))
     _dots = len(_re.findall(r'class="deckdot[^"]*"', _d))
     if _cards < 5:
         fails.append("%s: the phone deck is down to %d cards - it is the whole "
@@ -642,13 +642,47 @@ for _h in [q for q in pages if "class=heroF" in q.read_text()]:
     if _cards != _dots:
         fails.append("%s: %d deck cards but %d dots - the indicator cannot "
                      "reach every card" % (_h.relative_to(OUT), _cards, _dots))
-    # One eager image, the rest lazy: all nine up front is ~580KB on a phone.
-    _eager = _d.count("<li class=deckcard>") - _d.count("loading=lazy")
-    if _eager != 1:
-        fails.append("%s: %d deck images load eagerly, expected 1 - the deck "
-                     "is the first thing on a phone screen and the other "
-                     "eight are ~500KB nobody has swiped to yet"
-                     % (_h.relative_to(OUT), _eager))
+    # Only the first card loads up front. Each card has two <img> - the
+    # sharp photo and its blurred backdrop - so the first card is two eager
+    # images and every other image on the deck must be lazy. All nine cards
+    # eager is ~580KB on a phone for eight nobody has swiped to.
+    #
+    # Counted over the real <img> tags rather than the cards, because the
+    # backdrop started life as a CSS background-image and those do NOT honour
+    # loading=lazy: the whole deck came down on load and this gate, which was
+    # watching the cards, said nothing.
+    _deckhtml = _d.split('class=decktrack')[-1].split('</ul>')[0]
+    _imgs = _re.findall(r"<img\b[^>]*>", _deckhtml)
+    _eager = [t for t in _imgs if " src=" in t]
+    if len(_imgs) != _cards * 2:
+        fails.append("%s: %d deck <img> for %d cards - expected two each, the "
+                     "sharp photo and its blurred backdrop"
+                     % (_h.relative_to(OUT), len(_imgs), _cards))
+    # Exactly the first card ships a real src. loading=lazy is NOT an
+    # acceptable substitute here: in a horizontal scroller Chrome treats the
+    # whole inline axis as near-viewport and fetches every card anyway. That
+    # was measured, not assumed - all nine came down on load.
+    if len(_eager) != 2:
+        fails.append("%s: %d deck images carry a real src, expected 2 (the "
+                     "first card's photo and its backdrop) - the rest must "
+                     "wait on the observer or the whole deck, ~500KB, "
+                     "downloads before a single swipe"
+                     % (_h.relative_to(OUT), len(_eager)))
+    if "loading=lazy" in _deckhtml:
+        fails.append("%s: the deck is back on loading=lazy, which a "
+                     "horizontal scroller ignores" % _h.relative_to(OUT))
+    if "if(deckOn()) loadAround(0)" not in design.replace(" ", "")\
+            .replace("if(deckOn())loadAround(0)", "if(deckOn()) loadAround(0)"):
+        fails.append("the deck's first load is no longer behind the "
+                     "breakpoint check - it is display:none above 760px, so "
+                     "that pulls images down on every desktop page too")
+    if "IntersectionObserver" not in design:
+        fails.append("nothing swaps the deck's deferred images in - cards "
+                     "past the first would stay blank")
+    if 'style="background-image' in _deckhtml:
+        fails.append("%s: a deck card is using a CSS background-image - those "
+                     "ignore loading=lazy, so every card downloads on load"
+                     % _h.relative_to(OUT))
 # The dots must not be coalesced behind requestAnimationFrame: rAF does not
 # tick in a hidden tab, so a scroll that lands while backgrounded leaves the
 # pending flag set and every later scroll is dropped - the dots freeze for the
@@ -657,7 +691,7 @@ _deck_src = order_js.split("the phone deck dots")[-1].split("the phone order she
 if "requestAnimationFrame(" in _deck_src:
     fails.append("the deck dots are back behind requestAnimationFrame - they "
                  "freeze permanently if a scroll lands while the tab is hidden")
-if "markDot(current())" not in _deck_src:
+if "markDot(i)" not in _deck_src and "markDot(current())" not in _deck_src:
     fails.append("the deck scroll handler no longer updates the dots")
 
 # The order page must not carry the site-wide sticky CTA. It prints a flat

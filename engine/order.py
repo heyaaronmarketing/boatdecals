@@ -812,8 +812,54 @@ JS = r"""
     // flag set and every later scroll was dropped - the dots froze for the
     // rest of the session. Reading nine rects per scroll is cheap and nothing
     // is written back, so there is no layout thrash to avoid here.
-    track.addEventListener('scroll', function(){ markDot(current()); },
-                           {passive:true});
+    // Swap the real URLs in a card ahead of the one being looked at.
+    // rootMargin is generous on the inline axis so the next card is already
+    // decoded by the time the swipe lands on it.
+    function load(card){
+      if(!card || card.dataset.loaded) return;
+      card.dataset.loaded='1';
+      var n=card.querySelectorAll('[data-src],[data-srcset]');
+      for(var i=0;i<n.length;i++){
+        var el=n[i];
+        if(el.dataset.srcset){ el.srcset=el.dataset.srcset; el.removeAttribute('data-srcset'); }
+        if(el.dataset.src){ el.src=el.dataset.src; el.removeAttribute('data-src'); }
+      }
+      card.classList.remove('pending');
+    }
+    // The deck is display:none above 760px, so none of this should pull an
+    // image down on a desktop page where it will never be seen.
+    var deckMq=matchMedia('(max-width:760px)');
+    function deckOn(){ return deckMq.matches; }
+
+    if(window.IntersectionObserver){
+      var io=new IntersectionObserver(function(es){
+        es.forEach(function(en){ if(en.isIntersecting && deckOn()) load(en.target); });
+      }, {root:track, rootMargin:'0px 120% 0px 120%'});
+      for(var k=0;k<track.children.length;k++) io.observe(track.children[k]);
+    } else {
+      deckMq.addEventListener
+        ? deckMq.addEventListener('change', function(){ if(deckOn()) loadAround(current()); })
+        : deckMq.addListener(function(){ if(deckOn()) loadAround(current()); });
+    }
+
+    function loadAround(i){
+      load(track.children[i]);
+      load(track.children[i-1]);
+      load(track.children[i+1]);
+    }
+    // Driven from the scroll as well as the observer. IntersectionObserver is
+    // the right primitive for "came into view", but it is one more thing that
+    // can be throttled or not fire; the scroll handler is already running to
+    // move the dots, so loading the neighbours from it costs nothing and
+    // means a swipe can never land on a card that has not started loading.
+    track.addEventListener('scroll', function(){
+      var i=current(); markDot(i); loadAround(i);
+    }, {passive:true});
+    // Resizing down to the deck's breakpoint has to prime it too, or the
+    // cards sit blank until the first swipe.
+    if(deckMq.addEventListener)
+      deckMq.addEventListener('change', function(){ if(deckOn()) loadAround(current()); });
+    if(deckOn()) loadAround(0);
     dots.forEach(function(d){
       d.addEventListener('click', function(){
         var c=cardAt(+d.dataset.i); if(!c) return;

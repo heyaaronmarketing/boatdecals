@@ -130,19 +130,44 @@ grid-template-areas:"a" "f" "b"}
 /* Only the TRACK bleeds to the edges, so the next card peeks past the screen.
    The dots, the button and the note stay in normal flow - hanging the whole
    deck on a negative margin put the button 16px off the right of the page. */
-.decktrack{display:flex;gap:10px;list-style:none;margin:0 -16px;padding:0 16px;
+.decktrack{display:flex;gap:10px;list-style:none;margin:0 -18px;padding:0 18px;
 overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
 -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .decktrack::-webkit-scrollbar{display:none}
-.deckcard{flex:0 0 86%;scroll-snap-align:center;background:#fff;
-border-radius:14px;overflow:hidden;box-shadow:0 10px 26px rgba(4,26,38,.3)}
+.deckcard{position:relative;flex:0 0 88%;scroll-snap-align:center;
+background:#0b2634;border-radius:16px;overflow:hidden;
+box-shadow:0 14px 34px rgba(4,26,38,.42);display:flex;align-items:center}
+/* filter, not backdrop-filter: this is a real image to blur, so there is no
+   dependency on backdrop-filter support. Scaled up because a blur samples
+   past the element's edges and would otherwise fade out at the border. */
+/* A card whose images have not been swapped in yet. Reads as a deliberate
+   dark card rather than a broken one. */
+.deckcard.pending{background:#0e3346}
+/* `.deckcard img.deckbg`, not `.deckbg`: the sharp-image rule below is
+   `.deckcard img`, which outranks a bare class and was handing the backdrop
+   `height:auto` and `aspect-ratio:3/2` - so it sized itself to the sharp
+   photo instead of filling the card. */
+.deckcard img.deckbg{position:absolute;inset:0;width:100%;height:100%;
+object-fit:cover;aspect-ratio:auto;border:0;box-shadow:none;
+filter:blur(26px) brightness(.72) saturate(1.05);transform:scale(1.18);
+pointer-events:none}
+.deckcard picture{position:relative;display:block;width:100%}
+/* A hairline and a shadow so the sharp photo reads as a photograph sitting
+   on its own blurred backdrop, rather than as a strip where the blur stops. */
 .deckcard img{display:block;width:100%;height:auto;aspect-ratio:3/2;
-object-fit:cover}
-.deckcap{padding:10px 13px 12px}
-.deckcap b{display:block;font-size:14px;font-weight:800;color:var(--ink);
-line-height:1.25}
-.deckcap em{display:block;font-style:normal;font-size:12px;font-weight:650;
-color:var(--mut);margin-top:3px;line-height:1.35}
+object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.42);
+border-top:1px solid rgba(255,255,255,.18);
+border-bottom:1px solid rgba(0,0,0,.25)}
+/* The caption sits ON the photo under a scrim rather than in a white block
+   below it. That is what gives the deck the full-bleed, app-like read, and it
+   hands the whole card height back to the image. */
+.deckcap{position:absolute;left:0;right:0;bottom:0;padding:34px 15px 14px;
+background:linear-gradient(to top,rgba(5,24,34,.93) 0%,rgba(5,24,34,.78) 42%,
+rgba(5,24,34,0) 100%)}
+.deckcap b{display:block;font-size:14.5px;font-weight:800;color:#fff;
+line-height:1.25;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.deckcap em{display:block;font-style:normal;font-size:12.2px;font-weight:650;
+color:#c9e2ef;margin-top:3px;line-height:1.35}
 .deckdots{display:flex;justify-content:center;gap:6px;margin:11px 0 13px}
 .deckdot{width:7px;height:7px;padding:0;border:0;border-radius:99px;
 background:rgba(255,255,255,.34);cursor:pointer;transition:background .15s,width .15s}
@@ -176,15 +201,40 @@ padding:8px 15px;cursor:pointer}
   body .sticky{display:none}
   html body.has-sticky{padding-bottom:0}
   /* A minimal header: the lockup and the menu on one row, nothing else. */
+  /* Measured against the rules just below: 7+7 padding + a 34px lockup +
+     1px border. The deck subtracts it to fill exactly the rest of the
+     screen, so it has to move when these do. */
+  :root{--hdr:53px}
   header .w{flex-wrap:nowrap;padding:7px 14px;gap:10px}
   .brand{flex:0 1 auto}
   .brand span{font-size:19px}
   .brand svg{width:34px;height:34px}
   .menubtn{order:3;margin-left:auto;width:38px;height:38px}
   header nav.open{order:4}
-  /* The deck is the hero, so it comes first and the headline follows it. */
-  .herogrid{grid-template-areas:"f" "a" "b"}
-  .hero{padding:16px 0 26px}
+  /* The deck IS the first screen. One viewport tall, the headline and the
+     copy start below it - so the phone opens on the work and one button,
+     the way an app would, and the page is still a page underneath.
+
+     100dvh, not 100vh: on a phone 100vh is the viewport with the URL bar
+     RETRACTED, so a vh-sized first screen is taller than what you can
+     actually see until you scroll. dvh tracks the bar. 100vh first as the
+     fallback for anything that does not know dvh. */
+  /* Still a grid with named areas: `display:block` would fall back to DOM
+     order and put the headline above the deck again. */
+  .herogrid{grid-template-areas:"f" "a" "b";gap:0}
+  .hero{padding:0 0 26px}
+  .heroStart{height:calc(100vh - var(--hdr));
+             height:calc(100dvh - var(--hdr))}
+  .deck{height:100%;display:flex;flex-direction:column;justify-content:center;
+    padding:12px 0 14px}
+  /* The track takes the screen; min-height:0 or the flex item refuses to
+     shrink below its content and pushes the button off the bottom. */
+  .decktrack{flex:1 1 auto;min-height:0;align-items:stretch}
+  .deckcard{flex:0 0 88%;height:auto}
+  .deckdots{margin:14px 0 0}
+  /* Pinned to the bottom of the screen; the card and dots centre above it. */
+  .deck .deckcta{margin-top:auto}
+  .heroA{padding-top:22px}
   .heroA h1{font-size:25px;margin-top:4px}
   .hero .sub{font-size:15.5px;margin-top:9px}
   /* The sheet owns the viewport: the page behind it must not scroll, and the

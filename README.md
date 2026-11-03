@@ -96,11 +96,46 @@ native momentum and rubber-banding, works with no JavaScript at all, and stays
 keyboard and screen-reader navigable. The JS on top is only the dots. The next
 card peeks past the right edge so it is obvious there is more.
 
-Two things that are easy to get wrong here, both gated:
+**The deck is one viewport tall** (`100dvh - var(--hdr)`), with the card and
+dots centred and the button pinned to the bottom, so the phone opens on the
+work and one button the way an app would. The headline and the copy start
+below it — the page is still a page underneath.
 
-- **Only the first card is eager.** The other eight are `loading=lazy`: the
-  deck is the first thing on the screen, and all nine would be ~580KB nobody
-  has swiped to yet.
+`100dvh`, **not** `100vh`: on a phone `100vh` is the viewport with the URL bar
+*retracted*, so a vh-sized first screen is taller than what you can actually
+see. `100vh` is declared first as the fallback for anything that does not know
+`dvh`.
+
+**Each card carries the photo twice** — a blurred copy filling the card, and
+the sharp one centred at its own 3:2. These are landscape photographs and a
+phone card is tall and narrow; stretching one to fill would crop it to a slab
+of hull with the lettering running off both edges, which is the opposite of
+showing the work. The blurred copy fills the space without touching the crop,
+the way music apps handle square artwork on a tall screen.
+
+#### Getting the images to load only when wanted
+
+This took three goes and is worth writing down, because every wrong version
+*looked* fine:
+
+- `loading=lazy` **does not work in a horizontal scroller.** Chrome treats the
+  whole inline axis as near-viewport and fetched all nine cards on load —
+  measured at ~580KB before a single swipe. The gate watches for it coming
+  back.
+- A **CSS `background-image` ignores `loading=lazy` entirely**, so the first
+  attempt at the blurred backdrop quietly doubled the problem. The backdrop is
+  a real `<img>` for exactly this reason.
+- So: the first card ships real `src`, every other card carries `data-src`,
+  and an `IntersectionObserver` swaps them in. It is **also driven from the
+  scroll handler**, which is already running to move the dots — so a swipe can
+  never land on a card that has not started loading, whatever the observer is
+  doing.
+- All of that is behind a **breakpoint check**. The deck is `display:none`
+  above 760px, and priming it on a desktop page would pull down images nobody
+  will see.
+
+Two more things that are easy to get wrong, both gated:
+
 - **The dots are updated straight from the scroll event, with no
   `requestAnimationFrame` in front of them.** rAF does not tick in a hidden
   tab, so a scroll that landed while backgrounded left the pending flag set
@@ -113,7 +148,18 @@ The dot positions are measured off `getBoundingClientRect`, **not
 which here is the hero rather than the track, so the first version computed
 centres in the wrong coordinate space and the dots never moved.
 
-#### The specificity trap, twice
+#### The specificity trap, three times
+
+`.deckbg` had to become `.deckcard img.deckbg`, because the sharp-image rule
+is `.deckcard img` — a class plus a type selector, which outranks a bare class
+— and it was handing the backdrop `height:auto` and `aspect-ratio:3/2`. The
+backdrop sized itself to the sharp photo instead of filling the card.
+
+That is the third time in this file that a later or higher-specificity rule
+has quietly beaten a new one. When a rule here looks correct and does nothing,
+check what else matches the element before changing the value.
+
+#### And on the chrome
 
 `.top`, `.hbtn` and `.sticky` each need an extra selector in front of them
 (`body .sticky{display:none}`), because their base rules sit **later** in
