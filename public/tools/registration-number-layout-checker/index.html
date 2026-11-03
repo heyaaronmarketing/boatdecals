@@ -112,6 +112,47 @@ grid-template-areas:"a" "f" "b"}
    Needs .hero .btnrow in front of it: .btn{display:inline-block} sits later in
    this sheet at the same specificity and would otherwise win, which is exactly
    how this hide silently stopped working. */
+/* ---- the phone order sheet ------------------------------------------
+   On a phone the page was offering the same action four times over - topbar
+   link, header button, the whole wizard inline, and the sticky bar - with the
+   inline wizard squeezed into a 343px column. Below 760px the wizard leaves
+   the flow, `.heroStart` makes the offer in one card with one button, and
+   every "Start your order" on the page opens the same wizard full screen.
+   It is promoted, not duplicated: there is only ever one form on the page. */
+@media(max-width:760px){.topcta{display:none}}
+.heroStart{display:none;grid-area:f;background:#fff;border-radius:13px;
+padding:17px 16px 15px;text-align:center;box-shadow:0 12px 30px rgba(4,26,38,.28)}
+.heroStartP{display:flex;align-items:baseline;justify-content:center;gap:7px;
+margin-bottom:12px}
+.heroStartP b{font-size:36px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em}
+.heroStartP em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--mut)}
+.heroStart .btn{width:100%}
+.heroStartN{font-size:11.8px;color:var(--mut);margin-top:10px;font-weight:650;
+line-height:1.35}
+
+.sheetbar{display:none;position:sticky;top:0;z-index:2;
+align-items:center;justify-content:space-between;background:var(--nav);
+color:#fff;padding:11px 15px;font-weight:800;font-size:15.5px}
+.sheetx{font:inherit;font-size:13.5px;font-weight:800;
+background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;
+padding:8px 15px;cursor:pointer}
+
+@media(max-width:760px){
+  .heroF{display:none}
+  .heroStart{display:block}
+  /* The sheet owns the viewport: the page behind it must not scroll, and the
+     sticky bar must not float over it offering the thing already open. */
+  body.sheeton{overflow:hidden}
+  body.sheeton .heroF{display:block;position:fixed;inset:0;z-index:300;
+    background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:30px}
+  body.sheeton .sheetbar{display:flex}
+  body.sheeton .sticky,body.sheeton header,body.sheeton .top{display:none}
+  body.sheeton .heroF .panel{border-radius:0;border-left:0;border-right:0;
+    box-shadow:none;margin:0}
+}
+
 @media(max-width:899px){
   .hero .btnrow .heroCta{display:none}
   .heroB .btnrow{margin-top:14px}
@@ -538,8 +579,15 @@ pointer-events:none}
 #platespan{position:absolute;white-space:nowrap;line-height:1;
 transform-origin:left top}
 /* Dark vinyl multiplies so the hull's scuffs and shading read through it, the
-   way film on gelcoat actually looks. Light vinyl is opaque, so it does not. */
+   way film on gelcoat actually looks. Light vinyl is opaque, so it does not.
+   Both the old blur() and this blend promote the text to its own composited
+   layer, and a phone rasterises that layer at a coarser scale than the device
+   pixels - which at a ~12px cap height is the difference between crisp vinyl
+   and mush. The blur is gone entirely and the blend stops at the phone
+   breakpoint: a flat overlay that is sharp beats a blended one that is not. */
 #platespan.ink{mix-blend-mode:multiply}
+@media(max-width:760px){#platespan.ink{mix-blend-mode:normal}}
+#platespan{-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 .platenote{font-size:10.6px;color:var(--mut);margin-top:5px;text-align:center;
 font-weight:650}
 .platenote b{color:var(--ink);font-weight:800}
@@ -927,7 +975,7 @@ line-height:1.15;transition:border-color .12s,background .12s}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/tools/registration-number-layout-checker/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"Free tools","item":"https://numbermyboat.com/tools/registration-number-layout-checker/"},{"@type":"ListItem","position":3,"name":"Layout checker","item":"https://numbermyboat.com/tools/registration-number-layout-checker/"}]},{"@type":"WebApplication","@id":"https://numbermyboat.com/tools/registration-number-layout-checker/#app","name":"Boat Registration Number Size & Spacing Checker","url":"https://numbermyboat.com/tools/registration-number-layout-checker/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@id":"https://numbermyboat.com/#org"}},{"@type":"FAQPage","@id":"https://numbermyboat.com/tools/registration-number-layout-checker/#faq","mainEntity":[{"@type":"Question","name":"How tall do boat registration numbers have to be?","acceptedAnswer":{"@type":"Answer","text":"Not less than 3 inches in height, in plain vertical block characters. Federal rule, every state. Taller is always legal."}},{"@type":"Question","name":"Do boat registration numbers have to be a certain color?","acceptedAnswer":{"@type":"Answer","text":"No specific color is required, but the characters must contrast with the color of the background and be distinctly visible and legible. White numbers on a white hull fail that test."}},{"@type":"Question","name":"Do I need a space or a hyphen in my boat number?","acceptedAnswer":{"@type":"Answer","text":"Yes - a space or hyphen equal to the width of a letter other than 'I' or a number other than '1', between the letter and number groupings. So TX 1234 AB."}},{"@type":"Question","name":"How wide will my registration numbers be?","acceptedAnswer":{"@type":"Answer","text":"Roughly 0.6 times the character height per character, plus the spaces. A six-character number at 3 inches finishes about 13-15 inches wide. The tool above calculates it for your exact number."}}]}]}</script>
 </head><body>
-<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping ships next business day</span><span>Cut in Evansdale, IA &middot; <a href="/design/" style="color:#fff">Start your order</a></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><div class=w><div class=bc><a href="/">Home</a><span>/</span>Free tools<span>/</span>Layout checker</div></div><main id=main><section style="padding-top:26px"><div class=w><h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">Boat Registration Number Size &amp; Spacing Checker</h1><p class=lede>Type your registration number, pick your hull color, and this checks it against every part of the federal rule &mdash; then tells you how wide the finished set will be so you can measure before you order.</p><div class=tool><div class="fieldrow two"><div><label for=chknum>Your registration number</label><input type=text id=chknum value="TX 1234 AB" maxlength=40 autocomplete=off><div class=hint>Type it with the spaces, exactly as on your card.</div></div><div><label for=chkh>Character height</label><select id=chkh><option value="2">2&quot;</option><option value="3" selected>3&quot;</option><option value="4">4&quot;</option><option value="5">5&quot;</option><option value="6">6&quot;</option></select></div></div><div class="fieldrow two" style="margin-top:13px"><div><label for=chkhull>Hull color</label><select id=chkhull><option selected>White</option><option>Black</option><option>Navy</option><option>Light Blue</option><option>Red</option><option>Gray</option><option>Forest</option><option>Burgundy</option><option>Tan</option><option>Silver</option><option>Yellow</option></select></div><div><label for=chkcol>Number color</label><select id=chkcol><option>White</option><option selected>Black</option><option>Navy</option><option>Light Blue</option><option>Red</option><option>Gray</option><option>Forest</option><option>Burgundy</option><option>Tan</option><option>Silver</option><option>Yellow</option></select></div></div><button type=button class="btn lg" id=chkbtn style="margin-top:15px">Check it</button><div class=out id=chkout></div></div><div class=prose><div class=rule>
+<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping ships next business day</span><span>Cut in Evansdale, IA<span class=topcta> &middot; <a href="/design/" style="color:#fff">Start your order</a></span></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><div class=w><div class=bc><a href="/">Home</a><span>/</span>Free tools<span>/</span>Layout checker</div></div><main id=main><section style="padding-top:26px"><div class=w><h1 style="font-size:30px;line-height:1.16;margin-bottom:9px">Boat Registration Number Size &amp; Spacing Checker</h1><p class=lede>Type your registration number, pick your hull color, and this checks it against every part of the federal rule &mdash; then tells you how wide the finished set will be so you can measure before you order.</p><div class=tool><div class="fieldrow two"><div><label for=chknum>Your registration number</label><input type=text id=chknum value="TX 1234 AB" maxlength=40 autocomplete=off><div class=hint>Type it with the spaces, exactly as on your card.</div></div><div><label for=chkh>Character height</label><select id=chkh><option value="2">2&quot;</option><option value="3" selected>3&quot;</option><option value="4">4&quot;</option><option value="5">5&quot;</option><option value="6">6&quot;</option></select></div></div><div class="fieldrow two" style="margin-top:13px"><div><label for=chkhull>Hull color</label><select id=chkhull><option selected>White</option><option>Black</option><option>Navy</option><option>Light Blue</option><option>Red</option><option>Gray</option><option>Forest</option><option>Burgundy</option><option>Tan</option><option>Silver</option><option>Yellow</option></select></div><div><label for=chkcol>Number color</label><select id=chkcol><option>White</option><option selected>Black</option><option>Navy</option><option>Light Blue</option><option>Red</option><option>Gray</option><option>Forest</option><option>Burgundy</option><option>Tan</option><option>Silver</option><option>Yellow</option></select></div></div><button type=button class="btn lg" id=chkbtn style="margin-top:15px">Check it</button><div class=out id=chkout></div></div><div class=prose><div class=rule>
 <p><strong>The federal rule, in full.</strong> Under 33 CFR 173.27, a registration
 number must:</p>
 <ul>

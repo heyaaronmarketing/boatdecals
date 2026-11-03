@@ -87,8 +87,15 @@ pointer-events:none}
 #platespan{position:absolute;white-space:nowrap;line-height:1;
 transform-origin:left top}
 /* Dark vinyl multiplies so the hull's scuffs and shading read through it, the
-   way film on gelcoat actually looks. Light vinyl is opaque, so it does not. */
+   way film on gelcoat actually looks. Light vinyl is opaque, so it does not.
+   Both the old blur() and this blend promote the text to its own composited
+   layer, and a phone rasterises that layer at a coarser scale than the device
+   pixels - which at a ~12px cap height is the difference between crisp vinyl
+   and mush. The blur is gone entirely and the blend stops at the phone
+   breakpoint: a flat overlay that is sharp beats a blended one that is not. */
 #platespan.ink{mix-blend-mode:multiply}
+@media(max-width:760px){#platespan.ink{mix-blend-mode:normal}}
+#platespan{-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 .platenote{font-size:10.6px;color:var(--mut);margin-top:5px;text-align:center;
 font-weight:650}
 .platenote b{color:var(--ink);font-weight:800}
@@ -213,12 +220,6 @@ window.BNS_PREVIEW = (function(){
     span.style.webkitTextStroke = o.outline
       ? (capPx*0.09)+'px '+o.outlineHex : '';
     span.style.paintOrder = 'stroke fill';
-    // Vector type on a photograph reads as pasted on; real film has a hair of
-    // edge softness and the plate has sensor noise. Scaled to cap height so it
-    // stays the same relative softness at any panel width, and capped - past
-    // about half a pixel it stops looking like vinyl and starts looking
-    // out of focus.
-    span.style.filter = 'blur(' + Math.min(0.55, capPx * 0.012) + 'px)';
     span.classList.toggle('ink', !lightFilm);
 
     // Anchor is a fraction of the plate; `left` aligns bow numbers forward,

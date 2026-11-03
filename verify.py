@@ -559,6 +559,48 @@ for _id in ("boatview", "viewboat", "viewflat", "platespan", "plateimg"):
         fails.append("the preview lost #%s - the boat/flat view toggle is "
                      "broken" % _id)
 
+# The lettering on the hull plate must not be filtered or blended into its
+# own composited layer on a phone. Both filter() and mix-blend-mode promote it,
+# and a phone rasterises that layer coarser than its device pixels - at a ~12px
+# cap height that is the difference between crisp vinyl and mush. This shipped
+# blurry once.
+if "span.style.filter" in design:
+    fails.append("the hull preview is filtering the lettering again - filter() "
+                 "promotes it to a composited layer and a phone renders that "
+                 "layer soft, which is exactly how the text went blurry")
+if "@media(max-width:760px){#platespan.ink{mix-blend-mode:normal}" not in design:
+    fails.append("the hull preview no longer drops mix-blend-mode on phones - "
+                 "the blend costs the lettering its sharpness at phone sizes, "
+                 "and a flat overlay that is sharp beats a blended one that "
+                 "is not")
+
+# The phone order sheet. Four CTAs for one action was the problem; the fix is
+# that they all open the same wizard full screen rather than each being its own
+# entry point. If any piece of that goes missing the page quietly returns to
+# offering a cramped inline form plus three links to a different page.
+_heroes = [q for q in pages if "class=heroF" in q.read_text()]
+if not _heroes:
+    fails.append("no page carries a hero wizard any more")
+for _h in _heroes:
+    _d = _h.read_text()
+    for _need, _why in (
+            ("<div class=heroStart>",
+             "the phone offer card is gone, so a phone sees no order entry "
+             "point where the wizard used to be"),
+            ("<div class=sheetbar>",
+             "the sheet has no title bar, so there is no way to close it"),
+            ("class=sheetx ", "the sheet has no close control")):
+        if _need not in _d:
+            fails.append("%s: %s" % (_h.relative_to(OUT), _why))
+if "classList.add('sheeton')" not in design:
+    fails.append("the order sheet never opens - the phone CTAs would fall back "
+                 "to navigating to /design/ and the cramped inline form")
+if "body.sheeton{overflow:hidden}" not in design:
+    fails.append("the page behind the order sheet still scrolls")
+if "body.sheeton .sticky" not in design:
+    fails.append("the sticky CTA still floats over the open order sheet, "
+                 "offering the thing that is already open")
+
 # The order page must not carry the site-wide sticky CTA. It prints a flat
 # "$19 Registration numbers" and links to /design/ - so on /design/ it sits
 # under a live total that may read $44 and points at the page you are on.

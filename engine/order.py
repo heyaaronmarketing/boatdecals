@@ -779,6 +779,63 @@ JS = r"""
     });
   });
 
+  // ---- the phone order sheet --------------------------------------------
+  // Every "Start your order" on a page that already carries the wizard opens
+  // that wizard full screen instead of navigating to /design/ - same element,
+  // same state, no second copy of the form. Pages without a hero wizard
+  // (/pricing/, the guides) have no .heroF, so their links navigate as before.
+  var sheet=document.querySelector('.heroF');
+  if(sheet && sheet.contains(W)){
+    var opener=null;
+
+    function sheetOpen(){ return document.body.classList.contains('sheeton'); }
+
+    function openSheet(from){
+      if(sheetOpen()) return;
+      opener=from||null;
+      document.body.classList.add('sheeton');
+      sheet.setAttribute('aria-modal','true');
+      sheet.scrollTop=0;
+      // The panel just went from a 343px column to the full viewport, and the
+      // boat preview sizes its lettering off the panel's width.
+      dispatchEvent(new Event('resize'));
+      var x=sheet.querySelector('.sheetx'); if(x) x.focus();
+      // Back should close the sheet, not leave the page - on a phone that is
+      // what the gesture means.
+      try{ history.pushState({bnsSheet:1}, ''); }catch(e){}
+    }
+
+    function closeSheet(pop){
+      if(!sheetOpen()) return;
+      document.body.classList.remove('sheeton');
+      sheet.setAttribute('aria-modal','false');
+      if(opener && opener.focus) opener.focus();
+      opener=null;
+      if(!pop){ try{ if(history.state && history.state.bnsSheet) history.back(); }
+                catch(e){} }
+    }
+
+    // Anything pointing at the order page, plus the hero card's own button.
+    document.addEventListener('click', function(ev){
+      var t=ev.target.closest('a[href="/design/"], .sheetgo, .sheetx');
+      if(!t) return;
+      if(t.classList.contains('sheetx')){ ev.preventDefault(); closeSheet(); return; }
+      // Desktop keeps the wizard inline, so the links stay links.
+      if(!matchMedia('(max-width:760px)').matches) return;
+      ev.preventDefault();
+      openSheet(t);
+    });
+    addEventListener('keydown', function(ev){
+      if(ev.key==='Escape' && sheetOpen()) closeSheet();
+    });
+    addEventListener('popstate', function(){ closeSheet(true); });
+    // Rotating to landscape past the breakpoint would otherwise leave the body
+    // locked with the sheet styles gone.
+    addEventListener('resize', function(){
+      if(sheetOpen() && !matchMedia('(max-width:760px)').matches) closeSheet();
+    });
+  }
+
   seedStatePrefix();
   syncOutline();   // hide the outline row before first paint
   // The server renders White checked as a sensible default. Without this it

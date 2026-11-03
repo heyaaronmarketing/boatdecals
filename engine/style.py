@@ -98,6 +98,47 @@ grid-template-areas:"a" "f" "b"}
    Needs .hero .btnrow in front of it: .btn{display:inline-block} sits later in
    this sheet at the same specificity and would otherwise win, which is exactly
    how this hide silently stopped working. */
+/* ---- the phone order sheet ------------------------------------------
+   On a phone the page was offering the same action four times over - topbar
+   link, header button, the whole wizard inline, and the sticky bar - with the
+   inline wizard squeezed into a 343px column. Below 760px the wizard leaves
+   the flow, `.heroStart` makes the offer in one card with one button, and
+   every "Start your order" on the page opens the same wizard full screen.
+   It is promoted, not duplicated: there is only ever one form on the page. */
+@media(max-width:760px){.topcta{display:none}}
+.heroStart{display:none;grid-area:f;background:#fff;border-radius:13px;
+padding:17px 16px 15px;text-align:center;box-shadow:0 12px 30px rgba(4,26,38,.28)}
+.heroStartP{display:flex;align-items:baseline;justify-content:center;gap:7px;
+margin-bottom:12px}
+.heroStartP b{font-size:36px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em}
+.heroStartP em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--mut)}
+.heroStart .btn{width:100%}
+.heroStartN{font-size:11.8px;color:var(--mut);margin-top:10px;font-weight:650;
+line-height:1.35}
+
+.sheetbar{display:none;position:sticky;top:0;z-index:2;
+align-items:center;justify-content:space-between;background:var(--nav);
+color:#fff;padding:11px 15px;font-weight:800;font-size:15.5px}
+.sheetx{font:inherit;font-size:13.5px;font-weight:800;
+background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;
+padding:8px 15px;cursor:pointer}
+
+@media(max-width:760px){
+  .heroF{display:none}
+  .heroStart{display:block}
+  /* The sheet owns the viewport: the page behind it must not scroll, and the
+     sticky bar must not float over it offering the thing already open. */
+  body.sheeton{overflow:hidden}
+  body.sheeton .heroF{display:block;position:fixed;inset:0;z-index:300;
+    background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:30px}
+  body.sheeton .sheetbar{display:flex}
+  body.sheeton .sticky,body.sheeton header,body.sheeton .top{display:none}
+  body.sheeton .heroF .panel{border-radius:0;border-left:0;border-right:0;
+    box-shadow:none;margin:0}
+}
+
 @media(max-width:899px){
   .hero .btnrow .heroCta{display:none}
   .heroB .btnrow{margin-top:14px}

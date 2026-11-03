@@ -417,8 +417,11 @@ def topbar():
     return ('<div class=top><div class=w>'
             '<span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping '
             'ships next business day</span>'
-            '<span>Cut in %s, %s &middot; '
-            '<a href="/design/" style="color:#fff">Start your order</a></span>'
+            # The link is hidden on a phone: the header button sits directly
+            # under it saying the same thing, and the point of this pass was to
+            # stop offering the same action four times on one screen.
+            '<span>Cut in %s, %s<span class=topcta> &middot; '
+            '<a href="/design/" style="color:#fff">Start your order</a></span></span>'
             '</div></div>' % (SITE["city"], SITE["region"]))
 
 def header():
@@ -460,14 +463,28 @@ def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     # Three grid areas, not two columns. On a phone that puts the wizard
     # directly under the headline instead of below a screenful of copy;
     # on desktop the copy stacks in the left column beside it.
+    # On a phone the inline wizard is hidden and `.heroStart` stands in for it:
+    # one offer, one button, and the form arrives full screen. The wizard is
+    # still the same element - the sheet promotes it rather than duplicating
+    # it - so there is no second copy of the form to keep in step.
+    start = ('<div class=heroStart>'
+             '<div class=heroStartP><b>$%d</b><em>a pair &middot; both sides</em></div>'
+             '<button type=button class="btn lg sheetgo">Start your order</button>'
+             '<div class=heroStartN>Free shipping &middot; cut and posted next '
+             'business day</div></div>') % PRICE["numbers"] if right else ""
+    sheetbar = ('<div class=sheetbar><span>Start your order</span>'
+                '<button type=button class=sheetx aria-label="Close">'
+                'Close</button></div>') if right else ""
     return ('<section class=hero><div class="w herogrid">'
             '<div class=heroA>%s<h1>%s</h1></div>'
-            '<div class=heroF>%s</div>'
+            '<div class=heroF role=dialog aria-modal=false '
+            'aria-label="Start your order">%s%s</div>%s'
             '<div class=heroB><p class=sub>%s</p><div class=trust>%s</div>'
             '<div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a>'
             '<a class="btn ghost" href="%s">%s</a></div></div>'
             '</div></section>'
-            % (bd, h1, right, sub, "".join("<span>%s</span>" % x for x in t),
+            % (bd, h1, sheetbar, right, start, sub,
+               "".join("<span>%s</span>" % x for x in t),
                (cta2 or ("/pricing/", "See all prices"))[0],
                (cta2 or ("/pricing/", "See all prices"))[1]))
 

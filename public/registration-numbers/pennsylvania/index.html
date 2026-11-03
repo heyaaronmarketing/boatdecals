@@ -112,6 +112,47 @@ grid-template-areas:"a" "f" "b"}
    Needs .hero .btnrow in front of it: .btn{display:inline-block} sits later in
    this sheet at the same specificity and would otherwise win, which is exactly
    how this hide silently stopped working. */
+/* ---- the phone order sheet ------------------------------------------
+   On a phone the page was offering the same action four times over - topbar
+   link, header button, the whole wizard inline, and the sticky bar - with the
+   inline wizard squeezed into a 343px column. Below 760px the wizard leaves
+   the flow, `.heroStart` makes the offer in one card with one button, and
+   every "Start your order" on the page opens the same wizard full screen.
+   It is promoted, not duplicated: there is only ever one form on the page. */
+@media(max-width:760px){.topcta{display:none}}
+.heroStart{display:none;grid-area:f;background:#fff;border-radius:13px;
+padding:17px 16px 15px;text-align:center;box-shadow:0 12px 30px rgba(4,26,38,.28)}
+.heroStartP{display:flex;align-items:baseline;justify-content:center;gap:7px;
+margin-bottom:12px}
+.heroStartP b{font-size:36px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em}
+.heroStartP em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--mut)}
+.heroStart .btn{width:100%}
+.heroStartN{font-size:11.8px;color:var(--mut);margin-top:10px;font-weight:650;
+line-height:1.35}
+
+.sheetbar{display:none;position:sticky;top:0;z-index:2;
+align-items:center;justify-content:space-between;background:var(--nav);
+color:#fff;padding:11px 15px;font-weight:800;font-size:15.5px}
+.sheetx{font:inherit;font-size:13.5px;font-weight:800;
+background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;
+padding:8px 15px;cursor:pointer}
+
+@media(max-width:760px){
+  .heroF{display:none}
+  .heroStart{display:block}
+  /* The sheet owns the viewport: the page behind it must not scroll, and the
+     sticky bar must not float over it offering the thing already open. */
+  body.sheeton{overflow:hidden}
+  body.sheeton .heroF{display:block;position:fixed;inset:0;z-index:300;
+    background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:30px}
+  body.sheeton .sheetbar{display:flex}
+  body.sheeton .sticky,body.sheeton header,body.sheeton .top{display:none}
+  body.sheeton .heroF .panel{border-radius:0;border-left:0;border-right:0;
+    box-shadow:none;margin:0}
+}
+
 @media(max-width:899px){
   .hero .btnrow .heroCta{display:none}
   .heroB .btnrow{margin-top:14px}
@@ -538,8 +579,15 @@ pointer-events:none}
 #platespan{position:absolute;white-space:nowrap;line-height:1;
 transform-origin:left top}
 /* Dark vinyl multiplies so the hull's scuffs and shading read through it, the
-   way film on gelcoat actually looks. Light vinyl is opaque, so it does not. */
+   way film on gelcoat actually looks. Light vinyl is opaque, so it does not.
+   Both the old blur() and this blend promote the text to its own composited
+   layer, and a phone rasterises that layer at a coarser scale than the device
+   pixels - which at a ~12px cap height is the difference between crisp vinyl
+   and mush. The blur is gone entirely and the blend stops at the phone
+   breakpoint: a flat overlay that is sharp beats a blended one that is not. */
 #platespan.ink{mix-blend-mode:multiply}
+@media(max-width:760px){#platespan.ink{mix-blend-mode:normal}}
+#platespan{-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 .platenote{font-size:10.6px;color:var(--mut);margin-top:5px;text-align:center;
 font-weight:650}
 .platenote b{color:var(--ink);font-weight:800}
@@ -927,7 +975,7 @@ line-height:1.15;transition:border-color .12s,background .12s}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/registration-numbers/pennsylvania/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"By state","item":"https://numbermyboat.com/registration-numbers/"},{"@type":"ListItem","position":3,"name":"Pennsylvania","item":"https://numbermyboat.com/registration-numbers/pennsylvania/"}]},{"@type":"FAQPage","@id":"https://numbermyboat.com/registration-numbers/pennsylvania/#faq","mainEntity":[{"@type":"Question","name":"How tall do Pennsylvania boat registration numbers have to be?","acceptedAnswer":{"@type":"Answer","text":"Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Pennsylvania like everywhere else. Taller is always legal."}},{"@type":"Question","name":"What do Pennsylvania boat numbers start with?","acceptedAnswer":{"@type":"Answer","text":"PA. Your full number runs prefix, digits, then a letter suffix \u2014 for example PA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing."}},{"@type":"Question","name":"Who issues boat registration in Pennsylvania?","acceptedAnswer":{"@type":"Answer","text":"You register through the Pennsylvania Fish and Boat Commission. We only make the decals \u2014 you get the number from them first, then we cut it."}},{"@type":"Question","name":"Do the numbers need a space or a hyphen?","acceptedAnswer":{"@type":"Answer","text":"Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So PA 1234 AB, not PA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong."}},{"@type":"Question","name":"Where do they go on the boat?","acceptedAnswer":{"@type":"Answer","text":"Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number \u2014 Pennsylvania publishes the exact offset, and it is usually within a few inches."}},{"@type":"Question","name":"Do I have to register a kayak or canoe in Pennsylvania?","acceptedAnswer":{"@type":"Answer","text":"Pennsylvania registers all motorized vessels and certain non-powered craft - also registers non-powered craft using state Fish & Boat Commission lakes and access areas. If your boat falls outside that, it does not need a registration number on the bow \u2014 and it does not need a set from us either. This is the Coast Guard's own summary of the Pennsylvania Fish and Boat Commission system."}},{"@type":"Question","name":"How many registered boats are there in Pennsylvania?","acceptedAnswer":{"@type":"Answer","text":"280,098, which puts Pennsylvania 14th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38."}},{"@type":"Question","name":"Where are the best places to boat in Pennsylvania?","acceptedAnswer":{"@type":"Answer","text":"Raystown Lake is the one most people name first: 8,300 acres and 118 miles of shoreline, the largest lake entirely inside Pennsylvania and the state's houseboat water. Others worth knowing: Lake Erie and Presque Isle Bay, Lake Wallenpaupack, Pymatuning Reservoir, The Allegheny Reservoir."}},{"@type":"Question","name":"When is boating season in Pennsylvania?","acceptedAnswer":{"@type":"Answer","text":"April through October for most of the state. The Commission's access areas open earlier than the marinas do."}}]},{"@type":"Product","@id":"https://numbermyboat.com/registration-numbers/pennsylvania/#product","name":"Registration numbers - Number My Boat","description":"Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day.","brand":{"@type":"Brand","name":"Number My Boat"},"category":"Marine vinyl decals","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","availability":"https://schema.org/InStock","url":"https://numbermyboat.com/design/","priceValidUntil":"2026-12-31","shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":"0","currency":"USD"},"shippingDestination":{"@type":"DefinedRegion","addressCountry":"US"}}}}]}</script>
 </head><body>
-<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping ships next business day</span><span>Cut in Evansdale, IA &middot; <a href="/design/" style="color:#fff">Start your order</a></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><div class=w><div class=bc><a href="/">Home</a><span>/</span><a href="/registration-numbers/">By state</a><span>/</span>Pennsylvania</div></div><main id=main><section class=hero><div class="w herogrid"><div class=heroA><h1>Pennsylvania Boat Registration Numbers: PA Prefix, Legal 3-Inch Block</h1></div><div class=heroF>
+<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping ships next business day</span><span>Cut in Evansdale, IA<span class=topcta> &middot; <a href="/design/" style="color:#fff">Start your order</a></span></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><div class=w><div class=bc><a href="/">Home</a><span>/</span><a href="/registration-numbers/">By state</a><span>/</span>Pennsylvania</div></div><main id=main><section class=hero><div class="w herogrid"><div class=heroA><h1>Pennsylvania Boat Registration Numbers: PA Prefix, Legal 3-Inch Block</h1></div><div class=heroF role=dialog aria-modal=false aria-label="Start your order"><div class=sheetbar><span>Start your order</span><button type=button class=sheetx aria-label="Close">Close</button></div>
 <div id=order class="panel wiz">
   <div class=wizhead>
     <div class=wizbar><i id=wizfill></i></div>
@@ -1062,7 +1110,7 @@ line-height:1.15;transition:border-color .12s,background .12s}
   <div class=wizfoot>
     <button type=button class="btn lg" id=next>Continue</button>
   </div>
-</div></div><div class=heroB><p class=sub>Legal 3-inch block numbers starting with PA, cut from marine vinyl, pre-spaced on one sheet for each side of the hull. Free shipping, shipped the next business day.</p><div class=trust><span>$19 a Pair</span><span>PA prefix</span><span>Fast Shipping</span><span>Meets 33 CFR 173.27</span></div><div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a><a class="btn ghost" href="/pricing/">See all prices</a></div></div></div></section><section class="sidband"><div class="w sband" style="--sbright:#d9762b"><div><svg class=sbadge viewBox="-6 -6 112 112" role="img" aria-label="Pennsylvania, vessel prefix PA" focusable="false" style="--sdeep:#23262b;--sbright:#d9762b"><path d="M13 21.4L13 27.1L88.6 27.1L93.9 32.7L93.5 36.1L96.6 40L99.2 40.1L100 41.7L92.5 50.6L93.9 52.9L91.3 56.9L91.4 59.5L93.6 60.3L93.8 63.2L98.7 67.8L97.8 69.8L92.6 73.5L92.3 75.3L87.7 77.1L84.2 76.5L81.3 79L0 79L0 27.6L13 21.4Z" class=sbshape/><text x="50.0" y="50.2" class=sbtext text-anchor="middle" dominant-baseline="central" font-size="30.0" stroke-width="6.9">PA</text></svg><p class=smotif>Pennsylvania in anthracite and molten steel</p></div><div><div class=sfacts><div class=sfact><b>280,098</b><span>Registered vessels</span></div><div class=sfact><b>#14</b><span>Of the 50 states</span></div><div class=sfact><b>PA</b><span>Vessel prefix</span></div></div><p class=ssrc>2.4% of every registered boat in the country is in Pennsylvania. Registration counts from the US Coast Guard, <cite>Recreational Boating Statistics 2024</cite>, Table 38, 2024 figures. <a href="https://www.uscgboating.org/library/accident-statistics/Recreational-Boating-Statistics-2024.pdf" rel="nofollow noopener" target="_blank">Source</a>.</p></div></div></section><section class="soft altband"><div class=w><div class="altrow l"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/ST-PA-800.webp 800w,/assets/img/ST-PA-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/ST-PA-800.jpg" srcset="/assets/img/ST-PA-800.jpg 800w,/assets/img/ST-PA-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="PA 1234 AB · 3&quot; black on a light hull. What a Pennsylvania number looks like on the bow." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>PA 1234 AB &middot; 3" black on a light hull</b><span>What a Pennsylvania number looks like on the bow</span></figcaption></figure></div><div class="alttext prose"><h2>What a Pennsylvania number looks like</h2><p>A Pennsylvania registration number is built from three parts: the state prefix <strong>PA</strong>, a block of digits, and a letter suffix. Written out with the spacing the law requires, it looks like <strong>PA 1234 AB</strong>.</p><div class=rule>
+</div></div><div class=heroStart><div class=heroStartP><b>$19</b><em>a pair &middot; both sides</em></div><button type=button class="btn lg sheetgo">Start your order</button><div class=heroStartN>Free shipping &middot; cut and posted next business day</div></div><div class=heroB><p class=sub>Legal 3-inch block numbers starting with PA, cut from marine vinyl, pre-spaced on one sheet for each side of the hull. Free shipping, shipped the next business day.</p><div class=trust><span>$19 a Pair</span><span>PA prefix</span><span>Fast Shipping</span><span>Meets 33 CFR 173.27</span></div><div class=btnrow><a class="btn lg heroCta" href="/design/">Start your order</a><a class="btn ghost" href="/pricing/">See all prices</a></div></div></div></section><section class="sidband"><div class="w sband" style="--sbright:#d9762b"><div><svg class=sbadge viewBox="-6 -6 112 112" role="img" aria-label="Pennsylvania, vessel prefix PA" focusable="false" style="--sdeep:#23262b;--sbright:#d9762b"><path d="M13 21.4L13 27.1L88.6 27.1L93.9 32.7L93.5 36.1L96.6 40L99.2 40.1L100 41.7L92.5 50.6L93.9 52.9L91.3 56.9L91.4 59.5L93.6 60.3L93.8 63.2L98.7 67.8L97.8 69.8L92.6 73.5L92.3 75.3L87.7 77.1L84.2 76.5L81.3 79L0 79L0 27.6L13 21.4Z" class=sbshape/><text x="50.0" y="50.2" class=sbtext text-anchor="middle" dominant-baseline="central" font-size="30.0" stroke-width="6.9">PA</text></svg><p class=smotif>Pennsylvania in anthracite and molten steel</p></div><div><div class=sfacts><div class=sfact><b>280,098</b><span>Registered vessels</span></div><div class=sfact><b>#14</b><span>Of the 50 states</span></div><div class=sfact><b>PA</b><span>Vessel prefix</span></div></div><p class=ssrc>2.4% of every registered boat in the country is in Pennsylvania. Registration counts from the US Coast Guard, <cite>Recreational Boating Statistics 2024</cite>, Table 38, 2024 figures. <a href="https://www.uscgboating.org/library/accident-statistics/Recreational-Boating-Statistics-2024.pdf" rel="nofollow noopener" target="_blank">Source</a>.</p></div></div></section><section class="soft altband"><div class=w><div class="altrow l"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/ST-PA-800.webp 800w,/assets/img/ST-PA-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/ST-PA-800.jpg" srcset="/assets/img/ST-PA-800.jpg 800w,/assets/img/ST-PA-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="PA 1234 AB · 3&quot; black on a light hull. What a Pennsylvania number looks like on the bow." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>PA 1234 AB &middot; 3" black on a light hull</b><span>What a Pennsylvania number looks like on the bow</span></figcaption></figure></div><div class="alttext prose"><h2>What a Pennsylvania number looks like</h2><p>A Pennsylvania registration number is built from three parts: the state prefix <strong>PA</strong>, a block of digits, and a letter suffix. Written out with the spacing the law requires, it looks like <strong>PA 1234 AB</strong>.</p><div class=rule>
 <p><strong>The federal rule, in full.</strong> Under 33 CFR 173.27, a registration
 number must:</p>
 <ul>
@@ -1301,12 +1349,6 @@ window.BNS_PREVIEW = (function(){
     span.style.webkitTextStroke = o.outline
       ? (capPx*0.09)+'px '+o.outlineHex : '';
     span.style.paintOrder = 'stroke fill';
-    // Vector type on a photograph reads as pasted on; real film has a hair of
-    // edge softness and the plate has sensor noise. Scaled to cap height so it
-    // stays the same relative softness at any panel width, and capped - past
-    // about half a pixel it stops looking like vinyl and starts looking
-    // out of focus.
-    span.style.filter = 'blur(' + Math.min(0.55, capPx * 0.012) + 'px)';
     span.classList.toggle('ink', !lightFilm);
 
     // Anchor is a fraction of the plate; `left` aligns bow numbers forward,
@@ -2037,6 +2079,63 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       render();
     });
   });
+
+  // ---- the phone order sheet --------------------------------------------
+  // Every "Start your order" on a page that already carries the wizard opens
+  // that wizard full screen instead of navigating to /design/ - same element,
+  // same state, no second copy of the form. Pages without a hero wizard
+  // (/pricing/, the guides) have no .heroF, so their links navigate as before.
+  var sheet=document.querySelector('.heroF');
+  if(sheet && sheet.contains(W)){
+    var opener=null;
+
+    function sheetOpen(){ return document.body.classList.contains('sheeton'); }
+
+    function openSheet(from){
+      if(sheetOpen()) return;
+      opener=from||null;
+      document.body.classList.add('sheeton');
+      sheet.setAttribute('aria-modal','true');
+      sheet.scrollTop=0;
+      // The panel just went from a 343px column to the full viewport, and the
+      // boat preview sizes its lettering off the panel's width.
+      dispatchEvent(new Event('resize'));
+      var x=sheet.querySelector('.sheetx'); if(x) x.focus();
+      // Back should close the sheet, not leave the page - on a phone that is
+      // what the gesture means.
+      try{ history.pushState({bnsSheet:1}, ''); }catch(e){}
+    }
+
+    function closeSheet(pop){
+      if(!sheetOpen()) return;
+      document.body.classList.remove('sheeton');
+      sheet.setAttribute('aria-modal','false');
+      if(opener && opener.focus) opener.focus();
+      opener=null;
+      if(!pop){ try{ if(history.state && history.state.bnsSheet) history.back(); }
+                catch(e){} }
+    }
+
+    // Anything pointing at the order page, plus the hero card's own button.
+    document.addEventListener('click', function(ev){
+      var t=ev.target.closest('a[href="/design/"], .sheetgo, .sheetx');
+      if(!t) return;
+      if(t.classList.contains('sheetx')){ ev.preventDefault(); closeSheet(); return; }
+      // Desktop keeps the wizard inline, so the links stay links.
+      if(!matchMedia('(max-width:760px)').matches) return;
+      ev.preventDefault();
+      openSheet(t);
+    });
+    addEventListener('keydown', function(ev){
+      if(ev.key==='Escape' && sheetOpen()) closeSheet();
+    });
+    addEventListener('popstate', function(){ closeSheet(true); });
+    // Rotating to landscape past the breakpoint would otherwise leave the body
+    // locked with the sheet styles gone.
+    addEventListener('resize', function(){
+      if(sheetOpen() && !matchMedia('(max-width:760px)').matches) closeSheet();
+    });
+  }
 
   seedStatePrefix();
   syncOutline();   // hide the outline row before first paint

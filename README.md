@@ -79,6 +79,38 @@ position is derived. Anti-fatigue rules, all load-bearing:
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
 
+### The phone order sheet
+
+On a phone the page was offering the same action four times on one screen — a
+topbar link, the header button, the whole wizard inline, and the sticky bar —
+with the wizard itself squeezed into a 343px column. Four doors to one room,
+and the room was too small.
+
+Below **760px** the inline wizard leaves the flow. `.heroStart` takes its grid
+slot with the offer in one card and one button, and every "Start your order" on
+the page — header, hero card, sticky bar, any `a[href="/design/"]` — opens the
+wizard **full screen** instead of navigating.
+
+**It is promoted, not duplicated.** `body.sheeton` turns the existing `.heroF`
+into a fixed, full-viewport panel; there is never a second copy of the form to
+keep in step, and the customer's answers survive opening and closing it. Pages
+with no hero wizard (`/pricing/`, the guides) have no `.heroF`, so their links
+navigate as they always did, and `/design/` keeps its wizard inline because
+there the form *is* the page.
+
+Four things the sheet has to get right, each of which is gated:
+
+- **the page behind must not scroll** (`body.sheeton{overflow:hidden}`)
+- **the sticky bar must not float over it**, offering the thing already open
+- **Back closes the sheet rather than leaving the page** — a `pushState` on
+  open and a `popstate` listener. On a phone that is what the gesture means.
+- **a resize past the breakpoint closes it**, or rotating to landscape would
+  leave the body locked with the sheet styles gone
+
+Opening also fires a `resize`, because the panel just went from a 343px column
+to the full viewport and the boat preview sizes its lettering off the panel's
+width.
+
 **The total sits in a dark box with light type**, with "Free shipping" under the
 figure — the one claim worth repeating at the moment someone is looking at a
 price. **It animates on every increase** (`bumpTotal()`,
@@ -175,12 +207,19 @@ boat** (`media/CAPTIONS.md`).
 - Dark vinyl uses `mix-blend-mode: multiply`, so the hull's scuffs and shading
   read through the film the way they do on real gelcoat. Light vinyl is opaque,
   so it does not.
-- A blur of `capPx * 0.012`, capped at 0.55px. Vector type on a photograph
-  reads as pasted on; real film has a hair of edge softness. Past about half a
-  pixel it stops looking like vinyl and starts looking out of focus.
 - `paint-order: stroke fill` on the outline, so the fill paints over the
   stroke and the outline sits outside the character — which is what a second
   layer of vinyl cut slightly larger actually does.
+
+**Nothing may put the lettering in its own composited layer on a phone.** Both
+`filter` and `mix-blend-mode` do, and a phone rasterises that layer at a
+coarser scale than its device pixels — at the ~12px cap height a 3" character
+renders at on a 375px screen, that is the difference between crisp vinyl and
+mush. This shipped blurry once: a `blur(capPx * 0.012)` meant to soften the
+vinyl's edges cost far more in sharpness than it bought in realism. The blur is
+gone outright and the blend stops at the 760px breakpoint. **A flat overlay
+that is sharp beats a blended one that is not**, and `verify.py` fails the
+build if either comes back.
 
 #### Which plate
 
