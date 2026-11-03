@@ -2130,11 +2130,14 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       if(ev.key==='Escape' && sheetOpen()) closeSheet();
     });
     addEventListener('popstate', function(){ closeSheet(true); });
-    // Rotating to landscape past the breakpoint would otherwise leave the body
-    // locked with the sheet styles gone.
-    addEventListener('resize', function(){
-      if(sheetOpen() && !matchMedia('(max-width:760px)').matches) closeSheet();
-    });
+    // Watch the breakpoint itself rather than piggybacking on resize: this
+    // fires exactly when the query flips, however it was crossed. Rotating to
+    // landscape past it would otherwise leave the body scroll-locked and
+    // .heroF still aria-modal, with every sheet style gone.
+    var mq=matchMedia('(max-width:760px)');
+    function onBreak(){ if(sheetOpen() && !mq.matches) closeSheet(); }
+    if(mq.addEventListener) mq.addEventListener('change', onBreak);
+    else if(mq.addListener) mq.addListener(onBreak);   // Safari < 14
   }
 
   seedStatePrefix();

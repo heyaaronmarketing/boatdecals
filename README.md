@@ -104,8 +104,10 @@ Four things the sheet has to get right, each of which is gated:
 - **the sticky bar must not float over it**, offering the thing already open
 - **Back closes the sheet rather than leaving the page** — a `pushState` on
   open and a `popstate` listener. On a phone that is what the gesture means.
-- **a resize past the breakpoint closes it**, or rotating to landscape would
-  leave the body locked with the sheet styles gone
+- **crossing the breakpoint closes it**, or rotating to landscape would leave
+  the body scroll-locked and `.heroF` still `aria-modal` with every sheet
+  style gone. This watches `matchMedia().change` rather than `resize`: the
+  query flipping is the actual event, and it fires however it was crossed.
 
 Opening also fires a `resize`, because the panel just went from a 343px column
 to the full viewport and the boat preview sizes its lettering off the panel's

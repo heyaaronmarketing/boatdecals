@@ -597,6 +597,10 @@ if "classList.add('sheeton')" not in design:
                  "to navigating to /design/ and the cramped inline form")
 if "body.sheeton{overflow:hidden}" not in design:
     fails.append("the page behind the order sheet still scrolls")
+if "mq.addEventListener" not in design and "addListener(onBreak)" not in design:
+    fails.append("nothing watches the sheet's breakpoint - rotating to "
+                 "landscape past it would leave the body scroll-locked with "
+                 "every sheet style gone")
 if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
