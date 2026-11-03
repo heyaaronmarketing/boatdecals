@@ -119,6 +119,22 @@ grid-template-areas:"a" "f" "b"}
    the flow, `.heroStart` makes the offer in one card with one button, and
    every "Start your order" on the page opens the same wizard full screen.
    It is promoted, not duplicated: there is only ever one form on the page. */
+/* The phone's one above-the-fold CTA, on every page except the home page -
+   which opens on the app layer instead, sitting over the top of this. Skip
+   lands the visitor right here. */
+.heroStart{display:none;grid-area:f;background:#fff;border-radius:13px;
+padding:17px 16px 15px;text-align:center;box-shadow:0 12px 30px rgba(4,26,38,.28)}
+.heroStartP{display:flex;align-items:baseline;justify-content:center;gap:7px;
+margin-bottom:12px}
+.heroStartP b{font-size:36px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em}
+.heroStartP em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--mut)}
+/* `.heroStart` in front of it: .btn{display:inline-block} sits later in this
+   sheet and would win at equal specificity. */
+.heroStart .btn{display:block;width:100%}
+.heroStartN{font-size:11.8px;color:var(--mut);margin-top:10px;font-weight:650;
+line-height:1.35}
+
 /* ---- the phone app layer ---------------------------------------------
    A full-screen card deck over the page, shown once per visit on a phone.
    It is an OVERLAY, never a replacement: the page's own content stays in the
@@ -200,10 +216,9 @@ grid-template-areas:"a" "f" "b"}
 @media(max-width:760px){
   .heroF{display:none}
   .heroStart{display:block}
-  /* One order CTA on the phone, and it is the one under the deck. The
-     notification bar, the header button and the sticky footer drawer were
-     three more ways to say the same thing, each taking vertical space on the
-     screen where the work should be. */
+  /* One order CTA on the phone. The notification bar, the header button and
+     the sticky footer drawer were three more ways to say the same thing,
+     each taking vertical space where the offer should be. */
   /* Each of these needs an extra selector in front of it. The base rules for
      .sticky and body.has-sticky sit LATER in this sheet, and at equal
      specificity the later rule wins - which is how this hide silently did
@@ -213,40 +228,18 @@ grid-template-areas:"a" "f" "b"}
   body .sticky{display:none}
   html body.has-sticky{padding-bottom:0}
   /* A minimal header: the lockup and the menu on one row, nothing else. */
-  /* Measured against the rules just below: 7+7 padding + a 34px lockup +
-     1px border. The deck subtracts it to fill exactly the rest of the
-     screen, so it has to move when these do. */
-  :root{--hdr:53px}
   header .w{flex-wrap:nowrap;padding:7px 14px;gap:10px}
   .brand{flex:0 1 auto}
   .brand span{font-size:19px}
   .brand svg{width:34px;height:34px}
   .menubtn{order:3;margin-left:auto;width:38px;height:38px}
   header nav.open{order:4}
-  /* The deck IS the first screen. One viewport tall, the headline and the
-     copy start below it - so the phone opens on the work and one button,
-     the way an app would, and the page is still a page underneath.
-
-     100dvh, not 100vh: on a phone 100vh is the viewport with the URL bar
-     RETRACTED, so a vh-sized first screen is taller than what you can
-     actually see until you scroll. dvh tracks the bar. 100vh first as the
-     fallback for anything that does not know dvh. */
-  /* Still a grid with named areas: `display:block` would fall back to DOM
-     order and put the headline above the deck again. */
-  .herogrid{grid-template-areas:"f" "a" "b";gap:0}
-  .hero{padding:0 0 26px}
-  .heroStart{height:calc(100vh - var(--hdr));
-             height:calc(100dvh - var(--hdr))}
-  .deck{height:100%;display:flex;flex-direction:column;justify-content:center;
-    padding:12px 0 14px}
-  /* The track takes the screen; min-height:0 or the flex item refuses to
-     shrink below its content and pushes the button off the bottom. */
-  .decktrack{flex:1 1 auto;min-height:0;align-items:stretch}
-  .deckcard{flex:0 0 88%;height:auto}
-  .deckdots{margin:14px 0 0}
-  /* Pinned to the bottom of the screen; the card and dots centre above it. */
-  .deck .deckcta{margin-top:auto}
-  .heroA{padding-top:22px}
+  /* The offer card takes the wizard's grid slot and comes first, so the
+     phone opens on the offer and one button with the headline under it.
+     Still a grid with named areas: `display:block` would fall back to DOM
+     order and put the headline back on top. */
+  .herogrid{grid-template-areas:"f" "a" "b";gap:16px}
+  .hero{padding:16px 0 26px}
   .heroA h1{font-size:25px;margin-top:4px}
   .hero .sub{font-size:15.5px;margin-top:9px}
   /* The sheet owns the viewport: the page behind it must not scroll, and the

@@ -81,10 +81,10 @@ position is derived. Anti-fatigue rules, all load-bearing:
 
 ### The phone app layer
 
-On a phone the commercial pages open as **a full-screen card deck** — a
-stories-style progress bar, full-bleed cards you swipe or tap through, and one
-"Start your order" pinned to the bottom. No site header, no notification bar,
-no sticky drawer. The deck is the experience, not a hero element.
+On a phone **the home page** opens as a full-screen card deck — a stories-style
+progress bar, full-bleed cards you swipe or tap through, and one "Start your
+order" pinned to the bottom. No site header, no notification bar, no sticky
+drawer. The deck is the experience, not a hero element.
 
 Thirteen cards: nine photographs of lettering already on a hull, interleaved
 with four plain-language cards covering price, the law, surfaces and turnaround
@@ -105,19 +105,27 @@ This is the part that matters, and it is gated three ways:
 It is shown **once per visit** (`sessionStorage`), because handing someone the
 deck again on the second page, after they already chose to browse, is hostile.
 
-#### Where it does not appear
+#### The home page and nowhere else
 
-**Guides and tools never get it**, and `verify.py` fails the build if one does.
-Someone who searched for the registration rules and landed on that guide wants
-the guide; a full-screen deck over it is an interstitial, and Google treats
-intrusive interstitials on mobile as a ranking signal. It currently runs on 32
-commercial pages — the home page, the two product pages, the 22 state pages and
-the 6 boat-type pages — and not on the other 24.
+`verify.py` fails the build if it appears on a second page.
 
-**That is still a judgement call worth revisiting.** A visitor arriving from
-"iowa boat registration numbers" lands on a state page and meets the deck
-before the Iowa content. Narrowing it to the home page alone would remove the
-risk entirely at the cost of most of its reach.
+It ran on all 32 commercial pages first, and the problem is **arrival intent**.
+Somebody searching "iowa boat registration numbers" lands on the Iowa page
+wanting Iowa, and a full-screen deck over it is an interstitial — which Google
+treats as a mobile ranking signal, on a site whose whole strategy is search.
+The home page has no specific answer being sought, so there is nothing to
+interrupt.
+
+**Every other page gets `.heroStart` instead** — a small offer card in the
+wizard's grid slot, above the headline: the price, one button, one line of
+terms. It is not optional. The chrome that used to carry a phone CTA — the
+notification bar, the header button, the sticky drawer — is all hidden on a
+phone, so without the card a state page would have no way to order until you
+scrolled into the in-content bands. There is a gate for exactly that: any page
+with the wizard must also carry the card.
+
+On the home page the card sits underneath the app layer, so **Skip lands you
+straight on it**.
 
 #### The mechanics
 

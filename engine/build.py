@@ -545,11 +545,14 @@ def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     # Three grid areas, not two columns. On a phone that puts the wizard
     # directly under the headline instead of below a screenful of copy;
     # on desktop the copy stacks in the left column beside it.
-    # The phone card deck used to live here as `.heroStart`. It is a
-    # full-screen layer now, emitted by page() outside every container, so
-    # nothing in the hero can become its containing block and break
-    # position:fixed.
-    start = ""
+    # The phone's one above-the-fold CTA. The home page opens on the
+    # full-screen app layer instead, which sits over the top of this - and
+    # Skip lands the visitor right here.
+    start = ('<div class=heroStart>'
+             '<div class=heroStartP><b>$%d</b><em>a pair &middot; both sides</em></div>'
+             '<button type=button class="btn lg sheetgo">Start your order</button>'
+             '<div class=heroStartN>Free shipping &middot; cut and posted next '
+             'business day</div></div>') % PRICE["numbers"] if right else ""
     sheetbar = ('<div class=sheetbar><span>Start your order</span>'
                 '<button type=button class=sheetx aria-label="Close">'
                 'Close</button></div>') if right else ""
@@ -691,23 +694,28 @@ def write(path, body, prio="0.7"):
 
 def shell(title, desc, path, schema, main, trail=None, noindex=False,
           faqs=None, faq_heading=None, sticky_label=None, sticky_price=19,
-          sticky_bar=True, js="",
+          sticky_bar=True, app=False, js="",
           band=None):
     parts = [head(title, desc, path, schema, noindex), topbar(), header()]
     if trail: parts.append(bc(trail))
     parts.append('<main id=main>' + main)
     if faqs: parts.append(faq_block(faqs, faq_heading or "Questions people actually ask", band))
     parts.append('</main>')
-    # The phone app layer, on pages that put the wizard in a hero - the
-    # commercial pages. Deliberately NOT on the guides and tools: someone who
-    # searched for the registration rules and landed on that guide wants the
-    # guide, and a deck over the top of it is an interstitial.
+    # The phone app layer: the HOME PAGE ONLY.
+    #
+    # It ran on all 32 commercial pages first. The problem is arrival intent:
+    # someone searching "iowa boat registration numbers" lands on the Iowa
+    # page wanting Iowa, and a full-screen deck over it is an interstitial -
+    # which Google treats as a mobile ranking signal, on a site whose whole
+    # strategy is search. The home page has no specific answer being sought,
+    # so there is nothing to interrupt. Every other page gets the offer card
+    # in the hero instead.
     #
     # Emitted here, after </main> and outside every container, because a
     # fixed-position element is positioned against the nearest ancestor with
     # a transform, filter or contain - and the hero has a gradient today but
     # could grow one of those tomorrow.
-    if "class=heroF" in main:
+    if app:
         parts.append(app_shell())
     parts.append(footer())
     # The order page suppresses it: the wizard already carries a live total in
@@ -860,7 +868,7 @@ def build_home():
     write("/", shell("Boat Registration Numbers - Legal 3-Inch Sets, Both Sides",
           "Custom boat registration numbers $19 a pair with free shipping. Legal 3-inch "
           "block vinyl for all 50 states, boat names from $29. Ships next business day.",
-          "/", sch, main, faqs=FAQ_HOME, js=ORDER_JS), "1.0")
+          "/", sch, main, faqs=FAQ_HOME, js=ORDER_JS, app=True), "1.0")
 
 # ---------------------------------------------------------------- /design/
 def build_design():

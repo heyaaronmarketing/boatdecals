@@ -677,15 +677,31 @@ for _h in _app:
                      "attribute - with JavaScript off it would cover the page "
                      "with no way to dismiss it" % _h.relative_to(OUT))
 
-# Guides and tools must NOT get it: someone who searched for the registration
-# rules and landed on that guide wants the guide, and a full-screen deck over
-# it is an interstitial.
-for _g in pages:
-    _rel = str(_g.relative_to(OUT))
-    if (_rel.startswith("guides/") or _rel.startswith("tools/")) \
-            and "id=appshell" in _g.read_text():
-        fails.append("%s: a guide or tool page is showing the phone app "
-                     "layer over its content" % _rel)
+# THE HOME PAGE ONLY. Anywhere else is an interstitial over content somebody
+# searched for: a visitor arriving on the Iowa page wants Iowa, and Google
+# treats an intrusive mobile interstitial as a ranking signal - on a site whose
+# whole strategy is search. The home page has no specific answer being sought.
+if len(_app) != 1 or str(_app[0].relative_to(OUT)) != "index.html":
+    fails.append("the phone app layer is on %d pages (%s) - it belongs on the "
+                 "home page and nowhere else, or it is a full-screen "
+                 "interstitial over content the visitor searched for"
+                 % (len(_app), ", ".join(str(q.relative_to(OUT)) for q in _app[:4])))
+
+# Every other page needs its own above-the-fold CTA on a phone, because the
+# chrome that used to carry one - notification bar, header button, sticky
+# drawer - is hidden there. Without this a state page has no way to order
+# until you scroll into the in-content bands.
+for _q in pages:
+    _qd = _q.read_text()
+    if "class=heroF" in _qd and "<div class=heroStart>" not in _qd:
+        fails.append("%s: has the wizard but no phone offer card - on a phone "
+                     "the header button, notification bar and sticky drawer "
+                     "are all hidden, so this page would have no order CTA "
+                     "above the fold" % _q.relative_to(OUT))
+if ".heroStart .btn{display:block" not in design:
+    fails.append("the offer card's button lost the `.heroStart` in front of "
+                 "it, so .btn{display:inline-block} later in the sheet wins "
+                 "and the button stops being full width")
 
 if "classList.add('appon')" not in design:
     fails.append("the app layer never opens")
