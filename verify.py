@@ -591,9 +591,6 @@ if not _heroes:
 for _h in _heroes:
     _d = _h.read_text()
     for _need, _why in (
-            ("<div class=heroStart>",
-             "the phone offer card is gone, so a phone sees no order entry "
-             "point where the wizard used to be"),
             ("<div class=sheetbar>",
              "the sheet has no title bar, so there is no way to close it"),
             ("class=sheetx ", "the sheet has no close control")):
@@ -612,8 +609,8 @@ if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
 
-# ---- the phone deck and the one-CTA rule --------------------------------
-# A phone gets ONE way to start an order: the button under the deck. The
+# ---- the phone app layer and the one-CTA rule ---------------------------
+# A phone gets ONE way to start an order: the button under the card deck. The
 # notification bar, the header button and the sticky drawer are hidden.
 #
 # Each hide needs an extra selector in front of it, because the base rules for
@@ -627,72 +624,86 @@ for _sel in ("body .top{display:none}", "body .hbtn{display:none}",
         fails.append("the phone chrome rule %r is gone or has lost the extra "
                      "selector that makes it outrank the base rule later in "
                      "the sheet - the hide would silently do nothing" % _sel)
-if ".deck .deckcta{display:block" not in design:
-    fails.append("the deck button lost the `.deck` in front of it, so "
-                 ".btn{display:inline-block} later in the sheet wins and the "
-                 "button stops being full width")
+if ".appfoot .appcta{display:block" not in design:
+    fails.append("the app layer's button lost the `.appfoot` in front of it, "
+                 "so .btn{display:inline-block} later in the sheet wins and "
+                 "the button stops being full width")
 
-for _h in [q for q in pages if "class=heroF" in q.read_text()]:
+# The app layer must be an OVERLAY, never a replacement for the page. The
+# page's own content stays in the DOM and in normal flow underneath, so mobile
+# -first indexing still renders the whole page and Skip lands you on it.
+_app = [q for q in pages if "id=appshell" in q.read_text()]
+if not _app:
+    fails.append("no page carries the phone app layer")
+for _h in _app:
     _d = _h.read_text()
-    _cards = len(_re.findall(r'<li class="?deckcard', _d))
-    _dots = len(_re.findall(r'class="deckdot[^"]*"', _d))
-    if _cards < 5:
-        fails.append("%s: the phone deck is down to %d cards - it is the whole "
-                     "hero on a phone" % (_h.relative_to(OUT), _cards))
-    if _cards != _dots:
-        fails.append("%s: %d deck cards but %d dots - the indicator cannot "
-                     "reach every card" % (_h.relative_to(OUT), _cards, _dots))
-    # Only the first card loads up front. Each card has two <img> - the
-    # sharp photo and its blurred backdrop - so the first card is two eager
-    # images and every other image on the deck must be lazy. All nine cards
-    # eager is ~580KB on a phone for eight nobody has swiped to.
-    #
-    # Counted over the real <img> tags rather than the cards, because the
-    # backdrop started life as a CSS background-image and those do NOT honour
-    # loading=lazy: the whole deck came down on load and this gate, which was
-    # watching the cards, said nothing.
-    _deckhtml = _d.split('class=decktrack')[-1].split('</ul>')[0]
-    _imgs = _re.findall(r"<img\b[^>]*>", _deckhtml)
-    _eager = [t for t in _imgs if " src=" in t]
-    if len(_imgs) != _cards * 2:
-        fails.append("%s: %d deck <img> for %d cards - expected two each, the "
-                     "sharp photo and its blurred backdrop"
-                     % (_h.relative_to(OUT), len(_imgs), _cards))
-    # Exactly the first card ships a real src. loading=lazy is NOT an
-    # acceptable substitute here: in a horizontal scroller Chrome treats the
-    # whole inline axis as near-viewport and fetches every card anyway. That
-    # was measured, not assumed - all nine came down on load.
-    if len(_eager) != 2:
-        fails.append("%s: %d deck images carry a real src, expected 2 (the "
-                     "first card's photo and its backdrop) - the rest must "
-                     "wait on the observer or the whole deck, ~500KB, "
-                     "downloads before a single swipe"
-                     % (_h.relative_to(OUT), len(_eager)))
-    if "loading=lazy" in _deckhtml:
-        fails.append("%s: the deck is back on loading=lazy, which a "
-                     "horizontal scroller ignores" % _h.relative_to(OUT))
-    if "if(deckOn()) loadAround(0)" not in design.replace(" ", "")\
-            .replace("if(deckOn())loadAround(0)", "if(deckOn()) loadAround(0)"):
-        fails.append("the deck's first load is no longer behind the "
-                     "breakpoint check - it is display:none above 760px, so "
-                     "that pulls images down on every desktop page too")
-    if "IntersectionObserver" not in design:
-        fails.append("nothing swaps the deck's deferred images in - cards "
-                     "past the first would stay blank")
-    if 'style="background-image' in _deckhtml:
-        fails.append("%s: a deck card is using a CSS background-image - those "
-                     "ignore loading=lazy, so every card downloads on load"
+    if "<main id=main>" not in _d:
+        fails.append("%s: the page's own <main> is gone - the app layer is an "
+                     "overlay over the page, not a replacement for it"
                      % _h.relative_to(OUT))
-# The dots must not be coalesced behind requestAnimationFrame: rAF does not
-# tick in a hidden tab, so a scroll that lands while backgrounded leaves the
-# pending flag set and every later scroll is dropped - the dots freeze for the
-# rest of the session.
-_deck_src = order_js.split("the phone deck dots")[-1].split("the phone order sheet")[0]
-if "requestAnimationFrame(" in _deck_src:
-    fails.append("the deck dots are back behind requestAnimationFrame - they "
-                 "freeze permanently if a scroll lands while the tab is hidden")
-if "markDot(i)" not in _deck_src and "markDot(current())" not in _deck_src:
-    fails.append("the deck scroll handler no longer updates the dots")
+    _sh = _d.split("id=appshell")[-1].split("</div></div>")[0]
+    _cards = len(_re.findall(r'<li class="appcard', _d))
+    _segs = len(_re.findall(r'class="appbar-seg', _d))
+    if _cards < 8:
+        fails.append("%s: the app layer is down to %d cards - it is the whole "
+                     "phone experience" % (_h.relative_to(OUT), _cards))
+    if _cards != _segs:
+        fails.append("%s: %d app cards but %d progress segments - the bar "
+                     "cannot reach every card"
+                     % (_h.relative_to(OUT), _cards, _segs))
+    _track = _d.split("class=apptrack")[-1].split("</ul>")[0]
+    _imgs = _re.findall(r"<img\b[^>]*>", _track)
+    _eager = [t for t in _imgs if " src=" in t]
+    # Exactly the first card ships a real src. loading=lazy is NOT an
+    # acceptable substitute: in a horizontal scroller Chrome treats the whole
+    # inline axis as near-viewport and fetches every card anyway. That was
+    # measured, not assumed - all of them came down on load.
+    if len(_eager) != 2:
+        fails.append("%s: %d app images carry a real src, expected 2 (the "
+                     "first card's photo and its backdrop) - the rest must "
+                     "wait, or the whole deck downloads before a swipe"
+                     % (_h.relative_to(OUT), len(_eager)))
+    if "loading=lazy" in _track:
+        fails.append("%s: the app deck is on loading=lazy, which a horizontal "
+                     "scroller ignores" % _h.relative_to(OUT))
+    if 'style="background-image' in _track:
+        fails.append("%s: an app card is using a CSS background-image - those "
+                     "ignore lazy loading entirely"
+                     % _h.relative_to(OUT))
+    # Ships hidden: with JS off nobody may be handed a full-screen layer with
+    # no way out.
+    if "<div class=appshell id=appshell hidden" not in _d:
+        fails.append("%s: the app layer no longer ships with the `hidden` "
+                     "attribute - with JavaScript off it would cover the page "
+                     "with no way to dismiss it" % _h.relative_to(OUT))
+
+# Guides and tools must NOT get it: someone who searched for the registration
+# rules and landed on that guide wants the guide, and a full-screen deck over
+# it is an interstitial.
+for _g in pages:
+    _rel = str(_g.relative_to(OUT))
+    if (_rel.startswith("guides/") or _rel.startswith("tools/")) \
+            and "id=appshell" in _g.read_text():
+        fails.append("%s: a guide or tool page is showing the phone app "
+                     "layer over its content" % _rel)
+
+if "classList.add('appon')" not in design:
+    fails.append("the app layer never opens")
+if "body.appon{overflow:hidden}" not in design:
+    fails.append("the page behind the app layer still scrolls")
+if "sessionStorage.setItem('bnsAppSeen'" not in design:
+    fails.append("the app layer no longer remembers being dismissed - it "
+                 "would reappear on every page of the visit")
+_app_src = order_js.split("the phone app layer")[-1].split("the phone order sheet")[0]
+if "requestAnimationFrame(" in _app_src:
+    fails.append("the app layer's progress bar is behind requestAnimationFrame "
+                 "- it freezes permanently if a scroll lands while hidden")
+if "markSeg(i)" not in _app_src:
+    fails.append("the app scroll handler no longer moves the progress bar")
+if ".offsetLeft" in _app_src:
+    fails.append("the app layer is measuring with offsetLeft, which is "
+                 "relative to the nearest positioned ancestor rather than the "
+                 "track - the progress bar would never move")
 
 # The order page must not carry the site-wide sticky CTA. It prints a flat
 # "$19 Registration numbers" and links to /design/ - so on /design/ it sits

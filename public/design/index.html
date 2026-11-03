@@ -119,71 +119,83 @@ grid-template-areas:"a" "f" "b"}
    the flow, `.heroStart` makes the offer in one card with one button, and
    every "Start your order" on the page opens the same wizard full screen.
    It is promoted, not duplicated: there is only ever one form on the page. */
-.heroStart{display:none;grid-area:f}
+/* ---- the phone app layer ---------------------------------------------
+   A full-screen card deck over the page, shown once per visit on a phone.
+   It is an OVERLAY, never a replacement: the page's own content stays in the
+   DOM and in normal flow underneath, so what a crawler renders on mobile is
+   still the whole page and Skip drops you straight onto it.
 
-/* ---- the phone deck -------------------------------------------------
-   Scroll-snap, not a drag-and-throw card stack: the same one-thumb gesture,
-   with native momentum and rubber-banding, no JavaScript needed for the
-   gesture itself, and it stays keyboard and screen-reader navigable. The
-   next card peeks past the right edge so it is obvious there is more. */
-.deck{margin:0}
-/* Only the TRACK bleeds to the edges, so the next card peeks past the screen.
-   The dots, the button and the note stay in normal flow - hanging the whole
-   deck on a negative margin put the button 16px off the right of the page. */
-.decktrack{display:flex;gap:10px;list-style:none;margin:0 -18px;padding:0 18px;
-overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
--webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
-.decktrack::-webkit-scrollbar{display:none}
-.deckcard{position:relative;flex:0 0 88%;scroll-snap-align:center;
-background:#0b2634;border-radius:16px;overflow:hidden;
-box-shadow:0 14px 34px rgba(4,26,38,.42);display:flex;align-items:center}
-/* filter, not backdrop-filter: this is a real image to blur, so there is no
-   dependency on backdrop-filter support. Scaled up because a blur samples
-   past the element's edges and would otherwise fade out at the border. */
-/* A card whose images have not been swapped in yet. Reads as a deliberate
-   dark card rather than a broken one. */
-.deckcard.pending{background:#0e3346}
-/* `.deckcard img.deckbg`, not `.deckbg`: the sharp-image rule below is
-   `.deckcard img`, which outranks a bare class and was handing the backdrop
-   `height:auto` and `aspect-ratio:3/2` - so it sized itself to the sharp
-   photo instead of filling the card. */
-.deckcard img.deckbg{position:absolute;inset:0;width:100%;height:100%;
-object-fit:cover;aspect-ratio:auto;border:0;box-shadow:none;
-filter:blur(26px) brightness(.72) saturate(1.05);transform:scale(1.18);
-pointer-events:none}
-.deckcard picture{position:relative;display:block;width:100%}
-/* A hairline and a shadow so the sharp photo reads as a photograph sitting
-   on its own blurred backdrop, rather than as a strip where the blur stops. */
-.deckcard img{display:block;width:100%;height:auto;aspect-ratio:3/2;
-object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.42);
-border-top:1px solid rgba(255,255,255,.18);
-border-bottom:1px solid rgba(0,0,0,.25)}
-/* The caption sits ON the photo under a scrim rather than in a white block
-   below it. That is what gives the deck the full-bleed, app-like read, and it
-   hands the whole card height back to the image. */
-.deckcap{position:absolute;left:0;right:0;bottom:0;padding:34px 15px 14px;
-background:linear-gradient(to top,rgba(5,24,34,.93) 0%,rgba(5,24,34,.78) 42%,
-rgba(5,24,34,0) 100%)}
-.deckcap b{display:block;font-size:14.5px;font-weight:800;color:#fff;
-line-height:1.25;text-shadow:0 1px 2px rgba(0,0,0,.4)}
-.deckcap em{display:block;font-style:normal;font-size:12.2px;font-weight:650;
-color:#c9e2ef;margin-top:3px;line-height:1.35}
-.deckdots{display:flex;justify-content:center;gap:6px;margin:11px 0 13px}
-.deckdot{width:7px;height:7px;padding:0;border:0;border-radius:99px;
-background:rgba(255,255,255,.34);cursor:pointer;transition:background .15s,width .15s}
-.deckdot.on{background:#fff;width:19px}
-/* `.deck` in front of it on purpose: .btn{display:inline-block} sits later in
-   this sheet and would win at equal specificity. */
-.deck .deckcta{display:block;width:100%}
-.deckn{font-size:11.8px;color:#bcd9e8;margin:10px 0 0;font-weight:650;
-line-height:1.4;text-align:center}
+   display:none above the breakpoint, and the element also ships with the
+   `hidden` attribute so that with JavaScript off nobody is handed a
+   full-screen layer with no way to dismiss it. */
+.appshell{display:none}
+.appshell[hidden]{display:none}
 
-.sheetbar{display:none;position:sticky;top:0;z-index:2;
-align-items:center;justify-content:space-between;background:var(--nav);
-color:#fff;padding:11px 15px;font-weight:800;font-size:15.5px}
-.sheetx{font:inherit;font-size:13.5px;font-weight:800;
-background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;
-padding:8px 15px;cursor:pointer}
+@media(max-width:760px){
+  .appshell{position:fixed;inset:0;z-index:200;display:flex;
+    flex-direction:column;background:#07202d;
+    /* dvh, not vh: 100vh on a phone is the viewport with the URL bar
+       retracted, so a vh-sized layer is taller than what you can see. */
+    height:100vh;height:100dvh}
+  .appshell[hidden]{display:none}
+  body.appon{overflow:hidden}
+
+  .apptop{flex:0 0 auto;display:flex;align-items:center;gap:12px;
+    padding:11px 14px 9px}
+  .appprog{flex:1;display:flex;gap:3px}
+  .appbar-seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.26);
+    transition:background .18s}
+  .appbar-seg.on{background:#fff}
+  .appskip{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:700;
+    color:#9fc6da;background:none;border:0;padding:4px 2px;cursor:pointer}
+
+  .apptrack{flex:1 1 auto;min-height:0;display:flex;list-style:none;margin:0;
+    padding:0;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain}
+  .apptrack::-webkit-scrollbar{display:none}
+  .appcard{position:relative;flex:0 0 100%;scroll-snap-align:center;
+    display:flex;align-items:center;overflow:hidden;background:#07202d}
+  .appcard.pending{background:#0e3346}
+  /* `.appcard img.appbg`, not `.appbg`: the sharp-image rule below is
+     `.appcard img`, class plus type, which outranks a bare class and would
+     hand the backdrop height:auto and the 3:2 ratio - sizing it to the sharp
+     photo instead of filling the card. */
+  .appcard img.appbg{position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;aspect-ratio:auto;border:0;box-shadow:none;
+    filter:blur(28px) brightness(.66) saturate(1.05);transform:scale(1.2);
+    pointer-events:none}
+  .appcard picture{position:relative;display:block;width:100%}
+  /* The photos are 3:2 landscape and the card is a tall phone screen. A
+     stretched copy would crop to a slab of hull with the lettering running
+     off both edges, so the sharp one keeps its ratio and a blurred copy
+     fills the rest - what music apps do with square artwork. */
+  .appcard img{display:block;width:100%;height:auto;aspect-ratio:3/2;
+    object-fit:cover;box-shadow:0 12px 36px rgba(0,0,0,.45)}
+  .appcap{position:absolute;left:0;right:0;bottom:0;padding:44px 20px 24px;
+    background:linear-gradient(to top,rgba(4,18,26,.96) 0%,
+      rgba(4,18,26,.82) 45%,rgba(4,18,26,0) 100%)}
+  .appcap b{display:block;font-size:19px;font-weight:800;color:#fff;
+    line-height:1.22;letter-spacing:-.01em}
+  .appcap em{display:block;font-style:normal;font-size:14px;font-weight:600;
+    color:#bcd9e8;margin-top:5px;line-height:1.4}
+
+  .appcard.fact{align-items:center;justify-content:center;
+    background:linear-gradient(165deg,#0e3a52 0%,#155273 60%,#1b6382 100%)}
+  .factbody{padding:0 26px;text-align:center;max-width:30ch}
+  .factkick{display:block;font-size:12px;font-weight:800;letter-spacing:.09em;
+    text-transform:uppercase;color:#6fc4ea;margin-bottom:12px}
+  .factbody strong{display:block;font-size:34px;font-weight:800;color:#fff;
+    line-height:1.1;letter-spacing:-.02em;margin-bottom:13px}
+  .factbody p{font-size:15.5px;line-height:1.5;color:#cfe4ef}
+
+  .appfoot{flex:0 0 auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom))}
+  /* `.appfoot` in front of it: .btn{display:inline-block} sits later in this
+     sheet and would win at equal specificity. */
+  .appfoot .appcta{display:block;width:100%}
+  .appn{font-size:11.8px;color:#9fc6da;margin-top:10px;font-weight:650;
+    text-align:center}
+}
 
 @media(max-width:760px){
   .heroF{display:none}
@@ -2155,24 +2167,24 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     });
   });
 
-  // ---- the phone deck dots ----------------------------------------------
-  // The swipe itself is CSS scroll-snap and needs nothing from here. These
-  // only keep the dots in step, and let a tap on one move the deck.
-  var track=$('decktrack'), dotwrap=$('deckdots');
-  if(track && dotwrap){
-    var dots=[].slice.call(dotwrap.querySelectorAll('.deckdot'));
-    function cardAt(i){ return track.children[i]; }
-    function markDot(i){
-      for(var d=0;d<dots.length;d++) dots[d].classList.toggle('on', d===i);
+  // ---- the phone app layer ----------------------------------------------
+  // A full-screen card deck over the page - the whole phone experience, not
+  // a hero element. The page underneath is untouched and in normal flow, so
+  // dismissing this drops you straight onto it.
+  var track=$('apptrack'), prog=$('appprog'), shell=$('appshell');
+  if(track && prog && shell){
+    var segs=[].slice.call(prog.querySelectorAll('.appbar-seg'));
+    var appMq=matchMedia('(max-width:760px)');
+    function phone(){ return appMq.matches; }
+
+    function markSeg(i){
+      for(var d=0;d<segs.length;d++) segs[d].classList.toggle('on', d===i);
     }
     function current(){
-      // Nearest card centre to the track's centre, so a half-swipe that
-      // rubber-bands back does not leave the wrong dot lit.
-      //
-      // Measured off getBoundingClientRect, NOT offsetLeft: offsetLeft is
-      // relative to the nearest POSITIONED ancestor, which here is the hero
-      // rather than the track, so the centres came out in the wrong
-      // coordinate space and the dots never moved.
+      // Nearest card centre to the track's centre. Measured off
+      // getBoundingClientRect, NOT offsetLeft: offsetLeft is relative to the
+      // nearest POSITIONED ancestor, so the centres would come out in the
+      // wrong coordinate space and the progress bar would never move.
       var tr=track.getBoundingClientRect(), mid=tr.left + tr.width/2,
           best=0, gap=1e9;
       for(var i=0;i<track.children.length;i++){
@@ -2182,15 +2194,6 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       }
       return best;
     }
-    // Updated straight from the scroll event, with no requestAnimationFrame
-    // coalescing in front of it. rAF callbacks do not fire while the tab is
-    // hidden, so a scroll that landed in a backgrounded tab left the pending
-    // flag set and every later scroll was dropped - the dots froze for the
-    // rest of the session. Reading nine rects per scroll is cheap and nothing
-    // is written back, so there is no layout thrash to avoid here.
-    // Swap the real URLs in a card ahead of the one being looked at.
-    // rootMargin is generous on the inline axis so the next card is already
-    // decoded by the time the swipe lands on it.
     function load(card){
       if(!card || card.dataset.loaded) return;
       card.dataset.loaded='1';
@@ -2202,54 +2205,66 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       }
       card.classList.remove('pending');
     }
-    // The deck is display:none above 760px, so none of this should pull an
-    // image down on a desktop page where it will never be seen.
-    var deckMq=matchMedia('(max-width:760px)');
-    function deckOn(){ return deckMq.matches; }
-
-    if(window.IntersectionObserver){
-      var io=new IntersectionObserver(function(es){
-        es.forEach(function(en){ if(en.isIntersecting && deckOn()) load(en.target); });
-      }, {root:track, rootMargin:'0px 120% 0px 120%'});
-      for(var k=0;k<track.children.length;k++) io.observe(track.children[k]);
-    } else {
-      deckMq.addEventListener
-        ? deckMq.addEventListener('change', function(){ if(deckOn()) loadAround(current()); })
-        : deckMq.addListener(function(){ if(deckOn()) loadAround(current()); });
-    }
-
     function loadAround(i){
-      load(track.children[i]);
-      load(track.children[i-1]);
-      load(track.children[i+1]);
+      load(track.children[i]); load(track.children[i-1]); load(track.children[i+1]);
     }
-    // Driven from the scroll as well as the observer. IntersectionObserver is
-    // the right primitive for "came into view", but it is one more thing that
-    // can be throttled or not fire; the scroll handler is already running to
-    // move the dots, so loading the neighbours from it costs nothing and
-    // means a swipe can never land on a card that has not started loading.
+    function goTo(i){
+      var c=track.children[i]; if(!c) return;
+      var tr=track.getBoundingClientRect(), r=c.getBoundingClientRect();
+      // Smooth scrolling runs on animation frames, which do not tick while
+      // the tab is hidden, and a reader who asked for reduced motion should
+      // not be given an animation.
+      var still = document.hidden
+               || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      track.scrollTo({left: track.scrollLeft + (r.left - tr.left),
+                      behavior: still ? 'auto' : 'smooth'});
+      loadAround(i);
+    }
+
+    // Straight from the scroll event, with no requestAnimationFrame in front
+    // of it: rAF does not fire while the tab is hidden, so a scroll landing
+    // in a backgrounded tab would leave a pending flag set and freeze the
+    // progress bar for the rest of the session.
     track.addEventListener('scroll', function(){
-      var i=current(); markDot(i); loadAround(i);
+      var i=current(); markSeg(i); loadAround(i);
     }, {passive:true});
-    // Resizing down to the deck's breakpoint has to prime it too, or the
-    // cards sit blank until the first swipe.
-    if(deckMq.addEventListener)
-      deckMq.addEventListener('change', function(){ if(deckOn()) loadAround(current()); });
-    if(deckOn()) loadAround(0);
-    dots.forEach(function(d){
-      d.addEventListener('click', function(){
-        var c=cardAt(+d.dataset.i); if(!c) return;
-        var tr=track.getBoundingClientRect(), r=c.getBoundingClientRect();
-        // Smooth scrolling runs on animation frames, which do not tick while
-        // the tab is hidden - the jump would simply never happen. And a reader
-        // who asked for reduced motion should not be given an animation.
-        var still = document.hidden
-                 || matchMedia('(prefers-reduced-motion: reduce)').matches;
-        track.scrollTo({left: track.scrollLeft + (r.left - tr.left)
-                              - (tr.width - r.width)/2,
-                        behavior: still ? 'auto' : 'smooth'});
-      });
+
+    // Tap the left or right edge to move a card, the way a stories UI does.
+    track.addEventListener('click', function(ev){
+      if(ev.target.closest('a,button')) return;
+      var r=track.getBoundingClientRect(), x=ev.clientX - r.left, i=current();
+      if(x < r.width*0.28) goTo(Math.max(0, i-1));
+      else if(x > r.width*0.72) goTo(Math.min(track.children.length-1, i+1));
     });
+
+    function openApp(){
+      if(!phone() || shell.dataset.open) return;
+      shell.dataset.open='1';
+      shell.hidden=false;
+      document.body.classList.add('appon');
+      loadAround(0);
+    }
+    function closeApp(){
+      if(!shell.dataset.open) return;
+      delete shell.dataset.open;
+      shell.hidden=true;
+      document.body.classList.remove('appon');
+      try{ sessionStorage.setItem('bnsAppSeen','1'); }catch(e){}
+    }
+    $('appskip').addEventListener('click', closeApp);
+    addEventListener('keydown', function(ev){
+      if(ev.key==='Escape' && shell.dataset.open) closeApp();
+    });
+    // Rotating past the breakpoint would otherwise leave the body locked with
+    // the layer's styles gone.
+    if(appMq.addEventListener)
+      appMq.addEventListener('change', function(){ if(!phone()) closeApp(); });
+
+    // Shown once per visit. Coming back to a second page and being handed the
+    // deck again, after you already chose to browse, is hostile.
+    var seen=false;
+    try{ seen=sessionStorage.getItem('bnsAppSeen')==='1'; }catch(e){}
+    if(!seen) openApp();
   }
 
   // ---- the phone order sheet --------------------------------------------

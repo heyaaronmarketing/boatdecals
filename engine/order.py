@@ -779,24 +779,24 @@ JS = r"""
     });
   });
 
-  // ---- the phone deck dots ----------------------------------------------
-  // The swipe itself is CSS scroll-snap and needs nothing from here. These
-  // only keep the dots in step, and let a tap on one move the deck.
-  var track=$('decktrack'), dotwrap=$('deckdots');
-  if(track && dotwrap){
-    var dots=[].slice.call(dotwrap.querySelectorAll('.deckdot'));
-    function cardAt(i){ return track.children[i]; }
-    function markDot(i){
-      for(var d=0;d<dots.length;d++) dots[d].classList.toggle('on', d===i);
+  // ---- the phone app layer ----------------------------------------------
+  // A full-screen card deck over the page - the whole phone experience, not
+  // a hero element. The page underneath is untouched and in normal flow, so
+  // dismissing this drops you straight onto it.
+  var track=$('apptrack'), prog=$('appprog'), shell=$('appshell');
+  if(track && prog && shell){
+    var segs=[].slice.call(prog.querySelectorAll('.appbar-seg'));
+    var appMq=matchMedia('(max-width:760px)');
+    function phone(){ return appMq.matches; }
+
+    function markSeg(i){
+      for(var d=0;d<segs.length;d++) segs[d].classList.toggle('on', d===i);
     }
     function current(){
-      // Nearest card centre to the track's centre, so a half-swipe that
-      // rubber-bands back does not leave the wrong dot lit.
-      //
-      // Measured off getBoundingClientRect, NOT offsetLeft: offsetLeft is
-      // relative to the nearest POSITIONED ancestor, which here is the hero
-      // rather than the track, so the centres came out in the wrong
-      // coordinate space and the dots never moved.
+      // Nearest card centre to the track's centre. Measured off
+      // getBoundingClientRect, NOT offsetLeft: offsetLeft is relative to the
+      // nearest POSITIONED ancestor, so the centres would come out in the
+      // wrong coordinate space and the progress bar would never move.
       var tr=track.getBoundingClientRect(), mid=tr.left + tr.width/2,
           best=0, gap=1e9;
       for(var i=0;i<track.children.length;i++){
@@ -806,15 +806,6 @@ JS = r"""
       }
       return best;
     }
-    // Updated straight from the scroll event, with no requestAnimationFrame
-    // coalescing in front of it. rAF callbacks do not fire while the tab is
-    // hidden, so a scroll that landed in a backgrounded tab left the pending
-    // flag set and every later scroll was dropped - the dots froze for the
-    // rest of the session. Reading nine rects per scroll is cheap and nothing
-    // is written back, so there is no layout thrash to avoid here.
-    // Swap the real URLs in a card ahead of the one being looked at.
-    // rootMargin is generous on the inline axis so the next card is already
-    // decoded by the time the swipe lands on it.
     function load(card){
       if(!card || card.dataset.loaded) return;
       card.dataset.loaded='1';
@@ -826,54 +817,66 @@ JS = r"""
       }
       card.classList.remove('pending');
     }
-    // The deck is display:none above 760px, so none of this should pull an
-    // image down on a desktop page where it will never be seen.
-    var deckMq=matchMedia('(max-width:760px)');
-    function deckOn(){ return deckMq.matches; }
-
-    if(window.IntersectionObserver){
-      var io=new IntersectionObserver(function(es){
-        es.forEach(function(en){ if(en.isIntersecting && deckOn()) load(en.target); });
-      }, {root:track, rootMargin:'0px 120% 0px 120%'});
-      for(var k=0;k<track.children.length;k++) io.observe(track.children[k]);
-    } else {
-      deckMq.addEventListener
-        ? deckMq.addEventListener('change', function(){ if(deckOn()) loadAround(current()); })
-        : deckMq.addListener(function(){ if(deckOn()) loadAround(current()); });
-    }
-
     function loadAround(i){
-      load(track.children[i]);
-      load(track.children[i-1]);
-      load(track.children[i+1]);
+      load(track.children[i]); load(track.children[i-1]); load(track.children[i+1]);
     }
-    // Driven from the scroll as well as the observer. IntersectionObserver is
-    // the right primitive for "came into view", but it is one more thing that
-    // can be throttled or not fire; the scroll handler is already running to
-    // move the dots, so loading the neighbours from it costs nothing and
-    // means a swipe can never land on a card that has not started loading.
+    function goTo(i){
+      var c=track.children[i]; if(!c) return;
+      var tr=track.getBoundingClientRect(), r=c.getBoundingClientRect();
+      // Smooth scrolling runs on animation frames, which do not tick while
+      // the tab is hidden, and a reader who asked for reduced motion should
+      // not be given an animation.
+      var still = document.hidden
+               || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      track.scrollTo({left: track.scrollLeft + (r.left - tr.left),
+                      behavior: still ? 'auto' : 'smooth'});
+      loadAround(i);
+    }
+
+    // Straight from the scroll event, with no requestAnimationFrame in front
+    // of it: rAF does not fire while the tab is hidden, so a scroll landing
+    // in a backgrounded tab would leave a pending flag set and freeze the
+    // progress bar for the rest of the session.
     track.addEventListener('scroll', function(){
-      var i=current(); markDot(i); loadAround(i);
+      var i=current(); markSeg(i); loadAround(i);
     }, {passive:true});
-    // Resizing down to the deck's breakpoint has to prime it too, or the
-    // cards sit blank until the first swipe.
-    if(deckMq.addEventListener)
-      deckMq.addEventListener('change', function(){ if(deckOn()) loadAround(current()); });
-    if(deckOn()) loadAround(0);
-    dots.forEach(function(d){
-      d.addEventListener('click', function(){
-        var c=cardAt(+d.dataset.i); if(!c) return;
-        var tr=track.getBoundingClientRect(), r=c.getBoundingClientRect();
-        // Smooth scrolling runs on animation frames, which do not tick while
-        // the tab is hidden - the jump would simply never happen. And a reader
-        // who asked for reduced motion should not be given an animation.
-        var still = document.hidden
-                 || matchMedia('(prefers-reduced-motion: reduce)').matches;
-        track.scrollTo({left: track.scrollLeft + (r.left - tr.left)
-                              - (tr.width - r.width)/2,
-                        behavior: still ? 'auto' : 'smooth'});
-      });
+
+    // Tap the left or right edge to move a card, the way a stories UI does.
+    track.addEventListener('click', function(ev){
+      if(ev.target.closest('a,button')) return;
+      var r=track.getBoundingClientRect(), x=ev.clientX - r.left, i=current();
+      if(x < r.width*0.28) goTo(Math.max(0, i-1));
+      else if(x > r.width*0.72) goTo(Math.min(track.children.length-1, i+1));
     });
+
+    function openApp(){
+      if(!phone() || shell.dataset.open) return;
+      shell.dataset.open='1';
+      shell.hidden=false;
+      document.body.classList.add('appon');
+      loadAround(0);
+    }
+    function closeApp(){
+      if(!shell.dataset.open) return;
+      delete shell.dataset.open;
+      shell.hidden=true;
+      document.body.classList.remove('appon');
+      try{ sessionStorage.setItem('bnsAppSeen','1'); }catch(e){}
+    }
+    $('appskip').addEventListener('click', closeApp);
+    addEventListener('keydown', function(ev){
+      if(ev.key==='Escape' && shell.dataset.open) closeApp();
+    });
+    // Rotating past the breakpoint would otherwise leave the body locked with
+    // the layer's styles gone.
+    if(appMq.addEventListener)
+      appMq.addEventListener('change', function(){ if(!phone()) closeApp(); });
+
+    // Shown once per visit. Coming back to a second page and being handed the
+    // deck again, after you already chose to browse, is hostile.
+    var seen=false;
+    try{ seen=sessionStorage.getItem('bnsAppSeen')==='1'; }catch(e){}
+    if(!seen) openApp();
   }
 
   // ---- the phone order sheet --------------------------------------------

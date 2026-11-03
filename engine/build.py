@@ -457,78 +457,86 @@ def sticky(label="Registration numbers", price=19):
             '<a class=btn href="/design/">Start your order</a></div>'
             % (price, e(html.unescape(label))))
 
-# The phone hero. Nine shots of lettering already on a hull, across the
-# surfaces people actually own - gelcoat, navy gelcoat, metalflake, bare
-# aluminium, a pontoon rail, PWC plastic, kayak plastic - plus two transom
-# names. Enough variety that most visitors find their own boat in the deck.
-DECK = ["AL-01", "AL-02", "AL-10", "AL-03", "AL-04", "AL-07", "AL-05",
-        "AL-06", "AL-08"]
+# The cards, in order. A photo card is an id from IMAGES; a fact card is a
+# (kicker, headline, line) triple. Interleaved so the deck reads as a tour of
+# the work rather than a slideshow with adverts bolted on the end.
+APP_CARDS = [
+    "AL-01",
+    ("What it costs", "$19 a pair",
+     "Both sides, pre-spaced on one sheet, shipping included. The price is on "
+     "the page - you do not have to build a design to see it."),
+    "AL-02",
+    ("The law", "Legal in all 50 states",
+     "3-inch plain block characters, contrasting with the hull, on the forward "
+     "half, both sides. That is 33 CFR 173.27, and every set we cut meets it."),
+    "AL-10",
+    "AL-03",
+    ("Your boat", "Any surface",
+     "Gelcoat, bare aluminium, a textured pontoon rail, rotomoulded plastic. "
+     "High-tack film for the awkward ones, free, no upcharge."),
+    "AL-04",
+    "AL-07",
+    ("When it arrives", "Cut and posted next business day",
+     "Cut the next business day and in the post the same afternoon. No queue, "
+     "no proof to approve first."),
+    "AL-05",
+    "AL-06",
+    "AL-08",
+]
 
 
-def swipe_deck():
-    """A swipeable deck of our work, for the top of a phone screen.
+def app_shell():
+    """The phone experience: a full-screen card deck, not a hero element.
 
-    CSS scroll-snap rather than a drag-and-throw card stack: it gives the same
-    one-thumb gesture with native momentum and rubber-banding, it works with no
-    JavaScript at all, and it stays keyboard and screen-reader navigable. The
-    JS on top is only the dots.
-
-    Only the first card is eager. The other eight are `loading=lazy`, so the
-    deck costs ~52KB up front instead of ~580KB.
+    This is an overlay over the page, never a replacement for it. The page's
+    own content stays in the DOM and in normal flow underneath - nothing is
+    `display:none`-d away - so what a crawler renders on mobile is still the
+    whole page, and dismissing the deck drops you straight onto it.
     """
     cards = []
-    for i, iid in enumerate(DECK):
-        m = IMAGES.get(iid)
+    for i, c in enumerate(APP_CARDS):
+        first = " src" if i == 0 else " data-src"
+        if isinstance(c, tuple):
+            kick, head, line = c
+            cards.append(
+                '<li class="appcard fact"><div class=factbody>'
+                '<span class=factkick>%s</span><strong>%s</strong><p>%s</p>'
+                '</div></li>' % (kick, head, line))
+            continue
+        m = IMAGES.get(c)
         if not m:
             continue
         alt = html.unescape("%s. %s." % (m["caption"], m["sub"]))
         cards.append(
-            # The card carries the same photo twice: a blurred copy filling
-            # the card, and the sharp one centred at its own 3:2. The deck
-            # fills a phone screen and these are landscape photographs, so a
-            # card stretched to a tall viewport would crop them to a slab of
-            # hull with the lettering running off both edges. The blurred
-            # copy fills the space without touching the crop - what music
-            # apps do with square artwork on a tall screen.
-            #
-            # The backdrop is a real <img>, not a CSS background: a
-            # background-image does not honour loading=lazy, so every card's
-            # backdrop was fetched on load and the whole deck came down at
-            # once. Same URL as the sharp copy, so it is one fetch per card.
-            # First card real, the rest behind data- attributes that the
-            # IntersectionObserver in order.py swaps in as you swipe.
-            #
-            # loading=lazy does NOT work here. In a horizontally scrolling
-            # container Chrome treats everything on the inline axis as near
-            # the viewport and fetches the lot - measured: all nine came down
-            # on load, ~580KB before a single swipe.
-            '<li class="deckcard%s">'
-            '<img class=deckbg %s="/assets/img/%s-800.jpg" alt="" '
+            '<li class="appcard%s">'
+            '<img class=appbg%s="/assets/img/%s-800.jpg" alt="" '
             'aria-hidden=true decoding=async>'
             '<picture>'
-            '<source type="image/webp" %s="/assets/img/%s-800.webp">'
-            '<img %s="/assets/img/%s-800.jpg" alt="%s" width="1400" '
+            '<source type="image/webp"%s="/assets/img/%s-800.webp">'
+            '<img%s="/assets/img/%s-800.jpg" alt="%s" width="1400" '
             'height="933" decoding=async>'
             '</picture>'
-            '<div class=deckcap><b>%s</b><em>%s</em></div>'
+            '<div class=appcap><b>%s</b><em>%s</em></div>'
             '</li>'
             % ("" if i == 0 else " pending",
-               "src" if i == 0 else "data-src", iid,
-               "srcset" if i == 0 else "data-srcset", iid,
-               "src" if i == 0 else "data-src", iid, e(alt),
+               " src" if i == 0 else " data-src", c,
+               " srcset" if i == 0 else " data-srcset", c,
+               " src" if i == 0 else " data-src", c, e(alt),
                m["caption"], m["sub"]))
-    dots = "".join('<button type=button class="deckdot%s" data-i="%d" '
-                   'aria-label="Show example %d of %d"></button>'
-                   % (" on" if i == 0 else "", i, i + 1, len(cards))
+    bars = "".join('<i class="appbar-seg%s"></i>' % (" on" if i == 0 else "")
                    for i in range(len(cards)))
-    return ('<div class=deck>'
-            '<ul class=decktrack id=decktrack>%s</ul>'
-            '<div class=deckdots id=deckdots>%s</div>'
-            '<button type=button class="btn lg sheetgo deckcta">'
-            'Start your order</button>'
-            '<div class=deckn>$%d a pair &middot; both sides &middot; free '
-            'shipping, cut and posted next business day</div>'
-            '</div>' % ("".join(cards), dots, PRICE["numbers"]))
+    return (
+        '<div class=appshell id=appshell hidden aria-label="Our work">'
+        '<div class=apptop>'
+        '<div class=appprog id=appprog>%s</div>'
+        '<button type=button class=appskip id=appskip>Skip</button>'
+        '</div>'
+        '<ul class=apptrack id=apptrack>%s</ul>'
+        '<div class=appfoot>'
+        '<button type=button class="btn lg sheetgo appcta">Start your order</button>'
+        '<div class=appn>$%d a pair &middot; both sides &middot; free shipping</div>'
+        '</div>'
+        '</div>' % (bars, "".join(cards), PRICE["numbers"]))
 
 
 def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
@@ -537,11 +545,11 @@ def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     # Three grid areas, not two columns. On a phone that puts the wizard
     # directly under the headline instead of below a screenful of copy;
     # on desktop the copy stacks in the left column beside it.
-    # On a phone the inline wizard is hidden and `.heroStart` stands in for it:
-    # one offer, one button, and the form arrives full screen. The wizard is
-    # still the same element - the sheet promotes it rather than duplicating
-    # it - so there is no second copy of the form to keep in step.
-    start = '<div class=heroStart>%s</div>' % swipe_deck() if right else ""
+    # The phone card deck used to live here as `.heroStart`. It is a
+    # full-screen layer now, emitted by page() outside every container, so
+    # nothing in the hero can become its containing block and break
+    # position:fixed.
+    start = ""
     sheetbar = ('<div class=sheetbar><span>Start your order</span>'
                 '<button type=button class=sheetx aria-label="Close">'
                 'Close</button></div>') if right else ""
@@ -690,6 +698,17 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
     parts.append('<main id=main>' + main)
     if faqs: parts.append(faq_block(faqs, faq_heading or "Questions people actually ask", band))
     parts.append('</main>')
+    # The phone app layer, on pages that put the wizard in a hero - the
+    # commercial pages. Deliberately NOT on the guides and tools: someone who
+    # searched for the registration rules and landed on that guide wants the
+    # guide, and a deck over the top of it is an interstitial.
+    #
+    # Emitted here, after </main> and outside every container, because a
+    # fixed-position element is positioned against the nearest ancestor with
+    # a transform, filter or contain - and the hero has a gradient today but
+    # could grow one of those tomorrow.
+    if "class=heroF" in main:
+        parts.append(app_shell())
     parts.append(footer())
     # The order page suppresses it: the wizard already carries a live total in
     # its header, and a second bar reading a flat "$19 Registration numbers"

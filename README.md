@@ -79,94 +79,96 @@ position is derived. Anti-fatigue rules, all load-bearing:
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
 
-### The phone hero: a deck of our work, and one button
+### The phone app layer
 
-Below **760px** the page is a different thing. The notification bar, the header
-button and the sticky footer drawer are all hidden, the header shrinks to the
-lockup and a menu, and the hero becomes **a swipeable deck of nine shots of
-lettering already on a hull** with a single "Start your order" under it.
+On a phone the commercial pages open as **a full-screen card deck** — a
+stories-style progress bar, full-bleed cards you swipe or tap through, and one
+"Start your order" pinned to the bottom. No site header, no notification bar,
+no sticky drawer. The deck is the experience, not a hero element.
 
-The deck covers the surfaces people actually own — white gelcoat, navy
-gelcoat, metalflake, bare aluminium, a pontoon rail, PWC and kayak plastic —
-plus two transom names, so most visitors find something like their own boat.
-Captions are by spec, never as a customer's boat (`media/CAPTIONS.md`).
+Thirteen cards: nine photographs of lettering already on a hull, interleaved
+with four plain-language cards covering price, the law, surfaces and turnaround
+(`APP_CARDS` in `build.py`). Interleaved rather than photos-then-adverts, so it
+reads as a tour of the work.
 
-**CSS scroll-snap, not a drag-and-throw card stack.** Same one-thumb gesture,
-native momentum and rubber-banding, works with no JavaScript at all, and stays
-keyboard and screen-reader navigable. The JS on top is only the dots. The next
-card peeks past the right edge so it is obvious there is more.
+#### It is an overlay, never a replacement
 
-**The deck is one viewport tall** (`100dvh - var(--hdr)`), with the card and
-dots centred and the button pinned to the bottom, so the phone opens on the
-work and one button the way an app would. The headline and the copy start
-below it — the page is still a page underneath.
+This is the part that matters, and it is gated three ways:
 
-`100dvh`, **not** `100vh`: on a phone `100vh` is the viewport with the URL bar
-*retracted*, so a vh-sized first screen is taller than what you can actually
-see. `100vh` is declared first as the fallback for anything that does not know
-`dvh`.
+- The page's own content **stays in the DOM and in normal flow underneath**.
+  Nothing is `display:none`-d away, so mobile-first indexing still renders the
+  whole page.
+- `<main id=main>` must still be present on every page that carries the layer.
+- The element **ships with the `hidden` attribute** and JavaScript removes it.
+  With JS off nobody is handed a full-screen layer they cannot dismiss.
 
-**Each card carries the photo twice** — a blurred copy filling the card, and
-the sharp one centred at its own 3:2. These are landscape photographs and a
-phone card is tall and narrow; stretching one to fill would crop it to a slab
-of hull with the lettering running off both edges, which is the opposite of
-showing the work. The blurred copy fills the space without touching the crop,
-the way music apps handle square artwork on a tall screen.
+It is shown **once per visit** (`sessionStorage`), because handing someone the
+deck again on the second page, after they already chose to browse, is hostile.
+
+#### Where it does not appear
+
+**Guides and tools never get it**, and `verify.py` fails the build if one does.
+Someone who searched for the registration rules and landed on that guide wants
+the guide; a full-screen deck over it is an interstitial, and Google treats
+intrusive interstitials on mobile as a ranking signal. It currently runs on 32
+commercial pages — the home page, the two product pages, the 22 state pages and
+the 6 boat-type pages — and not on the other 24.
+
+**That is still a judgement call worth revisiting.** A visitor arriving from
+"iowa boat registration numbers" lands on a state page and meets the deck
+before the Iowa content. Narrowing it to the home page alone would remove the
+risk entirely at the cost of most of its reach.
+
+#### The mechanics
+
+- **CSS scroll-snap**, full-bleed cards. Native momentum and rubber-banding,
+  and it still works with the JS doing nothing but the progress bar. Tapping
+  the left or right 28% of the track moves a card, the way a stories UI does.
+- **Each card carries the photo twice** — a blurred copy filling the card, and
+  the sharp one at its own 3:2. These are landscape photographs and a phone
+  card is tall and narrow; stretching one to fill crops it to a slab of hull
+  with the lettering running off both edges.
+- The order sheet sits at `z-index:300` **above** the layer's `200`, so the
+  button opens the form over the deck and closing it returns you to the deck.
 
 #### Getting the images to load only when wanted
 
-This took three goes and is worth writing down, because every wrong version
-*looked* fine:
+This took three goes, and every wrong version *looked* fine:
 
 - `loading=lazy` **does not work in a horizontal scroller.** Chrome treats the
-  whole inline axis as near-viewport and fetched all nine cards on load —
-  measured at ~580KB before a single swipe. The gate watches for it coming
-  back.
-- A **CSS `background-image` ignores `loading=lazy` entirely**, so the first
+  whole inline axis as near-viewport and fetched every card on load — measured
+  at ~580KB before a single swipe.
+- A **CSS `background-image` ignores lazy loading entirely**, so the first
   attempt at the blurred backdrop quietly doubled the problem. The backdrop is
-  a real `<img>` for exactly this reason.
-- So: the first card ships real `src`, every other card carries `data-src`,
-  and an `IntersectionObserver` swaps them in. It is **also driven from the
-  scroll handler**, which is already running to move the dots — so a swipe can
-  never land on a card that has not started loading, whatever the observer is
-  doing.
-- All of that is behind a **breakpoint check**. The deck is `display:none`
-  above 760px, and priming it on a desktop page would pull down images nobody
-  will see.
+  a real `<img>` for exactly that reason.
+- So: the first card ships a real `src`, every other card carries `data-src`,
+  and the scroll handler swaps in the neighbours as you go. Two requests on
+  load instead of twenty-six.
 
-Two more things that are easy to get wrong, both gated:
+Two more things, both gated:
 
-- **The dots are updated straight from the scroll event, with no
-  `requestAnimationFrame` in front of them.** rAF does not tick in a hidden
-  tab, so a scroll that landed while backgrounded left the pending flag set
-  and every later scroll was dropped — the dots froze for the rest of the
-  session. Nine `getBoundingClientRect` reads per scroll is cheap and nothing
-  is written back, so there is no thrash to coalesce away.
-
-The dot positions are measured off `getBoundingClientRect`, **not
-`offsetLeft`**: `offsetLeft` is relative to the nearest *positioned* ancestor,
-which here is the hero rather than the track, so the first version computed
-centres in the wrong coordinate space and the dots never moved.
+- **The progress bar is updated straight from the scroll event, with no
+  `requestAnimationFrame` in front of it.** rAF does not tick in a hidden tab,
+  so a scroll that landed while backgrounded left a pending flag set and the
+  bar froze for the rest of the session.
+- Positions are measured off `getBoundingClientRect`, **not `offsetLeft`**:
+  `offsetLeft` is relative to the nearest *positioned* ancestor rather than the
+  track, so the first version computed centres in the wrong coordinate space
+  and the bar never moved.
 
 #### The specificity trap, three times
 
-`.deckbg` had to become `.deckcard img.deckbg`, because the sharp-image rule
-is `.deckcard img` — a class plus a type selector, which outranks a bare class
-— and it was handing the backdrop `height:auto` and `aspect-ratio:3/2`. The
+`.appbg` has to be written `.appcard img.appbg`, because the sharp-image rule
+is `.appcard img` — a class plus a type selector, which outranks a bare class —
+and it was handing the backdrop `height:auto` and `aspect-ratio:3/2`. The
 backdrop sized itself to the sharp photo instead of filling the card.
 
-That is the third time in this file that a later or higher-specificity rule
-has quietly beaten a new one. When a rule here looks correct and does nothing,
-check what else matches the element before changing the value.
+That is the third time in this file that a later or higher-specificity rule has
+quietly beaten a new one — `.heroCta`, then `.sticky`, then this. When a rule
+here looks correct and does nothing, check what else matches the element before
+changing the value.
 
-#### And on the chrome
-
-`.top`, `.hbtn` and `.sticky` each need an extra selector in front of them
-(`body .sticky{display:none}`), because their base rules sit **later** in
-`style.py` and at equal specificity the later rule wins. The first pass wrote
-plain `.sticky{display:none}` and the drawer stayed on screen — which is
-exactly how `.heroCta`'s hide broke once before. It is now checked by
-`verify.py` rather than remembered.
+#### And the chrome
 
 ### The phone order sheet
 
