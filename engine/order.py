@@ -779,6 +779,57 @@ JS = r"""
     });
   });
 
+  // ---- the phone deck dots ----------------------------------------------
+  // The swipe itself is CSS scroll-snap and needs nothing from here. These
+  // only keep the dots in step, and let a tap on one move the deck.
+  var track=$('decktrack'), dotwrap=$('deckdots');
+  if(track && dotwrap){
+    var dots=[].slice.call(dotwrap.querySelectorAll('.deckdot'));
+    function cardAt(i){ return track.children[i]; }
+    function markDot(i){
+      for(var d=0;d<dots.length;d++) dots[d].classList.toggle('on', d===i);
+    }
+    function current(){
+      // Nearest card centre to the track's centre, so a half-swipe that
+      // rubber-bands back does not leave the wrong dot lit.
+      //
+      // Measured off getBoundingClientRect, NOT offsetLeft: offsetLeft is
+      // relative to the nearest POSITIONED ancestor, which here is the hero
+      // rather than the track, so the centres came out in the wrong
+      // coordinate space and the dots never moved.
+      var tr=track.getBoundingClientRect(), mid=tr.left + tr.width/2,
+          best=0, gap=1e9;
+      for(var i=0;i<track.children.length;i++){
+        var r=track.children[i].getBoundingClientRect(),
+            g=Math.abs((r.left + r.width/2) - mid);
+        if(g<gap){ gap=g; best=i; }
+      }
+      return best;
+    }
+    // Updated straight from the scroll event, with no requestAnimationFrame
+    // coalescing in front of it. rAF callbacks do not fire while the tab is
+    // hidden, so a scroll that landed in a backgrounded tab left the pending
+    // flag set and every later scroll was dropped - the dots froze for the
+    // rest of the session. Reading nine rects per scroll is cheap and nothing
+    // is written back, so there is no layout thrash to avoid here.
+    track.addEventListener('scroll', function(){ markDot(current()); },
+                           {passive:true});
+    dots.forEach(function(d){
+      d.addEventListener('click', function(){
+        var c=cardAt(+d.dataset.i); if(!c) return;
+        var tr=track.getBoundingClientRect(), r=c.getBoundingClientRect();
+        // Smooth scrolling runs on animation frames, which do not tick while
+        // the tab is hidden - the jump would simply never happen. And a reader
+        // who asked for reduced motion should not be given an animation.
+        var still = document.hidden
+                 || matchMedia('(prefers-reduced-motion: reduce)').matches;
+        track.scrollTo({left: track.scrollLeft + (r.left - tr.left)
+                              - (tr.width - r.width)/2,
+                        behavior: still ? 'auto' : 'smooth'});
+      });
+    });
+  }
+
   // ---- the phone order sheet --------------------------------------------
   // Every "Start your order" on a page that already carries the wizard opens
   // that wizard full screen instead of navigating to /design/ - same element,

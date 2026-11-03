@@ -79,17 +79,54 @@ position is derived. Anti-fatigue rules, all load-bearing:
 - phone / boat / notes live behind a `<details>`; the card supplies the name
 - the running total is visible from step 1, so price is never a late surprise
 
+### The phone hero: a deck of our work, and one button
+
+Below **760px** the page is a different thing. The notification bar, the header
+button and the sticky footer drawer are all hidden, the header shrinks to the
+lockup and a menu, and the hero becomes **a swipeable deck of nine shots of
+lettering already on a hull** with a single "Start your order" under it.
+
+The deck covers the surfaces people actually own — white gelcoat, navy
+gelcoat, metalflake, bare aluminium, a pontoon rail, PWC and kayak plastic —
+plus two transom names, so most visitors find something like their own boat.
+Captions are by spec, never as a customer's boat (`media/CAPTIONS.md`).
+
+**CSS scroll-snap, not a drag-and-throw card stack.** Same one-thumb gesture,
+native momentum and rubber-banding, works with no JavaScript at all, and stays
+keyboard and screen-reader navigable. The JS on top is only the dots. The next
+card peeks past the right edge so it is obvious there is more.
+
+Two things that are easy to get wrong here, both gated:
+
+- **Only the first card is eager.** The other eight are `loading=lazy`: the
+  deck is the first thing on the screen, and all nine would be ~580KB nobody
+  has swiped to yet.
+- **The dots are updated straight from the scroll event, with no
+  `requestAnimationFrame` in front of them.** rAF does not tick in a hidden
+  tab, so a scroll that landed while backgrounded left the pending flag set
+  and every later scroll was dropped — the dots froze for the rest of the
+  session. Nine `getBoundingClientRect` reads per scroll is cheap and nothing
+  is written back, so there is no thrash to coalesce away.
+
+The dot positions are measured off `getBoundingClientRect`, **not
+`offsetLeft`**: `offsetLeft` is relative to the nearest *positioned* ancestor,
+which here is the hero rather than the track, so the first version computed
+centres in the wrong coordinate space and the dots never moved.
+
+#### The specificity trap, twice
+
+`.top`, `.hbtn` and `.sticky` each need an extra selector in front of them
+(`body .sticky{display:none}`), because their base rules sit **later** in
+`style.py` and at equal specificity the later rule wins. The first pass wrote
+plain `.sticky{display:none}` and the drawer stayed on screen — which is
+exactly how `.heroCta`'s hide broke once before. It is now checked by
+`verify.py` rather than remembered.
+
 ### The phone order sheet
 
-On a phone the page was offering the same action four times on one screen — a
-topbar link, the header button, the whole wizard inline, and the sticky bar —
-with the wizard itself squeezed into a 343px column. Four doors to one room,
-and the room was too small.
-
-Below **760px** the inline wizard leaves the flow. `.heroStart` takes its grid
-slot with the offer in one card and one button, and every "Start your order" on
-the page — header, hero card, sticky bar, any `a[href="/design/"]` — opens the
-wizard **full screen** instead of navigating.
+Every "Start your order" on the page — the deck button, the header, the sticky
+bar on wider screens, any `a[href="/design/"]` — opens the wizard **full
+screen** instead of navigating.
 
 **It is promoted, not duplicated.** `body.sheeton` turns the existing `.heroF`
 into a fixed, full-viewport panel; there is never a second copy of the form to

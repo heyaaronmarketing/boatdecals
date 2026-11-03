@@ -105,17 +105,39 @@ grid-template-areas:"a" "f" "b"}
    the flow, `.heroStart` makes the offer in one card with one button, and
    every "Start your order" on the page opens the same wizard full screen.
    It is promoted, not duplicated: there is only ever one form on the page. */
-@media(max-width:760px){.topcta{display:none}}
-.heroStart{display:none;grid-area:f;background:#fff;border-radius:13px;
-padding:17px 16px 15px;text-align:center;box-shadow:0 12px 30px rgba(4,26,38,.28)}
-.heroStartP{display:flex;align-items:baseline;justify-content:center;gap:7px;
-margin-bottom:12px}
-.heroStartP b{font-size:36px;font-weight:800;color:var(--nav);line-height:1;
-letter-spacing:-.02em}
-.heroStartP em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--mut)}
-.heroStart .btn{width:100%}
-.heroStartN{font-size:11.8px;color:var(--mut);margin-top:10px;font-weight:650;
-line-height:1.35}
+.heroStart{display:none;grid-area:f}
+
+/* ---- the phone deck -------------------------------------------------
+   Scroll-snap, not a drag-and-throw card stack: the same one-thumb gesture,
+   with native momentum and rubber-banding, no JavaScript needed for the
+   gesture itself, and it stays keyboard and screen-reader navigable. The
+   next card peeks past the right edge so it is obvious there is more. */
+.deck{margin:0}
+/* Only the TRACK bleeds to the edges, so the next card peeks past the screen.
+   The dots, the button and the note stay in normal flow - hanging the whole
+   deck on a negative margin put the button 16px off the right of the page. */
+.decktrack{display:flex;gap:10px;list-style:none;margin:0 -16px;padding:0 16px;
+overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.decktrack::-webkit-scrollbar{display:none}
+.deckcard{flex:0 0 86%;scroll-snap-align:center;background:#fff;
+border-radius:14px;overflow:hidden;box-shadow:0 10px 26px rgba(4,26,38,.3)}
+.deckcard img{display:block;width:100%;height:auto;aspect-ratio:3/2;
+object-fit:cover}
+.deckcap{padding:10px 13px 12px}
+.deckcap b{display:block;font-size:14px;font-weight:800;color:var(--ink);
+line-height:1.25}
+.deckcap em{display:block;font-style:normal;font-size:12px;font-weight:650;
+color:var(--mut);margin-top:3px;line-height:1.35}
+.deckdots{display:flex;justify-content:center;gap:6px;margin:11px 0 13px}
+.deckdot{width:7px;height:7px;padding:0;border:0;border-radius:99px;
+background:rgba(255,255,255,.34);cursor:pointer;transition:background .15s,width .15s}
+.deckdot.on{background:#fff;width:19px}
+/* `.deck` in front of it on purpose: .btn{display:inline-block} sits later in
+   this sheet and would win at equal specificity. */
+.deck .deckcta{display:block;width:100%}
+.deckn{font-size:11.8px;color:#bcd9e8;margin:10px 0 0;font-weight:650;
+line-height:1.4;text-align:center}
 
 .sheetbar{display:none;position:sticky;top:0;z-index:2;
 align-items:center;justify-content:space-between;background:var(--nav);
@@ -127,6 +149,30 @@ padding:8px 15px;cursor:pointer}
 @media(max-width:760px){
   .heroF{display:none}
   .heroStart{display:block}
+  /* One order CTA on the phone, and it is the one under the deck. The
+     notification bar, the header button and the sticky footer drawer were
+     three more ways to say the same thing, each taking vertical space on the
+     screen where the work should be. */
+  /* Each of these needs an extra selector in front of it. The base rules for
+     .sticky and body.has-sticky sit LATER in this sheet, and at equal
+     specificity the later rule wins - which is how this hide silently did
+     nothing on the first pass, and how .heroCta's hide broke before it. */
+  body .top{display:none}
+  body .hbtn{display:none}
+  body .sticky{display:none}
+  html body.has-sticky{padding-bottom:0}
+  /* A minimal header: the lockup and the menu on one row, nothing else. */
+  header .w{flex-wrap:nowrap;padding:7px 14px;gap:10px}
+  .brand{flex:0 1 auto}
+  .brand span{font-size:19px}
+  .brand svg{width:34px;height:34px}
+  .menubtn{order:3;margin-left:auto;width:38px;height:38px}
+  header nav.open{order:4}
+  /* The deck is the hero, so it comes first and the headline follows it. */
+  .herogrid{grid-template-areas:"f" "a" "b"}
+  .hero{padding:16px 0 26px}
+  .heroA h1{font-size:25px;margin-top:4px}
+  .hero .sub{font-size:15.5px;margin-top:9px}
   /* The sheet owns the viewport: the page behind it must not scroll, and the
      sticky bar must not float over it offering the thing already open. */
   body.sheeton{overflow:hidden}

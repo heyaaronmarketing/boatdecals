@@ -427,6 +427,13 @@ order_js = (ROOT / "engine" / "order.py").read_text()
 js_ids = set(_re.findall(r"\$\('([A-Za-z0-9_]+)'\)", order_js))
 markup_ids = set(_re.findall(r"id=([A-Za-z0-9_]+)", order_js))
 markup_ids |= set(_re.findall(r'id="([A-Za-z0-9_]+)"', design))
+# The phone deck is built by build.py and only exists on pages with a hero, so
+# its ids are absent from /design/. Scan a hero page too rather than exempting
+# them: a typo in a deck id still has to fail, it just has to be looked for
+# where the deck actually is.
+_homepage = (OUT / "index.html").read_text()
+markup_ids |= set(_re.findall(r'id="([A-Za-z0-9_]+)"', _homepage))
+markup_ids |= set(_re.findall(r"id=([A-Za-z0-9_]+)", _homepage))
 missing = sorted(i for i in js_ids - markup_ids if i not in {"order"})
 if missing:
     fails.append("order.py JS writes to ids with no element: %s" % missing)
@@ -604,6 +611,54 @@ if "mq.addEventListener" not in design and "addListener(onBreak)" not in design:
 if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
+
+# ---- the phone deck and the one-CTA rule --------------------------------
+# A phone gets ONE way to start an order: the button under the deck. The
+# notification bar, the header button and the sticky drawer are hidden.
+#
+# Each hide needs an extra selector in front of it, because the base rules for
+# .sticky and body.has-sticky sit LATER in style.py and win at equal
+# specificity. That has now silently broken a hide twice - once for .heroCta
+# and once for .sticky - so it is checked rather than remembered.
+for _sel in ("body .top{display:none}", "body .hbtn{display:none}",
+             "body .sticky{display:none}",
+             "html body.has-sticky{padding-bottom:0}"):
+    if _sel not in design:
+        fails.append("the phone chrome rule %r is gone or has lost the extra "
+                     "selector that makes it outrank the base rule later in "
+                     "the sheet - the hide would silently do nothing" % _sel)
+if ".deck .deckcta{display:block" not in design:
+    fails.append("the deck button lost the `.deck` in front of it, so "
+                 ".btn{display:inline-block} later in the sheet wins and the "
+                 "button stops being full width")
+
+for _h in [q for q in pages if "class=heroF" in q.read_text()]:
+    _d = _h.read_text()
+    _cards = _d.count("<li class=deckcard>")
+    _dots = len(_re.findall(r'class="deckdot[^"]*"', _d))
+    if _cards < 5:
+        fails.append("%s: the phone deck is down to %d cards - it is the whole "
+                     "hero on a phone" % (_h.relative_to(OUT), _cards))
+    if _cards != _dots:
+        fails.append("%s: %d deck cards but %d dots - the indicator cannot "
+                     "reach every card" % (_h.relative_to(OUT), _cards, _dots))
+    # One eager image, the rest lazy: all nine up front is ~580KB on a phone.
+    _eager = _d.count("<li class=deckcard>") - _d.count("loading=lazy")
+    if _eager != 1:
+        fails.append("%s: %d deck images load eagerly, expected 1 - the deck "
+                     "is the first thing on a phone screen and the other "
+                     "eight are ~500KB nobody has swiped to yet"
+                     % (_h.relative_to(OUT), _eager))
+# The dots must not be coalesced behind requestAnimationFrame: rAF does not
+# tick in a hidden tab, so a scroll that lands while backgrounded leaves the
+# pending flag set and every later scroll is dropped - the dots freeze for the
+# rest of the session.
+_deck_src = order_js.split("the phone deck dots")[-1].split("the phone order sheet")[0]
+if "requestAnimationFrame(" in _deck_src:
+    fails.append("the deck dots are back behind requestAnimationFrame - they "
+                 "freeze permanently if a scroll lands while the tab is hidden")
+if "markDot(current())" not in _deck_src:
+    fails.append("the deck scroll handler no longer updates the dots")
 
 # The order page must not carry the site-wide sticky CTA. It prints a flat
 # "$19 Registration numbers" and links to /design/ - so on /design/ it sits

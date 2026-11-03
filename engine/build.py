@@ -457,6 +457,56 @@ def sticky(label="Registration numbers", price=19):
             '<a class=btn href="/design/">Start your order</a></div>'
             % (price, e(html.unescape(label))))
 
+# The phone hero. Nine shots of lettering already on a hull, across the
+# surfaces people actually own - gelcoat, navy gelcoat, metalflake, bare
+# aluminium, a pontoon rail, PWC plastic, kayak plastic - plus two transom
+# names. Enough variety that most visitors find their own boat in the deck.
+DECK = ["AL-01", "AL-02", "AL-10", "AL-03", "AL-04", "AL-07", "AL-05",
+        "AL-06", "AL-08"]
+
+
+def swipe_deck():
+    """A swipeable deck of our work, for the top of a phone screen.
+
+    CSS scroll-snap rather than a drag-and-throw card stack: it gives the same
+    one-thumb gesture with native momentum and rubber-banding, it works with no
+    JavaScript at all, and it stays keyboard and screen-reader navigable. The
+    JS on top is only the dots.
+
+    Only the first card is eager. The other eight are `loading=lazy`, so the
+    deck costs ~52KB up front instead of ~580KB.
+    """
+    cards = []
+    for i, iid in enumerate(DECK):
+        m = IMAGES.get(iid)
+        if not m:
+            continue
+        alt = html.unescape("%s. %s." % (m["caption"], m["sub"]))
+        cards.append(
+            '<li class=deckcard>'
+            '<picture>'
+            '<source type="image/webp" srcset="/assets/img/%s-800.webp">'
+            '<img src="/assets/img/%s-800.jpg" alt="%s" width="1400" '
+            'height="933" decoding=async%s>'
+            '</picture>'
+            '<div class=deckcap><b>%s</b><em>%s</em></div>'
+            '</li>'
+            % (iid, iid, e(alt), "" if i == 0 else " loading=lazy",
+               m["caption"], m["sub"]))
+    dots = "".join('<button type=button class="deckdot%s" data-i="%d" '
+                   'aria-label="Show example %d of %d"></button>'
+                   % (" on" if i == 0 else "", i, i + 1, len(cards))
+                   for i in range(len(cards)))
+    return ('<div class=deck>'
+            '<ul class=decktrack id=decktrack>%s</ul>'
+            '<div class=deckdots id=deckdots>%s</div>'
+            '<button type=button class="btn lg sheetgo deckcta">'
+            'Start your order</button>'
+            '<div class=deckn>$%d a pair &middot; both sides &middot; free '
+            'shipping, cut and posted next business day</div>'
+            '</div>' % ("".join(cards), dots, PRICE["numbers"]))
+
+
 def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     t = trust or list(FEATURES)
     bd = '<div class=badge>%s</div>' % badge if badge else ""
@@ -467,11 +517,7 @@ def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     # one offer, one button, and the form arrives full screen. The wizard is
     # still the same element - the sheet promotes it rather than duplicating
     # it - so there is no second copy of the form to keep in step.
-    start = ('<div class=heroStart>'
-             '<div class=heroStartP><b>$%d</b><em>a pair &middot; both sides</em></div>'
-             '<button type=button class="btn lg sheetgo">Start your order</button>'
-             '<div class=heroStartN>Free shipping &middot; cut and posted next '
-             'business day</div></div>') % PRICE["numbers"] if right else ""
+    start = '<div class=heroStart>%s</div>' % swipe_deck() if right else ""
     sheetbar = ('<div class=sheetbar><span>Start your order</span>'
                 '<button type=button class=sheetx aria-label="Close">'
                 'Close</button></div>') if right else ""
