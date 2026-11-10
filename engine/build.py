@@ -381,13 +381,20 @@ def head(title, desc, path, schema, noindex=False):
 
 # The four headline claims, in one place. proof_band() spells each one out;
 # the hero badges are the short form. Both read from here so they cannot drift.
-FEATURES = ["$19 a Pair", "Fast Shipping", "Marine Vinyl", "Meets 33 CFR 173.27"]
+# "Proofed Before We Cut" earns its place on the strength of what goes wrong
+# without it: a registration number is worthless if one character is wrong, and
+# the customer is the only person who can check it against their card. It also
+# replaces the speed claim the proof step cost us - the honest trade is a day
+# for a second pair of eyes, and that is the trade to sell.
+FEATURES = ["$19 a Pair", "Proofed Before We Cut", "Marine Vinyl",
+            "Meets 33 CFR 173.27"]
 FEATURE_SUB = {
     "$19 a Pair":
         "One for each side of the hull, pre-spaced on a single sheet. "
         "Shipping included.",
-    "Fast Shipping":
-        "Proof within 12 hours, posted 1-2 business days after you approve.",
+    "Proofed Before We Cut":
+        "We email your exact lettering within 12 hours. Nothing goes to the "
+        "plotter until you have checked it and said yes.",
     "Marine Vinyl":
         "Marine film built for sun, salt and spray &mdash; not the craft stock "
         "the cheap sets use.",
@@ -479,9 +486,10 @@ APP_CARDS = [
      "High-tack film for the awkward ones, free, no upcharge."),
     "AL-04",
     "AL-07",
-    ("When it arrives", "Proof in 12 hours, then 1-2 days",
-     "We email you a proof of your exact lettering within twelve hours. "
-     "Approve it and we cut, pack and post within 1-2 business days."),
+    ("No typos", "You approve it before we cut",
+     "Within twelve hours we email your exact lettering. Check it against "
+     "your registration card, tap approve, and it is cut, packed and posted "
+     "within 1-2 business days. Nothing is cut before you say so."),
     "AL-05",
     "AL-06",
     "AL-08",
@@ -826,9 +834,8 @@ def claims_band():
 
     - "Two Sets" has to say which two, because elsewhere on the site a "set"
       has meant a pair.
-    - "Fast Shipping" has to say shipped, not delivered - standard post is
-      3-6 days in transit after that, and a reader who takes the headline at
-      face value is a "where is my order" email.
+    - "Proofed Before We Cut" has to say what the proof is and when it comes,
+      or it reads as a delay rather than the protection it is.
     - "Meets 33 CFR 173.27" has to scope itself to what we actually control. We cut
       the characters to the federal rule; where they get stuck is the owner's.
     """
@@ -837,6 +844,43 @@ def claims_band():
             + "".join('<div><b>%s</b><span>%s</span></div>' % (f, FEATURE_SUB[f])
                       for f in FEATURES)
             + '</div></div></section>')
+
+def proof_band(band=None):
+    """How the proof works, as three steps.
+
+    This is the one thing on the site that is genuinely different from the
+    marketplace sets, so it gets a section rather than a line in a list. It is
+    also the answer to the real objection - "what if you cut it wrong" - which
+    is worth more than the day of turnaround the proof step costs us.
+    """
+    steps = [
+        ("Within 12 hours",
+         "We email you a proof",
+         "Your exact lettering, at your height, in your font and colour. Not a "
+         "mock-up of something similar - the artwork itself."),
+        ("You check it",
+         "Against your registration card",
+         "Character by character, including the spaces. You are the only "
+         "person who can tell us the card says UH and not U4."),
+        ("You approve it",
+         "Then it goes to the plotter",
+         "One tap, or just reply to the email. Cut, packed and posted within "
+         "1-2 business days. Nothing is cut before you say yes."),
+    ]
+    open_ = band.open() if band else '<section class=soft>'
+    return (open_ + '<div class=w><h2>Nothing is cut until you have seen it</h2>'
+            '<p class=lede>A registration number with one wrong character is '
+            'worth nothing &mdash; you cannot file the corner off a 3-inch '
+            'digit. So we proof every order before the vinyl moves.</p>'
+            '<ol class=proofsteps>'
+            + "".join('<li><span class=psnum>%d</span><b>%s</b>'
+                      '<strong>%s</strong><span class=pstext>%s</span></li>'
+                      % (i + 1, k, h, t) for i, (k, h, t) in enumerate(steps))
+            + '</ol>'
+            '<p class=hint>Need a change instead? Say so on the proof and we '
+            'send a corrected one. It costs nothing and there is no limit.</p>'
+            '</div></section>')
+
 
 # ------------------------------------------------------------------- home
 def build_home():
@@ -852,6 +896,7 @@ def build_home():
            badge="Price on the page. Shipping included.",
            right=right)
       + claims_band()
+      + proof_band()
       + gallery(["AL-01", "AL-02", "AL-08"])
       + '<section><div class=w><h2>Why buy here instead of the cheap set</h2>'
         '<p class=lede>There are $11 sets on marketplaces. Here is honestly what '
@@ -1178,7 +1223,8 @@ def build_product(p):
     band = Band()
     main = (hero(p["h1"], p["blurb"],
             trust=["$%d %s" % (p["price"], p["unit"] or "flat"),
-                   "Fast Shipping", "Marine Vinyl", "Meets 33 CFR 173.27"],
+                   "Proofed Before We Cut", "Marine Vinyl",
+                   "Meets 33 CFR 173.27"],
             right=O.form())
       + (alternating(body, secs, band) if secs
          else band.open() + '<div class=w><div class=prose>' + body
@@ -1394,7 +1440,7 @@ def build_state(s):
             "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
             "1-2 business days after you approve your proof." % ab,
-            trust=["$19 a Pair", "%s prefix" % ab, "Fast Shipping",
+            trust=["$19 a Pair", "%s prefix" % ab, "Proofed Before We Cut",
                    "Meets 33 CFR 173.27"],
             right=O.form())
       + state_identity(s, band)
@@ -1436,7 +1482,7 @@ def build_states_hub():
             "The 3-inch block rule is federal and the same everywhere. What changes is "
             "your prefix, who issues the number, and where the validation decal goes. "
             "$19 a pair, every state.",
-            trust=["$19 a Pair", "All 50 states", "Fast Shipping",
+            trust=["$19 a Pair", "All 50 states", "Proofed Before We Cut",
                    "Meets 33 CFR 173.27"],
             right=O.form())
       + '<section><div class=w>' + lead_figure(path) + '<h2>Pick your state</h2>'
@@ -1475,7 +1521,7 @@ def build_boat_type(b):
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     main = (hero(b["title"], b["lead"],
             trust=["$19 a Pair", "High-tack when needed, free",
-                   "Fast Shipping", "Meets 33 CFR 173.27"], right=O.form())
+                   "Proofed Before We Cut", "Meets 33 CFR 173.27"], right=O.form())
       + '<section><div class=w><div class=prose>'
         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
         '<h2>What we cut for %s</h2>'

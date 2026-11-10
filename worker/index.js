@@ -7,7 +7,8 @@
  * from scratch and that figure is the authority. Never trust a posted total.
  */
 
-import { runProofCycle, handleApprove, handleProofData } from "./proof.js";
+import { runProofCycle, handleApprove, handleProofData,
+         sendOrderConfirmation } from "./proof.js";
 
 const BASE = {
   "Registration numbers": 19,
@@ -248,6 +249,14 @@ async function handleOrder(request, env) {
         }),
       });
     } catch (err) { console.error("resend failed", err && err.message); }
+  }
+
+  // The customer hears from us immediately, not in eleven hours' time.
+  // Failure here must not fail the order - it is already in D1 and the shop
+  // has been told - so it is caught and logged like the shop email above.
+  if (!o.test_mode) {
+    try { await sendOrderConfirmation(env, o); }
+    catch (err) { console.error("confirmation failed", err && err.message); }
   }
 
   return json({ ok: true, ref: o.ref, total: o.total,

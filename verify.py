@@ -645,7 +645,25 @@ if "approved_at IS NULL" not in _proof:
 if "test_mode = 0" not in _proof:
     fails.append("the proof cycle no longer excludes sandbox orders - a test "
                  "order would email a real person asking them to approve it")
-if "env.PROOF_RUN_KEY" not in (ROOT / "worker" / "index.js").read_text():
+# The customer hears from us the moment they order. Without this they get
+# nothing until the proof eleven hours later, having just been told on screen
+# that an email was on its way - which is exactly how the first real order sat
+# unanswered for a working day.
+_wjs = (ROOT / "worker" / "index.js").read_text()
+if "sendOrderConfirmation" not in _wjs or "sendOrderConfirmation" not in _proof:
+    fails.append("orders no longer send the customer a confirmation - the "
+                 "screen promises one and the proof is 11 hours away")
+if "secure payment link" in design:
+    fails.append("the checkout still promises to email a secure payment link. "
+                 "Nothing sends one, so that is a promise the site cannot keep")
+# Checked on the home page: /design/ has no trust chips of its own.
+if "Proofed Before We Cut" not in _homepage:
+    fails.append("the proof is no longer one of the headline claims")
+if "proofsteps" not in _homepage:
+    fails.append("the home page lost the section explaining how the proof "
+                 "works - it is the one thing here the marketplace sets do "
+                 "not do, so it earns more than a line in a list")
+if "env.PROOF_RUN_KEY" not in _wjs:
     fails.append("the manual proof-run endpoint lost its key check - that is "
                  "a button anybody can press to email our customers")
 

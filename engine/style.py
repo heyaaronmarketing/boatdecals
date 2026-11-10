@@ -950,3 +950,20 @@ border:1.5px solid var(--line);border-radius:9px;margin-bottom:11px}
 .prooftick{width:52px;height:52px;border-radius:99px;background:var(--cta);
 color:#fff;font-size:28px;line-height:52px;text-align:center;margin:0 0 14px}
 """
+
+# ---- the proof explainer ------------------------------------------------
+CSS += """
+.proofsteps{list-style:none;display:grid;gap:14px;margin:22px 0 16px;padding:0}
+@media(min-width:800px){.proofsteps{grid-template-columns:repeat(3,1fr);gap:18px}}
+.proofsteps li{position:relative;background:#fff;border:1px solid var(--line);
+border-radius:13px;padding:20px 18px 19px}
+.psnum{position:absolute;top:-13px;left:18px;width:28px;height:28px;
+border-radius:99px;background:var(--nav);color:#fff;font-size:14px;
+font-weight:800;line-height:28px;text-align:center}
+.proofsteps li b{display:block;font-size:11.5px;font-weight:800;
+letter-spacing:.07em;text-transform:uppercase;color:var(--nav2);
+margin:6px 0 7px}
+.proofsteps li strong{display:block;font-size:18px;font-weight:800;
+line-height:1.22;color:var(--ink);margin-bottom:7px}
+.pstext{display:block;font-size:14.6px;line-height:1.5;color:var(--mut)}
+"""

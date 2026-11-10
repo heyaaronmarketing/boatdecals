@@ -207,6 +207,31 @@ export async function runProofCycle(env, nowMs) {
   return { sent, nudged };
 }
 
+/**
+ * Sent the moment the order lands.
+ *
+ * Without this the customer gets nothing at all until the proof eleven hours
+ * later, having just been told on screen that an email was on its way. That
+ * gap is how the first real order sat unanswered: the shop was notified, the
+ * customer was not, and the screen had promised otherwise.
+ */
+export async function sendOrderConfirmation(env, o) {
+  if (!o || !o.email) return false;
+  return send(env, o.email, {
+    subject: `Order ${o.ref} received - your proof is on its way`,
+    html: shell(
+      `<h2 style="font-size:21px;margin:0 0 6px">We have your order</h2>` +
+      `<p style="margin:0 0 18px;color:#44606f">Nothing is cut yet. Within ` +
+      `<strong>12 hours</strong> we will email you a proof of your exact ` +
+      `lettering to check and approve.</p>` +
+      letteringBlock(o) +
+      `<table style="border-collapse:collapse;margin:0 0 20px">${specRows(o)}</table>` +
+      `<p style="font-size:13.5px;color:#5b7383;margin:0">Order ` +
+      `<strong>${esc(o.ref)}</strong>. Spotted a mistake already? Reply to ` +
+      `this email and we will fix it before the proof goes out.</p>`),
+  }, env.ORDER_TO);
+}
+
 /** GET /api/approve?r=REF&t=TOKEN[&c=1] - the link in the email. */
 export async function handleApprove(request, env) {
   const url = new URL(request.url);
@@ -251,7 +276,10 @@ export async function handleApprove(request, env) {
       await send(env, env.ORDER_TO, {
         subject: `APPROVED - cut ${o.ref} - ${lettering(o)}`,
         html: shell(`<h2>${esc(o.ref)} is approved</h2>` +
-          `<p>Cut, pack and post within 1-2 business days.</p>` +
+          `<p style="background:#fff7e6;border-left:4px solid #d08700;` +
+          `padding:10px 13px"><b>Send the payment link now.</b> Nothing in ` +
+          `the site does this - the customer was told the link follows ` +
+          `approval. Then cut, pack and post within 1-2 business days.</p>` +
           letteringBlock(o) +
           `<table style="border-collapse:collapse">${specRows(o)}</table>` +
           `<p>${esc(o.name || "")} &lt;${esc(o.email)}&gt;</p>`),

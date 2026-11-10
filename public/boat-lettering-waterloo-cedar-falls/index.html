@@ -1096,6 +1096,20 @@ margin-bottom:6px}
 border:1.5px solid var(--line);border-radius:9px;margin-bottom:11px}
 .prooftick{width:52px;height:52px;border-radius:99px;background:var(--cta);
 color:#fff;font-size:28px;line-height:52px;text-align:center;margin:0 0 14px}
+
+.proofsteps{list-style:none;display:grid;gap:14px;margin:22px 0 16px;padding:0}
+@media(min-width:800px){.proofsteps{grid-template-columns:repeat(3,1fr);gap:18px}}
+.proofsteps li{position:relative;background:#fff;border:1px solid var(--line);
+border-radius:13px;padding:20px 18px 19px}
+.psnum{position:absolute;top:-13px;left:18px;width:28px;height:28px;
+border-radius:99px;background:var(--nav);color:#fff;font-size:14px;
+font-weight:800;line-height:28px;text-align:center}
+.proofsteps li b{display:block;font-size:11.5px;font-weight:800;
+letter-spacing:.07em;text-transform:uppercase;color:var(--nav2);
+margin:6px 0 7px}
+.proofsteps li strong{display:block;font-size:18px;font-weight:800;
+line-height:1.22;color:var(--ink);margin-bottom:7px}
+.pstext{display:block;font-size:14.6px;line-height:1.5;color:var(--mut)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/boat-lettering-waterloo-cedar-falls/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"Local pickup","item":"https://numbermyboat.com/boat-lettering-waterloo-cedar-falls/"}]},{"@type":"FAQPage","@id":"https://numbermyboat.com/boat-lettering-waterloo-cedar-falls/#faq","mainEntity":[{"@type":"Question","name":"Can I pick up instead of having it shipped?","acceptedAnswer":{"@type":"Answer","text":"Yes, in Evansdale. Email orders@numbermyboat.com before you order and we will set a time and tell you where to come - usually same day on registration numbers. It is a private workshop rather than a storefront, so the address is not published and we cannot take walk-ins."}},{"@type":"Question","name":"Do you do Iowa registration numbers?","acceptedAnswer":{"@type":"Answer","text":"That is our home state. Iowa numbers run IA, four digits, two letters - IA 3717 ZW. Iowa registers through your county recorder rather than the DNR directly, and Iowa wants the validation decal 4 inches toward the stern of the number and in line with it. Full detail on our Iowa page."}},{"@type":"Question","name":"Do you install them for me?","acceptedAnswer":{"@type":"Answer","text":"They are designed to go on yourself in about twenty minutes - pre-spaced on one sheet, with a squeegee and instructions in the envelope. If you would rather we did it, email and ask; it depends on the week."}},{"@type":"Question","name":"How much is it?","acceptedAnswer":{"@type":"Answer","text":"$19 a pair for registration numbers, the same price locally as online. Names from $29, including shipping. What the preview shows is what gets cut."}}]}]}</script>
 </head><body>
@@ -2083,9 +2097,10 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     var w=$('paywrap');
     if(w.dataset.degraded) return;
     w.dataset.degraded='1';
-    $('payelement').innerHTML='<div class=paysoft><b>Card payment is being switched on.</b>'+
-      '<span>Send the order now and we will email you a secure payment link. '+
-      'Nothing is cut until it is paid.</span></div>';
+    $('payelement').innerHTML='<div class=paysoft><b>No card needed yet.</b>'+
+      '<span>Send the order and we will email your proof within 12 hours. '+
+      'Once you approve it we send the payment link, and it is cut after '+
+      'that \u2014 so nothing is charged for artwork you have not seen.</span></div>';
     $('payhint').textContent='';
     nextBtn.textContent='Send my order';
   }
@@ -2103,9 +2118,9 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     // are still flagged test_mode=1 in D1 and [TEST] in the shop email.
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
-      '<p>'+(paid?'Thanks. ':'')+'Your receipt is on its way to <strong>'+
+      '<p>'+(paid?'Thanks. ':'')+'A confirmation is on its way to <strong>'+
       esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
-      (paid?'.':', along with a secure payment link.')+'</p>'+
+      ', and your proof follows within 12 hours.</p>'+
       '<p class=hint>We email your proof within 12 hours. Nothing is cut until '+
       'you approve it. Spotted a '+
       'mistake? Email us today with this reference and we can almost always stop '+

@@ -679,9 +679,10 @@ JS = r"""
     var w=$('paywrap');
     if(w.dataset.degraded) return;
     w.dataset.degraded='1';
-    $('payelement').innerHTML='<div class=paysoft><b>Card payment is being switched on.</b>'+
-      '<span>Send the order now and we will email you a secure payment link. '+
-      'Nothing is cut until it is paid.</span></div>';
+    $('payelement').innerHTML='<div class=paysoft><b>No card needed yet.</b>'+
+      '<span>Send the order and we will email your proof within 12 hours. '+
+      'Once you approve it we send the payment link, and it is cut after '+
+      'that \u2014 so nothing is charged for artwork you have not seen.</span></div>';
     $('payhint').textContent='';
     nextBtn.textContent='Send my order';
   }
@@ -699,9 +700,9 @@ JS = r"""
     // are still flagged test_mode=1 in D1 and [TEST] in the shop email.
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
-      '<p>'+(paid?'Thanks. ':'')+'Your receipt is on its way to <strong>'+
+      '<p>'+(paid?'Thanks. ':'')+'A confirmation is on its way to <strong>'+
       esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
-      (paid?'.':', along with a secure payment link.')+'</p>'+
+      ', and your proof follows within 12 hours.</p>'+
       '<p class=hint>We email your proof within 12 hours. Nothing is cut until '+
       'you approve it. Spotted a '+
       'mistake? Email us today with this reference and we can almost always stop '+
