@@ -95,7 +95,7 @@ def form():
         '<input type=radio name=font value="%s"%s aria-label="%s">'
         '<span class=fontbox><span class=fontdemo style="font-family:%s">%s</span>'
         '</span></label>'
-        % (1 if block else 0, cat, lbl, lbl, " checked" if i == 0 else "", lbl,
+        % (1 if block else 0, cat, lbl, lbl, "", lbl,
            css.replace('"', "&quot;"), "Abc")
         for i, (lbl, css, _g, block, cat) in enumerate(FONTS))
     # Tabs, so 72 faces read as three manageable sets rather than one wall -
@@ -180,6 +180,7 @@ __VIEWS__
     <h2>Pick a font</h2>
     <div class=fonttabs id=fonttabs>""" + fonttabs + """</div>
     <div class=fontgrid id=fontgrid>""" + fonts + """</div>
+    <div class=err id=e4 role=alert></div>
     <div class=hint id=fonthint></div>
   </section>
 
@@ -403,16 +404,19 @@ JS = r"""
       name: ($('f_name2').value||'').trim(),
       outline: isOut, outlineHex: ometa[0], outlineLight: !!ometa[1]
     });
-    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+esc(fn)+
+    lbl.innerHTML = '<b>'+hv+'&quot;</b> '+(fn ? esc(fn) : 'font not picked yet')+
       ' &middot; <b>'+esc(cname)+'</b>'+
       (isOut ? ' with <b>'+esc(ocn)+'</b> outline' : '')+' &middot; '+
       (isNum() ? (hasName()? 'pair + name, pre-spaced' : 'one pair, pre-spaced')
                : 'one decal, pre-spaced');
   }
 
+  // Empty until the customer picks one. Nothing is preselected: a default
+  // here is a choice nobody made, and it is the one field the whole order is
+  // cut from. Callers that need something to DRAW fall back on their own.
   function font(){
     var r=W.querySelector('[name=font]:checked');
-    return r ? r.value : 'Block';
+    return r ? r.value : '';
   }
   function isBlockFont(name){
     var c=W.querySelector('[name=font][value="'+name+'"]');
@@ -460,10 +464,11 @@ JS = r"""
       c.classList.toggle('off', !shown);
       if(!legal && inp.checked){ inp.checked=false; moved=true; }
     }
-    if(moved){
-      var first=W.querySelector('.fontchip:not(.off) input');
-      if(first) first.checked=true;
-    }
+    // Cleared, not swapped for the first legal face. Picking one for them is
+    // how you end up cutting a font nobody chose; the step will not advance
+    // until they choose again, and `fonthint` says why theirs went away.
+    if(moved && $('e4')) $('e4').textContent =
+      'That font is not legal on a registration number - pick another.';
     // Only the mixed case needs explaining: the chosen face lands on the name
     // while the numbers are cut in Block regardless. Everything else is
     // self-evident once the illegal faces are gone.
@@ -596,6 +601,12 @@ JS = r"""
         return false; }
       $('e3').textContent=''; return true;
     }
+    if(cur===4){
+      if(!font()){
+        $('e4').textContent='Pick a font to carry on.';
+        return false; }
+      $('e4').textContent=''; return true;
+    }
     if(isLast()){
       var em=$('f_email').value.trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
@@ -691,7 +702,8 @@ JS = r"""
       '<p>'+(paid?'Thanks. ':'')+'Your receipt is on its way to <strong>'+
       esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
       (paid?'.':', along with a secure payment link.')+'</p>'+
-      '<p class=hint>We cut it the next business day and ship it free. Spotted a '+
+      '<p class=hint>We email your proof within 12 hours. Nothing is cut until '+
+      'you approve it. Spotted a '+
       'mistake? Email us today with this reference and we can almost always stop '+
       'it before the plotter runs.</p>'+
       '<a class="btn lg" href="/">Back to the shop</a></div>';

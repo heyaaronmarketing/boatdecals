@@ -12,7 +12,7 @@ SITE = {
     "short": "Number My Boat",
     "url": "https://numbermyboat.com",
     "domain": "numbermyboat.com",
-    "tagline": "Boat registration numbers, $19 a pair. Shipped next business day.",
+    "tagline": "Boat registration numbers, $19 a pair. Proof in 12 hours.",
     "email": "orders@numbermyboat.com",
     "hours": "Mon-Fri 8-5 CT",
     # NO PHONE, NO STREET ADDRESS, NO COORDINATES - Aaron's call 2026-10-30.
@@ -82,7 +82,7 @@ PRODUCTS = [
          kw="boat registration numbers", vol=5400, cpc=2.60, price=PRICE["numbers"],
          unit="a pair", icon="numbers",
          blurb="Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.",
-         desc="Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states, cut and shipped the next business day."),
+         desc="Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states. Proof emailed within 12 hours."),
     dict(slug="boat-lettering", nav="Boat letters", short="Lettering",
          h1="Boat Letters &amp; Name Decals - Any Font, From $29",
          title="Boat Letters &amp; Name Decals, Any Font",
@@ -460,7 +460,7 @@ ORDER_COLORS = ["White", "Black", "Red", "Navy", "Royal Blue", "Forest",
 # answer engines are already answering for someone else.
 FAQ_HOME = [
     ("How much do boat registration numbers cost?",
-     "Ours are $19 a pair with free shipping, cut and shipped the next business day. "
+     "Ours are $19 a pair with free shipping, proofed within 12 hours. "
      "Online prices across the market run about $10 to $25 a pair. Cheap sets are usually "
      "calendared craft vinyl, cut as loose characters you space yourself."),
     ("Do boat registration numbers have to be a certain color?",
@@ -476,7 +476,7 @@ FAQ_HOME = [
      "within a few inches of the number."),
     ("Where can I get boat lettering made?",
      "Here. You pick the characters, font and color, we cut them from marine vinyl, "
-     "pre-space them on one sheet with application tape, and ship next business day. "
+     "pre-space them on one sheet with application tape, and email you a proof. "
      "We cut registration numbers, boat names and custom lettering - not printed "
      "graphics or logo artwork."),
     ("What kind of vinyl is best for boat lettering?",

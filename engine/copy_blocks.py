@@ -60,9 +60,9 @@ WHY_US = [
  ("$19 a pair, published",
   "Every competitor makes you build a design before showing a price. Ours is on the "
   "page and it includes shipping."),
- ("Cut and shipped next business day",
-  "Cut the next business day and in the post the same afternoon, free. No queue, "
-  "no proof to approve first."),
+ ("Proof in 12 hours, then 1-2 days",
+  "We email you a proof of your exact lettering within twelve hours. "
+  "Approve it and we cut, pack and post within 1-2 business days."),
  ("Marine Vinyl",
   "Marine film built for sun, salt and spray, not the craft stock the cheap sets "
   "use. High-tack on plastic hulls at no extra charge."),
@@ -96,7 +96,7 @@ HOW_IT_WORKS_STEPS = [
 #   * the question is phrased the way a person types it, not the way we would
 #     title a section
 #   * the FIRST SENTENCE is the whole answer. No preamble, no "it depends"
-#   * the specifics are in it - 3 inches, 33 CFR 173.27, $19, next business day
+#   * the specifics are in it - 3 inches, 33 CFR 173.27, $19, 12-hour proof
 #   * one shop question per guide at most, and only where it actually follows
 GUIDE_FAQS = {
  "boat-registration-number-rules": [
@@ -280,7 +280,8 @@ GUIDE_FAQS = {
    "From $29, including shipping. Most transom names land between $29 and $79, and "
    "price follows the finished size of the decal rather than the number of letters."),
   ("How long does it take to get boat registration numbers?",
-   "Cut and shipped the next business day, then 3 to 6 days in standard post. If you "
+   "Posted 1-2 business days after you approve the proof, then 3 to 6 days in "
+  "standard post. If you "
    "need it faster than that, email before you order and we will say what is "
    "possible."),
  ],

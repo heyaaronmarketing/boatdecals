@@ -489,6 +489,14 @@ else:
                          "tabs no longer match height"
                          % (_k, _n, _C.FONTS_PER_CAT, _C.FONT_COLS,
                             _n / _C.FONT_COLS, _C.FONT_ROWS))
+    # Nothing is preselected on the font step: a default there is a choice
+    # nobody made, and it is the one field the whole order is cut from.
+    if ' checked' in design.split("class=fontgrid")[-1].split("</div>")[0]:
+        fails.append("a font chip ships preselected - the customer must pick "
+                     "one, not inherit whichever face happens to be first")
+    if "'Pick a font to carry on.'" not in design:
+        fails.append("the font step no longer blocks on an empty choice, so "
+                     "an order could be cut in a font nobody picked")
     if not [f for f in _C.FONTS if f[4] == "block" and f[3]]:
         fails.append("no block-legal face left in the block category - a "
                      "registration number could not be ordered at all")
@@ -608,6 +616,38 @@ if "mq.addEventListener" not in design and "addListener(onBreak)" not in design:
 if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
+
+# ---- the proof promise --------------------------------------------------
+# The site promises a proof within twelve hours and says nothing is cut until
+# it is approved. Two things make that true, and both have to stay true:
+# worker/proof.js has to send it, and no page may still claim the old
+# cut-it-the-next-day turnaround that the proof step replaced.
+for _q in pages:
+    _qd = _q.read_text()
+    if "next business day" in _qd:
+        fails.append("%s: still promises the old next-business-day turnaround. "
+                     "Orders now wait on an approved proof, so that is a "
+                     "delivery date we do not meet" % _q.relative_to(OUT))
+    if "no proof to approve" in _qd:
+        fails.append("%s: still sells 'no proof to approve first' as a "
+                     "feature, which is now the opposite of what happens"
+                     % _q.relative_to(OUT))
+_proof = (ROOT / "worker" / "proof.js").read_text()
+if "PROOF_AFTER = 11 * HOURS" not in _proof:
+    fails.append("the proof send window is no longer inside the twelve hours "
+                 "the site promises")
+if _proof.count("NUDGES = [") != 1 or "24 * HOURS, 72 * HOURS, 144 * HOURS" not in _proof:
+    fails.append("the proof reminder schedule changed - the site says we "
+                 "chase it, and three reminders is what that means")
+if "approved_at IS NULL" not in _proof:
+    fails.append("the proof cycle no longer excludes approved orders - it "
+                 "would email people who already approved")
+if "test_mode = 0" not in _proof:
+    fails.append("the proof cycle no longer excludes sandbox orders - a test "
+                 "order would email a real person asking them to approve it")
+if "env.PROOF_RUN_KEY" not in (ROOT / "worker" / "index.js").read_text():
+    fails.append("the manual proof-run endpoint lost its key check - that is "
+                 "a button anybody can press to email our customers")
 
 # ---- the phone app layer and the one-CTA rule ---------------------------
 # A phone gets ONE way to start an order: the button under the card deck. The

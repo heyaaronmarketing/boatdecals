@@ -7,6 +7,8 @@
  * from scratch and that figure is the authority. Never trust a posted total.
  */
 
+import { runProofCycle, handleApprove, handleProofData } from "./proof.js";
+
 const BASE = {
   "Registration numbers": 19,
   "Boat name": 29,
@@ -140,7 +142,11 @@ async function handleOrder(request, env) {
   // two halves of a card order stay one row rather than two.
   const reuse = str(d.ref, 24);
   if (reuse) o.ref = reuse;
-  if (o.kind === "Registration numbers" && o.font && !BLOCK_FONTS.includes(o.font)) {
+  // An empty font is "not specified", not "asked for something illegal" - the
+  // form will not submit without one, but an API post can, and telling Ryan
+  // the customer requested "" would be a lie about a person.
+  if (!o.font) o.font = BLOCK_FONTS[0];
+  else if (o.kind === "Registration numbers" && !BLOCK_FONTS.includes(o.font)) {
     o.font_requested = o.font;
     o.font = BLOCK_FONTS[0];
   }
@@ -381,6 +387,14 @@ function handleGeo(request) {
 }
 
 export default {
+  // Hourly. The cycle picks its own work off the order timestamps, so the
+  // exact firing time does not matter and a missed run catches up on the
+  // next one.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runProofCycle(env).then((r) =>
+      console.log("proof cycle", JSON.stringify(r))));
+  },
+
   async fetch(request, env) {
     const url = new URL(request.url);
 
@@ -396,8 +410,24 @@ export default {
       return handleCheckout(request, env);
     }
     if (url.pathname === "/api/geo") return handleGeo(request);
+    // Runs the cycle on demand. Sends real email, so it is useless without
+    // the key and refuses outright if none is configured - an unguarded
+    // version of this is a button anybody can press to mail our customers.
+    if (url.pathname === "/api/proof-run") {
+      const key = env.PROOF_RUN_KEY;
+      if (!key || url.searchParams.get("k") !== key) return json({ error: "no" }, 404);
+      return json(await runProofCycle(env));
+    }
+    if (url.pathname === "/api/approve") {
+      return json(await handleApprove(request, env));
+    }
+    if (url.pathname === "/api/proof") {
+      const d = await handleProofData(request, env);
+      return json(d, d.ok ? 200 : 404);
+    }
     if (url.pathname === "/api/health") {
       return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
+                    shop_to: !!env.ORDER_TO,
                     stripe: !!env.STRIPE_SECRET_KEY,
                     pay_mode: env.STRIPE_SECRET_KEY ? "stripe" : "sandbox" });
     }

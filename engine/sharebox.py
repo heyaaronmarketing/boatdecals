@@ -37,7 +37,7 @@ def posts_for(path, state=None):
           ("Price",
            "Need %s registration numbers? $19 a pair, both sides, 3\u2033 "
            "legal block vinyl pre-spaced on one sheet so you're not lining up "
-           "twelve loose letters. Free shipping, cut next business day. My "
+           "twelve loose letters. Free shipping, and they email a proof first. My "
            "brother cuts them in Iowa \u2014 link in comments \U0001f6a4"
            % state["name"]),
         ]
@@ -51,7 +51,7 @@ def posts_for(path, state=None):
       ("Price",
        "Registration numbers: $19 a pair, both sides, 3\u2033 legal block "
        "vinyl pre-spaced on one sheet so you're not lining up twelve loose "
-       "letters. Free shipping, cut next business day. "
+       "letters. Free shipping, and a proof to approve first. "
        "It's my brother's shop in Iowa \u2014 link in comments \U0001f6a4"),
       ("New owner",
        "Just bought a boat? The checklist nobody gives you: register it, put "

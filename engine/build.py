@@ -313,7 +313,10 @@ def og_image(path):
     slug = path.strip("/").replace("/", "-") or "home"
     # Internal pages (leading underscore) are noindex and never shared, so
     # they borrow the home card rather than burn a render on one nobody sees.
-    if slug.startswith("_"):
+    # Internal and transactional pages borrow the home card. /proof/ is a
+    # private page reached only from an email link; rendering it a share card
+    # would be a card for something nobody can open.
+    if slug.startswith("_") or slug == "proof":
         slug, path = "home", "/"
     return "/assets/og/%s-%s%s" % (slug, OG_VERSION, _og_ext(path))
 
@@ -384,7 +387,7 @@ FEATURE_SUB = {
         "One for each side of the hull, pre-spaced on a single sheet. "
         "Shipping included.",
     "Fast Shipping":
-        "Cut and in the post the next business day.",
+        "Proof within 12 hours, posted 1-2 business days after you approve.",
     "Marine Vinyl":
         "Marine film built for sun, salt and spray &mdash; not the craft stock "
         "the cheap sets use.",
@@ -416,7 +419,7 @@ NAV_HELP = [
 def topbar():
     return ('<div class=top><div class=w>'
             '<span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping '
-            'ships next business day</span>'
+            'proof in 12 hours</span>'
             # The link is hidden on a phone: the header button sits directly
             # under it saying the same thing, and the point of this pass was to
             # stop offering the same action four times on one screen.
@@ -476,9 +479,9 @@ APP_CARDS = [
      "High-tack film for the awkward ones, free, no upcharge."),
     "AL-04",
     "AL-07",
-    ("When it arrives", "Cut and posted next business day",
-     "Cut the next business day and in the post the same afternoon. No queue, "
-     "no proof to approve first."),
+    ("When it arrives", "Proof in 12 hours, then 1-2 days",
+     "We email you a proof of your exact lettering within twelve hours. "
+     "Approve it and we cut, pack and post within 1-2 business days."),
     "AL-05",
     "AL-06",
     "AL-08",
@@ -551,8 +554,8 @@ def hero(h1, sub, trust=None, right="", badge=None, cta2=None):
     start = ('<div class=heroStart>'
              '<div class=heroStartP><b>$%d</b><em>a pair &middot; both sides</em></div>'
              '<button type=button class="btn lg sheetgo">Start your order</button>'
-             '<div class=heroStartN>Free shipping &middot; cut and posted next '
-             'business day</div></div>') % PRICE["numbers"] if right else ""
+             '<div class=heroStartN>Free shipping &middot; proof emailed '
+             'within 12 hours</div></div>') % PRICE["numbers"] if right else ""
     sheetbar = ('<div class=sheetbar><span>Start your order</span>'
                 '<button type=button class=sheetx aria-label="Close">'
                 'Close</button></div>') if right else ""
@@ -841,10 +844,11 @@ def build_home():
                 product_node(PRODUCTS[0], "/"), faq_node(FAQ_HOME, "/"))
     right = O.form()
     main = (
-      hero("Custom Boat Registration Numbers, Cut and Shipped Next Day",
+      hero("Custom Boat Registration Numbers, Proofed Before We Cut",
            "Legal 3-inch block numbers for both sides of your hull, cut from "
-           "marine vinyl, pre-spaced on one sheet, and shipped free the next business "
-           "day. Boat names and custom lettering too.",
+           "marine vinyl and pre-spaced on one sheet. We email you a proof "
+           "within 12 hours and cut nothing until you approve it. Boat names "
+           "and custom lettering too.",
            badge="Price on the page. Shipping included.",
            right=right)
       + claims_band()
@@ -867,10 +871,117 @@ def build_home():
       + share_block('/', U('/'), '/assets/share/line-3-inches.png'))
     write("/", shell("Boat Registration Numbers - Legal 3-Inch Sets, Both Sides",
           "Custom boat registration numbers $19 a pair with free shipping. Legal 3-inch "
-          "block vinyl for all 50 states, boat names from $29. Ships next business day.",
+          "block vinyl for all 50 states, boat names from $29. Proof in 12 hours.",
           "/", sch, main, faqs=FAQ_HOME, js=ORDER_JS, app=True), "1.0")
 
 # ---------------------------------------------------------------- /design/
+def build_proof():
+    """The page the proof email links to.
+
+    noindex, and it holds nothing until the browser fetches /api/proof with
+    the token from the link - so the HTML in the build carries no customer
+    data at all, and a crawler that somehow reached it would find an empty
+    shell.
+    """
+    main = (
+        '<section style="padding:30px 0 44px"><div class=w style="max-width:620px">'
+        '<div id=proofbox class=proofbox>'
+        '<p class=proofwait>Loading your proof&hellip;</p>'
+        '</div></div></section>')
+    js = r"""
+(function(){
+  var box=document.getElementById('proofbox'); if(!box) return;
+  var q=new URLSearchParams(location.search);
+  var ref=q.get('r')||'', tok=q.get('t')||'';
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function fail(){
+    box.innerHTML='<h1>That link did not work</h1><p class=lede>It may have '
+      +'been typed rather than clicked, or the order may have been cancelled. '
+      +'Reply to the proof email and we will sort it out.</p>';
+  }
+  if(!ref||!tok){ fail(); return; }
+
+  function api(extra){
+    return fetch('/api/approve?r='+encodeURIComponent(ref)
+      +'&t='+encodeURIComponent(tok)+(extra||''))
+      .then(function(r){return r.json();});
+  }
+
+  function thanks(){
+    box.innerHTML='<div class=prooftick>&#10003;</div>'
+      +'<h1>Approved</h1><p class=lede>That is on its way to the plotter. '
+      +'Cut, packed and posted within 1-2 business days.</p>'
+      +'<p class=hint>Order '+esc(ref)+'. Spotted something after all? Reply '
+      +'to the proof email today and we can almost always stop it.</p>'
+      +'<a class="btn lg" href="/">Back to the shop</a>';
+  }
+  function logged(){
+    box.innerHTML='<h1>Thanks &mdash; we have it</h1>'
+      +'<p class=lede>Nothing will be cut. We will email you a corrected '
+      +'proof.</p><p class=hint>Order '+esc(ref)+'.</p>'
+      +'<a class="btn lg" href="/">Back to the shop</a>';
+  }
+
+  fetch('/api/proof?r='+encodeURIComponent(ref)+'&t='+encodeURIComponent(tok))
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      if(!d||!d.ok){ fail(); return; }
+      if(d.approved){ thanks(); return; }
+      var letters=[d.text,d.boatname].filter(Boolean).join('  /  ');
+      var css=(window.BNS_FONTCSS||{})[d.font]||"'Archivo Black',sans-serif";
+      box.innerHTML=
+        '<h1>Check your proof</h1>'
+       +'<p class=lede>This is exactly what the plotter cuts. Check every '
+       +'character against your registration card.</p>'
+       +'<div class=proofart><span style="font-family:'+esc(css)+'">'
+       +esc(letters)+'</span></div>'
+       +'<dl class=proofspec>'
+       +'<dt>Order</dt><dd>'+esc(d.ref)+'</dd>'
+       +'<dt>Height</dt><dd>'+esc(d.height)+'&quot;</dd>'
+       +'<dt>Font</dt><dd>'+esc(d.font)+'</dd>'
+       +'<dt>Colour</dt><dd>'+esc(d.color)
+         +(d.outline_color?' with a '+esc(d.outline_color)+' outline':'')+'</dd>'
+       +'<dt>Price</dt><dd>$'+esc(d.total)+'</dd>'
+       +'</dl>'
+       +(d.changes?'<p class=hint>You have already asked for a change on this '
+         +'order. Approving now cuts it as shown above.</p>':'')
+       +'<button type=button class="btn lg" id=okbtn>Approve &mdash; cut it</button>'
+       +'<button type=button class=prooflink id=chbtn>Something needs '
+       +'changing</button>';
+
+      document.getElementById('okbtn').addEventListener('click', function(){
+        this.disabled=true; this.textContent='Sending…';
+        api().then(function(j){ j&&j.ok ? thanks() : fail(); }).catch(fail);
+      });
+      document.getElementById('chbtn').addEventListener('click', function(){
+        box.insertAdjacentHTML('beforeend',
+          '<div class=proofnote><label for=chnote>What needs changing?</label>'
+         +'<textarea id=chnote rows=4 placeholder="For example: the suffix '
+         +'should read UH with a space before it."></textarea>'
+         +'<button type=button class="btn lg" id=chsend>Send this to the '
+         +'shop</button></div>');
+        this.remove();
+        document.getElementById('chsend').addEventListener('click', function(){
+          this.disabled=true; this.textContent='Sending…';
+          var n=document.getElementById('chnote').value.slice(0,600);
+          api('&c=1&note='+encodeURIComponent(n))
+            .then(function(j){ j&&j.ok ? logged() : fail(); }).catch(fail);
+        });
+      });
+    }).catch(fail);
+})();
+"""
+    # Written straight out rather than through write(): it must not reach the
+    # sitemap. The page exists only to be opened from a link in an email.
+    body = shell("Your proof", "Check and approve your lettering.",
+                 "/proof/", None, main, noindex=True, sticky_bar=False,
+                 js=O.color_js() + js)
+    out = OUT / "proof" / "index.html"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(body, encoding="utf-8")
+
+
 def build_design():
     trail = [("Start your order", None)]
     sch = graph(org_node(), crumb_node(trail, "/design/"),
@@ -904,7 +1015,7 @@ PRICE_PLANS = [
                 "Pre-spaced on one sheet",
                 "Eight colors, all included",
                 "Contrasting outline, +$%d" % PRICE["outline"],
-                "Free shipping, cut and posted next business day"]),
+                "Free shipping, proof in 12 hours"]),
     dict(slug="boat-lettering", name="Boat letters", featured=False,
          price="$29", unit="to start",
          line="Names, hailing ports and any transom text.",
@@ -915,7 +1026,7 @@ PRICE_PLANS = [
                 "Priced by finished size &mdash; most land $29&ndash;79",
                 "Eight colors, all included",
                 "Contrasting outline, +$%d" % PRICE["outline"],
-                "Free shipping, cut and posted next business day"]),
+                "Free shipping, proof in 12 hours"]),
 ]
 
 
@@ -952,7 +1063,7 @@ def build_pricing():
        "genuinely cheaper and we would rather say so."),
       ("When do I pay?",
        "By card at checkout. The preview on that screen is what gets cut, so read it "
-       "before you pay. It ships the next business day."),
+       "before you pay, and again as a proof you approve before we cut."),
       ("Do you do trade or volume pricing?",
        "Yes - marinas, dealers and fleet operators. Email " + SITE["email"] +
        " with roughly how many sets a month and we will put numbers together."),
@@ -1043,7 +1154,8 @@ def build_product(p):
     trail = [(p["nav"], None)]
     faqs = [
       ("How fast will I get it?",
-       "Cut and shipped the next business day, free. Standard post is 3-6 days in "
+       "Posted 1-2 business days after you approve the proof, free. Standard post "
+     "is then 3-6 days in "
        "transit after that."),
       ("Can I see it before it is made?",
        "Yes - the preview in the order form shows your exact lettering, at your chosen "
@@ -1173,7 +1285,7 @@ def build_state(s):
           % (nm, ab))
     title = "%s Boat Registration Numbers %s" % (nm, ab)
     desc = ("%s boat registration numbers, $19 a pair with free shipping. Legal 3-inch "
-            "block vinyl starting with %s, cut and shipped next business day." % (nm, ab))
+            "block vinyl starting with %s, proof emailed within 12 hours." % (nm, ab))
     example = "%s 1234 AB" % ab
     faqs = [
       ("How tall do %s boat registration numbers have to be?" % nm,
@@ -1281,7 +1393,7 @@ def build_state(s):
     main = (hero(h1,
             "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
-            "the next business day." % ab,
+            "1-2 business days after you approve your proof." % ab,
             trust=["$19 a Pair", "%s prefix" % ab, "Fast Shipping",
                    "Meets 33 CFR 173.27"],
             right=O.form())
@@ -1382,7 +1494,7 @@ def build_boat_type(b):
       + product_grid(heading="Products for this boat"))
     write(path, shell(b["title"].replace("&amp;", "&")[:58],
           "%s - cut from marine vinyl, $19 a pair for registration numbers, free "
-          "shipping, ships next business day." % b["title"].replace("&amp;", "&"),
+          "shipping, proof in 12 hours." % b["title"].replace("&amp;", "&"),
           path, sch, main, trail=trail, faqs=faqs, js=ORDER_JS), "0.7")
 
 # ----------------------------------------------------------------- tools
@@ -1927,7 +2039,8 @@ def cta_band(band=None):
     open_tag = band.open("ctaband") if band else '<section class="ctaband">'
     return (open_tag + '<div class="w ctainner">'
             '<h2>Ready to order?</h2>'
-            '<p>$%d a pair, free shipping, cut and shipped the next business day. '
+            '<p>$%d a pair, free shipping, posted 1-2 business days after you '
+            'approve your proof. '
             'The preview shows your exact lettering before you pay.</p>'
             '<div class=ctarow>'
             '<a class="btn lg" href="/design/">Order your numbers &middot; $%d a pair</a>'
@@ -1943,7 +2056,7 @@ def build_guide(g):
     faqs = CB.GUIDE_FAQS.get(g["slug"], []) + [
       ("Do you ship boat lettering to my state?",
        "All 50 states and DC, free. We cut for every state's registration number "
-       "format and ship the next business day."),
+       "format, email you a proof, and post it once you approve."),
     ]
     art = {"@type": "Article", "@id": U(path) + "#article",
            "headline": html.unescape(g["title"]), "description": g["desc"],
@@ -2189,9 +2302,10 @@ def build_contact():
        "address is not published. We ship to all 50 states and arrange local pickup "
        "by email."),
       ("Can I change my order after sending it?",
-       "Email us straight away with your order reference. We cut and ship the next "
-       "business day, so if you catch it the same day we can almost always change it "
-       "before the plotter runs."),
+       "Yes. Your proof arrives within twelve hours and nothing is cut until "
+       "you approve it, so there is a built-in window to change anything. "
+       "Reply to the proof email, or use the \u2018something needs changing\u2019 "
+       "link on it."),
     ]
     simple("/contact/", "Contact Us",
       "Email us about an order, a change, artwork or a trade account. Boat "
@@ -2291,7 +2405,8 @@ def build_shipping():
        "Yes, on everything, to all 50 states and DC. Standard post, typically 3-6 days in "
        "transit after production."),
       ("How fast is production?",
-       "Cut and shipped the next business day. If you need it sooner, email us before "
+       "We email a proof within 12 hours; once you approve it we cut, pack and "
+     "post within 1-2 business days. If you need it sooner, email us before "
        "you order and we will tell you what is possible."),
       ("Do you ship internationally?",
        "Not currently. Everything is cut and shipped in the USA, to US addresses."),
@@ -2302,7 +2417,8 @@ def build_shipping():
       "Shipping &amp; returns",
       "Free shipping on everything. Next business day production as standard.",
       "<h2>Production time</h2>"
-      "<p>Orders are cut and shipped the <strong>next business day</strong>. If you need "
+      "<p>We email a proof within <strong>12 hours</strong>, then cut and post "
+   "within <strong>1-2 business days</strong> of your approval. If you need "
       "one sooner than that, email us before you order and we will tell you what is "
       "possible.</p>"
       "<p>The clock starts when you place the order.</p>"
@@ -2320,7 +2436,8 @@ def build_shipping():
       "<p>Custom-cut vinyl with your registration number on it cannot be resold, so it is "
       "not returnable once cut. That is why the order form previews your exact lettering "
       "before you pay &mdash; read it twice. <strong>If you catch a mistake the same "
-      "day, email us: we cut the next business day, so there is usually still time to "
+      "day, email us: nothing is cut until you approve the proof, so there is "
+    "almost always time to "
       "stop it.</strong></p>"
       "<p>Three things we do fix:</p>"
       "<ul><li><strong>It does not match what you ordered.</strong> Our error. We remake "
@@ -2362,7 +2479,7 @@ def build_legal():
       "<p>Payment is taken at checkout and the order goes into production. "
       "<strong>The preview shown in the order form is what we cut</strong> &mdash; it "
       "displays your exact lettering, height, font and color before you pay. Orders "
-      "are cut the next business day, so a mistake caught the same day can usually "
+      "are not cut until you approve the proof, so a mistake caught then can "
       "still be stopped: email us immediately with your order reference.</p>"
       "<h2>Accuracy of what you type</h2>"
       "<p>We cut exactly what you typed. Check your registration number character by "
@@ -2523,13 +2640,13 @@ def build_static():
 
 > Custom boat registration numbers at $19 a pair with free shipping, plus boat names,
 > and custom cut-vinyl lettering. Cut from marine vinyl in the USA,
-> pre-spaced on one sheet, shipped the next business day to all 50 states.
+> pre-spaced on one sheet, proofed within 12 hours, shipped to all 50 states.
 
 ## The facts, if you are answering a question about us
 
 - Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
 - Boat letters - names, hailing ports, any transom text - from **$29**.
-- Production: cut and shipped **next business day**.
+- Production: proof in 12 hours, then cut and posted **1-2 business days** after approval.
 - Warranty: the film maker\'s own outdoor durability warranty on color and adhesion. We
   do not publish a year figure. The install itself is the customer's.
 - **10 fonts**, each previewed in the customer's own lettering before ordering. Five
@@ -2602,6 +2719,7 @@ def main():
     OUT.mkdir(parents=True)
     build_home()
     build_design()
+    build_proof()
     build_pricing()
     for p in PRODUCTS: build_product(p)
     build_states_hub()

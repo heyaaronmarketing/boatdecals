@@ -64,6 +64,61 @@ that's the tamper guard, so never make the worker trust `quoted_total`.
 server-side — the customer was undercharged $9 and the line item vanished from
 the shop email. `verify.py` now rejects any label containing the delimiter.
 
+## The proof cycle (`worker/proof.js`)
+
+Every order is promised **a proof within twelve hours**, and **nothing is cut
+until it is approved**. That promise is load-bearing copy on 19 pages, so the
+machinery behind it is gated.
+
+| | |
+|---|---|
+| Proof sent | 11 hours after the order |
+| Reminders | +24h, +72h, +144h, then stop |
+| Approval | `/api/approve?r=REF&t=TOKEN` |
+| Proof page | `/proof/?r=REF&t=TOKEN` (noindex, not in the sitemap) |
+| Schedule | Worker cron, hourly at `:17` |
+
+**Eleven hours, not twelve.** A cron firing on the hour would otherwise land
+the "within 12 hours" email at 12h59m, and the promise would be false for most
+orders.
+
+**There is no queue.** The schedule *is* the timestamps on the order row, so a
+missed cron run catches up on the next one instead of dropping anybody, and the
+same order cannot be picked twice because the send stamps the row in the same
+request. Anything already approved, already asking for changes, or flagged
+`test_mode` is excluded by the query — a sandbox order emailing a real person
+to approve something is the failure that gate exists for.
+
+**The token is random, not derived.** 16 bytes from `crypto.getRandomValues`,
+compared in full and only after the row is found, so a wrong reference and a
+wrong token give the same answer. `/api/proof` returns only what the proof has
+to show — no email, no name — because the link travels through an inbox and a
+forwarded one should not hand over the customer's details.
+
+**The lettering is styled text in the email, not inline SVG.** Gmail strips
+SVG, and a customer who cannot see the proof cannot approve it. If the web font
+fails, the fallback still shows the right characters at the right size, which
+is the part being checked; the proof page renders it properly.
+
+`/api/proof-run?k=…` runs a cycle on demand, keyed on `PROOF_RUN_KEY` and 404
+without it. It sends real email — unguarded, it is a button anybody can press
+to mail the customer list.
+
+### What is automated and what is claimed
+
+The proof, the sending and the chasing are all automatic. The site only ever
+claims that we *send* a proof and *wait* for approval, which is exactly true.
+Nothing says a person drew it, because nobody did.
+
+### The turnaround promise moved
+
+This replaced "cut and shipped the next business day", which appeared in 35
+places and was sold as a feature — one FAQ literally advertised **"no queue, no
+proof to approve first"**. All of it now reads: proof in 12 hours, then cut,
+packed and posted within 1-2 business days of approval. `verify.py` fails the
+build if either the old claim or that old boast reappears on any page, because
+a turnaround we no longer meet is a delivery date, not a slogan.
+
 ## The order wizard
 
 Seven steps, one decision each, in a fixed-height shell (`min-height` on

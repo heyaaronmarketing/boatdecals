@@ -15,7 +15,7 @@ import html as _html
 META = {
  "/": ("Legal Boat Registration Numbers - $19 a Pair",
        "3\" block vinyl, pre-spaced to the federal rule. Free shipping, cut and "
-       "posted next business day."),
+       "proofed within 12 hours."),
  "/design/": ("Design Your Boat Numbers - $19, Posted Next Day",
        "Type your number, see it on screen, and we cut it from marine vinyl. "
        "No designer to click through first."),
@@ -85,7 +85,7 @@ META = {
        "What the film warranty covers, where it stops, and what happens if we "
        "get your order wrong."),
  "/shipping-and-returns/": ("Free Shipping on Boat Numbers, All 50 States",
-       "Cut and posted the next business day, then 3-6 days in standard post. "
+       "Posted 1-2 business days after you approve, then 3-6 days in post. "
        "No minimum, no surcharge."),
  "/contact/": ("Contact Number My Boat",
        "One person, one inbox, answered the same working day by whoever cuts "
@@ -101,7 +101,7 @@ META = {
 def state_meta(name, ab):
     title = "%s Boat Numbers - %s Prefix, $19 a Pair" % (name, ab)
     desc = ("Federal 3-inch block rule, %s decal placement, and a pre-spaced "
-            "pair posted next business day." % name)
+            "pair, proof in 12 hours." % name)
     return title[:60], desc[:110]
 
 
@@ -111,5 +111,5 @@ def boat_type_meta(nav):
     nav = _html.unescape(nav)
     title = "%s Registration Numbers - $19 a Pair" % nav
     desc = ("3-inch block vinyl sized for %s, pre-spaced on one sheet. Free "
-            "shipping, posted next business day." % nav.lower())
+            "shipping, proof in 12 hours." % nav.lower())
     return title[:60], desc[:110]

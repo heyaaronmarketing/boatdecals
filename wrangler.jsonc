@@ -21,6 +21,13 @@
       "database_id": "43724d47-a4c3-4528-8bca-109b54052179"
     }
   ],
-  "observability": { "enabled": true },
-  "workers_dev": true
+  "observability": {
+    "enabled": true
+  },
+  "workers_dev": true,
+  "triggers": {
+    "crons": [
+      "17 * * * *"
+    ]
+  }
 }

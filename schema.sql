@@ -28,3 +28,19 @@ ALTER TABLE orders ADD COLUMN card_last4 TEXT;
 -- rows written while the feature was live still carry real values.
 ALTER TABLE orders ADD COLUMN finish TEXT DEFAULT 'standard';
 ALTER TABLE orders ADD COLUMN outline_color TEXT;
+
+-- ---------------------------------------------------------------------------
+-- The proof cycle, added 2026-11-10.
+--
+-- Every order gets an emailed proof about twelve hours after it is placed,
+-- then up to three reminders if nobody approves it. Nothing is cut until
+-- approved_at is set. The timestamps are what the cron reads to decide who is
+-- due, so they are the schedule - there is no queue anywhere else.
+ALTER TABLE orders ADD COLUMN proof_token TEXT;
+ALTER TABLE orders ADD COLUMN proof_sent_at TEXT;
+ALTER TABLE orders ADD COLUMN proof_nudges INTEGER DEFAULT 0;
+ALTER TABLE orders ADD COLUMN proof_nudged_at TEXT;
+ALTER TABLE orders ADD COLUMN approved_at TEXT;
+ALTER TABLE orders ADD COLUMN changes_at TEXT;
+ALTER TABLE orders ADD COLUMN changes_note TEXT;
+CREATE INDEX IF NOT EXISTS idx_orders_proof ON orders(approved_at, proof_sent_at);

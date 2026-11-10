@@ -924,3 +924,29 @@ line-height:1.15;transition:border-color .12s,background .12s}
 .fonttab.on em{color:#bcd9e8}
 .fonttab[hidden]{display:none}
 """
+
+# ---- the proof page -----------------------------------------------------
+CSS += """
+.proofbox{background:#fff;border:1px solid var(--line);border-radius:14px;
+padding:26px 22px 28px;box-shadow:0 10px 30px rgba(4,26,38,.07)}
+.proofbox h1{font-size:26px;line-height:1.16;margin-bottom:8px}
+.proofwait{color:var(--mut)}
+.proofart{background:#eef3f6;border:1px solid #cfdde6;border-radius:11px;
+padding:30px 16px;text-align:center;margin:18px 0 20px;overflow:hidden}
+.proofart span{font-size:34px;line-height:1.2;color:#111;word-break:break-word}
+.proofspec{display:grid;grid-template-columns:auto 1fr;gap:7px 18px;
+margin:0 0 22px;font-size:15px}
+.proofspec dt{color:var(--mut);font-weight:650}
+.proofspec dd{margin:0;font-weight:800;color:var(--ink)}
+.proofbox .btn{display:block;width:100%}
+.prooflink{display:block;width:100%;margin-top:11px;background:none;border:0;
+font:inherit;font-size:14px;font-weight:700;color:var(--nav2);cursor:pointer;
+padding:10px;text-decoration:underline}
+.proofnote{margin-top:16px;text-align:left}
+.proofnote label{display:block;font-size:13.5px;font-weight:700;
+margin-bottom:6px}
+.proofnote textarea{width:100%;font:inherit;font-size:15px;padding:11px 12px;
+border:1.5px solid var(--line);border-radius:9px;margin-bottom:11px}
+.prooftick{width:52px;height:52px;border-radius:99px;background:var(--cta);
+color:#fff;font-size:28px;line-height:52px;text-align:center;margin:0 0 14px}
+"""
