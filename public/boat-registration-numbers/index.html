@@ -1146,6 +1146,17 @@ background:#fdf4e6;border-radius:99px;padding:3px 9px;white-space:nowrap}
 .fcwarn{margin-top:18px;background:#fdf4e6;border:1px solid #f0dcbb;
 border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
 .fcwarn[hidden]{display:none}
+
+.shipbox{margin-top:15px;border:1.5px solid var(--line);border-radius:11px;
+padding:14px 14px 12px;background:#fbfdfe}
+.shiphead{font-size:12px;font-weight:800;letter-spacing:.07em;
+text-transform:uppercase;color:var(--nav2);margin-bottom:10px}
+.shipbox>div{margin-bottom:9px}
+.shipbox>div:last-child{margin-bottom:0}
+.shipbox label .opt{font-weight:600;color:var(--mut);text-transform:none;
+letter-spacing:0;font-size:12px}
+.shipbox select{width:100%;font:inherit;font-size:16px;padding:11px 12px;
+border:1.5px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["OnlineStore","Organization"],"@id":"https://numbermyboat.com/#org","name":"Number My Boat","url":"https://numbermyboat.com/","email":"orders@numbermyboat.com","description":"Custom boat registration numbers, boat names and marine vinyl decals cut to order in Evansdale, Iowa and shipped nationwide.","address":{"@type":"PostalAddress","addressLocality":"Evansdale","addressRegion":"IA","addressCountry":"US"},"areaServed":[{"@type":"Country","name":"United States"},{"@type":"AdministrativeArea","name":"Black Hawk County"}],"priceRange":"$15-$120","currenciesAccepted":"USD","paymentAccepted":"Credit Card","knowsAbout":["boat registration numbers","33 CFR 173.27","marine vinyl lettering","hull identification numbers"]},{"@type":"BreadcrumbList","@id":"https://numbermyboat.com/boat-registration-numbers/#bc","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://numbermyboat.com/"},{"@type":"ListItem","position":2,"name":"Registration numbers","item":"https://numbermyboat.com/boat-registration-numbers/"}]},{"@type":"Product","@id":"https://numbermyboat.com/boat-registration-numbers/#product","name":"Registration numbers - Number My Boat","description":"Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states. Proof emailed within 12 hours.","brand":{"@type":"Brand","name":"Number My Boat"},"category":"Marine vinyl decals","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","availability":"https://schema.org/InStock","url":"https://numbermyboat.com/design/","priceValidUntil":"2026-12-31","shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":"0","currency":"USD"},"shippingDestination":{"@type":"DefinedRegion","addressCountry":"US"}}}},{"@type":"FAQPage","@id":"https://numbermyboat.com/boat-registration-numbers/#faq","mainEntity":[{"@type":"Question","name":"How fast will I get it?","acceptedAnswer":{"@type":"Answer","text":"Posted 1-2 business days after you approve the proof, free. Standard post is then 3-6 days in transit after that."}},{"@type":"Question","name":"Can I see it before it is made?","acceptedAnswer":{"@type":"Answer","text":"Yes - the preview in the order form shows your exact lettering, at your chosen height, in your chosen color. That is what gets cut, so read it twice before you pay."}},{"@type":"Question","name":"What if I ruin it putting it on?","acceptedAnswer":{"@type":"Answer","text":"A replacement set is a new order. The install is the part we cannot do for you, which is why everything ships pre-spaced on one sheet with application tape over the top - it goes on in one pass rather than character by character. Read the install guide before you start and take the twenty minutes."}},{"@type":"Question","name":"How long will it last?","acceptedAnswer":{"@type":"Answer","text":"Years, not seasons - it is marine-grade film, not craft vinyl, and it is the same stock sign shops put on vehicles. A dark color in southern sun fades soonest. If one of ours fails on a hull you prepared properly, tell us."}}]}]}</script>
 </head><body>
@@ -1272,6 +1283,34 @@ border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
         <input type=text id=f_name name=name autocomplete=name placeholder="Jane Rivera">
       </div>
     </div>
+
+    <!-- Our own fields, not Stripe's Address Element. An address is what makes
+         the order shippable at all, so capturing it must not depend on a third
+         party being reachable - and the autocomplete attributes hand the whole
+         thing to the browser's own autofill anyway. -->
+    <div class=shipbox>
+      <div class=shiphead>Where it ships</div>
+      <div><label for=f_a1>Street address</label>
+        <input type=text id=f_a1 name=ship_line1 autocomplete="shipping address-line1"
+               placeholder="114 Lakeview Dr"></div>
+      <div><label for=f_a2>Apartment, unit <span class=opt>optional</span></label>
+        <input type=text id=f_a2 name=ship_line2 autocomplete="shipping address-line2"
+               placeholder="Apt 2B"></div>
+      <div class="fieldrow two">
+        <div><label for=f_city>City</label>
+          <input type=text id=f_city name=ship_city autocomplete="shipping address-level2"
+                 placeholder="Evansdale"></div>
+        <div><label for=f_zip>ZIP</label>
+          <input type=text id=f_zip name=ship_zip autocomplete="shipping postal-code"
+                 inputmode=numeric placeholder="50707"></div>
+      </div>
+      <div><label for=f_state>State</label>
+        <select id=f_state name=ship_state autocomplete="shipping address-level1">
+          <option value="">Choose&hellip;</option><option value="AL">Alabama</option><option value="CF">California</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="LA">Louisiana</option><option value="MC">Michigan</option><option value="MN">Minnesota</option><option value="MO">Missouri</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="OH">Ohio</option><option value="PA">Pennsylvania</option><option value="SC">South Carolina</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="VA">Virginia</option><option value="WN">Washington</option><option value="WS">Wisconsin</option></select></div>
+      <div class=hint>We ship to all 50 states, free. This is where the decals
+        go, not where the boat is.</div>
+    </div>
+
     <div id=paywrap style="margin-top:15px">
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card
@@ -1307,107 +1346,7 @@ state. Your state can add to it, but cannot drop below it.</cite>
 <p><b>The rule most people miss is contrast.</b> There is no required color &mdash;
 but white numbers on a white hull are not &ldquo;distinctly visible and legible,&rdquo;
 and that is a failed inspection. Dark hull, light numbers. Light hull, dark numbers.
-Our order form flags the combination before it gets cut.</p></div></div></div></div></section><section class="soft altband"><div class=w><div class="altrow l"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/PR-1-800.webp 800w,/assets/img/PR-1-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/PR-1-800.jpg" srcset="/assets/img/PR-1-800.jpg 800w,/assets/img/PR-1-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="What arrives in the envelope. Two sets, a squeegee and the instructions." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>What arrives in the envelope</b><span>Two sets, a squeegee and the instructions</span></figcaption></figure></div><div class="alttext prose"><h2>What you actually receive</h2><p>One sheet, not a bag of loose letters. Your full number is cut from a single piece of colored vinyl, already spaced to the federal rule, with clear application tape laid over the top holding every character in position. You get two of them &mdash; one for each side &mdash; plus a squeegee and written instructions.</p><p>That matters more than it sounds. The most common way a home install goes wrong is not a torn letter, it is spacing: loose characters placed by eye end up uneven, drifting uphill, or packed too tight to meet the spacing rule. Pre-spaced removes the only hard part of the job.</p></div></div></div></section><section class="altband"><div class=w><div class="altrow r"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/PR-6-800.webp 800w,/assets/img/PR-6-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/PR-6-800.jpg" srcset="/assets/img/PR-6-800.jpg 800w,/assets/img/PR-6-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="Three inches against six. The same number at two heights." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>Three inches against six</b><span>The same number at two heights</span></figcaption></figure></div><div class="alttext prose"><h2>Sizing it to your hull</h2><p>Three inches is the legal floor, and it is what most people order. Go taller if your hull has the run for it &mdash; 4 inches reads noticeably better from a distance and costs $4 more. A six-character number at 3 inches finishes roughly 13&ndash;15 inches wide. At 4 inches, about 18 inches. Measure the flat run on the forward half of your hull above the waterline before you commit, and use our <a href="/tools/registration-number-layout-checker/">layout checker</a> to see the finished width.</p></div></div></div></section><section class="soft altband"><div class=w><div class="altrow l"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/GD-1-800.webp 800w,/assets/img/GD-1-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/GD-1-800.jpg" srcset="/assets/img/GD-1-800.jpg 800w,/assets/img/GD-1-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="Where the numbers go. Forward half, both sides." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>Where the numbers go</b><span>Forward half, both sides</span></figcaption></figure></div><div class="alttext prose"><h2>Where they go</h2><p>Forward half of the boat, both sides, reading left to right. In practice that means as far forward as you can get them while staying on a flat panel above the waterline, and high enough that they are not permanently under spray. The validation decal &mdash; the little sticker with your expiry &mdash; sits near the number, and exactly where varies by state. <a href="/guides/where-to-put-boat-registration-numbers/">Full placement guide</a>.</p></div></div></div></section><section><div class=w><h2>How it works</h2><p class=lede>Four steps, about a minute.</p><div class=stepgrid><div class=stepcard><span class=stepnum>1</span><h3>Type what it should say</h3><p>Straight off your registration card for numbers, or whatever you have picked for a name.</p></div><div class=stepcard><span class=stepnum>2</span><h3>Pick height, font and color</h3><p>The form only offers block faces once you choose registration numbers, because the law requires them.</p></div><div class=stepcard><span class=stepnum>3</span><h3>Check the preview</h3><p>It shows your exact lettering, at your height, in your color. We cut what is on that screen - so read it twice.</p></div><div class=stepcard><span class=stepnum>4</span><h3>We cut it and ship it</h3><p>Next business day, free, pre-spaced with application tape over the top.</p></div></div><a class="btn lg" href="/design/">Start your order</a></div></section><section class="soft"><div class=w><h2>Other things we cut</h2><div class=xgrid><a class=xcard href="/boat-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19L12 5l8 14M7.5 14h9" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div class=xbody><h3>Boat letters</h3><p>Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.</p><div class=xprice>$29 <small>to start</small></div></div><span class=xgo aria-hidden="true">&rarr;</span></a></div></div></section><section><div class=w><h2>Questions people actually ask</h2><div class=faq style="margin-top:18px"><details><summary>How fast will I get it?</summary><div class=ans><p>Posted 1-2 business days after you approve the proof, free. Standard post is then 3-6 days in transit after that.</p></div></details><details><summary>Can I see it before it is made?</summary><div class=ans><p>Yes - the preview in the order form shows your exact lettering, at your chosen height, in your chosen color. That is what gets cut, so read it twice before you pay.</p></div></details><details><summary>What if I ruin it putting it on?</summary><div class=ans><p>A replacement set is a new order. The install is the part we cannot do for you, which is why everything ships pre-spaced on one sheet with application tape over the top - it goes on in one pass rather than character by character. Read the install guide before you start and take the twenty minutes.</p></div></details><details><summary>How long will it last?</summary><div class=ans><p>Years, not seasons - it is marine-grade film, not craft vinyl, and it is the same stock sign shops put on vehicles. A dark color in southern sun fades soonest. If one of ours fails on a hull you prepared properly, tell us.</p></div></details></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat letters</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Number My Boat</strong><br>Cut and shipped from Evansdale, Iowa<br><a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a> &middot; Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Number My Boat. Cut by hand in Evansdale, Iowa and shipped to all 50 states.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><div class=sticky><span class=sp>$19<em>Registration numbers</em></span><a class=btn href="/design/">Start your order</a></div><script>document.body.classList.add("has-sticky");</script><script>(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@700&family=Archivo+Black&family=Anton&family=Nova+Mono&family=Noto+Sans+Mono&family=Bodoni+Moda:opsz@6..96&family=Alfa+Slab+One&family=Rye&family=Bowlby+One&family=Stardos+Stencil:wght@700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@700&family=Archivo+Black&family=Anton&family=Nova+Mono&family=Noto+Sans+Mono&family=Bodoni+Moda:opsz@6..96&family=Alfa+Slab+One&family=Rye&family=Bowlby+One&family=Stardos+Stencil:wght@700&display=swap"></noscript><script>window.BNS_STRIPE_PK="";window.BNS_PAY_MODE="sandbox";window.BNS_MOCKPAY_HTML="\n<div class=sfield>\n  <label for=cc_num>Card number</label>\n  <div class=sinput id=cc_numwrap>\n    <input type=text id=cc_num inputmode=numeric autocomplete=\"off\"\n           placeholder=\"1234 1234 1234 1234\" maxlength=23 aria-describedby=cc_err>\n    <span class=brands id=cc_brand>\n      <i data-b=visa>VISA</i><i data-b=mc>MC</i><i data-b=amex>AMEX</i><i data-b=disc>DISC</i>\n    </span>\n  </div>\n</div>\n<div class=srow>\n  <div class=sfield>\n    <label for=cc_exp>Expiry</label>\n    <div class=sinput><input type=text id=cc_exp inputmode=numeric\n      placeholder=\"MM / YY\" maxlength=7 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_cvc>CVC</label>\n    <div class=sinput><input type=text id=cc_cvc inputmode=numeric\n      placeholder=\"CVC\" maxlength=4 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_zip>ZIP</label>\n    <div class=sinput><input type=text id=cc_zip inputmode=numeric\n      placeholder=\"50707\" maxlength=10 autocomplete=\"off\"></div>\n  </div>\n</div>\n<div class=scerr id=cc_err role=alert></div>\n\n";</script><script>
-window.BNS_MOCKPAY = (function(){
-  var $=function(i){return document.getElementById(i);};
-
-  function digits(s){ return String(s||'').replace(/\D/g,''); }
-
-  function brandOf(n){
-    if(/^4/.test(n)) return ['visa','Visa'];
-    if(/^(5[1-5]|2[2-7])/.test(n)) return ['mc','Mastercard'];
-    if(/^3[47]/.test(n)) return ['amex','Amex'];
-    if(/^6(011|5|4[4-9])/.test(n)) return ['disc','Discover'];
-    return ['',''];
-  }
-  function isAmex(n){ return /^3[47]/.test(n); }
-
-  function groupPan(n, amex){
-    if(amex) return n.replace(/^(\d{1,4})(\d{1,6})?(\d{1,5})?.*$/,
-      function(_,a,b,c){ return [a,b,c].filter(Boolean).join(' '); });
-    return (n.match(/.{1,4}/g)||[]).join(' ');
-  }
-
-  function wire(){
-    var num=$('cc_num'), exp=$('cc_exp'), cvc=$('cc_cvc'), zip=$('cc_zip'),
-        brands=$('cc_brand'), err=$('cc_err');
-    if(!num) return;
-
-    num.addEventListener('input',function(){
-      var d=digits(num.value), amex=isAmex(d);
-      d=d.slice(0, amex?15:19);
-      num.value=groupPan(d, amex);
-      cvc.maxLength = amex?4:3;
-      var b=brandOf(d)[0];
-      brands.classList.toggle('on', d.length>0);
-      [].forEach.call(brands.children,function(i){
-        i.classList.toggle('lit', !!b && i.dataset.b===b); });
-      clear();
-    });
-
-    exp.addEventListener('input',function(){
-      var d=digits(exp.value);
-      // "2" can only be February, and "22" is not a month - in both cases the
-      // first digit is a single-digit month and wants a leading zero. Stripe
-      // does the same, so "229" becomes 02 / 29 rather than 22 / 9.
-      if(d.length>=1 && +d.charAt(0)>1) d='0'+d;
-      else if(d.length>=2 && +d.slice(0,2)>12) d='0'+d;
-      d=d.slice(0,4);
-      exp.value = d.length>2 ? d.slice(0,2)+' / '+d.slice(2) : d;
-      clear();
-    });
-    exp.addEventListener('keydown',function(ev){
-      if(ev.key==='Backspace' && /\s\/\s$/.test(exp.value))
-        exp.value=exp.value.replace(/\d\s\/\s$/,'');
-    });
-
-    cvc.addEventListener('input',function(){
-      cvc.value=digits(cvc.value).slice(0, isAmex(digits(num.value))?4:3); clear(); });
-    zip.addEventListener('input',function(){
-      zip.value=zip.value.replace(/[^0-9A-Za-z \-]/g,'').slice(0,10); clear(); });
-
-    function clear(){
-      err.textContent='';
-      ['cc_numwrap'].concat([]).forEach(function(){});
-      [].forEach.call(document.querySelectorAll('.sinput.bad'),function(e){
-        e.classList.remove('bad'); });
-    }
-  }
-
-  function fail(el,msg){
-    var err=$('cc_err');
-    err.textContent=msg;
-    if(el){ el.closest('.sinput').classList.add('bad'); el.focus(); }
-    return null;
-  }
-
-  /**
-   * Validates SHAPE only - deliberately not a Luhn check, because the whole
-   * point is that any test number works. Returns {brand, last4} and nothing
-   * else: the PAN and CVC stay in this function and are never returned,
-   * logged, or sent anywhere.
-   */
-  function collect(){
-    var num=$('cc_num'), exp=$('cc_exp'), cvc=$('cc_cvc');
-    var d=digits(num.value), amex=isAmex(d);
-    if(d.length < (amex?15:13)) return fail(num,'Your card number is incomplete.');
-    var e=digits(exp.value);
-    if(e.length<4) return fail(exp,'Your card’s expiry date is incomplete.');
-    var mm=+e.slice(0,2), yy=+e.slice(2,4);
-    if(mm<1||mm>12) return fail(exp,'Your card’s expiry month is invalid.');
-    var now=new Date(), curY=now.getFullYear()%100, curM=now.getMonth()+1;
-    if(yy<curY || (yy===curY && mm<curM))
-      return fail(exp,'Your card’s expiry date is in the past.');
-    if(digits(cvc.value).length < (amex?4:3))
-      return fail(cvc,'Your card’s security code is incomplete.');
-    return {brand: brandOf(d)[1] || 'Card', last4: d.slice(-4)};
-    // d, cvc and zip go out of scope here. Nothing above this line is returned.
-  }
-
-  return {wire: wire, collect: collect,
-          fail: function(m){ return fail(null, m); }};
-})();
-</script><script>window.BNS_PLATES=[{"id":"PV-01","view":"side","dark":false,"inches":72,"anchor":[0.12,0.4],"align":"left","deg":0,"nominal":"17 ft runabout"},{"id":"PV-02","view":"side","dark":true,"inches":72,"anchor":[0.18,0.21],"align":"left","deg":1.0,"nominal":"19 ft bowrider"},{"id":"PV-03","view":"transom","dark":false,"inches":82,"anchor":[0.5,0.33],"align":"center","deg":0,"nominal":"78 in transom"},{"id":"PV-04","view":"transom","dark":true,"inches":90,"anchor":[0.5,0.3],"align":"center","deg":0,"nominal":"78 in transom"}];
+Our order form flags the combination before it gets cut.</p></div></div></div></div></section><section class="soft altband"><div class=w><div class="altrow l"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/PR-1-800.webp 800w,/assets/img/PR-1-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/PR-1-800.jpg" srcset="/assets/img/PR-1-800.jpg 800w,/assets/img/PR-1-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="What arrives in the envelope. Two sets, a squeegee and the instructions." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>What arrives in the envelope</b><span>Two sets, a squeegee and the instructions</span></figcaption></figure></div><div class="alttext prose"><h2>What you actually receive</h2><p>One sheet, not a bag of loose letters. Your full number is cut from a single piece of colored vinyl, already spaced to the federal rule, with clear application tape laid over the top holding every character in position. You get two of them &mdash; one for each side &mdash; plus a squeegee and written instructions.</p><p>That matters more than it sounds. The most common way a home install goes wrong is not a torn letter, it is spacing: loose characters placed by eye end up uneven, drifting uphill, or packed too tight to meet the spacing rule. Pre-spaced removes the only hard part of the job.</p></div></div></div></section><section class="altband"><div class=w><div class="altrow r"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/PR-6-800.webp 800w,/assets/img/PR-6-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/PR-6-800.jpg" srcset="/assets/img/PR-6-800.jpg 800w,/assets/img/PR-6-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="Three inches against six. The same number at two heights." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>Three inches against six</b><span>The same number at two heights</span></figcaption></figure></div><div class="alttext prose"><h2>Sizing it to your hull</h2><p>Three inches is the legal floor, and it is what most people order. Go taller if your hull has the run for it &mdash; 4 inches reads noticeably better from a distance and costs $4 more. A six-character number at 3 inches finishes roughly 13&ndash;15 inches wide. At 4 inches, about 18 inches. Measure the flat run on the forward half of your hull above the waterline before you commit, and use our <a href="/tools/registration-number-layout-checker/">layout checker</a> to see the finished width.</p></div></div></div></section><section class="soft altband"><div class=w><div class="altrow l"><div class=altimg><figure class="shot"><picture><source type="image/webp" srcset="/assets/img/GD-1-800.webp 800w,/assets/img/GD-1-1400.webp 1400w" sizes="(min-width:900px) 44vw, 100vw"><img src="/assets/img/GD-1-800.jpg" srcset="/assets/img/GD-1-800.jpg 800w,/assets/img/GD-1-1400.jpg 1400w" sizes="(min-width:900px) 44vw, 100vw" alt="Where the numbers go. Forward half, both sides." width="1400" height="933" loading="lazy" decoding="async"></picture><figcaption><b>Where the numbers go</b><span>Forward half, both sides</span></figcaption></figure></div><div class="alttext prose"><h2>Where they go</h2><p>Forward half of the boat, both sides, reading left to right. In practice that means as far forward as you can get them while staying on a flat panel above the waterline, and high enough that they are not permanently under spray. The validation decal &mdash; the little sticker with your expiry &mdash; sits near the number, and exactly where varies by state. <a href="/guides/where-to-put-boat-registration-numbers/">Full placement guide</a>.</p></div></div></div></section><section><div class=w><h2>How it works</h2><p class=lede>Four steps, about a minute.</p><div class=stepgrid><div class=stepcard><span class=stepnum>1</span><h3>Type what it should say</h3><p>Straight off your registration card for numbers, or whatever you have picked for a name.</p></div><div class=stepcard><span class=stepnum>2</span><h3>Pick height, font and color</h3><p>The form only offers block faces once you choose registration numbers, because the law requires them.</p></div><div class=stepcard><span class=stepnum>3</span><h3>Check the preview</h3><p>It shows your exact lettering, at your height, in your color. We cut what is on that screen - so read it twice.</p></div><div class=stepcard><span class=stepnum>4</span><h3>We cut it and ship it</h3><p>Next business day, free, pre-spaced with application tape over the top.</p></div></div><a class="btn lg" href="/design/">Start your order</a></div></section><section class="soft"><div class=w><h2>Other things we cut</h2><div class=xgrid><a class=xcard href="/boat-lettering/"><span class=icw><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19L12 5l8 14M7.5 14h9" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div class=xbody><h3>Boat letters</h3><p>Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.</p><div class=xprice>$29 <small>to start</small></div></div><span class=xgo aria-hidden="true">&rarr;</span></a></div></div></section><section><div class=w><h2>Questions people actually ask</h2><div class=faq style="margin-top:18px"><details><summary>How fast will I get it?</summary><div class=ans><p>Posted 1-2 business days after you approve the proof, free. Standard post is then 3-6 days in transit after that.</p></div></details><details><summary>Can I see it before it is made?</summary><div class=ans><p>Yes - the preview in the order form shows your exact lettering, at your chosen height, in your chosen color. That is what gets cut, so read it twice before you pay.</p></div></details><details><summary>What if I ruin it putting it on?</summary><div class=ans><p>A replacement set is a new order. The install is the part we cannot do for you, which is why everything ships pre-spaced on one sheet with application tape over the top - it goes on in one pass rather than character by character. Read the install guide before you start and take the twenty minutes.</p></div></details><details><summary>How long will it last?</summary><div class=ans><p>Years, not seasons - it is marine-grade film, not craft vinyl, and it is the same stock sign shops put on vehicles. A dark color in southern sun fades soonest. If one of ours fails on a hull you prepared properly, tell us.</p></div></details></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat letters</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Number My Boat</strong><br>Cut and shipped from Evansdale, Iowa<br><a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a> &middot; Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Number My Boat. Cut by hand in Evansdale, Iowa and shipped to all 50 states.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><div class=sticky><span class=sp>$19<em>Registration numbers</em></span><a class=btn href="/design/">Start your order</a></div><script>document.body.classList.add("has-sticky");</script><script>(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@700&family=Archivo+Black&family=Anton&family=Nova+Mono&family=Noto+Sans+Mono&family=Bodoni+Moda:opsz@6..96&family=Alfa+Slab+One&family=Rye&family=Bowlby+One&family=Stardos+Stencil:wght@700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@700&family=Archivo+Black&family=Anton&family=Nova+Mono&family=Noto+Sans+Mono&family=Bodoni+Moda:opsz@6..96&family=Alfa+Slab+One&family=Rye&family=Bowlby+One&family=Stardos+Stencil:wght@700&display=swap"></noscript><script>window.BNS_STRIPE_PK="pk_live_51UZidJLNiNr0qE3jmG1msQVtgUZYUiVXyBy9jP3HiVsLkB4Ym20VMv4YYecXVJEe0P6yAFLTUNmMtxLMBh4uVEtb00WZgUVDKw";window.BNS_PAY_MODE="stripe";window.BNS_MOCKPAY_HTML="\n<div class=sfield>\n  <label for=cc_num>Card number</label>\n  <div class=sinput id=cc_numwrap>\n    <input type=text id=cc_num inputmode=numeric autocomplete=\"off\"\n           placeholder=\"1234 1234 1234 1234\" maxlength=23 aria-describedby=cc_err>\n    <span class=brands id=cc_brand>\n      <i data-b=visa>VISA</i><i data-b=mc>MC</i><i data-b=amex>AMEX</i><i data-b=disc>DISC</i>\n    </span>\n  </div>\n</div>\n<div class=srow>\n  <div class=sfield>\n    <label for=cc_exp>Expiry</label>\n    <div class=sinput><input type=text id=cc_exp inputmode=numeric\n      placeholder=\"MM / YY\" maxlength=7 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_cvc>CVC</label>\n    <div class=sinput><input type=text id=cc_cvc inputmode=numeric\n      placeholder=\"CVC\" maxlength=4 autocomplete=\"off\"></div>\n  </div>\n  <div class=sfield>\n    <label for=cc_zip>ZIP</label>\n    <div class=sinput><input type=text id=cc_zip inputmode=numeric\n      placeholder=\"50707\" maxlength=10 autocomplete=\"off\"></div>\n  </div>\n</div>\n<div class=scerr id=cc_err role=alert></div>\n\n";</script><script src="https://js.stripe.com/v3/"></script><script>window.BNS_PLATES=[{"id":"PV-01","view":"side","dark":false,"inches":72,"anchor":[0.12,0.4],"align":"left","deg":0,"nominal":"17 ft runabout"},{"id":"PV-02","view":"side","dark":true,"inches":72,"anchor":[0.18,0.21],"align":"left","deg":1.0,"nominal":"19 ft bowrider"},{"id":"PV-03","view":"transom","dark":false,"inches":82,"anchor":[0.5,0.33],"align":"center","deg":0,"nominal":"78 in transom"},{"id":"PV-04","view":"transom","dark":true,"inches":90,"anchor":[0.5,0.3],"align":"center","deg":0,"nominal":"78 in transom"}];
 window.BNS_PREVIEW = (function(){
   var $=function(i){return document.getElementById(i);};
   var PAD=7;           // viewBox units of breathing room around the glyphs
@@ -2072,6 +2011,18 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       if(!$('f_name').value.trim()){
         $('e5').textContent='We need a name for the order.';
         $('f_name').focus(); return false; }
+      // No address, no parcel. Checked here rather than left to the shop to
+      // chase, because an order that cannot be posted is not an order.
+      var miss=[['f_a1','a street address'],['f_city','a city'],
+                ['f_state','a state'],['f_zip','a ZIP code']];
+      for(var m=0;m<miss.length;m++){
+        if(!$(miss[m][0]).value.trim()){
+          $('e5').textContent='We need '+miss[m][1]+' to post it to you.';
+          $(miss[m][0]).focus(); return false; }
+      }
+      if(!/^\d{5}(-\d{4})?$/.test($('f_zip').value.trim())){
+        $('e5').textContent='That ZIP code does not look right.';
+        $('f_zip').focus(); return false; }
       $('e5').textContent=''; return true;
     }
     return true;
@@ -2080,7 +2031,10 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   function payload(){
     var ups=[];
     W.querySelectorAll('[name=upgrade]:checked').forEach(function(u){ups.push(u.value);});
-    return {kind:kind(), text:$('f_text').value.trim(),
+    function sv(id){ var e=$(id); return e ? e.value.trim() : ''; }
+    return {ship_line1:sv('f_a1'), ship_line2:sv('f_a2'), ship_city:sv('f_city'),
+            ship_state:sv('f_state'), ship_zip:sv('f_zip'),
+            kind:kind(), text:$('f_text').value.trim(),
             boatname:$('f_name2').value.trim(), state:stateFromPrefix(),
             height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),

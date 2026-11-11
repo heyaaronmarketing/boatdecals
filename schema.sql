@@ -63,3 +63,17 @@ CREATE TABLE IF NOT EXISTS font_reports (
   all_sys  TEXT,
   picks    TEXT   -- "block:Block=Archivo Black | ...", the faces he wants offered
 );
+
+-- ---------------------------------------------------------------------------
+-- Shipping address, added 2026-11-11.
+--
+-- The form collected a name and an email and nothing else, which meant every
+-- order placed before today was unshippable - including a real one that had
+-- already been approved. Collected by our own fields rather than Stripe's
+-- Address Element on purpose: an address is required for the business to
+-- function at all, so capturing it must not depend on a third party being up.
+ALTER TABLE orders ADD COLUMN ship_line1 TEXT;
+ALTER TABLE orders ADD COLUMN ship_line2 TEXT;
+ALTER TABLE orders ADD COLUMN ship_city  TEXT;
+ALTER TABLE orders ADD COLUMN ship_state TEXT;
+ALTER TABLE orders ADD COLUMN ship_zip   TEXT;

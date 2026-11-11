@@ -693,6 +693,24 @@ if _C.STRIPE_PK:
     if _C.STRIPE_PK.startswith("sk_") or "sk_live" in design or "sk_test" in design:
         fails.append("a Stripe SECRET key is in the built output")
 
+# An order with no address cannot be posted. The form collected a name and an
+# email and nothing else until 2026-11-11, which left a real approved order
+# unshippable - so the address is required at checkout and gated here.
+for _f in ("f_a1", "f_city", "f_state", "f_zip"):
+    if "id=" + _f not in design:
+        fails.append("the shipping field %s is gone from checkout - an order "
+                     "without an address cannot be posted" % _f)
+if "to post it to you" not in design:
+    fails.append("checkout no longer blocks on a missing address")
+_wj2 = (ROOT / "worker" / "index.js").read_text()
+if "ship_line1: str(d.ship_line1" not in _wj2:
+    fails.append("the worker is not storing the shipping address")
+if '"shipping[address][line1]"' not in _wj2:
+    fails.append("the address is no longer sent to Stripe, so a dispute "
+                 "cannot show where the parcel went")
+if '["Ship to"' not in _wj2:
+    fails.append("the shop email no longer prints a shipping label")
+
 # ---- the Stripe webhook -------------------------------------------------
 # Without a verified signature this is a public endpoint that marks any order
 # paid for anyone who can spell the reference. The signature is the entire

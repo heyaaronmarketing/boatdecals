@@ -216,6 +216,34 @@ __VIEWS__
         <input type=text id=f_name name=name autocomplete=name placeholder="Jane Rivera">
       </div>
     </div>
+
+    <!-- Our own fields, not Stripe's Address Element. An address is what makes
+         the order shippable at all, so capturing it must not depend on a third
+         party being reachable - and the autocomplete attributes hand the whole
+         thing to the browser's own autofill anyway. -->
+    <div class=shipbox>
+      <div class=shiphead>Where it ships</div>
+      <div><label for=f_a1>Street address</label>
+        <input type=text id=f_a1 name=ship_line1 autocomplete="shipping address-line1"
+               placeholder="114 Lakeview Dr"></div>
+      <div><label for=f_a2>Apartment, unit <span class=opt>optional</span></label>
+        <input type=text id=f_a2 name=ship_line2 autocomplete="shipping address-line2"
+               placeholder="Apt 2B"></div>
+      <div class="fieldrow two">
+        <div><label for=f_city>City</label>
+          <input type=text id=f_city name=ship_city autocomplete="shipping address-level2"
+                 placeholder="Evansdale"></div>
+        <div><label for=f_zip>ZIP</label>
+          <input type=text id=f_zip name=ship_zip autocomplete="shipping postal-code"
+                 inputmode=numeric placeholder="50707"></div>
+      </div>
+      <div><label for=f_state>State</label>
+        <select id=f_state name=ship_state autocomplete="shipping address-level1">
+          <option value="">Choose&hellip;</option><option value="AL">Alabama</option><option value="CF">California</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="LA">Louisiana</option><option value="MC">Michigan</option><option value="MN">Minnesota</option><option value="MO">Missouri</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="OH">Ohio</option><option value="PA">Pennsylvania</option><option value="SC">South Carolina</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="VA">Virginia</option><option value="WN">Washington</option><option value="WS">Wisconsin</option></select></div>
+      <div class=hint>We ship to all 50 states, free. This is where the decals
+        go, not where the boat is.</div>
+    </div>
+
     <div id=paywrap style="margin-top:15px">
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card
@@ -591,6 +619,18 @@ JS = r"""
       if(!$('f_name').value.trim()){
         $('e5').textContent='We need a name for the order.';
         $('f_name').focus(); return false; }
+      // No address, no parcel. Checked here rather than left to the shop to
+      // chase, because an order that cannot be posted is not an order.
+      var miss=[['f_a1','a street address'],['f_city','a city'],
+                ['f_state','a state'],['f_zip','a ZIP code']];
+      for(var m=0;m<miss.length;m++){
+        if(!$(miss[m][0]).value.trim()){
+          $('e5').textContent='We need '+miss[m][1]+' to post it to you.';
+          $(miss[m][0]).focus(); return false; }
+      }
+      if(!/^\d{5}(-\d{4})?$/.test($('f_zip').value.trim())){
+        $('e5').textContent='That ZIP code does not look right.';
+        $('f_zip').focus(); return false; }
       $('e5').textContent=''; return true;
     }
     return true;
@@ -599,7 +639,10 @@ JS = r"""
   function payload(){
     var ups=[];
     W.querySelectorAll('[name=upgrade]:checked').forEach(function(u){ups.push(u.value);});
-    return {kind:kind(), text:$('f_text').value.trim(),
+    function sv(id){ var e=$(id); return e ? e.value.trim() : ''; }
+    return {ship_line1:sv('f_a1'), ship_line2:sv('f_a2'), ship_city:sv('f_city'),
+            ship_state:sv('f_state'), ship_zip:sv('f_zip'),
+            kind:kind(), text:$('f_text').value.trim(),
             boatname:$('f_name2').value.trim(), state:stateFromPrefix(),
             height:(val('height')||{value:'3'}).value, font:font(),
             color:(val('color')||{value:'Black'}).value, upgrades:ups.join(' | '),

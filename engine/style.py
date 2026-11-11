@@ -1007,3 +1007,17 @@ background:#fdf4e6;border-radius:99px;padding:3px 9px;white-space:nowrap}
 border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
 .fcwarn[hidden]{display:none}
 """
+
+# ---- shipping address ---------------------------------------------------
+CSS += """
+.shipbox{margin-top:15px;border:1.5px solid var(--line);border-radius:11px;
+padding:14px 14px 12px;background:#fbfdfe}
+.shiphead{font-size:12px;font-weight:800;letter-spacing:.07em;
+text-transform:uppercase;color:var(--nav2);margin-bottom:10px}
+.shipbox>div{margin-bottom:9px}
+.shipbox>div:last-child{margin-bottom:0}
+.shipbox label .opt{font-weight:600;color:var(--mut);text-transform:none;
+letter-spacing:0;font-size:12px}
+.shipbox select{width:100%;font:inherit;font-size:16px;padding:11px 12px;
+border:1.5px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+"""

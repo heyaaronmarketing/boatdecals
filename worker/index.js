@@ -124,6 +124,9 @@ async function handleOrder(request, env) {
     finish: d.outline ? "outline" : "standard",
     outline_color: d.outline ? str(d.outline_color, 40) : "",
     upgrades: str(d.upgrades, 300),
+    ship_line1: str(d.ship_line1, 120), ship_line2: str(d.ship_line2, 120),
+    ship_city: str(d.ship_city, 80), ship_state: str(d.ship_state, 2),
+    ship_zip: str(d.ship_zip, 10),
     name: str(d.name, 80),
     email: str(d.email, 120),
     phone: str(d.phone, 30),
@@ -179,13 +182,15 @@ async function handleOrder(request, env) {
         ).bind(o.payment, o.test_mode ? "test" : "paid", o.ref).run();
       } else {
         await env.DB.prepare(
-          `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,
+          `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,ship_line1,ship_line2,ship_city,ship_state,ship_zip,
              name,email,phone,boat,notes,page,total,quoted,mismatch,paid,payment,
              ua,country,ts
            ,test_mode,card_brand,card_last4,status,finish,outline_color)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         ).bind(o.ref, o.kind, o.text, o.boatname, o.state, o.height, o.font, o.color,
-               o.upgrades, o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total,
+               o.upgrades,
+               o.ship_line1, o.ship_line2, o.ship_city, o.ship_state, o.ship_zip,
+               o.name, o.email, o.phone, o.boat, o.notes, o.page, o.total,
                o.quoted, o.mismatch, o.paid, o.payment, o.ua, o.country, o.ts,
                o.test_mode, o.card_brand, o.card_last4,
                // `paid` stays the real-money flag, so SUM(total) WHERE paid=1 is
@@ -227,6 +232,9 @@ async function handleOrder(request, env) {
       ["Payment", o.test_mode
         ? `TEST MODE - no money taken (${o.card_brand || "card"} ending ${o.card_last4 || "----"})`
         : (o.paid ? `Paid (${o.card_brand} ending ${o.card_last4})` : "Payment link to send")],
+      ["Ship to", [o.name, o.ship_line1, o.ship_line2,
+                   [o.ship_city, o.ship_state].filter(Boolean).join(", "),
+                   o.ship_zip].filter(Boolean).join("\n") || "NO ADDRESS"],
       ["Customer", o.name], ["Email", o.email],
       ["Phone", o.phone || "-"], ["Boat", o.boat || "-"],
       ["Notes", o.notes || "-"], ["From page", o.page],
@@ -332,6 +340,16 @@ async function handleCheckout(request, env) {
   if (o.font) body.set("metadata[font]", str(o.font, 40));
   if (o.height) body.set("metadata[height]", str(o.height, 8) + '"');
   if (o.email && EMAIL.test(o.email)) body.set("receipt_email", str(o.email, 120));
+  // Shipping on the intent, so a dispute shows Stripe where the parcel went.
+  if (o.ship_line1 && o.ship_city) {
+    body.set("shipping[name]", str(o.name || "Customer", 80));
+    body.set("shipping[address][line1]", str(o.ship_line1, 120));
+    if (o.ship_line2) body.set("shipping[address][line2]", str(o.ship_line2, 120));
+    body.set("shipping[address][city]", str(o.ship_city, 80));
+    body.set("shipping[address][state]", str(o.ship_state, 2));
+    body.set("shipping[address][postal_code]", str(o.ship_zip, 10));
+    body.set("shipping[address][country]", "US");
+  }
   // Authorise now, charge on approval - or charge outright. Set by
   // STRIPE_CAPTURE so the shop can change its mind without a code change.
   if (env.STRIPE_CAPTURE === "manual") body.set("capture_method", "manual");
@@ -525,6 +543,48 @@ export default {
                .map((f) => `${f.cat || "?"}:${f.label || ""}=${f.family || ""}`)
                .join(" | ").slice(0, 20000)).run();
       return json({ ok: true });
+    }
+    // A pay-and-address link for an order that has neither - the ones placed
+    // before checkout took payment, or any that fail it later. Stripe collects
+    // the address, which matters because those same orders have no address
+    // either. Key-guarded: it reads customer records and spends nothing, but
+    // it should not be a URL anyone can enumerate.
+    if (url.pathname === "/api/paylink") {
+      const k = env.PROOF_RUN_KEY;
+      if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
+      if (!env.STRIPE_SECRET_KEY || !env.DB) return json({ error: "not configured" }, 503);
+      const ref = str(url.searchParams.get("r"), 24);
+      const o = await env.DB.prepare(
+        `SELECT * FROM orders WHERE ref=? LIMIT 1`).bind(ref).first();
+      if (!o) return json({ error: "no such order" }, 404);
+      if (o.paid) return json({ error: "already paid", ref }, 409);
+
+      const amount = priceOf(o);
+      const label = [o.kind, [o.text, o.boatname].filter(Boolean).join(" / ")]
+        .filter(Boolean).join(" - ");
+      const body = new URLSearchParams({
+        mode: "payment",
+        "line_items[0][quantity]": "1",
+        "line_items[0][price_data][currency]": "usd",
+        "line_items[0][price_data][unit_amount]": String(amount * 100),
+        "line_items[0][price_data][product_data][name]": label.slice(0, 120),
+        // The reason this exists: these orders have no address either.
+        "shipping_address_collection[allowed_countries][0]": "US",
+        "payment_intent_data[metadata][ref]": o.ref,
+        "metadata[ref]": o.ref,
+        success_url: (env.SITE_URL || "https://numbermyboat.com") + "/?paid=" + o.ref,
+      });
+      if (o.email && EMAIL.test(o.email)) body.set("customer_email", o.email);
+      const r = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
+                   "Content-Type": "application/x-www-form-urlencoded" },
+        body });
+      const cs = await r.json();
+      if (!r.ok) {
+        return json({ error: (cs.error && cs.error.message) || "stripe failed" }, 502);
+      }
+      return json({ ok: true, ref: o.ref, amount, url: cs.url, expires: cs.expires_at });
     }
     if (url.pathname === "/api/approve") {
       return json(await handleApprove(request, env));

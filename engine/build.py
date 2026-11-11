@@ -5,7 +5,7 @@ import json, os, pathlib, re, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
-                     LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href,
+                     LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href, STRIPE_PK,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL)
 from style import CSS
 import namegen as NG
@@ -759,7 +759,7 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
                 '<noscript><link rel="stylesheet" href="%s"></noscript>' % (gf, gf))
             # Precedence: a real publishable key wins; otherwise PAY_MODE decides
             # between the sandbox card form and the emailed-payment-link fallback.
-            pk = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+            pk = os.environ.get("STRIPE_PUBLISHABLE_KEY", "") or STRIPE_PK
             mode = os.environ.get("PAY_MODE", "sandbox" if not pk else "stripe")
             parts.append('<script>window.BNS_STRIPE_PK=%s;window.BNS_PAY_MODE=%s;'
                          'window.BNS_MOCKPAY_HTML=%s;</script>'

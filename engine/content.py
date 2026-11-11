@@ -311,7 +311,7 @@ FONTS = [
 # the card field cannot mount, and checkout silently degrades to "payment
 # unavailable" with nothing in any log. STRIPE_PUBLISHABLE_KEY still overrides
 # it for a one-off build.
-STRIPE_PK = ""
+STRIPE_PK = "pk_live_51UZidJLNiNr0qE3jmG1msQVtgUZYUiVXyBy9jP3HiVsLkB4Ym20VMv4YYecXVJEe0P6yAFLTUNmMtxLMBh4uVEtb00WZgUVDKw"
 
 FONT_NAMES = [f[0] for f in FONTS]
 
