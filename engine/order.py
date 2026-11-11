@@ -22,7 +22,8 @@ Anti-fatigue rules this file holds to:
 Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
-from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES,
+from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES,
+                     SHIP_STATES, UPGRADES,
                      google_fonts_href)
 import preview as PV
 
@@ -205,8 +206,7 @@ __VIEWS__
 
   <!-- 7 - checkout --------------------------------------------------- -->
   <section class=step data-step="7" data-when="">
-    <h2>Checkout</h2>
-    <div class=sumbox id=summary></div>
+    <h2>Where it ships</h2>
     <div class="fieldrow two">
       <div><label for=f_email>Email</label>
         <input type=email id=f_email name=email autocomplete=email
@@ -239,18 +239,29 @@ __VIEWS__
       </div>
       <div><label for=f_state>State</label>
         <select id=f_state name=ship_state autocomplete="shipping address-level1">
-          <option value="">Choose&hellip;</option><option value="AL">Alabama</option><option value="CF">California</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="LA">Louisiana</option><option value="MC">Michigan</option><option value="MN">Minnesota</option><option value="MO">Missouri</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="OH">Ohio</option><option value="PA">Pennsylvania</option><option value="SC">South Carolina</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="VA">Virginia</option><option value="WN">Washington</option><option value="WS">Wisconsin</option></select></div>
+          <option value="">Choose&hellip;</option><option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="DC">District of Columbia</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option></select></div>
       <div class=hint>We ship to all 50 states, free. This is where the decals
         go, not where the boat is.</div>
     </div>
 
+    <div class=err id=e5 role=alert></div>
+  </section>
+
+  <!-- Payment is its own step. Contact, address and card on one screen was a
+       dozen fields plus a card form, and the card is the only part a customer
+       cannot autofill in a tap - it deserves a screen with nothing else on
+       it. Splitting also means the address is known BEFORE the card mounts,
+       which is what lets us drop the duplicate country and ZIP below. -->
+  <section class=step data-step="8" data-when="">
+    <h2>Payment</h2>
+    <div class=sumbox id=summary2></div>
     <div id=paywrap style="margin-top:15px">
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card
         number. You are charged now; your proof follows within 12 hours and
         nothing is cut until you approve it.</div>
     </div>
-    <div class=err id=e5 role=alert></div>
+    <div class=err id=e6 role=alert></div>
   </section>
 
   </div>
@@ -310,7 +321,8 @@ JS = r"""
     var n = stepAfter(cur);
     if(n === cur) return 'Continue';
     var map = {2:'Next: the number', 3:'Next: the name', 4:'Next: pick a font',
-               5:'Next: pick a color', 6:'Next: how tall', 7:'Next: checkout'};
+               5:'Next: pick a color', 6:'Next: how tall',
+               7:'Next: where it ships', 8:'Next: payment'};
     return map[n] || 'Continue';
   }
   function pos(){ var i=ids().indexOf(cur); return i<0 ? 1 : i+1; }
@@ -508,6 +520,7 @@ JS = r"""
   }
 
   function summary(){
+    // two boxes now: the payment step has its own.
     var rows=[], k=kind();
     var kb=W.querySelector('[name=kind]:checked');
     rows.push([k, '$'+(kb?kb.dataset.base:19)]);
@@ -522,7 +535,12 @@ JS = r"""
     var c=val('color');
     // One glance: what it says, how it looks, what it costs. Line items are a
     // click away rather than four more rows of height in the hero.
-    var box=$('summary');
+    // The summary used to live on the checkout step; it now sits on the
+    // payment step, where the number next to the Pay button is the thing
+    // being agreed to. Resolved rather than assumed, so neither a missing box
+    // nor a future second one throws here.
+    var box=$('summary2');
+    if(!box) return;
     var open=box.classList.contains('open');
     box.innerHTML =
       '<div class=sumline><span>'+esc(txt.join('  ·  ')||'Your lettering')+'</span>'+
@@ -611,7 +629,9 @@ JS = r"""
         return false; }
       $('e4').textContent=''; return true;
     }
-    if(isLast()){
+    // Step 7, not the last step: the card now has a screen of its own and
+    // Stripe validates that itself.
+    if(cur===7){
       var em=$('f_email').value.trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){
         $('e5').textContent='We need a valid email for your receipt.';
@@ -687,7 +707,14 @@ JS = r"""
         elements=stripe.elements({clientSecret:clientSecret,
           appearance:{theme:'stripe',variables:{colorPrimary:'#1d7a48',
             colorText:'#12242e',borderRadius:'10px',fontSizeBase:'16px'}}});
-        elements.create('payment',{layout:'tabs'}).mount('#payelement');
+        // billingDetails.address:'never' removes the Country dropdown and the
+        // second ZIP box from the card form. We already hold a validated US
+        // address from the previous step, so asking again is pure friction -
+        // but Stripe then REQUIRES us to supply it at confirm time, which
+        // confirmParams below does. Setting this without supplying it there
+        // fails every payment, so the two must change together.
+        elements.create('payment',{layout:'tabs',
+          fields:{billingDetails:{address:'never'}}}).mount('#payelement');
       })
       .catch(function(){ mounted=false; degrade(); });
   }
@@ -788,7 +815,17 @@ JS = r"""
     if(stripe && clientSecret){
       finish({payment:'stripe'}).then(function(j){
         return stripe.confirmPayment({elements:elements, redirect:'if_required',
-          confirmParams:{receipt_email:$('f_email').value.trim()}})
+          confirmParams:{receipt_email:$('f_email').value.trim(),
+            // Required because the card form no longer asks for an address.
+            payment_method_data:{billing_details:{
+              name:$('f_name').value.trim(),
+              email:$('f_email').value.trim(),
+              address:{line1:$('f_a1').value.trim(),
+                       line2:$('f_a2').value.trim(),
+                       city:$('f_city').value.trim(),
+                       state:$('f_state').value,
+                       postal_code:$('f_zip').value.trim(),
+                       country:'US'}}}}})
           .then(function(res){
             if(res.error){ throw new Error(res.error.message||'Card declined.'); }
             return fetch('/api/order',{method:'POST',
@@ -799,7 +836,7 @@ JS = r"""
           });
       }).catch(function(err){
         paying=false; nextBtn.disabled=false; nextBtn.textContent='Pay $'+price();
-        $('e5').textContent=(err&&err.message)||'That card did not go through.';
+        $('e6').textContent=(err&&err.message)||'That card did not go through.';
       });
     } else {
       finish({payment:'payment-link'}).then(function(j){
@@ -807,7 +844,7 @@ JS = r"""
         done(j,false);
       }).catch(function(){
         paying=false; nextBtn.disabled=false; nextBtn.textContent='Send my order';
-        $('e5').innerHTML='That did not go through. Email '+
+        $('e6').innerHTML='That did not go through. Email '+
           '<a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a>'+
           ' and we will pick it up by hand.';
       });

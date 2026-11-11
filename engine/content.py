@@ -459,3 +459,30 @@ FAQ_HOME = [
      "tape. The wet method lets you slide it straight before it grabs, so take the "
      "twenty minutes and it goes on in one pass."),
 ]
+
+# Postal abbreviations for the SHIPPING address - deliberately separate from
+# STATES[*]["ab"], which holds the VESSEL REGISTRATION prefix. They are not the
+# same alphabet: California registers boats as CF, Michigan MC, Washington WN,
+# Wisconsin WS. Those belong on a hull, never on a parcel, and the shipping
+# dropdown was built from the wrong list until 2026-11-11.
+#
+# All 50 plus DC, because the page promises free shipping to all 50 states and
+# a customer who cannot find their own state simply leaves.
+SHIP_STATES = [
+    ("AL", "Alabama"), ("AK", "Alaska"), ("AZ", "Arizona"), ("AR", "Arkansas"),
+    ("CA", "California"), ("CO", "Colorado"), ("CT", "Connecticut"),
+    ("DE", "Delaware"), ("DC", "District of Columbia"), ("FL", "Florida"),
+    ("GA", "Georgia"), ("HI", "Hawaii"), ("ID", "Idaho"), ("IL", "Illinois"),
+    ("IN", "Indiana"), ("IA", "Iowa"), ("KS", "Kansas"), ("KY", "Kentucky"),
+    ("LA", "Louisiana"), ("ME", "Maine"), ("MD", "Maryland"),
+    ("MA", "Massachusetts"), ("MI", "Michigan"), ("MN", "Minnesota"),
+    ("MS", "Mississippi"), ("MO", "Missouri"), ("MT", "Montana"),
+    ("NE", "Nebraska"), ("NV", "Nevada"), ("NH", "New Hampshire"),
+    ("NJ", "New Jersey"), ("NM", "New Mexico"), ("NY", "New York"),
+    ("NC", "North Carolina"), ("ND", "North Dakota"), ("OH", "Ohio"),
+    ("OK", "Oklahoma"), ("OR", "Oregon"), ("PA", "Pennsylvania"),
+    ("RI", "Rhode Island"), ("SC", "South Carolina"), ("SD", "South Dakota"),
+    ("TN", "Tennessee"), ("TX", "Texas"), ("UT", "Utah"), ("VT", "Vermont"),
+    ("VA", "Virginia"), ("WA", "Washington"), ("WV", "West Virginia"),
+    ("WI", "Wisconsin"), ("WY", "Wyoming"),
+]

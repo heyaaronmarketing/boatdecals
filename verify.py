@@ -86,13 +86,16 @@ for label, vals in (("title", titles), ("description", descs)):
 # The wizard is the only conversion path; if it loses a step, nothing converts.
 design = (OUT / "design" / "index.html").read_text()
 # Step count asserted explicitly so a section cannot vanish unnoticed. Two of
-# the seven only apply to some orders, so the markup always carries all seven
-# and data-when decides which are shown.
+# the eight only apply to some orders, so the markup always carries all eight
+# and data-when decides which are shown. Payment is step 8 and stands alone:
+# contact, address and a card form on one screen was the longest page in the
+# funnel and the one with the most to get wrong.
 _steps = len(re.findall(r'data-step="\d"', design))
-if _steps != 7:
-    fails.append("order wizard has %d steps, expected 7" % _steps)
+if _steps != 8:
+    fails.append("order wizard has %d steps, expected 8" % _steps)
 _when = re.findall(r'data-step="(\d)" data-when="(\w*)"', design)
-if dict(_when) != {"1": "", "2": "num", "3": "name", "4": "", "5": "", "6": "", "7": ""}:
+if dict(_when) != {"1": "", "2": "num", "3": "name", "4": "", "5": "", "6": "",
+                   "7": "", "8": ""}:
     fails.append("wizard step conditions changed: %s" % _when)
 # The number and name steps must be conditional, or a numbers-only order is
 # asked for a boat name it does not have.
@@ -702,6 +705,54 @@ for _f in ("f_a1", "f_city", "f_state", "f_zip"):
                      "without an address cannot be posted" % _f)
 if "to post it to you" not in design:
     fails.append("checkout no longer blocks on a missing address")
+
+# The shipping state must be a POSTAL code. STATES[*]["ab"] holds the vessel
+# registration prefix - California is CF there, Michigan MC, Washington WN,
+# Wisconsin WS - and the dropdown was built from that list by mistake, so
+# every parcel carried a state the post office does not recognise.
+_bad_ab = [a for a in ("CF", "MC", "WN", "WS")
+           if ('<option value="%s">' % a) in design]
+if _bad_ab:
+    fails.append("the shipping state dropdown is offering vessel registration "
+                 "prefixes %s instead of postal codes - those belong on a hull, "
+                 "not a parcel" % _bad_ab)
+for _ab in ("CA", "MI", "WA", "WI", "AZ", "WY"):
+    if ('<option value="%s">' % _ab) not in design:
+        fails.append("the shipping state dropdown has no %s - we promise free "
+                     "shipping to all 50 states" % _ab)
+_nstates = design.count('<option value="') - design.count('<option value="">')
+if _nstates < 51:
+    fails.append("only %d shipping states offered, expected 51 incl. DC"
+                 % _nstates)
+
+# The card form no longer asks for a country or a ZIP, because the step
+# before it already took a validated address. Stripe then REQUIRES the
+# address at confirm time: with the suppression but without the billing
+# details, EVERY payment fails. The two must never drift apart.
+_supp = "billingDetails:{address:'never'}" in design
+_give = "payment_method_data:{billing_details:" in design
+if _supp != _give:
+    fails.append("the card form suppresses the billing address (%s) but "
+                 "supplies it at confirm time (%s) - mismatched, so every "
+                 "payment would fail" % (_supp, _give))
+if _supp and "country:'US'" not in design:
+    fails.append("billing address is supplied without a country, which Stripe "
+                 "rejects")
+
+# Card only. automatic_payment_methods puts every method enabled on the
+# account - Klarna, Cash App, Amazon Pay, Bank - in a tab row above a $19
+# decal.
+_wj3 = (ROOT / "worker" / "index.js").read_text()
+if '"automatic_payment_methods[allow_redirects]": "never"' not in _wj3:
+    fails.append("the PaymentIntent allows redirect payment methods again, so "
+                 "the checkout grows a tab row of Klarna / Cash App / Amazon "
+                 "Pay above a $19 decal")
+# Stripe removed this parameter outright: sending it 400s the intent and
+# degrades every checkout on the site. It cost one live deploy to learn.
+if '"payment_method_types' in _wj3:   # the quoted KEY, not a mention in prose
+    fails.append("payment_method_types is back - Stripe no longer supports it "
+                 "and REJECTS the PaymentIntent, degrading card payment "
+                 "site-wide")
 _wj2 = (ROOT / "worker" / "index.js").read_text()
 if "ship_line1: str(d.ship_line1" not in _wj2:
     fails.append("the worker is not storing the shipping address")

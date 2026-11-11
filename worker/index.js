@@ -324,7 +324,21 @@ async function handleCheckout(request, env) {
   const body = new URLSearchParams({
     amount: String(amount * 100),
     currency: "usd",
+    // Trimming the payment menu. A $19 decal does not need a tab row of
+    // Klarna, Cash App, Amazon Pay and Bank above it - that is a pile of
+    // decisions in front of a trivial purchase.
+    //
+    // payment_method_types was the obvious lever and Stripe has REMOVED it:
+    // the API now answers "no longer supported, managed from your Dashboard".
+    // allow_redirects:"never" is what remains, and it does most of the job -
+    // it drops every method that would bounce the customer to another site,
+    // which is Klarna, Cash App, Amazon Pay and bank redirects. What is left
+    // is card plus the one-tap wallets, Apple Pay and Google Pay.
+    //
+    // Anything non-redirect that is still unwanted (Link) has to be switched
+    // off in the Stripe Dashboard; there is no API for it.
     "automatic_payment_methods[enabled]": "true",
+    "automatic_payment_methods[allow_redirects]": "never",
     // What Ryan sees on the Stripe line item. "Boat Number Shop - custom
     // lettering" told him nothing; the lettering and the reference are the
     // two things he needs to match a payment to a job.
