@@ -677,6 +677,22 @@ if "nothing is charged for artwork you have not seen" in design:
     fails.append("the checkout still promises not to charge before the proof, "
                  "which stopped being true when payment moved to checkout")
 
+# A configured publishable key must actually reach the page. If it goes
+# missing the card field cannot mount and checkout degrades to "payment
+# unavailable" - no error, no log line, just orders quietly not being paid.
+if _C.STRIPE_PK:
+    if _C.STRIPE_PK not in design:
+        fails.append("STRIPE_PK is configured but is not in the built order "
+                     "page, so the card field cannot mount and checkout "
+                     "silently falls back to taking no payment")
+    if "js.stripe.com/v3" not in design:
+        fails.append("Stripe.js is not loaded on the order page")
+    if not _C.STRIPE_PK.startswith("pk_"):
+        fails.append("STRIPE_PK does not look like a publishable key. A "
+                     "SECRET key here would be published in the page source")
+    if _C.STRIPE_PK.startswith("sk_") or "sk_live" in design or "sk_test" in design:
+        fails.append("a Stripe SECRET key is in the built output")
+
 # ---- the Stripe webhook -------------------------------------------------
 # Without a verified signature this is a public endpoint that marks any order
 # paid for anyone who can spell the reference. The signature is the entire

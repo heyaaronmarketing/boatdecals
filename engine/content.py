@@ -304,6 +304,15 @@ FONTS = [
      "Stardos+Stencil:wght@700",  False, "close"),
 ]
 
+# Stripe's publishable key. Public by design - it ships in the page source of
+# every Stripe-powered site and can only confirm payments the server already
+# authorised. It lives here rather than in an environment variable because the
+# page is built, not served: a rebuild without the variable set drops the key,
+# the card field cannot mount, and checkout silently degrades to "payment
+# unavailable" with nothing in any log. STRIPE_PUBLISHABLE_KEY still overrides
+# it for a one-off build.
+STRIPE_PK = ""
+
 FONT_NAMES = [f[0] for f in FONTS]
 
 # Five across. Ten faces is two tidy rows, and the five block-legal ones are
