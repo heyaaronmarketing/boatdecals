@@ -323,6 +323,24 @@ else:
             fails.append("brand PNG %s is %dpx but only %dB - probably blank"
                          % (_img.name, _w, _img.stat().st_size))
 
+    # Photographs: every master in media/photos must reach the pack. The
+    # listing slots that want a real photo are exactly the ones that look
+    # worst empty, and a master that silently stops being published is not
+    # something anyone would notice.
+    _pm = ROOT / "media" / "photos"
+    if _pm.exists():
+        if not (_pm / "README.md").exists():
+            fails.append("media/photos/README.md is gone - it carries the "
+                         "rule that nothing in there may be AI-generated")
+        for _src in sorted(_pm.glob("*.png")):
+            for _sz in (1024, 720, 500, 400, 320, 300, 250):
+                _want = _brand / "photo" / ("%s-%d.jpg" % (_src.stem, _sz))
+                if not _want.exists():
+                    fails.append("photo %s is in media/photos but %s was not "
+                                 "generated - run media/brand.py"
+                                 % (_src.name, _want.name))
+                    break
+
     # The generated assets must come from the header's own mark. Comparing the
     # mark's path data against the SVG master catches a header redesign that
     # never made it into the logo pack.

@@ -2875,6 +2875,20 @@ BRAND_USES = {
     "profile-320.png":  "Instagram",
     "profile-300.png":  "LinkedIn",
     "profile-250.png":  "The smallest most directories will take"}),
+ "photo": ("Photographs",
+   "Real photographs, not logos. Google Business ranks a profile with real "
+   "photos above a logo-only one, and several directories have a media tab "
+   "that otherwise sits empty. Nothing here is AI-generated and nothing here "
+   "may be - these are real people and real work.",
+   {"owner-headshot-1024.jpg": "Master. The About page, or any slot that "
+                               "takes a large photo.",
+    "owner-headshot-720.jpg": "Google Business Profile",
+    "owner-headshot-500.jpg": "Facebook, Pinterest",
+    "owner-headshot-400.jpg": "X / Twitter, YouTube",
+    "owner-headshot-320.jpg": "Instagram",
+    "owner-headshot-300.jpg": "LinkedIn",
+    "owner-headshot-250.jpg": "Directory minimum",
+    "owner-headshot-1024.png": "For the rare form that will not take a JPG"}),
  "icon": ("The mark on its own",
    "Transparent around a rounded tile - the logo as the site header draws it. "
    "For anywhere it sits on a white page: a directory listing, an invoice, a "
@@ -2928,10 +2942,14 @@ def build_brand():
     _sh.copytree(src, OUT / "brand", dirs_exist_ok=True)
 
     def dims(f):
-        if f.suffix != ".png":
-            return None
-        w, h = _st.unpack(">II", f.read_bytes()[16:24])
-        return "%d x %d" % (w, h)
+        if f.suffix == ".png":
+            w, h = _st.unpack(">II", f.read_bytes()[16:24])
+            return "%d x %d" % (w, h)
+        if f.suffix == ".jpg":
+            from PIL import Image as _Im
+            with _Im.open(f) as _i:
+                return "%d x %d" % _i.size
+        return None
 
     def kb(f):
         n = f.stat().st_size
@@ -2949,7 +2967,7 @@ def build_brand():
             u = "/brand/%s/%s" % (folder, f.name)
             note = uses.get(f.name, "")
             shot = ('<img src="%s" alt="%s" loading="lazy">' % (u, e(f.name))
-                    if f.suffix in (".png", ".svg") else "")
+                    if f.suffix in (".png", ".svg", ".jpg") else "")
             rows.append(
               '<a class=bcell href="%s" target="_blank" rel="noopener">'
               '<span class=bshot>%s</span>'

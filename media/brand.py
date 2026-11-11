@@ -26,6 +26,8 @@ import sys
 import zipfile
 from pathlib import Path
 
+from PIL import Image
+
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
@@ -305,6 +307,28 @@ def main():
                        ("linkedin-cover-1128x191", 1128, 191)):
         s = cover(w, h, tagline=(h > 300))
         keep(png(s, OUT / "cover" / ("%s.png" % stem), w, h))
+
+    # ---- real photographs, sized for the same slots
+    # Google Business ranks a profile with real photos above a logo-only one,
+    # and several directories have a media tab that stays conspicuously empty
+    # otherwise. Masters live in media/photos/ rather than here, because this
+    # script wipes brand/ on every run.
+    photos = ROOT / "media" / "photos"
+    for src_img in sorted(photos.glob("*.png")):
+        base = Image.open(src_img).convert("RGB")
+        # JPG, not PNG. A photograph has no transparency to preserve and PNG
+        # stores it losslessly: the 1024 came out 1.5MB as a PNG against
+        # 267KB as a JPG, for no visible difference, and it dragged the whole
+        # zip to 4.8MB. One PNG is kept for the rare form that demands one.
+        for size in (1024, 720, 500, 400, 320, 300, 250):
+            d = OUT / "photo" / ("%s-%d.jpg" % (src_img.stem, size))
+            d.parent.mkdir(parents=True, exist_ok=True)
+            base.resize((size, size), Image.LANCZOS).save(
+                d, quality=92, optimize=True)
+            keep(d)
+        d = OUT / "photo" / ("%s-1024.png" % src_img.stem)
+        base.resize((1024, 1024), Image.LANCZOS).save(d)
+        keep(d)
 
     # ---- one zip, because citation work means uploading the same set over
     # and over and nobody wants to click forty files.
