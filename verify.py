@@ -273,6 +273,18 @@ if "var OUTLINE_ADD=%d;" % _P["outline"] not in _ojs:
 # last. That ordering is fine right up until a page path changes and the card
 # silently 404s, which Facebook renders as a blank grey box. Check every
 # reference resolves, and that nothing is a placeholder-sized file.
+# A sitemap is a request to index. Listing a page that carries noindex is a
+# contradiction Google reports as "Submitted URL marked noindex", and it was
+# doing exactly that for /_cards/ and /brand/.
+_sm = (OUT / "sitemap.xml").read_text()
+for _f in OUT.rglob("index.html"):
+    if 'content="noindex' not in _f.read_text():
+        continue
+    _rel = str(_f.relative_to(OUT).parent).replace("\\", "/")
+    _url = "/" if _rel == "." else "/%s/" % _rel
+    if "%s</loc>" % _url in _sm:
+        fails.append("noindex page %s is listed in sitemap.xml" % _url)
+
 # ---- brand assets -------------------------------------------------------
 # The logo pack is what goes on Google Business, Facebook and every citation
 # site. Two ways it rots: the files stop shipping, or the header logo changes

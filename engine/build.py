@@ -28,6 +28,9 @@ TODAY = os.environ.get("BUILD_DATE", datetime.date.today().isoformat())
 B = SITE["brand"]
 e = html.escape
 PAGES = []
+# Paths that asked not to be indexed; kept out of sitemap.xml. Populated by
+# write() from the page's own markup.
+NOINDEX = set()
 
 def U(p): return URL + p
 
@@ -704,6 +707,12 @@ def write(path, body, prio="0.7"):
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(body, encoding="utf-8")
     PAGES.append((path, prio))
+    # A noindex page must not be in the sitemap. A sitemap is a request to
+    # index, so listing one that refuses indexing is a contradiction Search
+    # Console reports as "Submitted URL marked noindex". Read off the rendered
+    # HTML rather than passed in again, so it cannot disagree with the page.
+    if 'content="noindex' in body:
+        NOINDEX.add(path)
 
 def shell(title, desc, path, schema, main, trail=None, noindex=False,
           faqs=None, faq_heading=None, sticky_label=None, sticky_price=19,
@@ -3039,7 +3048,8 @@ def build_static():
     urls = "".join(
       "<url><loc>%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>"
       % (U(p if p.endswith("/") or p == "/" else p + "/"), TODAY, pr)
-      for p, pr in sorted(set(PAGES), key=lambda x: (-float(x[1]), x[0])))
+      for p, pr in sorted(set(PAGES), key=lambda x: (-float(x[1]), x[0]))
+      if p not in NOINDEX)
     (OUT / "sitemap.xml").write_text(
       '<?xml version="1.0" encoding="UTF-8"?>'
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">%s</urlset>' % urls,
