@@ -669,6 +669,13 @@ if "metadata[ref]" not in _wj:
 # priceOf is the only authority. A posted total must never reach it.
 if "priceOf(d.quoted" in _wj or "amount: d.amount" in _wj:
     fails.append("a browser-supplied amount is reaching the Stripe call")
+# The card field has to say when the money moves. The shop charges at
+# checkout, so the page may not still imply payment waits for the proof.
+if "You are charged now" not in design:
+    fails.append("the card field no longer says when the customer is charged")
+if "nothing is charged for artwork you have not seen" in design:
+    fails.append("the checkout still promises not to charge before the proof, "
+                 "which stopped being true when payment moved to checkout")
 
 # ---- server-side glyph outlining ----------------------------------------
 # The faces the shop cuts with are licensed Microsoft and Monotype fonts. A

@@ -1274,7 +1274,9 @@ border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
     </div>
     <div id=paywrap style="margin-top:15px">
       <div id=payelement class=payel></div>
-      <div class=hint id=payhint>Secured by Stripe. We never see your card number.</div>
+      <div class=hint id=payhint>Secured by Stripe. We never see your card
+        number. You are charged now; your proof follows within 12 hours and
+        nothing is cut until you approve it.</div>
     </div>
     <div class=err id=e5 role=alert></div>
   </section>
@@ -2120,10 +2122,10 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     var w=$('paywrap');
     if(w.dataset.degraded) return;
     w.dataset.degraded='1';
-    $('payelement').innerHTML='<div class=paysoft><b>No card needed yet.</b>'+
-      '<span>Send the order and we will email your proof within 12 hours. '+
-      'Once you approve it we send the payment link, and it is cut after '+
-      'that \u2014 so nothing is charged for artwork you have not seen.</span></div>';
+    $('payelement').innerHTML='<div class=paysoft><b>Card payment is '+
+      'temporarily unavailable.</b><span>Send the order and we will email you '+
+      'to take payment, along with your proof. Nothing is cut until you have '+
+      'approved it.</span></div>';
     $('payhint').textContent='';
     nextBtn.textContent='Send my order';
   }
@@ -2159,9 +2161,10 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     // are still flagged test_mode=1 in D1 and [TEST] in the shop email.
     W.innerHTML='<div class=okbox><div class=oktick>&#10003;</div>'+
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
-      '<p>'+(paid?'Thanks. ':'')+'A confirmation is on its way to <strong>'+
-      esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
-      ', and your proof follows within 12 hours.</p>'+
+      '<p>'+(paid?'Paid in full. ':'')+'A confirmation is on its way to '+
+      '<strong>'+esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
+      ', and your proof follows within 12 hours. Nothing is cut until you '+
+      'approve it.</p>'+
       '<p class=hint>We email your proof within 12 hours. Nothing is cut until '+
       'you approve it. Spotted a '+
       'mistake? Email us today with this reference and we can almost always stop '+
