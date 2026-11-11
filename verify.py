@@ -484,14 +484,31 @@ else:
                      "ends on a ragged row"
                      % (len(_C.FONTS), _C.FONT_COLS))
     _legal = [f for f in _C.FONTS if f[3]]
-    if len(_legal) != _C.FONT_COLS:
-        fails.append("%d block-legal faces, expected %d - they are meant to "
-                     "be exactly the first row, so a registration-numbers "
-                     "order shows one tidy row"
-                     % (len(_legal), _C.FONT_COLS))
-    if [f[0] for f in _C.FONTS[:_C.FONT_COLS]] != [f[0] for f in _legal]:
-        fails.append("the block-legal faces are no longer the first %d in the "
-                     "list, so the legal row has gaps in it" % _C.FONT_COLS)
+    if not _legal:
+        fails.append("no face is marked as plainly meeting 33 CFR 173.27, so "
+                     "every registration number would carry the warning")
+    # Every face is orderable on every product now, so nothing is hidden. What
+    # has to survive is the WARNING: the site advertises "Meets 33 CFR
+    # 173.27", and that claim cannot quietly stop being true for an order.
+    if "may not satisfy 33 CFR" not in design:
+        fails.append("the order form no longer warns when a decorative face "
+                     "is picked for a registration number, while the site "
+                     "still advertises meeting the rule")
+    if "classList.remove('off')" not in design:
+        fails.append("the font grid is hiding faces again - the shop decided "
+                     "every face is orderable on every product")
+    _pf = (ROOT / "worker" / "proof.js").read_text()
+    # Matched on the CALL SITE, not the definition. Checking for
+    # "riskNote(o)" passes against "function riskNote(o)" while the call has
+    # been deleted - the fourth time a gate in this file has been written as a
+    # substring that its own declaration satisfies.
+    if "letteringBlock(o) + riskNote(o)" not in _pf or "PLAIN_BLOCK" not in _pf:
+        fails.append("the proof no longer carries the font warning, so the "
+                     "customer approves a non-compliant cut without being "
+                     "told on the document they are approving")
+    if "o.font_risk" not in (ROOT / "worker" / "index.js").read_text():
+        fails.append("the shop email no longer flags a non-block face on a "
+                     "registration number")
     # Every one of these is an OPEN stand-in for a licensed Microsoft face.
     # Serving the originals would need a webfont licence we do not have, and
     # a visitor without them installed would silently see something else -

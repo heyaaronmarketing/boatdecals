@@ -564,10 +564,33 @@ the count stops dividing into rows of five, if the legal faces stop being
 exactly the first row, or if any face loses its match note — that judgement is
 the whole reason the substitution is defensible.
 
-`block_legal` marks the five that satisfy 33 CFR 173.27's "plain vertical block
-characters". The other five are serif, stencilled or decorative: fine on a
-transom, not on a registration number, and removed from the grid entirely when
-the order is for numbers.
+#### Every face is orderable, and five of them carry a warning
+
+`block_legal` marks the five that plainly satisfy 33 CFR 173.27's "plain
+vertical block characters". The other five are serif, stencilled or
+decorative.
+
+They used to be **hidden** on a registration-numbers order, and the worker
+silently rewrote any that got through to Block — which meant cutting something
+the customer never chose and never saw on their proof. The shop decided all
+ten should be orderable on both products, so nothing is hidden and nothing is
+rewritten.
+
+**What replaced the filter is a warning, and it is gated in three places**,
+because the site advertises *"Meets 33 CFR 173.27"* on every page and that
+claim cannot quietly stop being true for an order:
+
+- the order form says so when the face is picked, before payment
+- the **proof** carries it, since that is the document being approved
+- the shop email flags it, so Ryan knows before the plotter runs
+
+The headline claim itself was reworded to match: it now says we flag a
+decorative pick rather than implying every order meets the rule.
+
+This is a real trade. Hiding them made every order compliant by construction;
+warning makes every order *informed*. The second is the shop's call to make —
+an officer's reading of "plain block" is a judgement, and Ryan deals with the
+customers who find out.
 
 **Nothing is preselected.** The step will not advance until a face is picked,
 and a face that becomes illegal (picking a transom font then switching to

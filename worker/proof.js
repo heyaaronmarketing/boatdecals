@@ -44,6 +44,21 @@ function proofUrl(env, o) {
   return `${base}/proof/?r=${encodeURIComponent(o.ref)}&t=${o.proof_token}`;
 }
 
+// The five faces that plainly satisfy 33 CFR 173.27. Kept in step with
+// content.py by the same drift gate that guards worker/index.js.
+const PLAIN_BLOCK = ["Arial Bold", "Arial Black", "Impact",
+  "OCR A Extended", "MS Gothic"];
+
+function riskNote(o) {
+  if (o.kind === "Boat name" || PLAIN_BLOCK.includes(o.font)) return "";
+  return `<p style="background:#fdf4e6;border:1px solid #f0dcbb;border-radius:9px;` +
+    `padding:12px 14px;font-size:14px;color:#7a5417;margin:0 0 18px">` +
+    `<b>About this font.</b> ${esc(o.font)} is not a plain block face. ` +
+    `33 CFR 173.27 asks for plain vertical block characters on a ` +
+    `registration number, so an officer may read this as non-compliant. ` +
+    `We will cut exactly what you approve.</p>`;
+}
+
 function specRows(o) {
   const rows = [
     ["Lettering", lettering(o)],
@@ -104,7 +119,7 @@ function proofEmail(env, o) {
       `<h2 style="font-size:21px;margin:0 0 6px">Here is your proof</h2>` +
       `<p style="margin:0 0 18px;color:#44606f">Check every character against ` +
       `your registration card. This is exactly what the plotter cuts.</p>` +
-      letteringBlock(o) +
+      letteringBlock(o) + riskNote(o) +
       `<table style="border-collapse:collapse;margin:0 0 22px">${specRows(o)}</table>` +
       `<p style="margin:0 0 18px">${button(url, "Approve this proof")}</p>` +
       `<p style="margin:0 0 6px;color:#44606f">Something not right? ` +

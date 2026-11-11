@@ -391,7 +391,10 @@ JS = r"""
     window.BNS_PREVIEW.render({
       hex: meta[0], light: !!meta[1], font: fn, height: hv,
       css: (window.BNS_FONTCSS||{})[fn] || '',
-      numBlock: isNum() && hasName() && !isBlockFont(fn),
+      // The preview shows the face they picked on both lines now:
+      // we cut what they picked, so previewing something else
+      // would be the lie the preview exists to prevent.
+      numBlock: false,
       showNum: isNum(), showName: hasName(),
       number: numberForPreview(), placeholder: PLACEHOLDER,
       name: ($('f_name2').value||'').trim(),
@@ -418,33 +421,35 @@ JS = r"""
 
 
   function syncFonts(){
-    // Registration numbers must be plain vertical block characters, so the
-    // non-block faces are removed from the grid entirely - an order that
-    // cannot legally be placed is not worth showing.
-    var lock = isNum() && kind()!=='Both';
-    var chips=W.querySelectorAll('.fontchip'), moved=false;
+    // Every face is orderable on every product, by the shop's decision. The
+    // five marked `data-block` are the ones that plainly satisfy 33 CFR
+    // 173.27's "plain vertical block characters"; the other five are serif,
+    // stencilled or decorative and are a judgement call a state officer makes,
+    // not us.
+    //
+    // So nothing is hidden and nothing is disabled - but the site advertises
+    // "Meets 33 CFR 173.27" on every page, and that claim cannot quietly stop
+    // being true for an order. A decorative face on a registration number
+    // says so, here, before it is paid for.
+    var chips=W.querySelectorAll('.fontchip');
     for(var i=0;i<chips.length;i++){
-      var c=chips[i], inp=c.querySelector('input'),
-          legal = !lock || c.dataset.block==='1',
-          shown = legal;
-      inp.disabled=!legal;
-      // `off` hides it; an illegal face stays unchecked even if its tab is up
-      c.classList.toggle('off', !shown);
-      if(!legal && inp.checked){ inp.checked=false; moved=true; }
+      var inp=chips[i].querySelector('input');
+      inp.disabled=false;
+      chips[i].classList.remove('off');
     }
-    // Cleared, not swapped for the first legal face. Picking one for them is
-    // how you end up cutting a font nobody chose; the step will not advance
-    // until they choose again, and `fonthint` says why theirs went away.
-    if(moved && $('e4')) $('e4').textContent =
-      'That font is not legal on a registration number - pick another.';
-    // Only the mixed case needs explaining: the chosen face lands on the name
-    // while the numbers are cut in Block regardless. Everything else is
-    // self-evident once the illegal faces are gone.
-    var mixed = isNum() && hasName() && !isBlockFont(font());
-    $('fonthint').innerHTML = mixed
-      ? 'This font goes on the <strong>name</strong>. Your registration numbers are '
-        + 'cut in Block either way &mdash; the law requires it.'
-      : '';
+    var risky = isNum() && font() && !isBlockFont(font());
+    var mixed = isNum() && hasName() && risky;
+    $('fonthint').innerHTML = !risky ? ''
+      : (mixed
+          ? '<strong>Heads up.</strong> This face goes on the name and on your '
+            + 'registration numbers. On the numbers it may not satisfy 33 CFR '
+            + '173.27, which asks for plain vertical block characters &mdash; '
+            + 'we will cut what you pick, but an officer may read it as '
+            + 'non-compliant.'
+          : '<strong>Heads up.</strong> This face may not satisfy 33 CFR '
+            + '173.27, which asks for plain vertical block characters on a '
+            + 'registration number. We will cut exactly what you pick &mdash; '
+            + 'just know an officer may read it as non-compliant.');
     // Chips preview the real lettering, not a stand-in.
     // The specimen shows whatever that tab's faces will actually be cut on:
     // the number under Block, the name under Display and Script. Otherwise a

@@ -146,10 +146,17 @@ async function handleOrder(request, env) {
   // An empty font is "not specified", not "asked for something illegal" - the
   // form will not submit without one, but an API post can, and telling Ryan
   // the customer requested "" would be a lie about a person.
+  // Every face is orderable on every product, by the shop's decision. The
+  // worker no longer rewrites the font - it used to silently swap a
+  // decorative face for Block on a registration number, which cut something
+  // the customer never chose and never saw on the proof.
+  //
+  // It still FLAGS it, because the site advertises "Meets 33 CFR 173.27" and
+  // the shop should know before the plotter runs which orders that claim does
+  // not cover.
   if (!o.font) o.font = BLOCK_FONTS[0];
-  else if (o.kind === "Registration numbers" && !BLOCK_FONTS.includes(o.font)) {
-    o.font_requested = o.font;
-    o.font = BLOCK_FONTS[0];
+  else if (o.kind !== "Boat name" && !BLOCK_FONTS.includes(o.font)) {
+    o.font_risk = o.font;
   }
   // Advisory only - annotates the order, never refuses it.
   o.number_flag = o.kind === "Boat name" ? "" : checkNumber(o.text);
@@ -205,9 +212,11 @@ async function handleOrder(request, env) {
             registration card before cutting`]]
         : []),
       ["State", o.state], ["Height", o.height + '"'],
-      ["Font", o.font_requested
-        ? `${o.font} - customer asked for ${o.font_requested}, which is not legal `
-          + `on a registration number. Corrected automatically; check before cutting.`
+      ["Font", o.font_risk
+        ? `${o.font} - NOT a plain block face. 33 CFR 173.27 asks for plain `
+          + `vertical block characters on a registration number, so this one `
+          + `may read as non-compliant. The customer was told and chose it `
+          + `anyway. Cut it as ordered.`
         : o.font],
       ["Colour", o.color],
       ["Outline", o.finish === "outline"

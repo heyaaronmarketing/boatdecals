@@ -399,8 +399,9 @@ FEATURE_SUB = {
         "Marine film built for sun, salt and spray &mdash; not the craft stock "
         "the cheap sets use.",
     "Meets 33 CFR 173.27":
-        "3-inch plain block characters, pre-spaced to the federal display rule "
-        "every state enforces. Where your state decal goes is on your state page.",
+        "3-inch characters, pre-spaced to the federal display rule every state "
+        "enforces. Pick a decorative face and we say so before you pay "
+        "&mdash; the rule asks for plain block characters.",
 }
 
 # Header nav. Labels are what customers say ("Boat Numbers"), not what the
