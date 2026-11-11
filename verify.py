@@ -273,6 +273,71 @@ if "var OUTLINE_ADD=%d;" % _P["outline"] not in _ojs:
 # last. That ordering is fine right up until a page path changes and the card
 # silently 404s, which Facebook renders as a blank grey box. Check every
 # reference resolves, and that nothing is a placeholder-sized file.
+# ---- brand assets -------------------------------------------------------
+# The logo pack is what goes on Google Business, Facebook and every citation
+# site. Two ways it rots: the files stop shipping, or the header logo changes
+# and the listings quietly keep the old one for years. Both are checked.
+_brand = OUT / "brand"
+if not _brand.exists():
+    fails.append("public/brand/ is missing - the logo pack did not ship. "
+                 "Run: python3 media/brand.py")
+else:
+    for _need in ("profile/profile-720.png",   # Google Business
+                  "profile/profile-500.png",   # Facebook
+                  "profile/profile-250.png",   # the common directory minimum
+                  "icon/icon-512.png", "icon/icon-32.png",
+                  "lockup/lockup-horizontal-1200.png",
+                  "lockup/lockup-horizontal-white-1200.png",
+                  "cover/facebook-page-cover-1640x624.png",
+                  "cover/google-business-cover-1024x576.png",
+                  "svg/lockup-horizontal.svg",
+                  "numbermyboat-logo-pack.zip"):
+        if not (_brand / _need).exists():
+            fails.append("brand asset missing: %s" % _need)
+
+    # A PNG that is all one colour rendered as an empty box. rsvg-convert
+    # exits 0 either way, so a silently blank logo would otherwise ship.
+    import struct as _struct
+    for _img in sorted(_brand.rglob("*.png")):
+        _b = _img.read_bytes()
+        if len(_b) < 24 or _b[:8] != b"\x89PNG\r\n\x1a\n":
+            fails.append("brand file is not a PNG: %s" % _img.name)
+            continue
+        _w, _h = _struct.unpack(">II", _b[16:24])
+        if _w < 16 or _h < 16:
+            fails.append("brand PNG %s is %dx%d" % (_img.name, _w, _h))
+        # An 8KB 1024px logo is a blank canvas; a real one is ~30KB+.
+        if _w >= 512 and _img.stat().st_size < 4096:
+            fails.append("brand PNG %s is %dpx but only %dB - probably blank"
+                         % (_img.name, _w, _img.stat().st_size))
+
+    # The generated assets must come from the header's own mark. Comparing the
+    # mark's path data against the SVG master catches a header redesign that
+    # never made it into the logo pack.
+    _bld = (ROOT / "engine" / "build.py").read_text()
+    _mk = re.search(r'LOGO_MARK = \((.*?)\)\n\nWORDMARK', _bld, re.S)
+    if not _mk:
+        fails.append("could not read LOGO_MARK out of build.py")
+    else:
+        _paths = re.findall(r'd="([^"]+)"', _mk.group(1))
+        _svg = (_brand / "svg" / "icon.svg").read_text()
+        for _d in _paths:
+            if _d not in _svg:
+                fails.append("the header logo has changed but brand/ has not "
+                             "been regenerated - listings would keep the old "
+                             "logo. Run: python3 media/brand.py")
+                break
+
+# Every asset the gallery links to must exist, or the page offers downloads
+# that 404 in the middle of filling in a listing.
+_bp = OUT / "brand" / "index.html"
+if _bp.exists():
+    for _href in set(re.findall(r'href="(/brand/[^"]+)"', _bp.read_text())):
+        if not (OUT / _href.lstrip("/")).exists():
+            fails.append("brand page links to a missing file: %s" % _href)
+    if 'content="noindex' not in _bp.read_text():
+        fails.append("the brand page is indexable - it is an internal library")
+
 _og_pages = 0
 for _f in OUT.rglob("index.html"):
     _m = re.search(r'og:image" content="[^"]*?(/assets/og/[^"]+)"', _f.read_text())
