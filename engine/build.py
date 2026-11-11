@@ -1045,13 +1045,14 @@ def build_fonts_check():
     """
     fams = []
     seen = set()
-    for label, css, spec, block, cat in FONTS:
+    for label, css, spec, block, _match in FONTS:
         fam = spec.split(":")[0].replace("+", " ")
         wght = spec.split("wght@")[1] if "wght@" in spec else "400"
         if fam in seen:
             continue
         seen.add(fam)
-        fams.append({"label": label, "family": fam, "weight": wght, "cat": cat})
+        fams.append({"label": label, "family": fam, "weight": wght,
+                     "cat": "block" if block else "display"})
 
     main = (
         '<section style="padding:30px 0 46px"><div class=w style="max-width:680px">'
@@ -1070,7 +1071,8 @@ def build_fonts_check():
         '</div></section>' % len(fams))
 
     js = ("window.NMB_FAMS="
-          + json.dumps(fams, separators=(",", ":")) + ";") + r"""
+          + json.dumps(fams, separators=(",", ":"))
+          + ";window.NMB_TARGET=0;") + r"""
 (function(){
   var go=document.getElementById('fcgo'), out=document.getElementById('fcout');
   if(!go) return;
@@ -1094,47 +1096,105 @@ def build_fonts_check():
 
   var report=null;
 
+  var CATS=[['block','Block','legal on a registration number'],
+            ['display','Display','names and lettering'],
+            ['script','Script','names and lettering']];
+  var TARGET=window.NMB_TARGET||15;
+
+  // Counts live against the grid's budget. The website shows each category as
+  // three rows of five, so a category that is not exactly TARGET cannot be
+  // built - better he sees that here than Aaron finds out at build time.
+  function tally(){
+    var ok=true;
+    CATS.forEach(function(c){
+      var n=out.querySelectorAll('.fcpick[data-cat="'+c[0]+'"]:checked').length;
+      var el=document.getElementById('fccount-'+c[0]);
+      if(!el) return;
+      el.textContent=n+' of '+TARGET;
+      el.className='fccount'+(n===TARGET?' on':(n>TARGET?' over':''));
+      if(n!==TARGET) ok=false;
+    });
+    var w=document.getElementById('fcwarn');
+    if(w) w.hidden=ok;
+  }
+
   function render(have, missing, sys, method){
-    report={have:have, missing:missing, all_sys:sys, method:method,
-            ua:navigator.userAgent,
-            platform:(navigator.userAgentData&&navigator.userAgentData.platform)
-                     ||navigator.platform||''};
-    var h='<h2 style="margin-top:26px">'+have.length+' of '+(have.length+missing.length)
-         +' already installed</h2>';
-    if(missing.length){
-      h+='<p class=lede>These '+missing.length+' need installing:</p><ul class=fclist>';
-      missing.forEach(function(f){
-        h+='<li><b>'+esc(f.family)+'</b>'+(f.weight!=='400'?' '+esc(f.weight):'')
-          +'<span>site calls it &ldquo;'+esc(f.label)+'&rdquo;</span></li>';
+    var haveSet={};
+    have.forEach(function(f){ haveSet[f.label]=1; });
+    var all=window.NMB_FAMS;
+
+    var h='<h2 style="margin-top:26px">'+have.length+' of '+all.length
+         +' already installed</h2>'
+       +'<p class=lede>Tick the faces you want the website to offer. The ones '
+       +'already on this machine are ticked for you - untick any you do not '
+       +'want to cut, and tick a missing one if you are happy to install it.</p>';
+
+    CATS.forEach(function(c){
+      var rows=all.filter(function(f){ return f.cat===c[0]; });
+      h+='<div class=fcgroup><div class=fchead><div><b>'+esc(c[1])+'</b>'
+        +'<span>'+esc(c[2])+'</span></div>'
+        +'<div class=fcactions><span class=fccount id=fccount-'+c[0]+'></span>'
+        +'<button type=button class=fcbtn data-cat="'+c[0]+'" data-on="1">All</button>'
+        +'<button type=button class=fcbtn data-cat="'+c[0]+'" data-on="">None</button>'
+        +'</div></div><ul class=fclist>';
+      rows.forEach(function(f){
+        var got=!!haveSet[f.label];
+        h+='<li class=fcrow><label><input type=checkbox class=fcpick'
+          +' data-cat="'+esc(f.cat)+'" data-label="'+esc(f.label)+'"'
+          +' data-family="'+esc(f.family)+'" data-weight="'+esc(f.weight)+'"'
+          +(got?' checked':'')+'>'
+          +'<span class=fcname><b>'+esc(f.label)+'</b>'
+          +'<em>'+esc(f.family)+(f.weight!=='400'?' '+esc(f.weight):'')+'</em></span>'
+          +'<span class="fcstat'+(got?' yes':'')+'">'
+          +(got?'installed':'needs installing')+'</span></label></li>';
       });
-      h+='</ul>';
-    } else {
-      h+='<p class=lede>Every face the site offers is already on this machine.</p>';
-    }
-    if(have.length){
-      h+='<details class=fcdet><summary>'+have.length+' already here</summary>'
-        +'<ul class=fclist>';
-      have.forEach(function(f){
-        h+='<li><b>'+esc(f.family)+'</b><span>&ldquo;'+esc(f.label)+'&rdquo;</span></li>';
-      });
-      h+='</ul></details>';
-    }
+      h+='</ul></div>';
+    });
+
+    h+='<p class=fcwarn id=fcwarn hidden>The website shows five across and '
+      +'three down in each group, so it needs exactly '+TARGET+' in each. '
+      +'Send it anyway if you like - Aaron will sort the numbers out.</p>';
+
     if(sys&&sys.length){
-      h+='<details class=fcdet><summary>Everything else installed ('+sys.length
-        +')</summary><div class=fcall>'+esc(sys.join(', '))+'</div></details>';
+      h+='<details class=fcdet><summary>Everything else installed on this '
+        +'computer ('+sys.length+')</summary><div class=fcall>'
+        +esc(sys.join(', '))+'</div></details>';
     }
     h+='<div class=fcsend><button type=button class="btn lg" id=fcsend>'
       +'Send this to Aaron</button>'
       +'<p class=hint>Nothing has been sent yet.</p></div>';
     out.innerHTML=h;
+
+    out.addEventListener('change', function(ev){
+      if(ev.target.classList.contains('fcpick')) tally();
+    });
+    [].forEach.call(out.querySelectorAll('.fcbtn'), function(b){
+      b.addEventListener('click', function(){
+        var on=!!b.dataset.on;
+        [].forEach.call(out.querySelectorAll('.fcpick[data-cat="'+b.dataset.cat+'"]'),
+          function(i){ i.checked=on; });
+        tally();
+      });
+    });
+    tally();
+
     document.getElementById('fcsend').addEventListener('click', function(){
-      var b=this; b.disabled=true; b.textContent='Sending…';
+      var b=this; b.disabled=true; b.textContent='Sending...';
+      var picks=[].map.call(out.querySelectorAll('.fcpick:checked'), function(i){
+        return {label:i.dataset.label, family:i.dataset.family,
+                weight:i.dataset.weight, cat:i.dataset.cat};
+      });
+      var body={have:have, missing:missing, all_sys:sys, method:method,
+                picks:picks, ua:navigator.userAgent,
+                platform:(navigator.userAgentData&&navigator.userAgentData.platform)
+                         ||navigator.platform||''};
       fetch('/api/fonts',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(report)})
+        body:JSON.stringify(body)})
         .then(function(r){return r.json();})
         .then(function(j){
           b.parentNode.innerHTML = j&&j.ok
-            ? '<p class=fcok>Sent. Aaron has the list.</p>'
+            ? '<p class=fcok>Sent - '+picks.length+' faces picked. Aaron has '
+              +'the list.</p>'
             : '<p class=fcerr>That did not send. Screenshot this page instead.</p>';
         }).catch(function(){
           b.parentNode.innerHTML='<p class=fcerr>That did not send. Screenshot '

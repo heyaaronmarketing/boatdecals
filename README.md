@@ -526,117 +526,65 @@ for numbers, a letterform for names, two stacked plates for both.
 
 ### Fonts
 
-45 faces, defined once in `content.py: FONTS` as
-`(label, css family, Google spec, block_legal, category)`, split by
-`FONT_CATEGORIES` into three tabs of fifteen:
+**The ten faces Ryan cuts with**, defined once in `content.py: FONTS` as
+`(label, css stack, Google spec, block_legal, match note)`.
 
-| tab | faces | what it is for |
-|---|---|---|
-| Block | 15 | the only set legal on a registration number |
-| Display | 15 | slab, western, nautical, neon, collegiate |
-| Script | 15 | brush, calligraphy, marker, handwritten |
+| he asked for | the site serves | how close | legal on a number |
+|---|---|---|---|
+| Arial Bold | Arimo Bold | metric-compatible Arial | yes |
+| Arial Black | Archivo Black | very close | yes |
+| Impact | Anton | the standard open Impact | yes |
+| OCR A Extended | Nova Mono | **loose** — OCR-ish mono, not OCR A | yes |
+| MS Gothic | Noto Sans Mono | **loose** — plain mono sans | yes |
+| Bodoni MT | Bodoni Moda | the same typeface | no |
+| Rockwell Extra Bold | Alfa Slab One | heavier than Rockwell XB | no |
+| Playbill | Rye | western slab, same spirit | no |
+| Snap ITC | Bowlby One | fat round, less extreme | no |
+| Stencil | Stardos Stencil | close | no |
 
-It was ten faces, all variations of the same condensed block — no real choice
-for a boat name. Three tabs beat one long grid, because the categories are the
-axis a customer is actually choosing on.
+#### Why not the fonts he actually named
 
-**Fifteen is a layout constant, not a taste call.** `FONT_COLS = 5` and
-`FONT_ROWS = 3` in `content.py`, so `FONTS_PER_CAT = 15`. Every tab is exactly
-three rows deep: no tab is taller than another, and the grid never pushes the
-wizard's Next button off the screen. It briefly did — Display ran 28 faces, six
-rows, and the panel grew past the viewport on the one step where the customer
-has to press Next to continue. `verify.py` fails the build if any category
-drifts off fifteen **or** if the CSS stops being five columns, because those two
-numbers only mean anything together.
+All ten originals ship with Windows or Office under a licence that covers
+**installing** them, not serving them as webfonts. And a visitor on a Mac or a
+phone does not have them at all — a face the browser cannot load falls back
+silently, so the customer would approve one thing and receive another. That is
+the single failure the preview and the proof exist to prevent.
 
-Below 420px the grid drops to three columns, which makes it five rows. That is
-deliberate: five columns on a 375px phone leaves a 65px chip, and a worst-case
-seven-character name needs 105px, so the specimen would be clipped — and the
-specimen is the entire point of the chip. All three tabs still match each other
-at every width; only the row count changes.
+So the rule is: **the site renders what Ryan cuts.** He installs these ten
+open faces, and the picker, the proof and the plotter agree. The two marked
+*loose* are the ones to revisit — OCR A and MS Gothic have no close open
+equivalent, and if the look matters they need a different choice.
 
-**Labels are descriptive, not foundry names.** "Brush Script", not the
-commercial face off a sign-shop chart. We are not licensing those faces, so we
-should not advertise them by name.
+#### The shape of the list
 
-**All 45 are free Google Fonts on purpose.** A plotter cuts any TTF, so the shop
-installs these and cuts *exactly* what the customer previewed. Substituting a
-lookalike for the preview would make it a lie.
+`FONT_COLS = 5`, ten faces, so the grid is two clean rows — and **the five
+block-legal faces are deliberately the first five**, so a registration-numbers
+order shows one tidy row with nothing hidden. `verify.py` fails the build if
+the count stops dividing into rows of five, if the legal faces stop being
+exactly the first row, or if any face loses its match note — that judgement is
+the whole reason the substitution is defensible.
 
-Each tab is **set in a face from its own category** — "Script" in Pacifico,
-"Display" in Alfa Slab One — which shows what the tab holds better than the
-caption under it did. Those two specimen faces are the only non-block families
-in the page head: their category stylesheet is not injected until the tab is
-opened, so a tab labelled in its own face would sit in a fallback until
-clicked, which is the whole point missed (`head_fonts_href()`).
+`block_legal` marks the five that satisfy 33 CFR 173.27's "plain vertical block
+characters". The other five are serif, stencilled or decorative: fine on a
+transom, not on a registration number, and removed from the grid entirely when
+the order is for numbers.
 
-Each chip renders the customer's own lettering (first 7 characters) in that face
-and **carries no name line** — the face is the thing being chosen, and they
-read faster as one dense grid. The name is not lost: it is on the chip as
-`title` and `aria-label` (a radio with no accessible name is a screen-reader
-dead end), and the label under the big preview always names the current pick
-(`3" Calligraphy · Black`). Script faces are set larger than the rest, because
-their much smaller x-height makes them read faint and near-identical at a
-shared point size.
+**Nothing is preselected.** The step will not advance until a face is picked,
+and a face that becomes illegal (picking a transom font then switching to
+numbers) is cleared rather than silently swapped — picking for the customer is
+how you cut a font nobody chose.
 
-The specimen **follows the active tab** — the number under Block, the name under Display and
-Script — because previewing a script face as "IA 3717" contradicts the hint
-saying that face goes on the name.
+#### What the 45-face version needed and this does not
 
-**Only the Block stylesheet is in the page head.** It holds the default face and
-is the only set a registration number may use. Display and script are injected
-by `order.py` the first time their tab is opened, which for most orders is
-never: ~135KB of webfont on the step instead of ~410KB. `loadedCats` makes the
-injection once-only — without it every tab click appends another `<link>`.
-Loading stays async (`media="print"` → `onload`, with a `<noscript>` fallback),
-so type never blocks first paint.
+Three category tabs, per-category lazy stylesheet loading, and a 15-per-tab
+budget all existed to make 45 faces survivable on a phone — 650KB of type if
+loaded at once. Ten faces is about 90KB, so it all loads with the page and the
+tabs are gone.
 
-`block_legal` marks the 15 faces satisfying 33 CFR 173.27's "plain vertical
-block characters":
-
-- **Registration numbers** — the Display and Script tabs are **removed**, not
-  greyed out, and the non-block chips leave the grid. No explanatory hint; an
-  order that cannot legally be placed isn't worth describing.
-- **"Both"** — all three tabs unlock, because the font applies to the *name*.
-  The big preview then renders the **number line in Block regardless**
-  (`numBlock` → `numFam` in `preview.py`), because showing script registration
-  numbers we would never cut would make the preview a lie. The hint says so
-  explicitly — it is the only font hint left, because it is the only case that
-  isn't self-evident.
-
-`worker/index.js` keeps its own `BLOCK_FONTS` copy and **coerces** a non-block
-font to Block on a registration-numbers order. It coerces rather than rejects:
-losing a real order to a stale cached page is worse than correcting the font and
-flagging it in the shop email, on a proof the customer approves anyway.
-
-That copy is the obvious thing to forget. It sat at five names while the site
-offered twenty legal ones, and it went stale again the moment the block set was
-trimmed to fifteen — so fifteen legal faces would have been silently
-rewritten to Block and reported to Ryan as *"customer asked for something
-illegal"* — wrong font cut, and the email blames the customer. `verify.py` now
-fails the build if the two lists drift in either direction.
-
-Three more gates came out of this change, each proven against a deliberate
-break:
-
-- **FONTS tuple shape.** Going 4-tuple → 5-tuple broke two unpack sites. Python
-  raised, `build.py` died, and the stale page already in `public/` still looked
-  fine — so the break shipped twice before a hand diff caught it. This is the
-  general hazard of a generator with a committed output directory: **a failed
-  build is invisible.** Never run `build.py` with its output piped to
-  `/dev/null`.
-- **Per-category `data-href`.** A tab that loses its href loads nothing and its
-  faces render in a fallback — the same silent-substitution problem the glyph
-  outlining work in `media/ogtype.py` was about.
-- **`window.BNS_*` cached before assignment.** `ORDER_JS` is
-  `preview + validate + color_js + order_js` concatenated, so anything in the
-  preview half that caches one of those globals at IIFE scope caches `{}`. No
-  error, the lookup just always misses. Read them at call time.
-
-The last one hid a real bug: the preview picked letter-spacing by regex-matching
-the label for `script|brush|formal|vibes`, which misses 16 of the 24 connected
-faces (Calligraphy, Wedding, Swash…) and tracked their joins apart. It is now
-driven off the real category via `BNS_FONTCAT`.
+`worker/index.js` keeps its own `BLOCK_FONTS` copy and coerces a non-block font
+to the first legal one on a registration-numbers order. It is the obvious thing
+to forget — it has now gone stale twice, and `verify.py` fails the build if the
+two lists drift in either direction. It caught this change too.
 
 ### Colours
 

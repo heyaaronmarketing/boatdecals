@@ -463,32 +463,12 @@ if "workers\\.dev" not in design and "workers.dev" not in design:
 import importlib, sys as _sys
 _sys.path.insert(0, "engine")
 _C = importlib.import_module("content")
-_cats = {k for k, _l, _h in _C.FONT_CATEGORIES}
 _shape = [f for f in _C.FONTS if len(f) != 5]
 if _shape:
-    # Report and stop here: every check below indexes f[4], so a shape failure
-    # would crash verify.py instead of printing something a human can act on.
     fails.append("%d FONTS entries are not 5-tuples (first: %r) - a build-time "
                  "unpack will raise and ship a stale page"
                  % (len(_shape), _shape[0][0]))
 else:
-    for _f in _C.FONTS:
-        if _f[4] not in _cats:
-            fails.append("font %r has category %r, which is not in "
-                         "FONT_CATEGORIES - its chip renders but no tab ever "
-                         "shows it" % (_f[0], _f[4]))
-    _lbls = [f[0] for f in _C.FONTS]
-    if len(set(_lbls)) != len(_lbls):
-        fails.append("two fonts share a label - `font` is submitted by label, "
-                     "so the order would be ambiguous")
-    for _k, _l, _h in _C.FONT_CATEGORIES:
-        _n = len(_C.fonts_in(_k))
-        if _n != _C.FONTS_PER_CAT:
-            fails.append("the %s tab holds %d faces, not %d - the grid is %d "
-                         "columns, so that is %.1f rows instead of %d and the "
-                         "tabs no longer match height"
-                         % (_k, _n, _C.FONTS_PER_CAT, _C.FONT_COLS,
-                            _n / _C.FONT_COLS, _C.FONT_ROWS))
     # Nothing is preselected on the font step: a default there is a choice
     # nobody made, and it is the one field the whole order is cut from.
     if ' checked' in design.split("class=fontgrid")[-1].split("</div>")[0]:
@@ -497,9 +477,38 @@ else:
     if "'Pick a font to carry on.'" not in design:
         fails.append("the font step no longer blocks on an empty choice, so "
                      "an order could be cut in a font nobody picked")
-    if not [f for f in _C.FONTS if f[4] == "block" and f[3]]:
-        fails.append("no block-legal face left in the block category - a "
-                     "registration number could not be ordered at all")
+    # Ryan cuts these ten. The grid is five across, so ten is two clean rows
+    # and the five block-legal ones are exactly the first row.
+    if len(_C.FONTS) % _C.FONT_COLS:
+        fails.append("%d faces does not divide into rows of %d, so the grid "
+                     "ends on a ragged row"
+                     % (len(_C.FONTS), _C.FONT_COLS))
+    _legal = [f for f in _C.FONTS if f[3]]
+    if len(_legal) != _C.FONT_COLS:
+        fails.append("%d block-legal faces, expected %d - they are meant to "
+                     "be exactly the first row, so a registration-numbers "
+                     "order shows one tidy row"
+                     % (len(_legal), _C.FONT_COLS))
+    if [f[0] for f in _C.FONTS[:_C.FONT_COLS]] != [f[0] for f in _legal]:
+        fails.append("the block-legal faces are no longer the first %d in the "
+                     "list, so the legal row has gaps in it" % _C.FONT_COLS)
+    # Every one of these is an OPEN stand-in for a licensed Microsoft face.
+    # Serving the originals would need a webfont licence we do not have, and
+    # a visitor without them installed would silently see something else -
+    # so the picker, the proof and the plotter would disagree.
+    for _f in _C.FONTS:
+        if not _f[4]:
+            fails.append("font %r has no note on how close its open stand-in "
+                         "is - that judgement is the whole reason the "
+                         "substitution is defensible" % _f[0])
+    _lbls = [f[0] for f in _C.FONTS]
+    if len(set(_lbls)) != len(_lbls):
+        fails.append("two fonts share a label - `font` is submitted by label, "
+                     "so the order would be ambiguous")
+    if not _legal:
+        fails.append("no block-legal face left - a registration number could "
+                     "not be ordered at all")
+
 # worker/index.js keeps its own copy of the block-legal faces, because it
 # cannot import Python. If a legal face is missing there the worker rewrites
 # the order to BLOCK_FONTS[0] and tells Ryan the customer asked for something
@@ -842,17 +851,10 @@ for _hit in _re.finditer(r"var \w+\s*=\s*window\.(BNS_\w+)\s*\|\|", design):
 # Only the block sheet is in the head; the other two are injected on first tab
 # open. If a category's tab loses its href those faces silently render in
 # Helvetica, which is exactly the bug the glyph-outlining work was about.
-for _key, _lbl, _h in _C.FONT_CATEGORIES:
-    if 'data-cat="%s" data-href="https://fonts.googleapis.com' % _key not in design:
-        fails.append("the %s tab has no data-href - its faces would never "
-                     "load and would render in a fallback face" % _key)
 if "grid-template-columns:repeat(%d,1fr)" % _C.FONT_COLS not in design:
-    fails.append("the font grid is no longer %d columns wide, so %d faces per "
-                 "tab stops being %d rows - update FONT_COLS and the per-tab "
-                 "count together" % (_C.FONT_COLS, _C.FONTS_PER_CAT, _C.FONT_ROWS))
-if "loadedCats[cat]) return" not in design:
-    fails.append("the font stylesheet loader lost its once-only guard - every "
-                 "tab click would append another <link>")
+    fails.append("the font grid is no longer %d columns wide, so %d faces "
+                 "stops being two clean rows"
+                 % (_C.FONT_COLS, len(_C.FONTS)))
 # The head must carry the block set plus one specimen face per other tab -
 # nothing more. Counting families beats grepping for a function name: it keeps
 # holding when the helper is renamed, and it is the number that actually costs
@@ -862,7 +864,7 @@ _head = _re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis'
 if not _head:
     fails.append("the order page head has no font stylesheet")
 elif not _shape:
-    _want = len([f for f in _C.FONTS if f[4] == "block"]) + len(_C.FONT_CATEGORIES) - 1
+    _want = len(_C.FONTS)
     _got = len(_re.findall(r"family=", _head.group(1)))
     if _got != _want:
         fails.append("the head font stylesheet carries %d families, expected %d "

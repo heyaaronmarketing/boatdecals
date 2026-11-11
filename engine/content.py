@@ -264,115 +264,71 @@ STATES = [
 # of them at once is not a thing to do to a phone. Someone cutting a
 # registration number only ever loads the block set.
 FONTS = [
-    # ---- block: legal on a registration number --------------------------
-    ("Block",         "'Archivo Black','Arial Black',sans-serif", "Archivo+Black", True, "block"),
-    ("Heavy Impact",  "'Anton',Impact,sans-serif", "Anton", True, "block"),
-    ("Condensed",     "'Oswald','Arial Narrow',sans-serif", "Oswald:wght@700", True, "block"),
-    ("Tall Block",    "'Bebas Neue','Arial Narrow',sans-serif", "Bebas+Neue", True, "block"),
-    ("Poster",        "'Staatliches',Impact,sans-serif", "Staatliches", True, "block"),
-    ("Narrow",        "'Fjalla One','Arial Narrow',sans-serif", "Fjalla+One", True, "block"),
-    ("Square",        "'Russo One',Impact,sans-serif", "Russo+One", True, "block"),
-    ("Rounded",       "'Titan One',Impact,sans-serif", "Titan+One", True, "block"),
-    ("Modern",        "'Montserrat',Helvetica,sans-serif", "Montserrat:wght@800", True, "block"),
-    ("Stencil",       "'Black Ops One',Impact,sans-serif", "Black+Ops+One", True, "block"),
-    ("Sport",         "'Teko',sans-serif", "Teko:wght@700", True, "block"),
-    ("Wide Block",    "'Chivo',sans-serif", "Chivo:wght@900", True, "block"),
-    ("Billboard",     "'Big Shoulders Display',sans-serif", "Big+Shoulders+Display:wght@800", True, "block"),
-    ("Varsity",       "'Alumni Sans',sans-serif", "Alumni+Sans:wght@800", True, "block"),
-    ("Orbit",         "'Orbitron',sans-serif", "Orbitron:wght@800", True, "block"),
-
-    # ---- display: names and lettering ------------------------------------
-    ("Slab",          "'Alfa Slab One',Georgia,serif", "Alfa+Slab+One", False, "display"),
-    ("Fat Serif",     "'Abril Fatface',Georgia,serif", "Abril+Fatface", False, "display"),
-    ("Classic Serif", "'Playfair Display',Georgia,serif", "Playfair+Display:wght@900", False, "display"),
-    ("Western",       "'Rye',Georgia,serif", "Rye", False, "display"),
-    ("Nautical",      "'Bungee',Impact,sans-serif", "Bungee", False, "display"),
-    ("Retro",         "'Righteous',Impact,sans-serif", "Righteous", False, "display"),
-    ("Speed",         "'Audiowide',Impact,sans-serif", "Audiowide", False, "display"),
-    ("Chunky",        "'Bowlby One',Impact,sans-serif", "Bowlby+One", False, "display"),
-    ("Circus",        "'Bevan',Georgia,serif", "Bevan", False, "display"),
-    ("Shadowed",      "'Bungee Shade',Impact,sans-serif", "Bungee+Shade", False, "display"),
-    ("Neon",          "'Monoton',Impact,sans-serif", "Monoton", False, "display"),
-    ("Racing",        "'Faster One',Impact,sans-serif", "Faster+One", False, "display"),
-    ("Cartoon",       "'Rammetto One',Impact,sans-serif", "Rammetto+One", False, "display"),
-    ("Typewriter",    "'Special Elite',Courier,monospace", "Special+Elite", False, "display"),
-    ("Collegiate",    "'Graduate',Georgia,serif", "Graduate", False, "display"),
-
-    # ---- script: names and lettering -------------------------------------
-    ("Brush Script",  "'Pacifico',cursive", "Pacifico", False, "script"),
-    ("Bold Script",   "'Lobster',cursive", "Lobster", False, "script"),
-    ("Casual Script", "'Yellowtail',cursive", "Yellowtail", False, "script"),
-    ("Flowing",       "'Dancing Script',cursive", "Dancing+Script:wght@700", False, "script"),
-    ("Formal Script", "'Great Vibes',cursive", "Great+Vibes", False, "script"),
-    ("Fine Script",   "'Sacramento',cursive", "Sacramento", False, "script"),
-    ("Signwriter",    "'Kaushan Script',cursive", "Kaushan+Script", False, "script"),
-    ("Playful",       "'Cookie',cursive", "Cookie", False, "script"),
-    ("Wedding",       "'Pinyon Script',cursive", "Pinyon+Script", False, "script"),
-    ("Calligraphy",   "'Alex Brush',cursive", "Alex+Brush", False, "script"),
-    ("Swash",         "'Mr Dafoe',cursive", "Mr+Dafoe", False, "script"),
-    ("Victorian",     "'Rochester',cursive", "Rochester", False, "script"),
-    ("Marker",        "'Permanent Marker',cursive", "Permanent+Marker", False, "script"),
-    ("Handwritten",   "'Caveat',cursive", "Caveat:wght@700", False, "script"),
-    ("Notebook",      "'Shadows Into Light',cursive", "Shadows+Into+Light", False, "script"),
+    # The ten faces Ryan cuts with, named as he names them.
+    #
+    # Every one is an OPEN equivalent, not the Microsoft original. That is not
+    # a shortcut - the originals ship with Windows and Office under a licence
+    # that covers installing them, not serving them as webfonts, and a visitor
+    # on a Mac or a phone does not have them at all. A face the browser cannot
+    # load falls back silently, so the customer would approve one thing and
+    # receive another, which is the single failure the preview and the proof
+    # exist to prevent.
+    #
+    # So the rule is: the site renders what Ryan cuts. He installs these ten,
+    # and preview, proof and plotter agree.
+    #
+    # `block` marks the five that satisfy 33 CFR 173.27's "plain vertical
+    # block characters". The other five are serif, stencilled or decorative -
+    # fine on a transom, not on a registration number.
+    #
+    # (label, css stack, Google spec, block_legal, match quality)
+    ("Arial Bold",          "'Arimo',Arial,Helvetica,sans-serif",
+     "Arimo:wght@700",            True,  "metric-compatible Arial"),
+    ("Arial Black",         "'Archivo Black','Arial Black',sans-serif",
+     "Archivo+Black",             True,  "very close"),
+    ("Impact",              "'Anton',Impact,sans-serif",
+     "Anton",                     True,  "the standard open Impact"),
+    ("OCR A Extended",      "'Nova Mono',monospace",
+     "Nova+Mono",                 True,  "loose - OCR-ish mono, not OCR A"),
+    ("MS Gothic",           "'Noto Sans Mono',monospace",
+     "Noto+Sans+Mono",            True,  "loose - plain mono sans"),
+    ("Bodoni MT",           "'Bodoni Moda',Didot,Georgia,serif",
+     "Bodoni+Moda:opsz@6..96",    False, "the same typeface"),
+    ("Rockwell Extra Bold", "'Alfa Slab One',Rockwell,Georgia,serif",
+     "Alfa+Slab+One",             False, "heavier than Rockwell XB"),
+    ("Playbill",            "'Rye',Playbill,Georgia,serif",
+     "Rye",                       False, "western slab, same spirit"),
+    ("Snap ITC",            "'Bowlby One','Snap ITC',sans-serif",
+     "Bowlby+One",                False, "fat round, less extreme"),
+    ("Stencil",             "'Stardos Stencil',Stencil,sans-serif",
+     "Stardos+Stencil:wght@700",  False, "close"),
 ]
+
 FONT_NAMES = [f[0] for f in FONTS]
-BLOCK_FONTS = [f[0] for f in FONTS if f[3]]
 
-FONT_CATEGORIES = [
-    ("block",   "Block", "Legal on a registration number"),
-    ("display", "Display", "Names and lettering"),
-    ("script",  "Script", "Names and lettering"),
-]
-
-
-def fonts_in(cat):
-    return [f for f in FONTS if f[4] == cat]
-
-
-# The font grid is 5 columns wide from 420px up, and every tab is meant to be
-# exactly FONT_ROWS deep so no category is taller than another and none of them
-# push the wizard's Next button off the screen. Display used to run 28 faces -
-# six rows - which did exactly that. 5 x 3 = 15 per category is the budget.
+# Five across. Ten faces is two tidy rows, and the five block-legal ones are
+# Five across. Ten faces is two tidy rows, and the five block-legal ones are
+# exactly the first row - so a registration-numbers order shows one row with
+# nothing hidden behind a tab.
 FONT_COLS = 5
-FONT_ROWS = 3
-FONTS_PER_CAT = FONT_COLS * FONT_ROWS
 
 
-def tab_face(cat):
-    """The face a category tab renders its own name in."""
-    f = fonts_in(cat)
-    return f[0] if f else None
+def google_fonts_href():
+    """All ten faces in one stylesheet.
+
+    About 90KB. The 45-face version had to split by category and load them
+    lazily because 650KB of type on a phone was indefensible; ten is small
+    enough to arrive with the page, so the picker never shows a fallback.
+
+    display=swap keeps the text visible while they land.
+    """
+    fams = "&".join("family=" + f[2] for f in FONTS)
+    return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
 
 
 def head_fonts_href():
-    """Block, plus one specimen face per other tab.
+    return google_fonts_href()
 
-    The display and script stylesheets are not injected until their tab is
-    opened, so a tab labelled in its own face would sit in a fallback until
-    clicked - which is the whole point missed. Two extra faces (~18KB) buys
-    all three tabs reading correctly on arrival.
-    """
-    src = fonts_in("block") + [tab_face(c) for c, _l, _h in FONT_CATEGORIES
-                               if c != "block"]
-    fams = "&".join("family=" + f[2] for f in src)
-    return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
-
-
-def google_fonts_href(cat=None):
-    """One stylesheet per CATEGORY, not one for all 72.
-
-    A face costs roughly 9KB and there are 72 of them. Asking a phone for
-    650KB of type the moment it opens the order form would be indefensible,
-    so each category is a separate request and only `block` is loaded up
-    front - it holds the default face and is the only set a registration
-    number may legally use. Display and script load when their tab is first
-    opened, which for most orders is never.
-
-    display=swap keeps the text visible while any of them arrive.
-    """
-    src = FONTS if cat is None else fonts_in(cat)
-    fams = "&".join("family=" + f[2] for f in src)
-    return "https://fonts.googleapis.com/css2?%s&display=swap" % fams
 
 # ------------------------------------------------- vessel number prefixes
 # The two-letter prefix a state issues on a registration number. Established

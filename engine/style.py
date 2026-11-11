@@ -909,21 +909,6 @@ border-radius:10px;overflow:hidden;background:#fff}
 .cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
 """
 
-# ---- font category tabs -------------------------------------------------
-CSS += """
-.fonttabs{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
-.fonttabs[hidden]{display:none}
-/* The label is set in a face from its own category (inline font-family from
-   order.py), so the tab shows what it holds instead of describing it. */
-.fonttab{flex:1;min-width:92px;text-align:center;cursor:pointer;
-background:#fff;border:1.5px solid var(--line);border-radius:10px;
-padding:9px 9px 10px;font-size:19px;font-weight:400;color:var(--ink);
-line-height:1.15;transition:border-color .12s,background .12s}
-.fonttab:hover{border-color:var(--nav2)}
-.fonttab.on{background:var(--nav);border-color:var(--nav);color:#fff}
-.fonttab.on em{color:#bcd9e8}
-.fonttab[hidden]{display:none}
-"""
 
 # ---- the proof page -----------------------------------------------------
 CSS += """
@@ -989,4 +974,36 @@ max-height:240px;overflow:auto}
 padding:13px 15px;font-weight:700;color:#1f5c37}
 .fcerr{background:#fdeceb;border:1px solid #f2c4c0;border-radius:9px;
 padding:13px 15px;font-weight:700;color:#9d2b24}
+"""
+
+# ---- the font checklist -------------------------------------------------
+CSS += """
+.fcgroup{margin-top:24px}
+.fchead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+flex-wrap:wrap;border-bottom:1.5px solid var(--line);padding-bottom:9px}
+.fchead b{display:block;font-size:17px;font-weight:800;color:var(--ink)}
+.fchead>div>span{display:block;font-size:12.4px;color:var(--mut);margin-top:2px}
+.fcactions{display:flex;align-items:center;gap:8px}
+.fccount{font-size:12.6px;font-weight:800;color:var(--mut);
+background:#eef3f6;border-radius:99px;padding:3px 10px}
+.fccount.on{background:#e4f3ea;color:#1f5c37}
+.fccount.over{background:#fdeceb;color:#9d2b24}
+.fcbtn{font:inherit;font-size:12.6px;font-weight:700;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:7px;padding:4px 10px;
+color:var(--nav2)}
+.fcbtn:hover{border-color:var(--nav2)}
+.fcrow{padding:0}
+.fcrow label{display:flex;align-items:center;gap:11px;cursor:pointer;
+padding:10px 13px;width:100%}
+.fcrow input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--nav2)}
+.fcname{flex:1;min-width:0}
+.fcname b{display:block;font-size:14.6px;font-weight:800;color:var(--ink)}
+.fcname em{display:block;font-style:normal;font-size:12.2px;color:var(--mut);
+margin-top:1px}
+.fcstat{flex:0 0 auto;font-size:11.4px;font-weight:700;color:#9d6a24;
+background:#fdf4e6;border-radius:99px;padding:3px 9px;white-space:nowrap}
+.fcstat.yes{color:#1f5c37;background:#e4f3ea}
+.fcwarn{margin-top:18px;background:#fdf4e6;border:1px solid #f0dcbb;
+border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
+.fcwarn[hidden]{display:none}
 """

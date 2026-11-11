@@ -1061,19 +1061,6 @@ border-radius:10px;overflow:hidden;background:#fff}
 .cardcell span{display:block;padding:7px 10px;font-size:12px;color:var(--mut)}
 .cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
 
-.fonttabs{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
-.fonttabs[hidden]{display:none}
-/* The label is set in a face from its own category (inline font-family from
-   order.py), so the tab shows what it holds instead of describing it. */
-.fonttab{flex:1;min-width:92px;text-align:center;cursor:pointer;
-background:#fff;border:1.5px solid var(--line);border-radius:10px;
-padding:9px 9px 10px;font-size:19px;font-weight:400;color:var(--ink);
-line-height:1.15;transition:border-color .12s,background .12s}
-.fonttab:hover{border-color:var(--nav2)}
-.fonttab.on{background:var(--nav);border-color:var(--nav);color:#fff}
-.fonttab.on em{color:#bcd9e8}
-.fonttab[hidden]{display:none}
-
 .proofbox{background:#fff;border:1px solid var(--line);border-radius:14px;
 padding:26px 22px 28px;box-shadow:0 10px 30px rgba(4,26,38,.07)}
 .proofbox h1{font-size:26px;line-height:1.16;margin-bottom:8px}
@@ -1130,10 +1117,39 @@ max-height:240px;overflow:auto}
 padding:13px 15px;font-weight:700;color:#1f5c37}
 .fcerr{background:#fdeceb;border:1px solid #f2c4c0;border-radius:9px;
 padding:13px 15px;font-weight:700;color:#9d2b24}
+
+.fcgroup{margin-top:24px}
+.fchead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+flex-wrap:wrap;border-bottom:1.5px solid var(--line);padding-bottom:9px}
+.fchead b{display:block;font-size:17px;font-weight:800;color:var(--ink)}
+.fchead>div>span{display:block;font-size:12.4px;color:var(--mut);margin-top:2px}
+.fcactions{display:flex;align-items:center;gap:8px}
+.fccount{font-size:12.6px;font-weight:800;color:var(--mut);
+background:#eef3f6;border-radius:99px;padding:3px 10px}
+.fccount.on{background:#e4f3ea;color:#1f5c37}
+.fccount.over{background:#fdeceb;color:#9d2b24}
+.fcbtn{font:inherit;font-size:12.6px;font-weight:700;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:7px;padding:4px 10px;
+color:var(--nav2)}
+.fcbtn:hover{border-color:var(--nav2)}
+.fcrow{padding:0}
+.fcrow label{display:flex;align-items:center;gap:11px;cursor:pointer;
+padding:10px 13px;width:100%}
+.fcrow input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--nav2)}
+.fcname{flex:1;min-width:0}
+.fcname b{display:block;font-size:14.6px;font-weight:800;color:var(--ink)}
+.fcname em{display:block;font-style:normal;font-size:12.2px;color:var(--mut);
+margin-top:1px}
+.fcstat{flex:0 0 auto;font-size:11.4px;font-weight:700;color:#9d6a24;
+background:#fdf4e6;border-radius:99px;padding:3px 9px;white-space:nowrap}
+.fcstat.yes{color:#1f5c37;background:#e4f3ea}
+.fcwarn{margin-top:18px;background:#fdf4e6;border:1px solid #f0dcbb;
+border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
+.fcwarn[hidden]{display:none}
 </style>
 <script type="application/ld+json">null</script>
 </head><body>
-<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping proof in 12 hours</span><span>Cut in Evansdale, IA<span class=topcta> &middot; <a href="/design/" style="color:#fff">Start your order</a></span></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><main id=main><section style="padding:30px 0 46px"><div class=w style="max-width:680px"><h1 style="font-size:28px;margin-bottom:10px">What fonts are on this computer?</h1><p class=lede>Run this on the machine that drives the plotter. It checks which of the 45 faces the website offers are already installed here, so we only install what is actually missing.</p><div class=fcnote><b>What this sends.</b> Font names, your browser version and whether this is Windows or a Mac. Nothing else &mdash; no files, no documents, nothing about the rest of the machine. It is only sent when you press the button at the bottom, and it goes to Aaron.</div><div id=fcrun><button type=button class="btn lg" id=fcgo>Check this computer</button></div><div id=fcout></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat letters</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Number My Boat</strong><br>Cut and shipped from Evansdale, Iowa<br><a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a> &middot; Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Number My Boat. Cut by hand in Evansdale, Iowa and shipped to all 50 states.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><script>(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><script>window.NMB_FAMS=[{"label":"Block","family":"Archivo Black","weight":"400","cat":"block"},{"label":"Heavy Impact","family":"Anton","weight":"400","cat":"block"},{"label":"Condensed","family":"Oswald","weight":"700","cat":"block"},{"label":"Tall Block","family":"Bebas Neue","weight":"400","cat":"block"},{"label":"Poster","family":"Staatliches","weight":"400","cat":"block"},{"label":"Narrow","family":"Fjalla One","weight":"400","cat":"block"},{"label":"Square","family":"Russo One","weight":"400","cat":"block"},{"label":"Rounded","family":"Titan One","weight":"400","cat":"block"},{"label":"Modern","family":"Montserrat","weight":"800","cat":"block"},{"label":"Stencil","family":"Black Ops One","weight":"400","cat":"block"},{"label":"Sport","family":"Teko","weight":"700","cat":"block"},{"label":"Wide Block","family":"Chivo","weight":"900","cat":"block"},{"label":"Billboard","family":"Big Shoulders Display","weight":"800","cat":"block"},{"label":"Varsity","family":"Alumni Sans","weight":"800","cat":"block"},{"label":"Orbit","family":"Orbitron","weight":"800","cat":"block"},{"label":"Slab","family":"Alfa Slab One","weight":"400","cat":"display"},{"label":"Fat Serif","family":"Abril Fatface","weight":"400","cat":"display"},{"label":"Classic Serif","family":"Playfair Display","weight":"900","cat":"display"},{"label":"Western","family":"Rye","weight":"400","cat":"display"},{"label":"Nautical","family":"Bungee","weight":"400","cat":"display"},{"label":"Retro","family":"Righteous","weight":"400","cat":"display"},{"label":"Speed","family":"Audiowide","weight":"400","cat":"display"},{"label":"Chunky","family":"Bowlby One","weight":"400","cat":"display"},{"label":"Circus","family":"Bevan","weight":"400","cat":"display"},{"label":"Shadowed","family":"Bungee Shade","weight":"400","cat":"display"},{"label":"Neon","family":"Monoton","weight":"400","cat":"display"},{"label":"Racing","family":"Faster One","weight":"400","cat":"display"},{"label":"Cartoon","family":"Rammetto One","weight":"400","cat":"display"},{"label":"Typewriter","family":"Special Elite","weight":"400","cat":"display"},{"label":"Collegiate","family":"Graduate","weight":"400","cat":"display"},{"label":"Brush Script","family":"Pacifico","weight":"400","cat":"script"},{"label":"Bold Script","family":"Lobster","weight":"400","cat":"script"},{"label":"Casual Script","family":"Yellowtail","weight":"400","cat":"script"},{"label":"Flowing","family":"Dancing Script","weight":"700","cat":"script"},{"label":"Formal Script","family":"Great Vibes","weight":"400","cat":"script"},{"label":"Fine Script","family":"Sacramento","weight":"400","cat":"script"},{"label":"Signwriter","family":"Kaushan Script","weight":"400","cat":"script"},{"label":"Playful","family":"Cookie","weight":"400","cat":"script"},{"label":"Wedding","family":"Pinyon Script","weight":"400","cat":"script"},{"label":"Calligraphy","family":"Alex Brush","weight":"400","cat":"script"},{"label":"Swash","family":"Mr Dafoe","weight":"400","cat":"script"},{"label":"Victorian","family":"Rochester","weight":"400","cat":"script"},{"label":"Marker","family":"Permanent Marker","weight":"400","cat":"script"},{"label":"Handwritten","family":"Caveat","weight":"700","cat":"script"},{"label":"Notebook","family":"Shadows Into Light","weight":"400","cat":"script"}];
+<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping proof in 12 hours</span><span>Cut in Evansdale, IA<span class=topcta> &middot; <a href="/design/" style="color:#fff">Start your order</a></span></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><main id=main><section style="padding:30px 0 46px"><div class=w style="max-width:680px"><h1 style="font-size:28px;margin-bottom:10px">What fonts are on this computer?</h1><p class=lede>Run this on the machine that drives the plotter. It checks which of the 10 faces the website offers are already installed here, so we only install what is actually missing.</p><div class=fcnote><b>What this sends.</b> Font names, your browser version and whether this is Windows or a Mac. Nothing else &mdash; no files, no documents, nothing about the rest of the machine. It is only sent when you press the button at the bottom, and it goes to Aaron.</div><div id=fcrun><button type=button class="btn lg" id=fcgo>Check this computer</button></div><div id=fcout></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat letters</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Number My Boat</strong><br>Cut and shipped from Evansdale, Iowa<br><a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a> &middot; Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Number My Boat. Cut by hand in Evansdale, Iowa and shipped to all 50 states.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><script>(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><script>window.NMB_FAMS=[{"label":"Arial Bold","family":"Arimo","weight":"700","cat":"block"},{"label":"Arial Black","family":"Archivo Black","weight":"400","cat":"block"},{"label":"Impact","family":"Anton","weight":"400","cat":"block"},{"label":"OCR A Extended","family":"Nova Mono","weight":"400","cat":"block"},{"label":"MS Gothic","family":"Noto Sans Mono","weight":"400","cat":"block"},{"label":"Bodoni MT","family":"Bodoni Moda","weight":"400","cat":"display"},{"label":"Rockwell Extra Bold","family":"Alfa Slab One","weight":"400","cat":"display"},{"label":"Playbill","family":"Rye","weight":"400","cat":"display"},{"label":"Snap ITC","family":"Bowlby One","weight":"400","cat":"display"},{"label":"Stencil","family":"Stardos Stencil","weight":"700","cat":"display"}];window.NMB_TARGET=0;
 (function(){
   var go=document.getElementById('fcgo'), out=document.getElementById('fcout');
   if(!go) return;
@@ -1157,47 +1173,105 @@ padding:13px 15px;font-weight:700;color:#9d2b24}
 
   var report=null;
 
+  var CATS=[['block','Block','legal on a registration number'],
+            ['display','Display','names and lettering'],
+            ['script','Script','names and lettering']];
+  var TARGET=window.NMB_TARGET||15;
+
+  // Counts live against the grid's budget. The website shows each category as
+  // three rows of five, so a category that is not exactly TARGET cannot be
+  // built - better he sees that here than Aaron finds out at build time.
+  function tally(){
+    var ok=true;
+    CATS.forEach(function(c){
+      var n=out.querySelectorAll('.fcpick[data-cat="'+c[0]+'"]:checked').length;
+      var el=document.getElementById('fccount-'+c[0]);
+      if(!el) return;
+      el.textContent=n+' of '+TARGET;
+      el.className='fccount'+(n===TARGET?' on':(n>TARGET?' over':''));
+      if(n!==TARGET) ok=false;
+    });
+    var w=document.getElementById('fcwarn');
+    if(w) w.hidden=ok;
+  }
+
   function render(have, missing, sys, method){
-    report={have:have, missing:missing, all_sys:sys, method:method,
-            ua:navigator.userAgent,
-            platform:(navigator.userAgentData&&navigator.userAgentData.platform)
-                     ||navigator.platform||''};
-    var h='<h2 style="margin-top:26px">'+have.length+' of '+(have.length+missing.length)
-         +' already installed</h2>';
-    if(missing.length){
-      h+='<p class=lede>These '+missing.length+' need installing:</p><ul class=fclist>';
-      missing.forEach(function(f){
-        h+='<li><b>'+esc(f.family)+'</b>'+(f.weight!=='400'?' '+esc(f.weight):'')
-          +'<span>site calls it &ldquo;'+esc(f.label)+'&rdquo;</span></li>';
+    var haveSet={};
+    have.forEach(function(f){ haveSet[f.label]=1; });
+    var all=window.NMB_FAMS;
+
+    var h='<h2 style="margin-top:26px">'+have.length+' of '+all.length
+         +' already installed</h2>'
+       +'<p class=lede>Tick the faces you want the website to offer. The ones '
+       +'already on this machine are ticked for you - untick any you do not '
+       +'want to cut, and tick a missing one if you are happy to install it.</p>';
+
+    CATS.forEach(function(c){
+      var rows=all.filter(function(f){ return f.cat===c[0]; });
+      h+='<div class=fcgroup><div class=fchead><div><b>'+esc(c[1])+'</b>'
+        +'<span>'+esc(c[2])+'</span></div>'
+        +'<div class=fcactions><span class=fccount id=fccount-'+c[0]+'></span>'
+        +'<button type=button class=fcbtn data-cat="'+c[0]+'" data-on="1">All</button>'
+        +'<button type=button class=fcbtn data-cat="'+c[0]+'" data-on="">None</button>'
+        +'</div></div><ul class=fclist>';
+      rows.forEach(function(f){
+        var got=!!haveSet[f.label];
+        h+='<li class=fcrow><label><input type=checkbox class=fcpick'
+          +' data-cat="'+esc(f.cat)+'" data-label="'+esc(f.label)+'"'
+          +' data-family="'+esc(f.family)+'" data-weight="'+esc(f.weight)+'"'
+          +(got?' checked':'')+'>'
+          +'<span class=fcname><b>'+esc(f.label)+'</b>'
+          +'<em>'+esc(f.family)+(f.weight!=='400'?' '+esc(f.weight):'')+'</em></span>'
+          +'<span class="fcstat'+(got?' yes':'')+'">'
+          +(got?'installed':'needs installing')+'</span></label></li>';
       });
-      h+='</ul>';
-    } else {
-      h+='<p class=lede>Every face the site offers is already on this machine.</p>';
-    }
-    if(have.length){
-      h+='<details class=fcdet><summary>'+have.length+' already here</summary>'
-        +'<ul class=fclist>';
-      have.forEach(function(f){
-        h+='<li><b>'+esc(f.family)+'</b><span>&ldquo;'+esc(f.label)+'&rdquo;</span></li>';
-      });
-      h+='</ul></details>';
-    }
+      h+='</ul></div>';
+    });
+
+    h+='<p class=fcwarn id=fcwarn hidden>The website shows five across and '
+      +'three down in each group, so it needs exactly '+TARGET+' in each. '
+      +'Send it anyway if you like - Aaron will sort the numbers out.</p>';
+
     if(sys&&sys.length){
-      h+='<details class=fcdet><summary>Everything else installed ('+sys.length
-        +')</summary><div class=fcall>'+esc(sys.join(', '))+'</div></details>';
+      h+='<details class=fcdet><summary>Everything else installed on this '
+        +'computer ('+sys.length+')</summary><div class=fcall>'
+        +esc(sys.join(', '))+'</div></details>';
     }
     h+='<div class=fcsend><button type=button class="btn lg" id=fcsend>'
       +'Send this to Aaron</button>'
       +'<p class=hint>Nothing has been sent yet.</p></div>';
     out.innerHTML=h;
+
+    out.addEventListener('change', function(ev){
+      if(ev.target.classList.contains('fcpick')) tally();
+    });
+    [].forEach.call(out.querySelectorAll('.fcbtn'), function(b){
+      b.addEventListener('click', function(){
+        var on=!!b.dataset.on;
+        [].forEach.call(out.querySelectorAll('.fcpick[data-cat="'+b.dataset.cat+'"]'),
+          function(i){ i.checked=on; });
+        tally();
+      });
+    });
+    tally();
+
     document.getElementById('fcsend').addEventListener('click', function(){
-      var b=this; b.disabled=true; b.textContent='Sending…';
+      var b=this; b.disabled=true; b.textContent='Sending...';
+      var picks=[].map.call(out.querySelectorAll('.fcpick:checked'), function(i){
+        return {label:i.dataset.label, family:i.dataset.family,
+                weight:i.dataset.weight, cat:i.dataset.cat};
+      });
+      var body={have:have, missing:missing, all_sys:sys, method:method,
+                picks:picks, ua:navigator.userAgent,
+                platform:(navigator.userAgentData&&navigator.userAgentData.platform)
+                         ||navigator.platform||''};
       fetch('/api/fonts',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(report)})
+        body:JSON.stringify(body)})
         .then(function(r){return r.json();})
         .then(function(j){
           b.parentNode.innerHTML = j&&j.ok
-            ? '<p class=fcok>Sent. Aaron has the list.</p>'
+            ? '<p class=fcok>Sent - '+picks.length+' faces picked. Aaron has '
+              +'the list.</p>'
             : '<p class=fcerr>That did not send. Screenshot this page instead.</p>';
         }).catch(function(){
           b.parentNode.innerHTML='<p class=fcerr>That did not send. Screenshot '

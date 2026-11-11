@@ -60,5 +60,6 @@ CREATE TABLE IF NOT EXISTS font_reports (
   method   TEXT,
   have     TEXT,
   missing  TEXT,
-  all_sys  TEXT
+  all_sys  TEXT,
+  picks    TEXT   -- "block:Block=Archivo Black | ...", the faces he wants offered
 );

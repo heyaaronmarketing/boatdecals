@@ -43,9 +43,8 @@ const BASE_MIN = 19, BASE_MAX = 200;
 // build if the two drift. A face missing here is silently rewritten to
 // BLOCK_FONTS[0] and reported to Ryan as an illegal request, so a legal
 // face left off this list gets the wrong font cut.
-const BLOCK_FONTS = ["Block", "Heavy Impact", "Condensed", "Tall Block",
-  "Poster", "Narrow", "Square", "Rounded", "Modern", "Stencil", "Sport",
-  "Wide Block", "Billboard", "Varsity", "Orbit"];
+const BLOCK_FONTS = ["Arial Bold", "Arial Black", "Impact",
+  "OCR A Extended", "MS Gothic"];
 
 function priceOf(d) {
   let n = BASE[d.kind] ?? 19;
@@ -435,7 +434,7 @@ export default {
         const k = env.PROOF_RUN_KEY;
         if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
         const r = await env.DB.prepare(
-          `SELECT id,ts,who,platform,method,have,missing,ua FROM font_reports
+          `SELECT id,ts,who,platform,method,have,missing,picks,ua FROM font_reports
             ORDER BY id DESC LIMIT 10`).all();
         return json({ ok: true, reports: r.results || [] });
       }
@@ -447,11 +446,16 @@ export default {
         .filter(Boolean).slice(0, 2000).join(", ").slice(0, 60000);
       if (!env.DB) return json({ ok: false, error: "no db" }, 500);
       await env.DB.prepare(
-        `INSERT INTO font_reports (ts,who,ua,platform,method,have,missing,all_sys)
-         VALUES (?,?,?,?,?,?,?,?)`
+        `INSERT INTO font_reports (ts,who,ua,platform,method,have,missing,all_sys,picks)
+         VALUES (?,?,?,?,?,?,?,?,?)`
       ).bind(new Date().toISOString(), str(d.who, 80), str(d.ua, 300),
              str(d.platform, 60), str(d.method, 40),
-             names(d.have), names(d.missing), names(d.all_sys)).run();
+             names(d.have), names(d.missing), names(d.all_sys),
+             // The picks keep their category, because which group a face
+             // lands in is the whole point of the count he was shown.
+             (Array.isArray(d.picks) ? d.picks : []).slice(0, 300)
+               .map((f) => `${f.cat || "?"}:${f.label || ""}=${f.family || ""}`)
+               .join(" | ").slice(0, 20000)).run();
       return json({ ok: true });
     }
     if (url.pathname === "/api/approve") {

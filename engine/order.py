@@ -23,7 +23,7 @@ Price is computed here for instant feedback and RE-COMPUTED in worker/index.js,
 which is the authority. Never trust a posted total.
 """
 from content import (PRICE, FONTS, COLORS, ORDER_COLORS, STATES, UPGRADES,
-                     FONT_CATEGORIES, google_fonts_href, tab_face)
+                     google_fonts_href)
 import preview as PV
 
 # (inches, price add, label). The old fourth field held a one-word pitch
@@ -91,23 +91,15 @@ def form():
     # Each chip renders the customer's own lettering in that face, so the
     # choice is made on the thing itself rather than on a font name.
     fonts = "".join(
-        '<label class=fontchip data-block="%d" data-cat="%s" title="%s">'
+        '<label class=fontchip data-block="%d" title="%s">'
         '<input type=radio name=font value="%s"%s aria-label="%s">'
         '<span class=fontbox><span class=fontdemo style="font-family:%s">%s</span>'
         '</span></label>'
-        % (1 if block else 0, cat, lbl, lbl, "", lbl,
+        % (1 if block else 0, lbl, lbl, "", lbl,
            css.replace('"', "&quot;"), "Abc")
-        for i, (lbl, css, _g, block, cat) in enumerate(FONTS))
+        for i, (lbl, css, _g, block, _match) in enumerate(FONTS))
     # Tabs, so 72 faces read as three manageable sets rather than one wall -
     # and so only the set you are looking at has to download.
-    # Each tab is set in a face from its own category, so "Script" reads as
-    # script. That says what the tab holds better than a caption under it did.
-    fonttabs = "".join(
-        '<button type=button class="fonttab%s" data-cat="%s" data-href="%s" '
-        'style="font-family:%s">%s</button>'
-        % (" on" if i == 0 else "", key, google_fonts_href(key),
-           tab_face(key)[1].replace('"', "&quot;"), label)
-        for i, (key, label, _hint) in enumerate(FONT_CATEGORIES))
     heights = "".join(
         '<label class=opt><input type=radio name=height value="%d" data-add="%d"%s>'
         '<span class=optbox>%s</span>'
@@ -178,7 +170,6 @@ __VIEWS__
   <!-- 4 - font ------------------------------------------------------- -->
   <section class=step data-step="4" data-when="">
     <h2>Pick a font</h2>
-    <div class=fonttabs id=fonttabs>""" + fonttabs + """</div>
     <div class=fontgrid id=fontgrid>""" + fonts + """</div>
     <div class=err id=e4 role=alert></div>
     <div class=hint id=fonthint></div>
@@ -252,12 +243,14 @@ def color_js():
     cols = ",".join('"%s":["%s",%d]' % (n, h, l) for n, h, l in COLORS)
     prefixes = ",".join('"%s":"%s"' % (st["ab"], st["name"]) for st in STATES)
     fontcss = ",".join('"%s":"%s"' % (lbl, css.replace('"', "'"))
-                       for lbl, css, _g, _b, _cat in FONTS)
-    # The preview used to sniff the label for "script"/"brush" to decide
-    # letter-spacing, which missed 16 of the 24 connected faces (Calligraphy,
-    # Wedding, Swash...) and tracked their joins apart. Ship the real category.
-    fontcat = ",".join('"%s":"%s"' % (lbl, cat)
-                       for lbl, _c, _g, _b, cat in FONTS)
+                       for lbl, css, _g, _b, _m in FONTS)
+    # preview.py keys letter-spacing off this. It used to sniff the label for
+    # "script"/"brush", which missed most of the connected faces and tracked
+    # their joins apart. None of the current ten are connected scripts, so
+    # every one tracks like a block face - but the map stays, because the day
+    # a script is added the tracking has to follow it without a code change.
+    fontcat = ",".join('"%s":"%s"' % (lbl, "block" if block else "display")
+                       for lbl, _c, _g, block, _m in FONTS)
     return ("window.BNS_COL={%s};window.BNS_PREFIX={%s};window.BNS_FONTCSS={%s};"
             "window.BNS_FONTCAT={%s};"
             % (cols, prefixes, fontcss, fontcat))
@@ -423,42 +416,17 @@ JS = r"""
     return !c || c.closest('.fontchip').dataset.block==='1';
   }
 
-  // Each category's stylesheet is injected the first time its tab is opened.
-  // Block ships in the page head because it holds the default face and is the
-  // only set a registration number may use; display and script are 28 and 24
-  // faces that most orders never look at.
-  var fontCat='block', loadedCats={block:1};
-  function loadCat(cat, href){
-    if(loadedCats[cat]) return;
-    loadedCats[cat]=1;
-    var l=document.createElement('link');
-    l.rel='stylesheet'; l.href=href; document.head.appendChild(l);
-  }
-
-  function syncFontTabs(){
-    // On a registration number only block is lawful, so the other two tabs go
-    // away rather than sitting there greyed out.
-    var lock = isNum() && kind()!=='Both';
-    var tabs=W.querySelectorAll('.fonttab');
-    if(lock && fontCat!=='block') fontCat='block';
-    tabs.forEach(function(t){
-      t.hidden = lock && t.dataset.cat!=='block';
-      t.classList.toggle('on', t.dataset.cat===fontCat);
-    });
-    $('fonttabs').hidden = lock;
-  }
 
   function syncFonts(){
     // Registration numbers must be plain vertical block characters, so the
     // non-block faces are removed from the grid entirely - an order that
     // cannot legally be placed is not worth showing.
     var lock = isNum() && kind()!=='Both';
-    syncFontTabs();
     var chips=W.querySelectorAll('.fontchip'), moved=false;
     for(var i=0;i<chips.length;i++){
       var c=chips[i], inp=c.querySelector('input'),
           legal = !lock || c.dataset.block==='1',
-          shown = legal && c.dataset.cat===fontCat;
+          shown = legal;
       inp.disabled=!legal;
       // `off` hides it; an illegal face stays unchecked even if its tab is up
       c.classList.toggle('off', !shown);
@@ -483,7 +451,7 @@ JS = r"""
     // script face previews as "IA 3717" while the hint says it goes on the name.
     var num=isNum() && ($('f_text').value.trim() || PLACEHOLDER),
         nm=hasName() && $('f_name2').value.trim();
-    var demo=(fontCat==='block' ? (num || nm) : (nm || num)) || 'Abc';
+    var demo=(num || nm) || 'Abc';
     if(demo.length>7) demo=demo.slice(0,7).trim();
     var d=W.querySelectorAll('.fontdemo');
     for(var j=0;j<d.length;j++) d[j].textContent=demo;
@@ -784,14 +752,6 @@ JS = r"""
 
   // If Stripe.js never loads (blocked, offline), degrade rather than hang.
   setTimeout(function(){ if(isLast() && !mounted) degrade(); },4000);
-  W.querySelectorAll('.fonttab').forEach(function(t){
-    t.addEventListener('click', function(){
-      fontCat = t.dataset.cat;
-      loadCat(fontCat, t.dataset.href);
-      render();
-    });
-  });
-
   // ---- the phone app layer ----------------------------------------------
   // A full-screen card deck over the page - the whole phone experience, not
   // a hero element. The page underneath is untouched and in normal flow, so
