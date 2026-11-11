@@ -316,7 +316,7 @@ def og_image(path):
     # Internal and transactional pages borrow the home card. /proof/ is a
     # private page reached only from an email link; rendering it a share card
     # would be a card for something nobody can open.
-    if slug.startswith("_") or slug == "proof":
+    if slug.startswith("_") or slug in ("proof", "fonts-check"):
         slug, path = "home", "/"
     return "/assets/og/%s-%s%s" % (slug, OG_VERSION, _og_ext(path))
 
@@ -1023,6 +1023,155 @@ def build_proof():
                  "/proof/", None, main, noindex=True, sticky_bar=False,
                  js=O.color_js() + js)
     out = OUT / "proof" / "index.html"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(body, encoding="utf-8")
+
+
+def build_fonts_check():
+    """A page Ryan opens on the cutter PC to report what is installed.
+
+    Two ways of finding out, because neither covers everything:
+
+    * `queryLocalFonts()` is the real API for this and returns the whole
+      system list, but it is Chrome and Edge on desktop only, and it puts up
+      a permission prompt he has to accept.
+    * A canvas metric check works in any browser but can only answer "is THIS
+      family here", so it is run against the site's own faces. That happens
+      to be the actual question, so it is the one that always runs.
+
+    Deliberately loads no web fonts. A face pulled in by the page would
+    measure as installed when it is not, and the whole report would be wrong
+    in the direction that costs a mis-cut.
+    """
+    fams = []
+    seen = set()
+    for label, css, spec, block, cat in FONTS:
+        fam = spec.split(":")[0].replace("+", " ")
+        wght = spec.split("wght@")[1] if "wght@" in spec else "400"
+        if fam in seen:
+            continue
+        seen.add(fam)
+        fams.append({"label": label, "family": fam, "weight": wght, "cat": cat})
+
+    main = (
+        '<section style="padding:30px 0 46px"><div class=w style="max-width:680px">'
+        '<h1 style="font-size:28px;margin-bottom:10px">What fonts are on this '
+        'computer?</h1>'
+        '<p class=lede>Run this on the machine that drives the plotter. It '
+        'checks which of the %d faces the website offers are already '
+        'installed here, so we only install what is actually missing.</p>'
+        '<div class=fcnote><b>What this sends.</b> Font names, your browser '
+        'version and whether this is Windows or a Mac. Nothing else &mdash; no '
+        'files, no documents, nothing about the rest of the machine. It is only '
+        'sent when you press the button at the bottom, and it goes to Aaron.</div>'
+        '<div id=fcrun><button type=button class="btn lg" id=fcgo>Check this '
+        'computer</button></div>'
+        '<div id=fcout></div>'
+        '</div></section>' % len(fams))
+
+    js = ("window.NMB_FAMS="
+          + json.dumps(fams, separators=(",", ":")) + ";") + r"""
+(function(){
+  var go=document.getElementById('fcgo'), out=document.getElementById('fcout');
+  if(!go) return;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  // Measured on a canvas against three different generic fallbacks. If the
+  // family is missing, the browser draws the fallback and the widths match.
+  var ctx=document.createElement('canvas').getContext('2d');
+  var PROBE='MWQ@0123456789mwiABCXYZ';
+  function installed(fam){
+    var base=['monospace','serif','sans-serif'];
+    for(var i=0;i<base.length;i++){
+      ctx.font='72px '+base[i];
+      var a=ctx.measureText(PROBE).width;
+      ctx.font='72px "'+fam.replace(/"/g,'')+'",'+base[i];
+      if(Math.abs(a-ctx.measureText(PROBE).width)>0.5) return true;
+    }
+    return false;
+  }
+
+  var report=null;
+
+  function render(have, missing, sys, method){
+    report={have:have, missing:missing, all_sys:sys, method:method,
+            ua:navigator.userAgent,
+            platform:(navigator.userAgentData&&navigator.userAgentData.platform)
+                     ||navigator.platform||''};
+    var h='<h2 style="margin-top:26px">'+have.length+' of '+(have.length+missing.length)
+         +' already installed</h2>';
+    if(missing.length){
+      h+='<p class=lede>These '+missing.length+' need installing:</p><ul class=fclist>';
+      missing.forEach(function(f){
+        h+='<li><b>'+esc(f.family)+'</b>'+(f.weight!=='400'?' '+esc(f.weight):'')
+          +'<span>site calls it &ldquo;'+esc(f.label)+'&rdquo;</span></li>';
+      });
+      h+='</ul>';
+    } else {
+      h+='<p class=lede>Every face the site offers is already on this machine.</p>';
+    }
+    if(have.length){
+      h+='<details class=fcdet><summary>'+have.length+' already here</summary>'
+        +'<ul class=fclist>';
+      have.forEach(function(f){
+        h+='<li><b>'+esc(f.family)+'</b><span>&ldquo;'+esc(f.label)+'&rdquo;</span></li>';
+      });
+      h+='</ul></details>';
+    }
+    if(sys&&sys.length){
+      h+='<details class=fcdet><summary>Everything else installed ('+sys.length
+        +')</summary><div class=fcall>'+esc(sys.join(', '))+'</div></details>';
+    }
+    h+='<div class=fcsend><button type=button class="btn lg" id=fcsend>'
+      +'Send this to Aaron</button>'
+      +'<p class=hint>Nothing has been sent yet.</p></div>';
+    out.innerHTML=h;
+    document.getElementById('fcsend').addEventListener('click', function(){
+      var b=this; b.disabled=true; b.textContent='Sending…';
+      fetch('/api/fonts',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(report)})
+        .then(function(r){return r.json();})
+        .then(function(j){
+          b.parentNode.innerHTML = j&&j.ok
+            ? '<p class=fcok>Sent. Aaron has the list.</p>'
+            : '<p class=fcerr>That did not send. Screenshot this page instead.</p>';
+        }).catch(function(){
+          b.parentNode.innerHTML='<p class=fcerr>That did not send. Screenshot '
+            +'this page instead.</p>';
+        });
+    });
+  }
+
+  function check(sys){
+    var have=[], missing=[], names=null;
+    if(sys){ names={}; sys.forEach(function(n){ names[n.toLowerCase()]=1; }); }
+    window.NMB_FAMS.forEach(function(f){
+      var yes = names ? !!names[f.family.toLowerCase()] : installed(f.family);
+      (yes?have:missing).push(f);
+    });
+    render(have, missing, sys||[], names?'local-font-access':'metrics');
+  }
+
+  go.addEventListener('click', function(){
+    go.disabled=true; go.textContent='Checking…';
+    if(typeof window.queryLocalFonts==='function'){
+      window.queryLocalFonts().then(function(list){
+        var fams={}; list.forEach(function(f){ fams[f.family]=1; });
+        check(Object.keys(fams).sort());
+      }).catch(function(){
+        // Prompt dismissed or blocked - the metric check still answers the
+        // question we actually care about.
+        check(null);
+      });
+    } else { check(null); }
+  });
+})();
+"""
+    body = shell("Font check", "Which fonts are installed on this computer.",
+                 "/fonts-check/", None, main, noindex=True, sticky_bar=False,
+                 js=js)
+    out = OUT / "fonts-check" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(body, encoding="utf-8")
 
@@ -2766,6 +2915,7 @@ def main():
     build_home()
     build_design()
     build_proof()
+    build_fonts_check()
     build_pricing()
     for p in PRODUCTS: build_product(p)
     build_states_hub()

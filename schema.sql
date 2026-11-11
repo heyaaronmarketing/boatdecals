@@ -44,3 +44,21 @@ ALTER TABLE orders ADD COLUMN approved_at TEXT;
 ALTER TABLE orders ADD COLUMN changes_at TEXT;
 ALTER TABLE orders ADD COLUMN changes_note TEXT;
 CREATE INDEX IF NOT EXISTS idx_orders_proof ON orders(approved_at, proof_sent_at);
+
+-- ---------------------------------------------------------------------------
+-- Font inventory reports, added 2026-11-11.
+--
+-- Ryan opens /fonts-check/ on the cutter PC and sends back what is installed,
+-- so we know which of the site's faces he already has. Font names and a
+-- browser string, nothing else - and only after he presses the button.
+CREATE TABLE IF NOT EXISTS font_reports (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts       TEXT NOT NULL,
+  who      TEXT,
+  ua       TEXT,
+  platform TEXT,
+  method   TEXT,
+  have     TEXT,
+  missing  TEXT,
+  all_sys  TEXT
+);

@@ -427,6 +427,33 @@ export default {
       if (!key || url.searchParams.get("k") !== key) return json({ error: "no" }, 404);
       return json(await runProofCycle(env));
     }
+    // Ryan's font inventory, posted from /fonts-check/ when he presses the
+    // button. Stored as names only - the page collects nothing else, and
+    // there is no reason for this endpoint to accept anything else either.
+    if (url.pathname === "/api/fonts") {
+      if (request.method === "GET") {
+        const k = env.PROOF_RUN_KEY;
+        if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
+        const r = await env.DB.prepare(
+          `SELECT id,ts,who,platform,method,have,missing,ua FROM font_reports
+            ORDER BY id DESC LIMIT 10`).all();
+        return json({ ok: true, reports: r.results || [] });
+      }
+      if (request.method !== "POST") return json({ error: "POST only" }, 405);
+      let d;
+      try { d = await request.json(); } catch { return json({ error: "bad json" }, 400); }
+      const names = (a) => (Array.isArray(a) ? a : [])
+        .map((f) => (typeof f === "string" ? f : `${f.family || ""}`.trim()))
+        .filter(Boolean).slice(0, 2000).join(", ").slice(0, 60000);
+      if (!env.DB) return json({ ok: false, error: "no db" }, 500);
+      await env.DB.prepare(
+        `INSERT INTO font_reports (ts,who,ua,platform,method,have,missing,all_sys)
+         VALUES (?,?,?,?,?,?,?,?)`
+      ).bind(new Date().toISOString(), str(d.who, 80), str(d.ua, 300),
+             str(d.platform, 60), str(d.method, 40),
+             names(d.have), names(d.missing), names(d.all_sys)).run();
+      return json({ ok: true });
+    }
     if (url.pathname === "/api/approve") {
       return json(await handleApprove(request, env));
     }

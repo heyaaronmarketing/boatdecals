@@ -64,6 +64,34 @@ that's the tamper guard, so never make the worker trust `quoted_total`.
 server-side — the customer was undercharged $9 and the line item vanished from
 the shop email. `verify.py` now rejects any label containing the delimiter.
 
+## The font inventory check (`/fonts-check/`)
+
+A private page the shop opens on the machine that drives the plotter. It
+reports which of the site's 45 faces are already installed, so only the
+missing ones get installed by hand.
+
+**Two detection paths, because neither covers everything:**
+
+- `queryLocalFonts()` is the real API for this and returns the whole system
+  list — but it is Chrome and Edge on desktop only, and it raises a permission
+  prompt that has to be accepted.
+- A canvas metric check works in any browser but can only answer *"is this
+  family here"*, so it runs against the site's own list. That happens to be
+  the actual question, which is why it always runs and the API is the bonus.
+
+**The page must load no web fonts.** A face pulled in by the page measures as
+installed when it is not, and the report would then be wrong in the direction
+that costs a mis-cut. Gated.
+
+**What it collects is on the page before the button is pressed**: font names,
+browser version, Windows-or-Mac. Nothing is sent until the second button, and
+the page says where it goes. That disclosure is gated too — a tool that reads
+something off someone's machine should say so in its own words, not in a
+policy somewhere else.
+
+`POST /api/fonts` stores names only; `GET /api/fonts?k=…` reads the last ten
+reports back and 404s without the key. noindex and out of the sitemap.
+
 ## The proof cycle (`worker/proof.js`)
 
 Every order is promised **a proof within twelve hours**, and **nothing is cut

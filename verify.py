@@ -617,6 +617,31 @@ if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
 
+# ---- the font inventory page --------------------------------------------
+# /fonts-check/ reports which of the site's faces are installed on the shop
+# PC. It must load NO web fonts: a face pulled in by the page measures as
+# installed when it is not, and the report would be wrong in the direction
+# that costs a mis-cut.
+_fc = (OUT / "fonts-check" / "index.html")
+if not _fc.exists():
+    fails.append("the font-check page is gone")
+else:
+    _fcd = _fc.read_text()
+    if "fonts.googleapis.com/css" in _fcd:
+        fails.append("/fonts-check/ is loading web fonts, so every face it "
+                     "loads reports as installed whether it is or not")
+    if 'content="noindex' not in _fcd:
+        fails.append("/fonts-check/ is indexable - it is a private tool, not "
+                     "a page for search")
+    if "What this sends" not in _fcd:
+        fails.append("/fonts-check/ no longer tells the reader what it "
+                     "collects before they press the button")
+    if "queryLocalFonts" not in _fcd or "measureText" not in _fcd:
+        fails.append("/fonts-check/ lost one of its two detection paths - the "
+                     "API is Chrome-only and the metric check is the fallback")
+if "fonts-check" in (OUT / "sitemap.xml").read_text():
+    fails.append("/fonts-check/ is in the sitemap")
+
 # ---- the proof promise --------------------------------------------------
 # The site promises a proof within twelve hours and says nothing is cut until
 # it is approved. Two things make that true, and both have to stay true:

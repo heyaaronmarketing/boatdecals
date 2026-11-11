@@ -1,0 +1,1233 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Font check | Number My Boat</title>
+<meta name="description" content="Which fonts are installed on this computer.">
+<link rel="canonical" href="https://numbermyboat.com/fonts-check/">
+<meta name="robots" content="noindex,follow">
+<meta property="og:type" content="website"><meta property="og:title" content="Font check">
+<meta property="og:description" content="Which fonts are installed on this computer."><meta property="og:url" content="https://numbermyboat.com/fonts-check/">
+<meta property="og:site_name" content="Number My Boat"><meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://numbermyboat.com/assets/og/home-v2.jpg"><meta property="og:image:secure_url" content="https://numbermyboat.com/assets/og/home-v2.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630"><meta property="og:image:alt" content="Font check">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Font check"><meta name="twitter:description" content="Which fonts are installed on this computer.">
+<meta name="twitter:image" content="https://numbermyboat.com/assets/og/home-v2.jpg"><meta name="twitter:image:alt" content="Font check">
+<meta name="theme-color" content="#0e3a52">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#12242e;--nav:#0e3a52;--nav2:#155273;--cta:#1d7a48;--cta2:#14603a;
+--sea:#5fc4f5;--bg:#fff;--soft:#f0f6f9;--line:#d7e3ea;--mut:#4d6473;--ok:#127a4d;
+--warn:#b4541a;--selbg:#e4eff5}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+color:var(--ink);background:var(--bg)}
+img,svg{max-width:100%;height:auto}
+a{color:var(--nav2)}
+.w{max-width:1080px;margin:0 auto;padding:0 18px}
+.skip{position:absolute;left:-9999px;top:0;z-index:60;background:var(--ink);color:#fff;
+padding:12px 18px;border-radius:0 0 8px 0;font-weight:700;text-decoration:none}
+.skip:focus{left:0}
+
+/* ---------- chrome ---------- */
+.top{background:var(--nav);color:#cfe4ef;font-size:13.5px}
+.top .w{display:flex;justify-content:space-between;gap:12px;padding:7px 18px;flex-wrap:wrap}
+.top strong{color:#fff}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+header .w{display:flex;align-items:center;gap:18px;padding:11px 18px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--nav);
+text-decoration:none;flex:0 0 auto}
+.brand svg{width:64px;height:64px;flex:0 0 auto}
+.brand span{font-family:'Archivo Black','Arial Black',sans-serif;font-weight:400;
+font-size:37.5px;line-height:.98;letter-spacing:-.015em;white-space:nowrap}
+.brand span b{font-weight:inherit;color:var(--sea)}
+header nav{display:none;margin-left:auto;gap:15px;font-size:14.6px;font-weight:600;
+align-items:center}
+header nav a{color:var(--ink);text-decoration:none;white-space:nowrap}
+header nav a:hover{color:var(--nav2)}
+
+/* About group. Opens on hover AND focus-within, so mouse, keyboard and touch
+   all work with no JS - and "About" stays a followable link. */
+.navgroup{position:relative;display:inline-flex;align-items:center}
+.navtop{display:inline-flex;align-items:center;gap:4px}
+.caret{width:11px;height:11px;flex:0 0 auto;transition:transform .14s;opacity:.75}
+.navgroup:hover .caret,.navgroup:focus-within .caret{transform:rotate(180deg)}
+.navmenu{display:none;position:absolute;top:100%;right:0;min-width:178px;
+background:#fff;border:1px solid var(--line);border-radius:11px;padding:6px;
+box-shadow:0 18px 38px -16px rgba(5,30,45,.38);z-index:60}
+/* A gap between the link and the panel would close the menu mid-travel. */
+.navgroup::after{content:"";position:absolute;top:100%;right:0;left:0;height:10px}
+.navgroup:hover .navmenu,.navgroup:focus-within .navmenu{display:block}
+.navmenu a{display:block;padding:9px 12px;border-radius:7px;font-size:14.6px;
+font-weight:650;color:var(--ink)}
+.navmenu a:hover,.navmenu a:focus-visible{background:var(--selbg);color:var(--nav)}
+
+/* Mobile toggle. The footer carries every link, so if the JS fails nothing is
+   unreachable - this only improves the header. */
+.menubtn{margin-left:auto;display:inline-grid;place-items:center;width:42px;height:42px;
+background:none;border:1.5px solid var(--line);border-radius:10px;color:var(--nav);
+cursor:pointer;padding:0;flex:0 0 auto}
+.menubtn svg{width:22px;height:22px}
+.menubtn:hover{background:var(--soft)}
+.menubtn[aria-expanded="true"]{background:var(--selbg);border-color:var(--nav2)}
+.hbtn{margin-left:auto;background:var(--cta);color:#fff;font-weight:800;font-size:14.5px;
+padding:10px 15px;border-radius:9px;text-decoration:none;white-space:nowrap}
+.hbtn:hover{background:var(--cta2)}
+@media(max-width:899px){
+  /* row 1: the lockup. row 2: [Start your order] [menu], right aligned. */
+  header .w{flex-wrap:wrap;gap:6px 8px;padding:9px 14px}
+  .brand{flex:1 0 100%;gap:9px}
+  .brand span{font-size:26px}
+  .brand svg{width:46px;height:46px}
+
+  .hbtn{order:2;margin-left:auto;font-size:13.6px;padding:9px 12px}
+  .menubtn{order:3;margin-left:0;width:40px;height:40px}
+  header nav.open{display:flex;flex-direction:column;align-items:stretch;
+    order:4;width:100%;gap:0;margin:2px 0 4px;border-top:1px solid var(--line);
+    padding-top:4px}
+  header nav.open>a,.navmenu a{padding:11px 4px;font-size:16px;border-radius:8px}
+  header nav.open>a:not(:last-child),.navgroup{border-bottom:1px solid var(--line)}
+  /* No flyout on a phone - the group just reads as a labelled section. */
+  .navgroup{display:block;width:100%;border-bottom:0}
+  .navtop{padding:11px 4px;font-size:16px;font-weight:700}
+  .caret{display:none}
+  .navmenu{display:block;position:static;border:0;box-shadow:none;padding:0 0 6px 14px;
+    min-width:0}
+  .navmenu a{padding:9px 4px;color:var(--mut)}
+}
+@media(min-width:900px){header nav{display:flex}.hbtn{margin-left:0}.menubtn{display:none}}
+
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(160deg,#0e3a52 0%,#155273 62%,#1b6382 100%);color:#fff;
+padding:30px 0 34px}
+.hero h1{font-size:30px;line-height:1.14;font-weight:800;letter-spacing:-.015em;max-width:17ch}
+.hero .sub{font-size:16.5px;line-height:1.48;color:#d2e6f1;margin-top:14px;max-width:50ch}
+.herogrid{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);
+grid-template-areas:"a" "f" "b"}
+.heroA{grid-area:a}.heroF{grid-area:f}.heroB{grid-area:b}
+.heroA h1{margin-bottom:0}
+/* The wizard is right there on a phone, so a second CTA is just noise.
+   Needs .hero .btnrow in front of it: .btn{display:inline-block} sits later in
+   this sheet at the same specificity and would otherwise win, which is exactly
+   how this hide silently stopped working. */
+/* ---- the phone order sheet ------------------------------------------
+   On a phone the page was offering the same action four times over - topbar
+   link, header button, the whole wizard inline, and the sticky bar - with the
+   inline wizard squeezed into a 343px column. Below 760px the wizard leaves
+   the flow, `.heroStart` makes the offer in one card with one button, and
+   every "Start your order" on the page opens the same wizard full screen.
+   It is promoted, not duplicated: there is only ever one form on the page. */
+/* The phone's one above-the-fold CTA, on every page except the home page -
+   which opens on the app layer instead, sitting over the top of this. Skip
+   lands the visitor right here. */
+.heroStart{display:none;grid-area:f;background:#fff;border-radius:13px;
+padding:17px 16px 15px;text-align:center;box-shadow:0 12px 30px rgba(4,26,38,.28)}
+.heroStartP{display:flex;align-items:baseline;justify-content:center;gap:7px;
+margin-bottom:12px}
+.heroStartP b{font-size:36px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em}
+.heroStartP em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--mut)}
+/* `.heroStart` in front of it: .btn{display:inline-block} sits later in this
+   sheet and would win at equal specificity. */
+.heroStart .btn{display:block;width:100%}
+.heroStartN{font-size:11.8px;color:var(--mut);margin-top:10px;font-weight:650;
+line-height:1.35}
+
+/* ---- the phone app layer ---------------------------------------------
+   A full-screen card deck over the page, shown once per visit on a phone.
+   It is an OVERLAY, never a replacement: the page's own content stays in the
+   DOM and in normal flow underneath, so what a crawler renders on mobile is
+   still the whole page and Skip drops you straight onto it.
+
+   display:none above the breakpoint, and the element also ships with the
+   `hidden` attribute so that with JavaScript off nobody is handed a
+   full-screen layer with no way to dismiss it. */
+.appshell{display:none}
+.appshell[hidden]{display:none}
+
+@media(max-width:760px){
+  .appshell{position:fixed;inset:0;z-index:200;display:flex;
+    flex-direction:column;background:#07202d;
+    /* dvh, not vh: 100vh on a phone is the viewport with the URL bar
+       retracted, so a vh-sized layer is taller than what you can see. */
+    height:100vh;height:100dvh}
+  .appshell[hidden]{display:none}
+  body.appon{overflow:hidden}
+
+  .apptop{flex:0 0 auto;display:flex;align-items:center;gap:12px;
+    padding:11px 14px 9px}
+  .appprog{flex:1;display:flex;gap:3px}
+  .appbar-seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.26);
+    transition:background .18s}
+  .appbar-seg.on{background:#fff}
+  .appskip{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:700;
+    color:#9fc6da;background:none;border:0;padding:4px 2px;cursor:pointer}
+
+  .apptrack{flex:1 1 auto;min-height:0;display:flex;list-style:none;margin:0;
+    padding:0;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain}
+  .apptrack::-webkit-scrollbar{display:none}
+  .appcard{position:relative;flex:0 0 100%;scroll-snap-align:center;
+    display:flex;align-items:center;overflow:hidden;background:#07202d}
+  .appcard.pending{background:#0e3346}
+  /* `.appcard img.appbg`, not `.appbg`: the sharp-image rule below is
+     `.appcard img`, class plus type, which outranks a bare class and would
+     hand the backdrop height:auto and the 3:2 ratio - sizing it to the sharp
+     photo instead of filling the card. */
+  .appcard img.appbg{position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;aspect-ratio:auto;border:0;box-shadow:none;
+    filter:blur(28px) brightness(.66) saturate(1.05);transform:scale(1.2);
+    pointer-events:none}
+  .appcard picture{position:relative;display:block;width:100%}
+  /* The photos are 3:2 landscape and the card is a tall phone screen. A
+     stretched copy would crop to a slab of hull with the lettering running
+     off both edges, so the sharp one keeps its ratio and a blurred copy
+     fills the rest - what music apps do with square artwork. */
+  .appcard img{display:block;width:100%;height:auto;aspect-ratio:3/2;
+    object-fit:cover;box-shadow:0 12px 36px rgba(0,0,0,.45)}
+  .appcap{position:absolute;left:0;right:0;bottom:0;padding:44px 20px 24px;
+    background:linear-gradient(to top,rgba(4,18,26,.96) 0%,
+      rgba(4,18,26,.82) 45%,rgba(4,18,26,0) 100%)}
+  .appcap b{display:block;font-size:19px;font-weight:800;color:#fff;
+    line-height:1.22;letter-spacing:-.01em}
+  .appcap em{display:block;font-style:normal;font-size:14px;font-weight:600;
+    color:#bcd9e8;margin-top:5px;line-height:1.4}
+
+  .appcard.fact{align-items:center;justify-content:center;
+    background:linear-gradient(165deg,#0e3a52 0%,#155273 60%,#1b6382 100%)}
+  .factbody{padding:0 26px;text-align:center;max-width:30ch}
+  .factkick{display:block;font-size:12px;font-weight:800;letter-spacing:.09em;
+    text-transform:uppercase;color:#6fc4ea;margin-bottom:12px}
+  .factbody strong{display:block;font-size:34px;font-weight:800;color:#fff;
+    line-height:1.1;letter-spacing:-.02em;margin-bottom:13px}
+  .factbody p{font-size:15.5px;line-height:1.5;color:#cfe4ef}
+
+  .appfoot{flex:0 0 auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom))}
+  /* `.appfoot` in front of it: .btn{display:inline-block} sits later in this
+     sheet and would win at equal specificity. */
+  .appfoot .appcta{display:block;width:100%}
+  .appn{font-size:11.8px;color:#9fc6da;margin-top:10px;font-weight:650;
+    text-align:center}
+}
+
+@media(max-width:760px){
+  .heroF{display:none}
+  .heroStart{display:block}
+  /* One order CTA on the phone. The notification bar, the header button and
+     the sticky footer drawer were three more ways to say the same thing,
+     each taking vertical space where the offer should be. */
+  /* Each of these needs an extra selector in front of it. The base rules for
+     .sticky and body.has-sticky sit LATER in this sheet, and at equal
+     specificity the later rule wins - which is how this hide silently did
+     nothing on the first pass, and how .heroCta's hide broke before it. */
+  body .top{display:none}
+  body .hbtn{display:none}
+  body .sticky{display:none}
+  html body.has-sticky{padding-bottom:0}
+  /* A minimal header: the lockup and the menu on one row, nothing else. */
+  header .w{flex-wrap:nowrap;padding:7px 14px;gap:10px}
+  .brand{flex:0 1 auto}
+  .brand span{font-size:19px}
+  .brand svg{width:34px;height:34px}
+  .menubtn{order:3;margin-left:auto;width:38px;height:38px}
+  header nav.open{order:4}
+  /* The offer card takes the wizard's grid slot and comes first, so the
+     phone opens on the offer and one button with the headline under it.
+     Still a grid with named areas: `display:block` would fall back to DOM
+     order and put the headline back on top. */
+  .herogrid{grid-template-areas:"f" "a" "b";gap:16px}
+  .hero{padding:16px 0 26px}
+  .heroA h1{font-size:25px;margin-top:4px}
+  .hero .sub{font-size:15.5px;margin-top:9px}
+  /* The sheet owns the viewport: the page behind it must not scroll, and the
+     sticky bar must not float over it offering the thing already open. */
+  body.sheeton{overflow:hidden}
+  body.sheeton .heroF{display:block;position:fixed;inset:0;z-index:300;
+    background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:30px}
+  body.sheeton .sheetbar{display:flex}
+  body.sheeton .sticky,body.sheeton header,body.sheeton .top{display:none}
+  body.sheeton .heroF .panel{border-radius:0;border-left:0;border-right:0;
+    box-shadow:none;margin:0}
+}
+
+@media(max-width:899px){
+  .hero .btnrow .heroCta{display:none}
+  .heroB .btnrow{margin-top:14px}
+  .hero .btnrow .btn.ghost{width:100%}}
+@media(min-width:900px){.hero{padding:40px 0 44px}.hero h1{font-size:40px}
+.herogrid{grid-template-columns:minmax(0,1fr) minmax(0,470px);
+grid-template-areas:"a f" "b f";column-gap:38px;row-gap:0;
+/* Row 1 hugs the headline; row 2 takes the slack beside the taller wizard,
+   otherwise both rows stretch and leave a gap under the h1. */
+grid-template-rows:auto 1fr;align-items:start}
+.heroB{align-self:start;margin-top:14px}}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(95,196,245,.17);
+border:1px solid rgba(95,196,245,.45);color:#d8eefa;font-size:13px;font-weight:700;
+padding:5px 11px;border-radius:999px;margin-bottom:15px}
+.trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.trust span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+font-size:13.5px;font-weight:600;padding:6px 11px;border-radius:7px;color:#e6f2f8}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-block;background:var(--cta);color:#fff;font-weight:800;font-size:17px;
+padding:15px 26px;border-radius:11px;text-decoration:none;border:0;cursor:pointer;
+min-height:52px;text-align:center}
+.btn:hover{background:var(--cta2)}
+.btn.lg{font-size:16.2px;padding:12px 26px;width:100%;min-height:46px}
+@media(min-width:620px){.btn.lg{width:auto}}
+.btn.alt{background:#fff;color:var(--nav);border:1.5px solid var(--line)}
+.btn.alt:hover{background:var(--soft)}
+.btn.ghost{background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.4);color:#fff}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:stretch}
+/* The hero pair must match. The primary carried .btn.lg (16.2px/12px padding)
+   while the ghost beside it was a plain .btn (17px/15px) - so the SECONDARY
+   button had bigger type and a chunkier box than the primary it was meant to
+   defer to. One rule for both, and the colour does the ranking.
+   Scoped to >=900px on purpose: below that the primary is hidden (the wizard
+   is right there) and the ghost goes full width, and an unscoped rule here
+   out-specifies both of those. */
+@media(min-width:900px){
+  .hero .btnrow .btn{display:inline-flex;align-items:center;justify-content:center;
+  font-size:16.6px;padding:14px 28px;min-height:54px;width:auto;line-height:1.2}
+}
+
+/* ---------- sections ---------- */
+section{padding:42px 0}
+section.soft{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:25px;line-height:1.2;font-weight:800;letter-spacing:-.012em;margin-bottom:8px}
+h3{font-size:19px;font-weight:800;line-height:1.28;margin-bottom:6px}
+.lede{font-size:17.5px;color:var(--mut);max-width:62ch;margin-bottom:22px}
+p{margin-bottom:14px;max-width:70ch}
+.prose h2{margin-top:34px}.prose h3{margin-top:24px}
+.prose ul,.prose ol{margin:0 0 16px 22px}.prose li{margin-bottom:7px;max-width:68ch}
+@media(min-width:900px){h2{font-size:31px}section{padding:56px 0}}
+
+/* ---------- cards / grids ---------- */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(248px,1fr))}
+.grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:19px 20px;
+display:flex;flex-direction:column;text-decoration:none;color:inherit}
+a.card{transition:border-color .12s,box-shadow .12s,transform .12s}
+a.card:hover{border-color:#a9c2d0;box-shadow:0 12px 26px -18px rgba(0,0,0,.4);transform:translateY(-1px)}
+.card p{font-size:15.5px;color:var(--mut);margin-bottom:13px}
+.icw{display:grid;place-items:center;width:46px;height:46px;border-radius:11px;
+background:var(--selbg);color:var(--nav);margin-bottom:13px;flex:0 0 auto}
+.icw svg{width:26px;height:26px}
+.price{font-size:21px;font-weight:800;color:var(--nav);margin-top:auto}
+.price small{font-size:13.5px;font-weight:600;color:var(--mut)}
+.go{font-size:14.5px;font-weight:700;color:var(--cta);margin-top:7px}
+a.card:hover .go{text-decoration:underline}
+
+/* ---------- panel / order box ---------- */
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;
+color:var(--ink);box-shadow:0 22px 44px -30px rgba(5,30,45,.5)}
+.panel h2,.panel h3{color:var(--ink)}
+.fieldrow{display:grid;gap:13px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:560px){.fieldrow.two{grid-template-columns:1fr 1fr}}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:4px;color:var(--ink)}
+input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;font:inherit;
+font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;
+background:#fff;color:var(--ink);min-height:44px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--sea);outline-offset:1px;border-color:var(--nav2)}
+.hint{font-size:12.2px;color:var(--mut);margin-top:3px}
+.hint:empty{display:none}
+fieldset{border:0;margin:0 0 11px}
+legend{font-size:12.8px;font-weight:700;margin-bottom:5px;color:var(--ink)}
+.opts{display:grid;gap:6px;grid-template-columns:repeat(4,1fr)}
+.opt{position:relative;display:block;cursor:pointer;text-align:center}
+.opt input{position:absolute;opacity:0;width:1px;height:1px}
+.optbox{display:flex;align-items:center;justify-content:center;
+border:1.5px solid var(--line);border-radius:11px;min-height:64px;
+padding:14px 6px;font-size:25px;font-weight:800;background:#fff;line-height:1;
+transition:border-color .12s,background .12s}
+.opt input:checked+.optbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.opt input:focus-visible+.optbox{outline:2px solid var(--sea);outline-offset:2px}
+.optcap{display:block;font-style:normal;line-height:1.3;margin-top:6px}
+.checks{display:grid;gap:7px}
+.chk{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);
+border-radius:10px;padding:11px 12px;cursor:pointer;background:#fff}
+.chk input{margin-top:3px;width:18px;height:18px;flex:0 0 auto;accent-color:var(--nav2)}
+.chk:has(input:checked){border-color:var(--nav2);background:var(--selbg)}
+.chk b{font-size:14.5px;display:block}
+.chk em{font-style:normal;font-size:12.8px;color:var(--mut);display:block;margin-top:1px}
+.chk .amt{margin-left:auto;font-weight:800;font-size:14.5px;color:var(--nav);white-space:nowrap}
+
+/* live total */
+.total{display:flex;align-items:baseline;gap:9px;background:var(--nav);color:#fff;
+border-radius:12px;padding:15px 18px;margin:4px 0 15px}
+.total .n{font-size:32px;font-weight:800;letter-spacing:-.02em}
+.total .lbl{font-size:13.5px;color:#bfdcea;font-weight:600}
+.total .ship{margin-left:auto;font-size:13px;color:#bfdcea;text-align:right;line-height:1.35}
+
+/* preview */
+.prev{background:#eef4f8;border:1px solid var(--line);border-radius:12px;padding:18px;
+text-align:center;margin-bottom:15px;overflow-x:auto}
+.prevtxt{font-weight:800;font-size:34px;letter-spacing:.07em;white-space:nowrap;line-height:1.25;
+font-family:"Arial Black",Impact,sans-serif}
+.prevlbl{font-size:12.5px;color:var(--mut);margin-top:7px;font-weight:600}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:15.3px;min-width:420px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+th{background:var(--soft);font-weight:800;font-size:13.5px;text-transform:uppercase;
+letter-spacing:.04em;color:var(--nav)}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--nav)}
+
+/* ---------- misc ---------- */
+.note{background:#fffaf0;border:1px solid #f0dcb4;border-left:4px solid var(--warn);
+border-radius:0 10px 10px 0;padding:14px 17px;margin:0 0 18px;font-size:15.3px}
+.note b{color:#8a4113}
+.rule{background:var(--soft);border:1px solid var(--line);border-left:4px solid var(--nav2);
+border-radius:0 10px 10px 0;padding:15px 18px;margin:0 0 18px}
+.rule p:last-child{margin-bottom:0}
+.rule cite{display:block;font-size:13px;color:var(--mut);font-style:normal;margin-top:7px}
+.faq details{border:1px solid var(--line);border-radius:11px;margin-bottom:9px;background:#fff}
+.faq summary{padding:14px 17px;font-weight:700;cursor:pointer;font-size:16px;list-style:none;
+display:flex;justify-content:space-between;gap:12px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:21px;font-weight:700;color:var(--nav2);flex:0 0 auto}
+.faq details[open] summary::after{content:"\2013"}
+.faq .ans{padding:0 17px 15px;font-size:15.6px;color:#2b4451}
+.faq .ans p{margin-bottom:9px}.faq .ans p:last-child{margin-bottom:0}
+.bc{font-size:13.5px;color:var(--mut);padding:13px 0 0}
+.bc a{color:var(--mut)}.bc span{margin:0 5px}
+.wheel{display:flex;flex-wrap:wrap;gap:8px}
+.wheel a{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+font-size:14.3px;font-weight:650;text-decoration:none;color:var(--ink)}
+.wheel a:hover{border-color:var(--nav2);background:var(--selbg)}
+.wheel a[aria-current]{background:var(--nav);color:#fff;border-color:var(--nav)}
+.steps{counter-reset:s;margin:0 0 20px;padding:0;list-style:none}
+.steps li{counter-increment:s;position:relative;padding:0 0 16px 46px;max-width:68ch}
+.steps li::before{content:counter(s);position:absolute;left:0;top:-1px;width:31px;height:31px;
+border-radius:50%;background:var(--nav);color:#fff;font-weight:800;font-size:15px;
+display:grid;place-items:center}
+.swatches{display:flex;flex-wrap:wrap;gap:7px}
+.sw{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:8px;
+padding:5px 10px;font-size:13.3px;font-weight:600;background:#fff}
+.sw i{width:15px;height:15px;border-radius:4px;border:1px solid rgba(0,0,0,.22);display:block}
+.claims{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+margin-top:6px}
+.claims div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.claims b{display:block;font-size:17px;line-height:1.25;color:var(--nav);
+margin-bottom:4px}
+.claims span{font-size:14px;color:var(--mut);line-height:1.4;display:block}
+.stategrid{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(152px,1fr))}
+.stategrid a{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 13px;
+text-decoration:none;color:var(--ink);font-weight:650;font-size:14.8px;display:flex;
+justify-content:space-between;gap:8px;align-items:center}
+.stategrid a:hover{border-color:var(--nav2);background:var(--selbg)}
+.stategrid i{font-style:normal;font-size:12.5px;color:var(--mut);font-weight:700}
+.tool{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:24px}
+.out{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px;margin-top:14px;display:none}
+.out.on{display:block}
+.out .big{font-size:23px;font-weight:800;color:var(--nav);line-height:1.3}
+.pill{display:inline-block;background:var(--selbg);color:var(--nav);border-radius:7px;
+padding:3px 9px;font-size:13px;font-weight:700;margin:0 5px 5px 0}
+.names{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:20px}
+.names div{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 13px;font-size:15px;font-weight:600}
+.ok{color:var(--ok);font-weight:700}.bad{color:#b0202f;font-weight:700}
+footer{background:var(--nav);color:#c5dce8;padding:38px 0 30px;font-size:15px;margin-top:10px}
+footer a{color:#e4f1f8}
+.fgrid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:24px}
+.fgrid h4{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:#8fb6ca;margin-bottom:9px}
+.fgrid ul{list-style:none}.fgrid li{margin-bottom:6px}
+.fbot{border-top:1px solid rgba(255,255,255,.17);padding-top:18px;font-size:13.5px;color:#9dbdcf;
+display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between}
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:55;background:#fff;
+border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:11px;align-items:center;
+box-shadow:0 -6px 20px -10px rgba(0,0,0,.3)}
+.sticky .sp{font-weight:800;font-size:15px;color:var(--nav);line-height:1.2}
+.sticky .sp em{display:block;font-style:normal;font-size:12px;color:var(--mut);font-weight:600}
+.sticky .btn{flex:1;font-size:16px;padding:13px 18px;min-height:48px}
+@media(min-width:900px){.sticky{display:none}}
+body.has-sticky{padding-bottom:76px}
+@media(min-width:900px){body.has-sticky{padding-bottom:0}}
+
+.nap{border-top:1px solid rgba(255,255,255,.17);padding:18px 0 4px;margin-bottom:4px;
+font-size:14.6px;line-height:1.65;color:#c5dce8}
+.nap strong{color:#fff;font-size:15.5px}
+.localgrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.localgrid span{background:#fff;border:1px solid var(--line);border-radius:999px;
+padding:6px 13px;font-size:14px;font-weight:600}
+
+.wiz{padding:0;overflow:hidden}
+.wizhead{padding:12px 16px 0}
+.wizbar{height:4px;border-radius:99px;background:var(--line);overflow:hidden}
+.wizbar i{display:block;height:100%;width:20%;background:var(--cta);
+border-radius:99px;transition:width .28s cubic-bezier(.4,0,.2,1)}
+.wizmeta{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:12.8px;
+font-weight:700;color:var(--mut)}
+.wizback{background:none;border:0;font:inherit;font-weight:700;color:var(--nav2);
+cursor:pointer;padding:3px 0}
+.wizback:hover{text-decoration:underline}
+.wiztot{margin-left:auto;display:inline-flex;flex-direction:column;
+align-items:center;gap:1px;background:var(--nav);border:1.5px solid var(--nav);
+border-radius:9px;padding:4px 11px 5px;text-align:center}
+.wiztotrow{display:flex;align-items:baseline;gap:5px;font-size:11.6px;
+font-weight:700;color:#b9d4e3;text-transform:uppercase;letter-spacing:.04em}
+.wiztot b{font-size:19px;color:#fff;margin:0;font-weight:800;
+letter-spacing:0;text-transform:none}
+.wiztot em{font-style:normal;font-size:10px;font-weight:700;color:#8fc4de;
+letter-spacing:.03em;line-height:1.1}
+/* Every colour the flash uses lives in the keyframes, not in .bump, so the
+   box returns to its resting state on its own and the class can be left on
+   the element. Re-triggering is a remove + reflow + add in bumpTotal(). */
+.wiztot.bump{animation:totbump .55s cubic-bezier(.2,1.5,.35,1) 1}
+@keyframes totbump{
+  0%{transform:scale(1)}
+  22%{transform:scale(1.13);border-color:var(--cta);background:#15506f}
+  60%{border-color:var(--cta);background:#15506f}
+  100%{transform:scale(1)}}
+.wiztot.bump b{animation:totbumpb .55s ease 1}
+@keyframes totbumpb{0%,70%{color:#ffd9b0}100%{color:#fff}}
+@media(prefers-reduced-motion:reduce){
+  .wiztot.bump,.wiztot.bump b{animation-name:totflash}
+  @keyframes totflash{0%,60%{border-color:var(--cta)}100%{}}}
+.wizbody{padding:12px 16px 0;min-height:176px}
+@media(min-width:620px){.wizbody{min-height:186px}}
+.step{display:none;padding:0;animation:stepin .22s ease both}
+.step.on{display:block}
+@keyframes stepin{from{opacity:0;transform:translateX(9px)}to{opacity:1;transform:none}}
+.step h2{font-size:17.5px;margin:0 0 3px}
+/* Visually hidden but still announced - step 2's heading is redundant on
+   screen next to the step counter and the field labels, but a screen reader
+   still wants the structure. */
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.sublede{font-size:13.6px;color:var(--mut);margin-bottom:11px}
+.wizfoot{padding:11px 16px 13px;border-top:1px solid var(--line);margin-top:10px;
+background:var(--soft)}
+.wizfoot .btn{width:100%}
+.paybtn{background:var(--nav);}
+.paybtn:hover{background:var(--nav2)}
+
+.vcheck{font-size:12.4px;line-height:1.45;margin-top:5px;min-height:1px}
+.vcheck:empty{display:none}
+.vcheck.vok{color:var(--ok);font-weight:650}
+.vcheck.vnote{color:#8a5a00;font-weight:600}
+.vcheck.vwarn{color:#b0202f;font-weight:700}
+.err{color:#b0202f;font-weight:700;font-size:14.3px;margin-top:11px;min-height:1px}
+.err a{color:#b0202f}
+.tinylink{font-size:12.6px;color:var(--mut);margin-top:10px}
+
+/* preview */
+.prevwrap{padding:12px 20px 0}
+.prev{border:1px solid #cfdde6;border-radius:12px;padding:20px 16px;text-align:center;
+overflow-x:auto;transition:background .22s,border-color .22s;background:#e9f0f4}
+.prevtxt{font-weight:900;font-size:30px;letter-spacing:.06em;white-space:nowrap;
+line-height:1.3;font-family:"Arial Black",Impact,sans-serif;transition:color .18s}
+@media(min-width:620px){.prevtxt{font-size:36px}}
+.prevlbl{font-size:12.6px;color:var(--mut);margin-top:7px;font-weight:650;text-align:center}
+
+/* step 1 cards */
+.kinds{display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr}
+@media(max-width:439px){.kinds{grid-template-columns:1fr}}
+.kind input{position:absolute;opacity:0;width:1px;height:1px}
+.kindbox{display:block;position:relative;border:1.5px solid var(--line);border-radius:11px;
+padding:7px 8px 8px;cursor:pointer;background:#fff;height:100%;text-align:center;
+transition:border-color .12s,background .12s}
+.kicon{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;
+background:var(--selbg);color:var(--nav);margin:0 auto 7px}
+.kicon svg{width:23px;height:23px;display:block}
+.kind input:checked+.kindbox .kicon{background:var(--nav);color:#fff}
+@media(max-width:439px){.kindbox{text-align:left;display:flex;align-items:center;gap:12px}
+  .kicon{margin:0;flex:0 0 auto}}
+.kind input:checked+.kindbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.kind input:focus-visible+.kindbox{outline:2px solid var(--sea);outline-offset:2px}
+.kindbox b{display:block;font-size:13.8px;font-weight:800;line-height:1.2;margin-bottom:2px}
+.kindbox em{display:block;font-style:normal;font-size:11.8px;color:var(--mut);line-height:1.3}
+/* One price pill, shared by step 1 and the height step so a price looks like
+   a price wherever it appears. 20px is 1.5x the 13.4px it started at. */
+.kindbox i,.optcap i{display:inline-block;font-style:normal;font-size:20px;
+font-weight:800;color:var(--cta);padding:2px 12px 3px;
+border:1.5px solid var(--cta);border-radius:999px;background:#fff6ed;
+line-height:1.25}
+.kindbox i{margin-top:8px}
+.flag{position:absolute;top:-8px;right:7px;background:var(--cta);color:#fff;
+font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 7px;border-radius:99px;
+text-transform:uppercase}
+
+/* colour swatches */
+/* Eight chips in a row. No boxes, no labels, no second column - the name of
+   the one you picked is in the hint line underneath and the preview above is
+   already showing it on your own lettering. */
+.swrow{display:flex;flex-wrap:wrap;gap:10px}
+.csw{position:relative;cursor:pointer;line-height:0}
+.csw input{position:absolute;opacity:0;width:1px;height:1px}
+.cswdot{display:block;width:36px;height:36px;border-radius:50%;
+box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);transition:box-shadow .12s}
+.csw:hover .cswdot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),
+0 0 0 3px var(--selbg)}
+.csw input:checked+.cswdot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),
+0 0 0 2px #fff,0 0 0 4.5px var(--nav)}
+.csw input:focus-visible+.cswdot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),
+0 0 0 2px #fff,0 0 0 4.5px var(--sea)}
+
+/* font picker - step 2 */
+.fontset{margin-bottom:4px}
+/* Two rows of five. The chips only need to tell the faces apart - the big
+   preview above does the real work, in the customer's full lettering. */
+.fontgrid{display:grid;gap:5px;grid-template-columns:repeat(3,1fr)}
+@media(min-width:420px){.fontgrid{grid-template-columns:repeat(5,1fr)}}
+.fontchip{position:relative;cursor:pointer}
+.fontchip input{position:absolute;opacity:0;width:1px;height:1px}
+/* No name line under the specimen - the face is the thing being chosen, and
+   72 of them read faster as one dense grid. The name stays in `title` and
+   `aria-label` on the chip, and the checkout summary names the pick. */
+/* A fixed height, not a min-height: the script specimens are set larger, so
+   content-driven rows made the script tab 3px taller than the other two and
+   the panel twitched on every tab change. Three rows is now the same number
+   of pixels whichever tab is open. */
+.fontbox{display:flex;align-items:center;justify-content:center;
+border:1.5px solid var(--line);border-radius:8px;padding:4px 3px;
+background:#fff;height:40px;overflow:hidden;
+transition:border-color .12s,background .12s}
+.fontdemo{display:block;font-size:15px;line-height:1.15;color:var(--ink);
+white-space:nowrap;max-width:100%;overflow:hidden}
+/* Script faces have a much smaller x-height than the block and display sets,
+   so at a shared point size they read as faint and near-identical. Set them
+   larger; the chip still fits because the ascenders are what grew. */
+.fontchip[data-cat=script] .fontdemo{font-size:20px;line-height:1}
+.fontchip input:checked+.fontbox{border-color:var(--nav2);background:var(--selbg);
+box-shadow:inset 0 0 0 1px var(--nav2)}
+.fontchip input:focus-visible+.fontbox{outline:2px solid var(--sea);outline-offset:2px}
+/* Faces that are not legal for the current order are removed from the grid,
+   not dimmed - so a registration-numbers order shows one tidy row of five. */
+.fontchip.off{display:none}
+
+/* step 4 merchandising */
+.mgrid{display:grid;gap:8px}
+@media(min-width:560px){.mgrid{grid-template-columns:1fr 1fr}}
+.mcard input{position:absolute;opacity:0;width:1px;height:1px}
+.mbox{display:block;position:relative;border:1.5px solid var(--line);border-radius:10px;
+padding:8px 36px 9px 11px;cursor:pointer;background:#fff;height:100%;
+transition:border-color .12s,background .12s}
+.mcard input:checked+.mbox{border-color:var(--cta);background:#f1f9f4}
+.mcard input:focus-visible+.mbox{outline:2px solid var(--sea);outline-offset:2px}
+.mbox b{display:block;font-size:13.4px;font-weight:800;line-height:1.2}
+.mbox em{display:block;font-style:normal;font-size:11.7px;color:var(--mut);
+line-height:1.35;margin-top:2px}
+.mbox i{display:none}
+.mamt{position:absolute;top:8px;right:10px;font-weight:800;font-size:13.4px;color:var(--nav)}
+.mtick{position:absolute;bottom:8px;right:10px;width:18px;height:18px;border-radius:50%;
+background:var(--cta);color:#fff;font-size:13px;font-weight:800;display:none;
+place-items:center;line-height:1}
+.mcard input:checked+.mbox .mtick{display:grid}
+.mcard input:checked+.mbox .mamt{color:var(--cta)}
+
+/* step 5 summary + pay */
+.sumbox{background:var(--soft);border:1px solid var(--line);border-radius:10px;
+padding:9px 11px;margin-bottom:10px}
+.sumline{display:flex;flex-direction:column;gap:0;padding-bottom:6px;
+margin-bottom:6px;border-bottom:1px solid var(--line)}
+.sumline>span:first-child{font-weight:800;font-size:14.2px}
+.summeta{font-size:12px;color:var(--mut);font-weight:600}
+.sumrow{display:flex;justify-content:space-between;gap:12px;font-size:12.9px;padding:1px 0}
+.sumitems{display:none}
+.sumbox.open .sumitems{display:block}
+.sumtoggle{background:none;border:0;font:inherit;font-size:12px;font-weight:700;
+color:var(--nav2);cursor:pointer;padding:2px 0;text-decoration:underline}
+.sumrow b{font-weight:700}
+.free{color:var(--ok)}
+.sumtot{border-top:1px solid var(--line);margin-top:6px;padding-top:7px;font-size:15.5px}
+.sumtot b{font-size:18px;color:var(--nav)}
+.payel{border:1.5px solid var(--line);border-radius:10px;padding:13px;background:#fff;
+min-height:46px}
+.paysoft{display:block;background:var(--soft);border-radius:8px;padding:12px 13px;font-size:14.2px}
+.paysoft b{display:block;margin-bottom:3px}
+.paysoft span{color:var(--mut);line-height:1.5}
+.extra{margin-top:10px}
+.extra summary{font-size:12.6px;font-weight:700;color:var(--nav2);cursor:pointer}
+.guar{font-size:11px;color:var(--mut);text-align:center;margin:8px 0 0;line-height:1.5}
+.okbox{padding:34px 24px 30px;text-align:center}
+.okbox h2{font-size:23px;margin-bottom:9px}
+.okbox p{margin:0 auto 12px;max-width:44ch}
+.oktick{width:54px;height:54px;border-radius:50%;background:var(--cta);color:#fff;
+font-size:28px;font-weight:800;display:grid;place-items:center;margin:0 auto 16px}
+
+.prevwrap{padding:7px 16px 0}
+.prev{border-radius:10px;padding:10px 12px;overflow:hidden;background:#e9f0f4;
+border:1px solid #cfdde6;transition:background .22s,border-color .22s}
+.prev.night{background:#1b2a33;border-color:#0e1b22}
+#prevsvg{display:block;width:100%;height:94px}
+#p_num,#p_name{transition:fill .2s}
+.prevlbl{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;font-size:11.2px;
+color:var(--mut);margin-top:5px;font-weight:650;text-align:center}
+.prevlbl b{color:var(--ink);font-weight:800}
+
+.prevtabs{display:flex;gap:5px;margin-bottom:7px}
+.prevtab{flex:1;font:inherit;font-size:11.4px;font-weight:800;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;
+color:var(--mut);transition:border-color .12s,background .12s,color .12s}
+.prevtab.on{background:var(--nav);border-color:var(--nav);color:#fff}
+
+/* The photo and the lettering share one positioning context, so the text can
+   be placed in fractions of the plate rather than in pixels - the same numbers
+   hold at every panel width. */
+.boatview{position:relative;border-radius:10px;overflow:hidden;
+border:1px solid #cfdde6;background:#e9f0f4;line-height:0}
+.boatview img{display:block;width:100%;height:auto}
+.platetext{position:absolute;left:0;top:0;width:100%;height:100%;
+pointer-events:none}
+#platespan{position:absolute;white-space:nowrap;line-height:1;
+transform-origin:left top}
+/* Dark vinyl multiplies so the hull's scuffs and shading read through it, the
+   way film on gelcoat actually looks. Light vinyl is opaque, so it does not.
+   Both the old blur() and this blend promote the text to its own composited
+   layer, and a phone rasterises that layer at a coarser scale than the device
+   pixels - which at a ~12px cap height is the difference between crisp vinyl
+   and mush. The blur is gone entirely and the blend stops at the phone
+   breakpoint: a flat overlay that is sharp beats a blended one that is not. */
+#platespan.ink{mix-blend-mode:multiply}
+@media(max-width:760px){#platespan.ink{mix-blend-mode:normal}}
+#platespan{-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.platenote{font-size:10.6px;color:var(--mut);margin-top:5px;text-align:center;
+font-weight:650}
+.platenote b{color:var(--ink);font-weight:800}
+.platenote[hidden]{display:none}
+
+.sfield{margin-bottom:8px;flex:1 1 0;min-width:0}
+.sfield label{display:block;font-size:12px;font-weight:600;color:#30313d;margin-bottom:4px}
+.srow{display:flex;gap:7px}
+.sinput{position:relative;display:flex;align-items:center;background:#fff;
+border:1px solid #e6e6e9;border-radius:8px;
+box-shadow:0 1px 1px rgba(0,0,0,.03),0 3px 6px rgba(0,0,0,.02);
+transition:border-color .12s,box-shadow .12s}
+.sinput:focus-within{border-color:#1d7a48;box-shadow:0 0 0 3px rgba(29,122,72,.18)}
+.sinput.bad{border-color:#df1b41}
+.sinput.bad:focus-within{box-shadow:0 0 0 3px rgba(223,27,65,.16)}
+.sinput input{width:100%;border:0;background:none;font:inherit;font-size:16px;
+padding:9px 11px;color:#30313d;min-height:40px;letter-spacing:.01em}
+.sinput input:focus{outline:0}
+.sinput input::placeholder{color:#a3a3ad}
+.brands{display:flex;gap:4px;padding-right:9px;flex:0 0 auto}
+.brands i{font-style:normal;font-size:9.5px;font-weight:800;letter-spacing:.02em;
+color:#8b8b96;background:#f2f2f5;border:1px solid #e3e3e8;border-radius:3px;
+padding:3px 4px;line-height:1;opacity:.5;transition:opacity .12s,background .12s}
+.brands.on i{opacity:.18}
+.brands.on i.lit{opacity:1;background:#1a1f36;color:#fff;border-color:#1a1f36}
+.scerr{color:#df1b41;font-size:12.4px;font-weight:600;min-height:1px;margin-top:-3px}
+
+.paying .sinput{opacity:.6;pointer-events:none}
+
+.payel.sandbox{border:0;padding:0;background:none}
+
+figure.shot{margin:0 0 6px}
+figure.shot img{display:block;width:100%;height:auto;border-radius:12px;
+background:var(--soft);aspect-ratio:3/2;object-fit:cover}
+figure.shot.wide{max-width:760px}
+figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;
+margin-top:8px;font-size:13.6px;line-height:1.45}
+figcaption b{font-weight:800;color:var(--nav)}
+figcaption span{color:var(--mut)}
+.gallery{display:grid;gap:18px;grid-template-columns:1fr;margin-bottom:14px}
+@media(min-width:720px){.gallery{grid-template-columns:repeat(3,1fr)}}
+figure.gshot{margin:0}
+figure.gshot img{display:block;width:100%;height:auto;border-radius:12px;
+background:var(--soft);aspect-ratio:3/2;object-fit:cover}
+figure.gshot figcaption{flex-direction:column;gap:1px;font-size:13px}
+
+.altwrap{display:flex;flex-direction:column;gap:34px}
+.altrow{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);align-items:center}
+.altrow .alttext>h2:first-child{margin-top:0}
+.altrow.full{display:block}
+@media(min-width:900px){
+  .altwrap{gap:52px}
+  .altrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+  /* Zigzag: the image swaps sides each row. Only the column ORDER changes -
+     the DOM order stays image-then-text so the reading order on a phone and
+     in a screen reader is the same everywhere. */
+  .altrow.r .altimg{order:2}
+  .altrow.r .alttext{order:1}
+  .altrow.full{display:block;max-width:70ch}
+}
+.altrow .altimg figure{margin:0}
+.altrow .altimg img{border-radius:12px}
+.altrow .alttext p{max-width:none}
+.altrow .alttext>*:last-child{margin-bottom:0}
+
+/* Each alternating row is its own full-bleed band, so the zigzag reads as
+   distinct stripes rather than one long white column. */
+section.altband{padding:34px 0}
+@media(min-width:900px){section.altband{padding:46px 0}}
+section.tight{padding:14px 0 20px}
+.altband .altwrap{display:block}
+.altband .altrow{margin:0}
+
+/* How it works: four numbered cards. */
+.stepgrid{display:grid;gap:12px;grid-template-columns:1fr;margin:4px 0 22px}
+@media(min-width:560px){.stepgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.stepgrid{grid-template-columns:repeat(4,1fr)}}
+.stepcard{position:relative;background:#fff;border:1px solid var(--line);
+border-radius:14px;padding:19px 17px 17px}
+section.soft .stepcard{background:#fff}
+.stepnum{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;
+background:var(--nav);color:#fff;font-weight:800;font-size:15px;line-height:1;
+margin-bottom:11px}
+.stepcard h3{font-size:16px;line-height:1.3;margin-bottom:5px}
+.stepcard p{font-size:14.4px;line-height:1.5;color:var(--mut);margin:0}
+
+/* Other things we cut: two cards, so give them room. */
+.xgrid{display:grid;gap:13px;grid-template-columns:1fr;margin-top:6px}
+@media(min-width:720px){.xgrid{grid-template-columns:1fr 1fr}}
+.xcard{position:relative;display:flex;align-items:center;gap:16px;background:#fff;
+border:1px solid var(--line);border-radius:14px;padding:18px 44px 18px 18px;
+text-decoration:none;color:inherit;
+transition:border-color .12s,box-shadow .12s,transform .12s}
+.xcard:hover{border-color:var(--nav2);box-shadow:0 14px 30px -20px rgba(5,30,45,.45);
+transform:translateY(-1px)}
+.xcard .icw{margin:0;flex:0 0 auto;width:52px;height:52px;border-radius:13px}
+.xcard .icw svg{width:28px;height:28px}
+.xcard:hover .icw{background:var(--nav);color:#fff}
+.xbody{min-width:0}
+.xcard h3{font-size:17.5px;margin-bottom:3px}
+.xcard p{font-size:14.3px;color:var(--mut);line-height:1.45;margin:0 0 7px}
+.xprice{font-size:18px;font-weight:800;color:var(--nav)}
+.xprice small{font-size:12.8px;font-weight:600;color:var(--mut)}
+.xgo{position:absolute;right:17px;top:50%;transform:translateY(-50%);
+font-size:21px;color:var(--line);transition:color .12s,right .12s}
+.xcard:hover .xgo{color:var(--cta);right:13px}
+
+.plangrid{display:grid;gap:16px;grid-template-columns:1fr;margin:6px 0 4px;
+align-items:stretch}
+@media(min-width:900px){.plangrid{grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:22px;max-width:760px;margin-left:auto;margin-right:auto}}
+.plan{position:relative;display:flex;flex-direction:column;background:#fff;
+border:1px solid var(--line);border-radius:16px;padding:24px 22px 22px}
+.plan.featured{border:2px solid var(--cta);box-shadow:0 20px 44px -26px rgba(29,122,72,.45)}
+@media(min-width:900px){.plan.featured{margin-top:-10px;padding-top:30px}}
+.planflag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+background:var(--cta);color:#fff;font-size:11.5px;font-weight:800;
+letter-spacing:.04em;text-transform:uppercase;padding:4px 12px;border-radius:999px;
+white-space:nowrap}
+.plan h3{font-size:19px;margin-bottom:3px}
+.planline{font-size:14.3px;color:var(--mut);margin-bottom:14px;min-height:2.6em}
+.planprice{font-size:38px;font-weight:800;color:var(--nav);line-height:1;
+letter-spacing:-.02em;margin-bottom:16px}
+.planprice small{font-size:14px;font-weight:600;color:var(--mut);letter-spacing:0}
+.planfeats{list-style:none;margin:0 0 20px;padding:0;flex:1}
+.planfeats li{position:relative;padding:0 0 9px 25px;font-size:14.6px;
+line-height:1.45;color:var(--ink)}
+.planfeats li::before{content:"";position:absolute;left:0;top:5px;width:15px;
+height:9px;border-left:2.4px solid var(--cta);border-bottom:2.4px solid var(--cta);
+transform:rotate(-45deg)}
+.planbtn{width:100%;font-size:16px;padding:13px 20px;min-height:50px}
+.plan:not(.featured) .planbtn{background:#fff;color:var(--nav);
+border:1.5px solid var(--line)}
+.plan:not(.featured) .planbtn:hover{background:var(--soft);border-color:var(--nav2)}
+.planmore{display:block;text-align:center;margin-top:11px;font-size:13.6px;
+font-weight:700;color:var(--nav2);text-decoration:none}
+.planmore:hover{text-decoration:underline}
+
+.gmore{margin:16px 0 0;font-size:14.6px;font-weight:700}
+.gmore a{color:var(--nav2);text-decoration:none}
+.gmore a:hover{text-decoration:underline}
+
+/* ---------- name generator ---------- */
+.ngpanel{padding:18px}
+.ngrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+justify-content:space-between}
+.nglab{font-weight:800;font-size:15px;color:var(--ink)}
+.nghint{font-size:13px;color:var(--mut);margin:0}
+.nghint b{color:var(--ink)}
+kbd{font:inherit;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;
+border-radius:5px;padding:0 5px;background:#fff}
+
+.ngcats{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.ngcat{border:1px solid var(--line);background:#fff;border-radius:999px;
+padding:8px 13px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;
+color:var(--ink);white-space:nowrap;transition:border-color .15s,transform .15s}
+.ngcat:hover{border-color:var(--nav2);transform:translateY(-1px)}
+.ngcat.on{background:var(--nav);color:#fff;border-color:var(--nav)}
+.ngcat.special{border-style:dashed}
+.ngcat.armed{border-style:solid;background:var(--selbg)}
+.ngcat.armed.on{background:var(--nav);color:#fff}
+
+.ngfields{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:640px){.ngfields{grid-template-columns:1.4fr 1fr}}
+.ngfield label{display:block;font-size:12px;font-weight:700;color:var(--mut);
+margin-bottom:4px}
+.ngfield input{width:100%;font:inherit;font-size:15px;padding:10px 12px;
+border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.ngfield input:focus{outline:2px solid var(--nav2);outline-offset:1px;
+border-color:var(--nav2)}
+
+.ngctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn.ngspin{font-size:16px}
+.btn.ghost{background:#fff;color:var(--nav);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--soft);border-color:var(--nav2)}
+.btn.sm{padding:8px 13px;font-size:13.5px;min-height:0}
+
+.nggrid{display:grid;gap:12px;margin-top:18px;
+grid-template-columns:repeat(auto-fill,minmax(248px,1fr))}
+.ngcard{background:#fff;border:1px solid var(--line);border-radius:12px;
+padding:14px 14px 10px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
+transition:border-color .15s,box-shadow .15s,transform .15s;animation:ngpop .3s both}
+.ngcard:hover{border-color:var(--nav2);transform:translateY(-2px);
+box-shadow:0 10px 24px -14px rgba(14,58,82,.5)}
+@keyframes ngpop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.ngcard{animation:none}}
+.ngtag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+color:var(--mut)}
+.ngname{font-size:26px;line-height:1.08;font-weight:800;color:var(--nav);
+letter-spacing:-.01em;word-break:break-word}
+.ngnote{font-size:12.5px;color:var(--mut);font-style:italic;margin-top:-4px}
+.ngmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ngchip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;
+background:var(--selbg);color:var(--ink)}
+.ngchip.ok{background:#dcf0e6;color:var(--ok)}
+.ngchip.warn{background:#fae6da;color:var(--warn)}
+.ngacts2{display:flex;gap:4px;justify-content:flex-end;align-items:center;
+border-top:1px dashed var(--line);padding-top:8px}
+.ngic{appearance:none;border:0;background:transparent;cursor:pointer;font:inherit;
+font-size:15px;padding:4px 8px;border-radius:7px;color:var(--mut);line-height:1}
+.ngic:hover{background:var(--soft);color:var(--nav)}
+.ngic.saved{color:var(--warn)}
+.ngic.cut{font-size:12px;font-weight:800;color:#fff;background:var(--nav);
+padding:6px 11px}
+.ngic.cut:hover{background:var(--nav2);color:#fff}
+.ngempty{grid-column:1/-1;text-align:center;color:var(--mut);padding:30px 10px}
+
+.ngtray{position:sticky;bottom:0;z-index:5;margin-top:18px}
+.ngtraybox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+background:var(--nav);color:#fff;border-radius:12px;padding:12px 14px}
+.nglist{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.ngsv{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+border-radius:999px;padding:4px 10px;font-size:13px;display:inline-flex;gap:6px;
+align-items:center}
+.ngsv button{all:unset;cursor:pointer;opacity:.7;font-size:15px;line-height:1}
+.ngsv button:hover{opacity:1}
+.ngtraybox .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.ngtraybox .btn.ghost:hover{background:rgba(255,255,255,.12);border-color:#fff}
+
+.ngmodal{position:fixed;inset:0;background:rgba(6,28,42,.72);display:none;
+align-items:center;justify-content:center;padding:16px;z-index:60}
+.ngmodal.open{display:flex}
+.ngsheet{position:relative;background:var(--soft);border-radius:16px;max-width:760px;
+width:100%;max-height:92vh;overflow:auto;padding:20px}
+.ngx{position:absolute;top:8px;right:12px;font-size:26px;line-height:1;
+background:none;border:0;cursor:pointer;color:var(--mut);padding:4px 8px}
+.ngx:hover{color:var(--ink)}
+.ngcolors{display:flex;gap:7px;align-items:center;margin-bottom:9px;font-size:13px;
+color:var(--mut)}
+.ngcolors button{width:25px;height:25px;border-radius:50%;border:2px solid #fff;
+box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.ngcolors button:focus-visible{outline:2px solid var(--nav2);outline-offset:2px}
+.ngtransom{background:linear-gradient(180deg,#1d5a7a,#0e3a52 55%,#082435);
+border-radius:18px 18px 60px 60px/18px 18px 40px 40px;min-height:190px;display:flex;
+align-items:center;justify-content:center;padding:32px 24px 42px;position:relative;
+overflow:hidden;box-shadow:inset 0 -18px 40px rgba(0,0,0,.35),
+inset 0 2px 0 rgba(255,255,255,.15)}
+.ngtransom:before{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;
+background:linear-gradient(180deg,rgba(255,255,255,0),rgba(170,220,255,.22));
+border-radius:0 0 60px 60px/0 0 40px 40px}
+.ngtxt{color:#fff;text-align:center;font-size:clamp(26px,7vw,60px);line-height:1.05;
+word-break:break-word;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.ngport{color:rgba(255,255,255,.85);font-size:clamp(11px,2.2vw,16px);text-align:center;
+margin-top:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.ngfonts{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.ngfonts button{border:1px solid var(--line);background:#fff;border-radius:8px;
+padding:7px 11px;cursor:pointer;font:inherit;font-size:13.5px;color:var(--ink)}
+.ngfonts button.on{background:var(--nav);color:#fff;border-color:var(--nav)}
+.ngradio{background:var(--nav);color:#bdf0d3;border-radius:10px;padding:12px 14px;
+font-size:14px;margin:8px 0 12px;line-height:1.5}
+.ngtests{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+margin:12px 0}
+.ngtest{background:#fff;border:1px solid var(--line);border-radius:10px;
+padding:10px 12px;font-size:13px}
+.ngtest b{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--mut);margin-bottom:3px}
+.ngfoot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+justify-content:space-between;margin-top:10px}
+.ngacts{display:flex;gap:6px;flex-wrap:wrap}
+.btn.ngcut{font-size:15px}
+.ngtoast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);
+background:var(--ink);color:#fff;padding:10px 17px;border-radius:999px;font-size:14px;
+opacity:0;transition:.22s;pointer-events:none;z-index:70}
+.ngtoast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.ctaband .ctainner{text-align:center;max-width:620px}
+.ctaband h2{font-size:23px;margin-bottom:7px}
+.ctaband p{color:var(--mut);font-size:15.4px;margin:0 auto 18px;max-width:52ch}
+.ctarow{display:flex;flex-direction:column;align-items:center;gap:12px}
+.ctarow .btn.lg{width:100%;max-width:340px}
+@media(min-width:560px){.ctarow .btn.lg{width:auto;min-width:300px}}
+.ctalink{font-weight:700;font-size:14.6px;color:var(--nav2);text-decoration:none;
+white-space:nowrap}
+.ctalink:hover{text-decoration:underline}
+
+.sband{display:grid;gap:20px;grid-template-columns:1fr;align-items:center}
+@media(min-width:760px){.sband{grid-template-columns:168px 1fr;gap:28px}}
+.sbadge{width:132px;height:132px;display:block;margin:0 auto;overflow:visible}
+@media(min-width:760px){.sbadge{width:168px;height:168px}}
+.sbshape{fill:var(--sdeep,var(--nav));stroke:var(--sbright,var(--sea));
+stroke-width:1.6;stroke-linejoin:round}
+.sbtext{font-family:'Archivo Black','Arial Black',sans-serif;font-weight:900;
+fill:#fff;letter-spacing:.01em;stroke:var(--sdeep,var(--nav));
+paint-order:stroke fill;stroke-linejoin:round}
+.smotif{font-size:11.5px;color:var(--mut);text-align:center;margin:9px 0 0;
+line-height:1.35}
+@media(max-width:759px){.smotif{margin-bottom:4px}}
+.sfacts{display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:560px){.sfacts{grid-template-columns:repeat(3,1fr)}}
+.sfact{background:#fff;border:1px solid var(--line);border-radius:11px;
+padding:11px 13px}
+.sfact{border-top:3px solid var(--sbright,var(--sea))}
+.sfact b{display:block;font-size:20px;line-height:1.15;color:var(--nav);
+font-weight:800;letter-spacing:-.01em}
+.sfact span{display:block;font-size:11.5px;color:var(--mut);font-weight:700;
+letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
+.ssrc{font-size:12px;color:var(--mut);margin:12px 0 0}
+.ssrc a{color:var(--mut)}
+.waters{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:12px}
+@media(min-width:720px){.waters{grid-template-columns:1fr 1fr;gap:12px 24px}}
+.waters li{padding-left:17px;position:relative;font-size:15px;line-height:1.5}
+.waters li::before{content:"";position:absolute;left:0;top:9px;width:9px;
+height:9px;border-radius:50%;background:var(--sbright,var(--sea))}
+.waters b{display:block;color:var(--nav);font-size:15.6px}
+.waters span{color:var(--mut)}
+
+.outline-opt{display:flex;align-items:center;gap:11px;margin-top:14px;
+border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;
+background:#fff;cursor:pointer;transition:border-color .14s,box-shadow .14s}
+.outline-opt:hover{border-color:var(--nav2)}
+.outline-opt input{position:absolute;opacity:0;width:1px;height:1px}
+.outline-opt:has(input:checked){border-color:var(--cta);
+box-shadow:0 0 0 3px rgba(29,122,72,.14)}
+
+.outline-opt:has(input:focus-visible){outline:2px solid var(--nav2);
+outline-offset:2px}
+.outbox{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+/* A real checkbox affordance. The first version was a circle with a filled
+   dot in it, which reads as an already-selected radio button - people thought
+   the $12 outline was switched on by default. */
+.outbox-check{width:24px;height:24px;border-radius:6px;background:#fff;
+border:1.5px solid var(--line);flex:0 0 auto;position:relative;
+transition:background .12s,border-color .12s}
+.outline-opt:has(input:checked) .outbox-check{background:var(--cta);
+border-color:var(--cta)}
+.outbox-check::after{content:"";position:absolute;left:7px;top:3px;width:6px;
+height:12px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;
+transform:rotate(42deg);opacity:0;transition:opacity .12s}
+.outline-opt:has(input:checked) .outbox-check::after{opacity:1}
+.outbox b{display:block;font-size:14.4px;color:var(--ink);line-height:1.2}
+.outbox em{display:block;font-style:normal;font-size:12.2px;color:var(--mut);
+margin-top:2px;line-height:1.3}
+.outprice{font-style:normal;font-size:14px;font-weight:800;color:var(--cta);
+flex:0 0 auto}
+.outrow{margin-top:12px}
+.outrow[hidden]{display:none}
+.outlabel{font-size:12px;font-weight:800;letter-spacing:.04em;
+text-transform:uppercase;color:var(--mut);margin-bottom:7px}
+
+#share .sbgrid{display:grid;gap:22px;grid-template-columns:1fr;margin-top:18px}
+@media(min-width:860px){#share .sbgrid{grid-template-columns:1.35fr 1fr;gap:30px}}
+.sbposts{display:grid;gap:12px}
+.sbpost{background:#fff;border:1px solid var(--line);border-radius:12px;
+padding:13px 15px}
+.sbhead{display:flex;align-items:center;justify-content:space-between;gap:12px;
+margin-bottom:7px}
+.sbhead b{font-size:12px;font-weight:800;letter-spacing:.05em;
+text-transform:uppercase;color:var(--mut)}
+.sbcopy{font:inherit;font-size:13px;font-weight:800;color:#fff;
+background:var(--nav);border:0;border-radius:8px;padding:7px 13px;cursor:pointer}
+.sbcopy:hover{background:var(--nav2)}
+.sbtext{margin:0;font-size:15px;line-height:1.5;color:var(--ink)}
+.sbside{display:flex;flex-direction:column;gap:11px}
+.sbimg{width:100%;border-radius:11px;border:1px solid var(--line);display:block}
+.btn.sbdl{text-align:center}
+.sblink{font-weight:700;font-size:14.4px;color:var(--nav2);text-decoration:none;
+text-align:center}
+.sblink:hover{text-decoration:underline}
+.sbnote{font-size:12.4px;color:var(--mut);margin:0;line-height:1.45}
+.sbtoast{margin-top:14px;font-size:14px;font-weight:700;color:var(--cta);
+opacity:0;transition:opacity .2s}
+.sbtoast.on{opacity:1}
+
+.cardgrid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
+@media(min-width:680px){.cardgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.cardgrid{grid-template-columns:repeat(3,1fr)}}
+.cardcell{display:block;text-decoration:none;border:1px solid var(--line);
+border-radius:10px;overflow:hidden;background:#fff}
+.cardcell:hover{border-color:var(--nav2)}
+.cardcell img{display:block;width:100%;height:auto}
+.cardcell span{display:block;padding:7px 10px;font-size:12px;color:var(--mut)}
+.cardcell b{display:block;color:var(--ink);font-size:12.6px;word-break:break-all}
+
+.fonttabs{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+.fonttabs[hidden]{display:none}
+/* The label is set in a face from its own category (inline font-family from
+   order.py), so the tab shows what it holds instead of describing it. */
+.fonttab{flex:1;min-width:92px;text-align:center;cursor:pointer;
+background:#fff;border:1.5px solid var(--line);border-radius:10px;
+padding:9px 9px 10px;font-size:19px;font-weight:400;color:var(--ink);
+line-height:1.15;transition:border-color .12s,background .12s}
+.fonttab:hover{border-color:var(--nav2)}
+.fonttab.on{background:var(--nav);border-color:var(--nav);color:#fff}
+.fonttab.on em{color:#bcd9e8}
+.fonttab[hidden]{display:none}
+
+.proofbox{background:#fff;border:1px solid var(--line);border-radius:14px;
+padding:26px 22px 28px;box-shadow:0 10px 30px rgba(4,26,38,.07)}
+.proofbox h1{font-size:26px;line-height:1.16;margin-bottom:8px}
+.proofwait{color:var(--mut)}
+.proofart{background:#eef3f6;border:1px solid #cfdde6;border-radius:11px;
+padding:30px 16px;text-align:center;margin:18px 0 20px;overflow:hidden}
+.proofart span{font-size:34px;line-height:1.2;color:#111;word-break:break-word}
+.proofspec{display:grid;grid-template-columns:auto 1fr;gap:7px 18px;
+margin:0 0 22px;font-size:15px}
+.proofspec dt{color:var(--mut);font-weight:650}
+.proofspec dd{margin:0;font-weight:800;color:var(--ink)}
+.proofbox .btn{display:block;width:100%}
+.prooflink{display:block;width:100%;margin-top:11px;background:none;border:0;
+font:inherit;font-size:14px;font-weight:700;color:var(--nav2);cursor:pointer;
+padding:10px;text-decoration:underline}
+.proofnote{margin-top:16px;text-align:left}
+.proofnote label{display:block;font-size:13.5px;font-weight:700;
+margin-bottom:6px}
+.proofnote textarea{width:100%;font:inherit;font-size:15px;padding:11px 12px;
+border:1.5px solid var(--line);border-radius:9px;margin-bottom:11px}
+.prooftick{width:52px;height:52px;border-radius:99px;background:var(--cta);
+color:#fff;font-size:28px;line-height:52px;text-align:center;margin:0 0 14px}
+
+.proofsteps{list-style:none;display:grid;gap:14px;margin:22px 0 16px;padding:0}
+@media(min-width:800px){.proofsteps{grid-template-columns:repeat(3,1fr);gap:18px}}
+.proofsteps li{position:relative;background:#fff;border:1px solid var(--line);
+border-radius:13px;padding:20px 18px 19px}
+.psnum{position:absolute;top:-13px;left:18px;width:28px;height:28px;
+border-radius:99px;background:var(--nav);color:#fff;font-size:14px;
+font-weight:800;line-height:28px;text-align:center}
+.proofsteps li b{display:block;font-size:11.5px;font-weight:800;
+letter-spacing:.07em;text-transform:uppercase;color:var(--nav2);
+margin:6px 0 7px}
+.proofsteps li strong{display:block;font-size:18px;font-weight:800;
+line-height:1.22;color:var(--ink);margin-bottom:7px}
+.pstext{display:block;font-size:14.6px;line-height:1.5;color:var(--mut)}
+
+.fcnote{background:#f3f8fb;border:1px solid #cfdde6;border-left:4px solid var(--nav2);
+border-radius:9px;padding:14px 16px;margin:18px 0 22px;font-size:14.4px;
+line-height:1.5;color:var(--mut)}
+.fcnote b{color:var(--ink)}
+.fclist{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:7px}
+@media(min-width:660px){.fclist{grid-template-columns:1fr 1fr}}
+.fclist li{background:#fff;border:1px solid var(--line);border-radius:9px;
+padding:10px 13px;font-size:14.6px}
+.fclist li b{display:block;font-weight:800;color:var(--ink)}
+.fclist li span{display:block;font-size:12.4px;color:var(--mut);margin-top:2px}
+.fcdet{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+.fcdet summary{cursor:pointer;font-weight:700;font-size:14.6px;color:var(--nav2)}
+.fcall{font-size:12.8px;line-height:1.6;color:var(--mut);margin-top:10px;
+max-height:240px;overflow:auto}
+.fcsend{margin-top:26px;border-top:1px solid var(--line);padding-top:18px}
+.fcok{background:#eaf6ee;border:1px solid #bfe0cb;border-radius:9px;
+padding:13px 15px;font-weight:700;color:#1f5c37}
+.fcerr{background:#fdeceb;border:1px solid #f2c4c0;border-radius:9px;
+padding:13px 15px;font-weight:700;color:#9d2b24}
+</style>
+<script type="application/ld+json">null</script>
+</head><body>
+<a class="skip" href="#main">Skip to the order form</a><div class=top><div class=w><span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping proof in 12 hours</span><span>Cut in Evansdale, IA<span class=topcta> &middot; <a href="/design/" style="color:#fff">Start your order</a></span></span></div></div><header><div class=w><a class=brand href="/"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e3a52"/><path d="M12.8 5 9.8 27M21.8 5 18.8 27" stroke="#fff" stroke-width="2.9" stroke-linecap="round"/><path d="M4 12.2c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M4 20.4c4 0 4 -2.2 8 0c4 0 4 2.2 8 0c4 0 4 -2.2 8 0" stroke="#5fc4f5" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg><span>NumberMy<br>Boat<b>.com</b></span></a><button type=button class=menubtn id=menubtn aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav id=nav><a href="/boat-registration-numbers/">Boat Numbers</a><a href="/boat-lettering/">Boat Letters</a><a href="/gallery/">Gallery</a><a href="/pricing/">Pricing</a><a href="/registration-numbers/">By State</a><span class=navgroup><a class=navtop href="/guides/">Help<svg class=caret viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class=navmenu><a href="/tools/">Free tools</a><a href="/warranty/">Warranty</a><a href="/shipping-and-returns/">Shipping</a><a href="/contact/">Contact</a></span></span></nav><a class=hbtn href="/design/">Start your order</a></div></header><main id=main><section style="padding:30px 0 46px"><div class=w style="max-width:680px"><h1 style="font-size:28px;margin-bottom:10px">What fonts are on this computer?</h1><p class=lede>Run this on the machine that drives the plotter. It checks which of the 45 faces the website offers are already installed here, so we only install what is actually missing.</p><div class=fcnote><b>What this sends.</b> Font names, your browser version and whether this is Windows or a Mac. Nothing else &mdash; no files, no documents, nothing about the rest of the machine. It is only sent when you press the button at the bottom, and it goes to Aaron.</div><div id=fcrun><button type=button class="btn lg" id=fcgo>Check this computer</button></div><div id=fcout></div></div></section></main><footer><div class=w><div class=fgrid><div><h4>Products</h4><ul><li><a href="/boat-registration-numbers/">Registration numbers</a></li><li><a href="/boat-lettering/">Boat letters</a></li></ul></div><div><h4>Free tools</h4><ul><li><a href="/tools/boat-name-generator/">Name generator</a></li><li><a href="/tools/funny-boat-names/">Funny names</a></li><li><a href="/tools/hull-number-decoder/">HIN decoder</a></li><li><a href="/tools/registration-number-layout-checker/">Layout checker</a></li></ul></div><div><h4>By boat</h4><ul><li><a href="/for/sailboats/">Sailboats</a></li><li><a href="/for/pontoon-boats/">Pontoon boats</a></li><li><a href="/for/jet-skis-and-pwc/">Jet skis &amp; PWC</a></li><li><a href="/for/kayaks-and-canoes/">Kayaks &amp; canoes</a></li><li><a href="/for/bass-boats/">Bass boats</a></li><li><a href="/for/jon-boats/">Jon boats</a></li></ul></div><div><h4>Guides</h4><ul><li><a href="/guides/boat-registration-number-rules/">The rules</a></li><li><a href="/guides/where-to-put-boat-registration-numbers/">Where they go</a></li><li><a href="/guides/how-to-apply-boat-lettering/">How to apply</a></li><li><a href="/guides/how-to-remove-boat-lettering/">How to remove</a></li><li><a href="/guides/boat-lettering-fonts/">Fonts</a></li><li><a href="/guides/best-vinyl-for-boat-lettering/">Vinyl types</a></li></ul></div><div><h4>Shop</h4><ul><li><a href="/pricing/">Pricing</a></li><li><a href="/registration-numbers/">Numbers by state</a></li><li><a href="/boat-lettering-waterloo-cedar-falls/">Local pickup</a></li><li><a href="/contact/">Contact</a></li><li><a href="/warranty/">Warranty &amp; guarantee</a></li><li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li></ul></div></div><div class=nap><strong>Number My Boat</strong><br>Cut and shipped from Evansdale, Iowa<br><a href="mailto:orders@numbermyboat.com">orders@numbermyboat.com</a> &middot; Mon-Fri 8-5 CT</div><div class=fbot><span>&copy; 2026 Number My Boat. Cut by hand in Evansdale, Iowa and shipped to all 50 states.</span><span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a> &middot; <a href="/sitemap.xml">Sitemap</a></span></div></div></footer><script>(function(){var b=document.getElementById("menubtn"),n=document.getElementById("nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script><script>window.NMB_FAMS=[{"label":"Block","family":"Archivo Black","weight":"400","cat":"block"},{"label":"Heavy Impact","family":"Anton","weight":"400","cat":"block"},{"label":"Condensed","family":"Oswald","weight":"700","cat":"block"},{"label":"Tall Block","family":"Bebas Neue","weight":"400","cat":"block"},{"label":"Poster","family":"Staatliches","weight":"400","cat":"block"},{"label":"Narrow","family":"Fjalla One","weight":"400","cat":"block"},{"label":"Square","family":"Russo One","weight":"400","cat":"block"},{"label":"Rounded","family":"Titan One","weight":"400","cat":"block"},{"label":"Modern","family":"Montserrat","weight":"800","cat":"block"},{"label":"Stencil","family":"Black Ops One","weight":"400","cat":"block"},{"label":"Sport","family":"Teko","weight":"700","cat":"block"},{"label":"Wide Block","family":"Chivo","weight":"900","cat":"block"},{"label":"Billboard","family":"Big Shoulders Display","weight":"800","cat":"block"},{"label":"Varsity","family":"Alumni Sans","weight":"800","cat":"block"},{"label":"Orbit","family":"Orbitron","weight":"800","cat":"block"},{"label":"Slab","family":"Alfa Slab One","weight":"400","cat":"display"},{"label":"Fat Serif","family":"Abril Fatface","weight":"400","cat":"display"},{"label":"Classic Serif","family":"Playfair Display","weight":"900","cat":"display"},{"label":"Western","family":"Rye","weight":"400","cat":"display"},{"label":"Nautical","family":"Bungee","weight":"400","cat":"display"},{"label":"Retro","family":"Righteous","weight":"400","cat":"display"},{"label":"Speed","family":"Audiowide","weight":"400","cat":"display"},{"label":"Chunky","family":"Bowlby One","weight":"400","cat":"display"},{"label":"Circus","family":"Bevan","weight":"400","cat":"display"},{"label":"Shadowed","family":"Bungee Shade","weight":"400","cat":"display"},{"label":"Neon","family":"Monoton","weight":"400","cat":"display"},{"label":"Racing","family":"Faster One","weight":"400","cat":"display"},{"label":"Cartoon","family":"Rammetto One","weight":"400","cat":"display"},{"label":"Typewriter","family":"Special Elite","weight":"400","cat":"display"},{"label":"Collegiate","family":"Graduate","weight":"400","cat":"display"},{"label":"Brush Script","family":"Pacifico","weight":"400","cat":"script"},{"label":"Bold Script","family":"Lobster","weight":"400","cat":"script"},{"label":"Casual Script","family":"Yellowtail","weight":"400","cat":"script"},{"label":"Flowing","family":"Dancing Script","weight":"700","cat":"script"},{"label":"Formal Script","family":"Great Vibes","weight":"400","cat":"script"},{"label":"Fine Script","family":"Sacramento","weight":"400","cat":"script"},{"label":"Signwriter","family":"Kaushan Script","weight":"400","cat":"script"},{"label":"Playful","family":"Cookie","weight":"400","cat":"script"},{"label":"Wedding","family":"Pinyon Script","weight":"400","cat":"script"},{"label":"Calligraphy","family":"Alex Brush","weight":"400","cat":"script"},{"label":"Swash","family":"Mr Dafoe","weight":"400","cat":"script"},{"label":"Victorian","family":"Rochester","weight":"400","cat":"script"},{"label":"Marker","family":"Permanent Marker","weight":"400","cat":"script"},{"label":"Handwritten","family":"Caveat","weight":"700","cat":"script"},{"label":"Notebook","family":"Shadows Into Light","weight":"400","cat":"script"}];
+(function(){
+  var go=document.getElementById('fcgo'), out=document.getElementById('fcout');
+  if(!go) return;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  // Measured on a canvas against three different generic fallbacks. If the
+  // family is missing, the browser draws the fallback and the widths match.
+  var ctx=document.createElement('canvas').getContext('2d');
+  var PROBE='MWQ@0123456789mwiABCXYZ';
+  function installed(fam){
+    var base=['monospace','serif','sans-serif'];
+    for(var i=0;i<base.length;i++){
+      ctx.font='72px '+base[i];
+      var a=ctx.measureText(PROBE).width;
+      ctx.font='72px "'+fam.replace(/"/g,'')+'",'+base[i];
+      if(Math.abs(a-ctx.measureText(PROBE).width)>0.5) return true;
+    }
+    return false;
+  }
+
+  var report=null;
+
+  function render(have, missing, sys, method){
+    report={have:have, missing:missing, all_sys:sys, method:method,
+            ua:navigator.userAgent,
+            platform:(navigator.userAgentData&&navigator.userAgentData.platform)
+                     ||navigator.platform||''};
+    var h='<h2 style="margin-top:26px">'+have.length+' of '+(have.length+missing.length)
+         +' already installed</h2>';
+    if(missing.length){
+      h+='<p class=lede>These '+missing.length+' need installing:</p><ul class=fclist>';
+      missing.forEach(function(f){
+        h+='<li><b>'+esc(f.family)+'</b>'+(f.weight!=='400'?' '+esc(f.weight):'')
+          +'<span>site calls it &ldquo;'+esc(f.label)+'&rdquo;</span></li>';
+      });
+      h+='</ul>';
+    } else {
+      h+='<p class=lede>Every face the site offers is already on this machine.</p>';
+    }
+    if(have.length){
+      h+='<details class=fcdet><summary>'+have.length+' already here</summary>'
+        +'<ul class=fclist>';
+      have.forEach(function(f){
+        h+='<li><b>'+esc(f.family)+'</b><span>&ldquo;'+esc(f.label)+'&rdquo;</span></li>';
+      });
+      h+='</ul></details>';
+    }
+    if(sys&&sys.length){
+      h+='<details class=fcdet><summary>Everything else installed ('+sys.length
+        +')</summary><div class=fcall>'+esc(sys.join(', '))+'</div></details>';
+    }
+    h+='<div class=fcsend><button type=button class="btn lg" id=fcsend>'
+      +'Send this to Aaron</button>'
+      +'<p class=hint>Nothing has been sent yet.</p></div>';
+    out.innerHTML=h;
+    document.getElementById('fcsend').addEventListener('click', function(){
+      var b=this; b.disabled=true; b.textContent='Sending…';
+      fetch('/api/fonts',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(report)})
+        .then(function(r){return r.json();})
+        .then(function(j){
+          b.parentNode.innerHTML = j&&j.ok
+            ? '<p class=fcok>Sent. Aaron has the list.</p>'
+            : '<p class=fcerr>That did not send. Screenshot this page instead.</p>';
+        }).catch(function(){
+          b.parentNode.innerHTML='<p class=fcerr>That did not send. Screenshot '
+            +'this page instead.</p>';
+        });
+    });
+  }
+
+  function check(sys){
+    var have=[], missing=[], names=null;
+    if(sys){ names={}; sys.forEach(function(n){ names[n.toLowerCase()]=1; }); }
+    window.NMB_FAMS.forEach(function(f){
+      var yes = names ? !!names[f.family.toLowerCase()] : installed(f.family);
+      (yes?have:missing).push(f);
+    });
+    render(have, missing, sys||[], names?'local-font-access':'metrics');
+  }
+
+  go.addEventListener('click', function(){
+    go.disabled=true; go.textContent='Checking…';
+    if(typeof window.queryLocalFonts==='function'){
+      window.queryLocalFonts().then(function(list){
+        var fams={}; list.forEach(function(f){ fams[f.family]=1; });
+        check(Object.keys(fams).sort());
+      }).catch(function(){
+        // Prompt dismissed or blocked - the metric check still answers the
+        // question we actually care about.
+        check(null);
+      });
+    } else { check(null); }
+  });
+})();
+</script>
