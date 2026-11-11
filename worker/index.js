@@ -290,18 +290,59 @@ async function handleCheckout(request, env) {
   let d;
   try { d = await request.json(); } catch { return json({ error: "bad request" }, 400); }
 
-  const amount = priceOf(d.order || d);
+  const o = d.order || d;
+  const amount = priceOf(o);
+  // Updating an existing intent rather than making a second one. The customer
+  // reaching checkout, going back to change the height and returning must
+  // move the amount with them - and must not leave a stray hold on the card.
+  if (d.intent) {
+    const u = await fetch(
+      `https://api.stripe.com/v1/payment_intents/${encodeURIComponent(String(d.intent).slice(0, 80))}`,
+      { method: "POST",
+        headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
+                   "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ amount: String(amount * 100) }) });
+    const pi = await u.json();
+    if (!u.ok) {
+      console.error("stripe reprice failed", pi && pi.error && pi.error.message);
+      return json({ error: "reprice failed" }, 502);
+    }
+    return json({ ok: true, amount, intent: pi.id });
+  }
+  const ref = str(o.ref || d.ref, 24);
+  const lettering = [o.text, o.boatname].filter(Boolean).join(" / ").slice(0, 80);
+
   const body = new URLSearchParams({
     amount: String(amount * 100),
     currency: "usd",
     "automatic_payment_methods[enabled]": "true",
-    description: `Boat Number Shop - ${d.kind || "custom lettering"}`,
+    // What Ryan sees on the Stripe line item. "Boat Number Shop - custom
+    // lettering" told him nothing; the lettering and the reference are the
+    // two things he needs to match a payment to a job.
+    description: `${o.kind || "Lettering"}${lettering ? " - " + lettering : ""}`
+      + (ref ? ` (${ref})` : ""),
   });
+  // Metadata so a Stripe refund or dispute can be traced back to an order
+  // without a database lookup - the dashboard is where that conversation
+  // starts, and a row that says only "$19.00" is no use in it.
+  if (ref) body.set("metadata[ref]", ref);
+  if (lettering) body.set("metadata[lettering]", lettering);
+  if (o.kind) body.set("metadata[product]", str(o.kind, 40));
+  if (o.font) body.set("metadata[font]", str(o.font, 40));
+  if (o.height) body.set("metadata[height]", str(o.height, 8) + '"');
+  if (o.email && EMAIL.test(o.email)) body.set("receipt_email", str(o.email, 120));
+  // Authorise now, charge on approval - or charge outright. Set by
+  // STRIPE_CAPTURE so the shop can change its mind without a code change.
+  if (env.STRIPE_CAPTURE === "manual") body.set("capture_method", "manual");
+
   try {
     const r = await fetch("https://api.stripe.com/v1/payment_intents", {
       method: "POST",
       headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
-                 "Content-Type": "application/x-www-form-urlencoded" },
+                 "Content-Type": "application/x-www-form-urlencoded",
+                 // A double-tap on a flaky connection must not create two
+                 // intents, and so two holds on the customer's card.
+                 ...(ref ? { "Idempotency-Key": `pi_${ref}_${amount}` } : {}) },
       body,
     });
     const pi = await r.json();
@@ -309,7 +350,7 @@ async function handleCheckout(request, env) {
       console.error("stripe intent failed", pi && pi.error && pi.error.message);
       return json({ error: "payment setup failed" }, 502);
     }
-    return json({ clientSecret: pi.client_secret, amount });
+    return json({ clientSecret: pi.client_secret, amount, intent: pi.id });
   } catch (err) {
     console.error("stripe unreachable", err && err.message);
     return json({ error: "payment setup failed" }, 502);

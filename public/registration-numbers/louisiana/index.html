@@ -1774,6 +1774,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
   var $=function(id){return document.getElementById(id);};
   var nextBtn=$('next'), backBtn=$('back'), fill=$('wizfill'),
       stepnum=$('stepnum'), tot=$('total');
+  var intentId=null, intentAmount=null;
   var stripe=null, elements=null, clientSecret=null, mounted=false,
       paying=false, sandbox=false;
 
@@ -2027,7 +2028,7 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
     nextBtn.classList.toggle('paybtn', last);
     document.getElementById('prevwrap').hidden = last;
     if(cur===2){ runValidate(); }
-    if(last){ summary(); initPay(); }
+    if(last){ summary(); initPay(); repriceIntent(); }
     render();
     var top=W.getBoundingClientRect().top+window.scrollY-80;
     if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
@@ -2105,12 +2106,19 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       return;
     }
     mounted=true;
+    // The whole order, not just the figure. The server deliberately ignores
+    // any amount the browser sends and reprices from the fields - so sending
+    // only {amount} left it pricing an empty object, which defaults to the
+    // $19 base. A "Both" order at 6" with an outline is $69 and would have
+    // been charged $19.
+    intentAmount=price();
     fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({amount:price()})})
+      body:JSON.stringify({order:payload()})})
       .then(function(r){return r.json();})
       .then(function(j){
         if(!j.clientSecret) throw new Error('no secret');
-        clientSecret=j.clientSecret;
+        clientSecret=j.clientSecret; intentId=j.intent||null;
+        if(typeof j.amount==='number') intentAmount=j.amount;
         stripe=window.Stripe(window.BNS_STRIPE_PK);
         elements=stripe.elements({clientSecret:clientSecret,
           appearance:{theme:'stripe',variables:{colorPrimary:'#1d7a48',
@@ -2139,6 +2147,24 @@ window.BNS_COL={"White":["#ffffff",1],"Black":["#111111",0],"Navy":["#12243f",0]
       'that \u2014 so nothing is charged for artwork you have not seen.</span></div>';
     $('payhint').textContent='';
     nextBtn.textContent='Send my order';
+  }
+
+  /**
+   * The customer can reach checkout, go back, change the height or tick the
+   * outline, and come forward again. `mounted` stops initPay() running twice,
+   * so without this the intent keeps the amount it was created with and the
+   * card is charged the old price.
+   */
+  function repriceIntent(){
+    if(!intentId || !stripe) return;
+    var now=price();
+    if(now===intentAmount) return;
+    intentAmount=now;
+    fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({intent:intentId, order:payload()})})
+      .then(function(r){return r.json();})
+      .then(function(j){ if(typeof j.amount==='number') intentAmount=j.amount; })
+      .catch(function(){});
   }
 
   function finish(extra){

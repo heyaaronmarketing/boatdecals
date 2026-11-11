@@ -643,6 +643,33 @@ if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
 
+# ---- Stripe ------------------------------------------------------------
+# The server reprices every order from its fields and ignores whatever amount
+# the browser sends. That is correct - and it is why the browser has to send
+# the ORDER. Posting only {amount} left the server pricing an empty object,
+# which falls through to the $19 base: a "Both" order at 6" with an outline is
+# $69 and would have been charged $19. Undercharging is silent, so it is
+# gated rather than remembered.
+if "body:JSON.stringify({order:payload()})" not in design.replace(" ", ""):
+    fails.append("the checkout call no longer sends the order, so the server "
+                 "prices an empty object and every order above the base rate "
+                 "is undercharged")
+if "repriceIntent()" not in design:
+    fails.append("nothing reprices the payment intent. A customer can reach "
+                 "checkout, go back, add an outline and return - the card "
+                 "would be charged the old amount")
+_wj = (ROOT / "worker" / "index.js").read_text()
+if "Idempotency-Key" not in _wj:
+    fails.append("the payment intent call lost its idempotency key - a "
+                 "double-tap on a flaky connection makes two holds on the "
+                 "customer's card")
+if "metadata[ref]" not in _wj:
+    fails.append("payments no longer carry the order reference into Stripe, "
+                 "so a refund or dispute starts from a row saying only $19.00")
+# priceOf is the only authority. A posted total must never reach it.
+if "priceOf(d.quoted" in _wj or "amount: d.amount" in _wj:
+    fails.append("a browser-supplied amount is reaching the Stripe call")
+
 # ---- server-side glyph outlining ----------------------------------------
 # The faces the shop cuts with are licensed Microsoft and Monotype fonts. A
 # desktop licence covers installing them and making artwork; it does not cover
