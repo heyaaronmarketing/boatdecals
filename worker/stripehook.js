@@ -53,6 +53,38 @@ export async function verifyStripe(raw, header, secret, nowMs) {
   return sameBytes(await hmacHex(secret, `${t}.${raw}`), parts.v1);
 }
 
+/**
+ * The shipping address Stripe collected, flattened.
+ *
+ * A Checkout Session with shipping_address_collection saves the address onto
+ * the PaymentIntent's `shipping`, so payment_intent.succeeded carries it. That
+ * matters for the pay-by-link path: those orders predate the address fields on
+ * the form, so the only copy of where to post the parcel is the one Stripe
+ * just collected. Ignoring it leaves the address in the Stripe dashboard and
+ * nowhere else - a paid order with a blank "Ship to" on Ryan's email.
+ *
+ * `shipping` is also absent on perfectly ordinary intents, because the site's
+ * own checkout already holds the address. Hence null rather than empty
+ * strings: the caller must not overwrite a good address with blanks.
+ */
+function shippingOf(obj) {
+  // A PaymentIntent calls it `shipping`; a Checkout Session calls the same
+  // thing `shipping_details`, and newer API versions nest it under
+  // `collected_information`. Which event arrives depends on what is ticked in
+  // the Stripe dashboard, which is not something this code can see - so it
+  // reads all three rather than betting on one.
+  const ci = obj && obj.collected_information;
+  const s = (obj && (obj.shipping || obj.shipping_details))
+    || (ci && ci.shipping_details);
+  const a = s && s.address;
+  if (!a || !a.line1) return null;
+  const t = (v) => String(v == null ? "" : v).slice(0, 120);
+  return {
+    name: t(s.name), line1: t(a.line1), line2: t(a.line2),
+    city: t(a.city), state: t(a.state), zip: t(a.postal_code),
+  };
+}
+
 export async function handleStripeWebhook(request, env) {
   if (request.method !== "POST") return new Response("POST only", { status: 405 });
   if (!env.STRIPE_WEBHOOK_SECRET) {
@@ -94,13 +126,48 @@ export async function handleStripeWebhook(request, env) {
         WHERE ref=? AND COALESCE(paid,0)=0`
     ).bind(intent ? `stripe:${intent}` : "stripe", "paid", ref).run();
     const changed = (r.meta && r.meta.changes) || 0;
+
+    // Only when we have nothing. The site's own checkout collects a validated
+    // address and must win over whatever was typed into Stripe afterwards.
+    const ship = shippingOf(obj);
+    if (ship) {
+      await env.DB.prepare(
+        `UPDATE orders SET ship_line1=?, ship_line2=?, ship_city=?,
+                           ship_state=?, ship_zip=?
+          WHERE ref=? AND COALESCE(ship_line1,'')=''`
+      ).bind(ship.line1, ship.line2, ship.city, ship.state, ship.zip, ref).run();
+    }
+
     if (changed && env.ORDER_TO && env.RESEND_API_KEY) {
       // Only when the browser never got back to us - the normal path already
       // told Ryan, and a second email on every order is noise he will learn
       // to ignore.
-      await notify(env, ref, obj);
+      await notify(env, ref, obj, ship);
     }
     return json200({ ok: true, ref, updated: changed });
+  }
+
+  // The other event that can carry the address. Harmless if the dashboard
+  // never sends it; the guards below make a duplicate a no-op.
+  if (ev.type === "checkout.session.completed") {
+    const ship = shippingOf(obj);
+    if (ship) {
+      await env.DB.prepare(
+        `UPDATE orders SET ship_line1=?, ship_line2=?, ship_city=?,
+                           ship_state=?, ship_zip=?
+          WHERE ref=? AND COALESCE(ship_line1,'')=''`
+      ).bind(ship.line1, ship.line2, ship.city, ship.state, ship.zip, ref).run();
+    }
+    // Only a session that actually took the money. An expired or unpaid
+    // session must never mark an order paid.
+    if (obj.payment_status === "paid") {
+      await env.DB.prepare(
+        `UPDATE orders SET paid=1, payment=?, status=?
+          WHERE ref=? AND COALESCE(paid,0)=0`
+      ).bind(obj.payment_intent ? `stripe:${obj.payment_intent}` : "stripe",
+             "paid", ref).run();
+    }
+    return json200({ ok: true, ref, address: !!ship });
   }
 
   if (ev.type === "charge.refunded" || ev.type === "charge.dispute.created") {
@@ -118,7 +185,7 @@ function json200(o) {
     { headers: { "Content-Type": "application/json" } });
 }
 
-async function notify(env, ref, obj) {
+async function notify(env, ref, obj, ship) {
   const amount = ((obj.amount_received || obj.amount || 0) / 100).toFixed(2);
   try {
     await fetch("https://api.resend.com/emails", {
@@ -132,8 +199,25 @@ async function notify(env, ref, obj) {
         html: `<p><b>${ref}</b> is paid ($${amount}), confirmed by Stripe `
           + `rather than by the customer's browser.</p><p>That means they paid `
           + `and then lost the page before it could tell us - so the order was `
-          + `sitting unpaid. It is marked paid now. Nothing else to do.</p>`,
+          + `sitting unpaid. It is marked paid now.</p>`
+          // Printed here too: for a pay-by-link order this email is the first
+          // place the address appears outside Stripe.
+          + (ship
+            ? `<p><b>Ship to</b><br>${esc(ship.name)}<br>${esc(ship.line1)}<br>`
+              + (ship.line2 ? `${esc(ship.line2)}<br>` : "")
+              + `${esc(ship.city)}, ${esc(ship.state)} ${esc(ship.zip)}</p>`
+              + `<p>Collected by Stripe at checkout and saved onto the order.</p>`
+            : `<p>No address came with this payment. If the order has none on `
+              + `it either, it cannot be posted - look it up in Stripe before `
+              + `cutting anything.</p>`),
       }),
     });
   } catch (err) { console.error("webhook notify failed", err && err.message); }
+}
+
+/** Addresses are customer-typed and this is HTML email. */
+function esc(v) {
+  return String(v == null ? "" : v)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

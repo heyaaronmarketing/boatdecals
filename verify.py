@@ -711,6 +711,26 @@ if '"shipping[address][line1]"' not in _wj2:
 if '["Ship to"' not in _wj2:
     fails.append("the shop email no longer prints a shipping label")
 
+# Pay-by-link orders have no address on the form at all - Stripe collects it at
+# checkout and the ONLY way it reaches us is the payment_intent.succeeded
+# webhook. Without these three the address lives in the Stripe dashboard and
+# nowhere else, which is how the first real order came to be unshippable.
+if '"shipping_address_collection[allowed_countries][0]"' not in _wj2:
+    fails.append("the pay-by-link session no longer asks for an address, so a "
+                 "link-paid order arrives with nowhere to post it")
+_hook0 = (ROOT / "worker" / "stripehook.js").read_text()
+# The CALL with its argument - "shippingOf" alone is satisfied by the
+# function's own declaration, which is the mistake that let five earlier gates
+# pass against code that never ran.
+if "const ship = shippingOf(obj);" not in _hook0:
+    fails.append("the webhook is ignoring the address Stripe collected - a "
+                 "link-paid order would store no address")
+if "SET ship_line1" not in _hook0:
+    fails.append("the webhook reads the collected address but never writes it")
+if "COALESCE(ship_line1,'')=''" not in _hook0:
+    fails.append("the webhook would overwrite a validated checkout address "
+                 "with whatever was later typed into Stripe")
+
 # ---- the Stripe webhook -------------------------------------------------
 # Without a verified signature this is a public endpoint that marks any order
 # paid for anyone who can spell the reference. The signature is the entire
