@@ -210,63 +210,7 @@ async function handleOrder(request, env) {
   if (reuse && o.paid) return json({ ok: true, ref: o.ref, total: o.total, paid: 1 });
 
   if (env.RESEND_API_KEY && env.ORDER_TO) {
-    const rows = [
-      ["Reference", o.ref], ["Product", o.kind],
-      ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
-      ...(o.number_flag
-        ? [["CHECK THE NUMBER", `${o.number_flag} - check against the customer's
-            registration card before cutting`]]
-        : []),
-      ["State", o.state], ["Height", o.height + '"'],
-      ["Font", o.font_risk
-        ? `${o.font} - NOT a plain block face. 33 CFR 173.27 asks for plain `
-          + `vertical block characters on a registration number, so this one `
-          + `may read as non-compliant. The customer was told and chose it `
-          + `anyway. Cut it as ordered.`
-        : o.font],
-      ["Colour", o.color],
-      ["Outline", o.finish === "outline"
-        ? `${o.outline_color} behind ${o.color} (+$${OUTLINE_ADD})` : "None"],
-      ["Upgrades", o.upgrades || "none"],
-      ["Price", "$" + o.total],
-      ["Payment", o.test_mode
-        ? `TEST MODE - no money taken (${o.card_brand || "card"} ending ${o.card_last4 || "----"})`
-        : (o.paid ? `Paid (${o.card_brand} ending ${o.card_last4})` : "Payment link to send")],
-      ["Ship to", [o.name, o.ship_line1, o.ship_line2,
-                   [o.ship_city, o.ship_state].filter(Boolean).join(", "),
-                   o.ship_zip].filter(Boolean).join("\n") || "NO ADDRESS"],
-      ["Customer", o.name], ["Email", o.email],
-      ["Phone", o.phone || "-"], ["Boat", o.boat || "-"],
-      ["Notes", o.notes || "-"], ["From page", o.page],
-    ];
-    const body =
-      (o.test_mode
-        ? `<p style="background:#fff7e6;border-left:4px solid #d08700;padding:10px 13px;
-             font:14px system-ui;margin:0 0 14px"><strong>TEST ORDER.</strong> This came
-             from the sandbox checkout. No payment was taken and no card was stored.
-             Do not cut it.</p>`
-        : "") +
-      `<h2>${o.test_mode ? "[TEST] " : ""}New order ${o.ref} - $${o.total}</h2>` +
-      (o.mismatch ? `<p style="color:#b0202f"><strong>Price mismatch:</strong> browser
-        quoted $${o.quoted}, server says $${o.total}. Check before you invoice.</p>` : "") +
-      `<table cellpadding="6" style="border-collapse:collapse;font:14px system-ui">` +
-      rows.map(([k, v]) =>
-        `<tr><td style="border-bottom:1px solid #ddd"><b>${esc(k)}</b></td>
-             <td style="border-bottom:1px solid #ddd">${esc(v)}</td></tr>`).join("") +
-      `</table>`;
-    try {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`,
-                   "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: env.ORDER_FROM || "orders@numbermyboat.com",
-          to: [env.ORDER_TO], reply_to: o.email,
-          subject: `${o.test_mode ? "[TEST] " : ""}Order ${o.ref} - ${o.kind} - $${o.total}`,
-          html: body,
-        }),
-      });
-    } catch (err) { console.error("resend failed", err && err.message); }
+    await emailShop(env, o);
   }
 
   // The customer hears from us immediately, not in eleven hours' time.
@@ -279,6 +223,91 @@ async function handleOrder(request, env) {
 
   return json({ ok: true, ref: o.ref, total: o.total,
                 state: o.state || undefined, flag: o.number_flag || undefined });
+}
+
+/**
+ * The order email the shop works from.
+ *
+ * Pulled out of the order handler so it can be sent again later. An order can
+ * arrive while the mailbox is misconfigured, or Ryan can simply lose the
+ * email, and before this the only record was a D1 row nobody can read from a
+ * phone. /api/resend-order replays it.
+ */
+async function emailShop(env, o) {
+  if (!env.RESEND_API_KEY || !env.ORDER_TO) return false;
+  const rows = [
+    ["Reference", o.ref], ["Product", o.kind],
+    ["Lettering", [o.text, o.boatname].filter(Boolean).join("  |  ")],
+    ...(o.number_flag
+      ? [["CHECK THE NUMBER", `${o.number_flag} - check against the customer's
+          registration card before cutting`]]
+      : []),
+    ["State", o.state], ["Height", o.height + '"'],
+    ["Font", o.font_risk
+      ? `${o.font} - NOT a plain block face. 33 CFR 173.27 asks for plain `
+        + `vertical block characters on a registration number, so this one `
+        + `may read as non-compliant. The customer was told and chose it `
+        + `anyway. Cut it as ordered.`
+      : o.font],
+    ["Colour", o.color],
+    ["Outline", o.finish === "outline"
+      ? `${o.outline_color} behind ${o.color} (+$${OUTLINE_ADD})` : "None"],
+    ["Upgrades", o.upgrades || "none"],
+    ["Price", "$" + o.total],
+    ["Payment", o.test_mode
+      ? `TEST MODE - no money taken (${o.card_brand || "card"} ending ${o.card_last4 || "----"})`
+      : (o.paid ? `Paid (${o.card_brand} ending ${o.card_last4})` : "Payment link to send")],
+    ["Ship to", [o.name, o.ship_line1, o.ship_line2,
+                 [o.ship_city, o.ship_state].filter(Boolean).join(", "),
+                 o.ship_zip].filter(Boolean).join("\n") || "NO ADDRESS"],
+    ["Customer", o.name], ["Email", o.email],
+    ["Phone", o.phone || "-"], ["Boat", o.boat || "-"],
+    ["Notes", o.notes || "-"], ["From page", o.page],
+  ];
+  const body =
+    (o.test_mode
+      ? `<p style="background:#fff7e6;border-left:4px solid #d08700;padding:10px 13px;
+           font:14px system-ui;margin:0 0 14px"><strong>TEST ORDER.</strong> This came
+           from the sandbox checkout. No payment was taken and no card was stored.
+           Do not cut it.</p>`
+      : "") +
+    `<h2>${o.test_mode ? "[TEST] " : ""}New order ${o.ref} - $${o.total}</h2>` +
+    (o.mismatch ? `<p style="color:#b0202f"><strong>Price mismatch:</strong> browser
+      quoted $${o.quoted}, server says $${o.total}. Check before you invoice.</p>` : "") +
+    `<table cellpadding="6" style="border-collapse:collapse;font:14px system-ui">` +
+    rows.map(([k, v]) =>
+      `<tr><td style="border-bottom:1px solid #ddd"><b>${esc(k)}</b></td>
+           <td style="border-bottom:1px solid #ddd">${esc(v)}</td></tr>`).join("") +
+    `</table>`;
+  // The result is CHECKED, not assumed. This used to fire and forget inside a
+  // try/catch and report success either way, so a rejected key or a refused
+  // address looked exactly like a delivered email - worthless when the whole
+  // question is "did the shop actually get the order?".
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`,
+                 "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: env.ORDER_FROM || "orders@numbermyboat.com",
+        to: [env.ORDER_TO], reply_to: o.email,
+        // Blind, so the shop's copy does not show a second address and
+        // nobody ends up replying to the wrong one.
+        ...(env.ORDER_BCC ? { bcc: [env.ORDER_BCC] } : {}),
+        subject: `${o.test_mode ? "[TEST] " : ""}Order ${o.ref} - ${o.kind} - $${o.total}`,
+        html: body,
+      }),
+    });
+    if (!r.ok) {
+      console.error("resend rejected", r.status, (await r.text()).slice(0, 200));
+      return false;
+    }
+    const j = await r.json().catch(() => ({}));
+    return { id: j.id || null };
+  } catch (err) {
+    console.error("resend failed", err && err.message);
+    return false;
+  }
 }
 
 const esc = s => String(s).replace(/[&<>"]/g,
@@ -599,6 +628,28 @@ export default {
         return json({ error: (cs.error && cs.error.message) || "stripe failed" }, 502);
       }
       return json({ ok: true, ref: o.ref, amount, url: cs.url, expires: cs.expires_at });
+    }
+    // Re-send the order email for an order already in D1. Keyed, because it
+    // sends mail: without the key this is a button anyone can press to post
+    // the shop's own inbox from the shop's own domain.
+    if (url.pathname === "/api/resend-order") {
+      const k = env.PROOF_RUN_KEY;
+      if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
+      if (!env.DB) return json({ error: "not configured" }, 503);
+      const ref = str(url.searchParams.get("r"), 24);
+      const o = await env.DB.prepare(
+        `SELECT * FROM orders WHERE ref=? LIMIT 1`).bind(ref).first();
+      if (!o) return json({ error: "no such order" }, 404);
+      const sent = await emailShop(env, o);
+      return json({ ok: !!sent, ref: o.ref,
+                    to: sent ? env.ORDER_TO : null,
+                    bcc: sent ? (env.ORDER_BCC || null) : null,
+                    // Resend's own id, so delivery can be traced in their
+                    // dashboard rather than taken on trust.
+                    id: (sent && sent.id) || null,
+                    has_address: !!o.ship_line1,
+                    error: sent ? undefined : "send failed - check the logs" },
+                  sent ? 200 : 502);
     }
     if (url.pathname === "/api/approve") {
       return json(await handleApprove(request, env));

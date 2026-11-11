@@ -121,6 +121,7 @@ for lbl, amt, _b, _f, _n in UPGRADES:
 if "upgrades:ups.join(' | ')" not in (ROOT / "engine" / "order.py").read_text():
     fails.append("client upgrade delimiter changed without updating the worker")
 from content import PREFIX_STATE as _PS
+import json
 import re as _r
 _m = _r.search(r'const PREFIX_STATE = \{(.*?)\};', wjs, _r.S)
 if not _m:
@@ -876,6 +877,29 @@ if "SET ship_line1" not in _hook0:
 if "COALESCE(ship_line1,'')=''" not in _hook0:
     fails.append("the webhook would overwrite a validated checkout address "
                  "with whatever was later typed into Stripe")
+
+# ---- where orders go ----------------------------------------------------
+# ORDER_TO used to be a Worker secret, which meant the answer to "where do
+# order emails go?" could not be read from the repo at all - and a wrong
+# value would be invisible until someone noticed orders had stopped arriving.
+# It is an ordinary address, not a credential, so it lives in config now.
+# Parsed as plain JSON. Stripping // comments first looked tidier and ate the
+# "https://" inside every URL in the file.
+_wr = json.loads((ROOT / "wrangler.jsonc").read_text())
+_vars = _wr.get("vars", {})
+if _vars.get("ORDER_TO") != "orders@numbermyboat.com":
+    fails.append("ORDER_TO is %r - order emails would go somewhere else, or "
+                 "nowhere" % _vars.get("ORDER_TO"))
+if _vars.get("ORDER_BCC") != "hello@aaron.chat":
+    fails.append("ORDER_BCC is %r - Aaron would stop being copied on orders"
+                 % _vars.get("ORDER_BCC"))
+_wj4 = (ROOT / "worker" / "index.js").read_text()
+if "bcc: [env.ORDER_BCC]" not in _wj4:
+    fails.append("the order email no longer carries a BCC")
+# A BCC that is not blind defeats the point: the shop's copy would show a
+# second recipient and replies could land on the wrong one.
+if re.search(r'to:\s*\[env\.ORDER_TO,\s*env\.ORDER_BCC', _wj4):
+    fails.append("ORDER_BCC was moved into the To line - it must stay blind")
 
 # ---- the Stripe webhook -------------------------------------------------
 # Without a verified signature this is a public endpoint that marks any order

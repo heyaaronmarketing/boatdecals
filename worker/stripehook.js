@@ -195,6 +195,8 @@ async function notify(env, ref, obj, ship) {
       body: JSON.stringify({
         from: env.ORDER_FROM || "orders@numbermyboat.com",
         to: [env.ORDER_TO],
+        // Same copy Aaron gets on the order itself.
+        ...(env.ORDER_BCC ? { bcc: [env.ORDER_BCC] } : {}),
         subject: `Payment confirmed by Stripe - ${ref} - $${amount}`,
         html: `<p><b>${ref}</b> is paid ($${amount}), confirmed by Stripe `
           + `rather than by the customer's browser.</p><p>That means they paid `

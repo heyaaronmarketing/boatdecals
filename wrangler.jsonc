@@ -12,7 +12,9 @@
   },
   "vars": {
     "SITE_URL": "https://numbermyboat.com",
-    "ORDER_FROM": "orders@numbermyboat.com"
+    "ORDER_FROM": "orders@numbermyboat.com",
+    "ORDER_TO": "orders@numbermyboat.com",
+    "ORDER_BCC": "hello@aaron.chat"
   },
   "d1_databases": [
     {
