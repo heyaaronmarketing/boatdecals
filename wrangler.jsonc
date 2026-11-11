@@ -29,5 +29,11 @@
     "crons": [
       "17 * * * *"
     ]
-  }
+  },
+  "r2_buckets": [
+    {
+      "binding": "FONTS",
+      "bucket_name": "nmb-fonts"
+    }
+  ]
 }

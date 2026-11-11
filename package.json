@@ -5,5 +5,8 @@
     "build": "python3 engine/build.py",
     "deploy": "npx wrangler deploy",
     "dev": "npx wrangler dev"
+  },
+  "dependencies": {
+    "opentype.js": "^2.0.0"
   }
 }

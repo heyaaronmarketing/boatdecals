@@ -626,6 +626,40 @@ if "body.sheeton .sticky" not in design:
     fails.append("the sticky CTA still floats over the open order sheet, "
                  "offering the thing that is already open")
 
+# ---- server-side glyph outlining ----------------------------------------
+# The faces the shop cuts with are licensed Microsoft and Monotype fonts. A
+# desktop licence covers installing them and making artwork; it does not cover
+# serving the font file to visitors, which is what @font-face does. So the
+# font files live in R2 and the worker returns OUTLINES of the characters a
+# customer typed. Three things have to stay true for that to hold.
+_ol = (ROOT / "worker" / "outline.js").read_text()
+if "env.FONTS" not in _ol:
+    fails.append("the outliner no longer reads fonts from the private bucket")
+_wrangler = json.loads((ROOT / "wrangler.jsonc").read_text())
+if not [b for b in _wrangler.get("r2_buckets", [])
+        if b.get("binding") == "FONTS"]:
+    fails.append("the FONTS bucket binding is gone, so the worker has no "
+                 "fonts to outline from")
+# The bucket must never be served to the browser. A public route to it would
+# be distributing the font software, which is the whole thing this avoids.
+for _b in _wrangler.get("r2_buckets", []):
+    if _b.get("preview_bucket_name") or _b.get("public"):
+        fails.append("the font bucket looks publicly exposed - outlining only "
+                     "works as a licence answer while the files stay private")
+# Matched on the CALL, not the definition: an earlier version of this gate
+# checked for "capHeight(f, upm)" and passed happily against the function
+# signature while the call site had been replaced with the OS/2 lookup.
+if "const cap = capHeight(f, upm);" not in _ol \
+        or 'charToGlyph("H")' not in _ol:
+    fails.append("cap height is no longer measured off the capital H. Rye "
+                 "declares sCapHeight 363 against a 2048 em when its real H "
+                 "is 1550 - trusting the table cuts that face four times "
+                 "oversize on a decal whose job is being exactly 3 inches")
+if "ALLOWED" not in _ol:
+    fails.append("the outliner no longer restricts input characters - a glyph "
+                 "that silently drops between preview and cut is the failure "
+                 "the proof exists to catch")
+
 # ---- the font inventory page --------------------------------------------
 # /fonts-check/ reports which of the site's faces are installed on the shop
 # PC. It must load NO web fonts: a face pulled in by the page measures as

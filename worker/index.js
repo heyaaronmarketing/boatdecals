@@ -7,6 +7,7 @@
  * from scratch and that figure is the authority. Never trust a posted total.
  */
 
+import { handleOutline } from "./outline.js";
 import { runProofCycle, handleApprove, handleProofData,
          sendOrderConfirmation } from "./proof.js";
 
@@ -418,6 +419,17 @@ export default {
       return handleCheckout(request, env);
     }
     if (url.pathname === "/api/geo") return handleGeo(request);
+    // Outlines are pure: the same text in the same face is always the same
+    // path, so they cache hard at the edge and a customer retyping a
+    // character they already had costs nothing.
+    if (url.pathname === "/api/outline") {
+      const d = await handleOutline(request, env);
+      return new Response(JSON.stringify(d), {
+        status: d.ok ? 200 : 400,
+        headers: { "Content-Type": "application/json",
+                   "Cache-Control": d.ok ? "public, max-age=86400" : "no-store" },
+      });
+    }
     // Runs the cycle on demand. Sends real email, so it is useless without
     // the key and refuses outright if none is configured - an unguarded
     // version of this is a button anybody can press to mail our customers.
