@@ -67,12 +67,24 @@ export async function handleStripeWebhook(request, env) {
   try { ev = JSON.parse(raw); } catch { return new Response("bad json", { status: 400 }); }
 
   const obj = (ev.data && ev.data.object) || {};
-  const ref = (obj.metadata && obj.metadata.ref) || "";
   const intent = obj.id || "";
 
   // Always 200 for events we do not act on. A non-2xx makes Stripe retry for
   // days over something we were never going to do anything about.
-  if (!env.DB || !ref) return json200({ ok: true, ignored: ev.type });
+  if (!env.DB) return json200({ ok: true, ignored: ev.type });
+
+  // A PaymentIntent carries our metadata; a Charge does NOT. Stripe does not
+  // copy metadata from the intent onto the charge it creates, so a refund or
+  // dispute arrives with metadata.ref empty and has to be matched the other
+  // way - through the intent id stored on the order when it was paid.
+  let ref = (obj.metadata && obj.metadata.ref) || "";
+  if (!ref && obj.payment_intent) {
+    const row = await env.DB.prepare(
+      `SELECT ref FROM orders WHERE payment = ? LIMIT 1`
+    ).bind("stripe:" + String(obj.payment_intent)).first();
+    if (row) ref = row.ref;
+  }
+  if (!ref) return json200({ ok: true, ignored: ev.type, reason: "no ref" });
 
   if (ev.type === "payment_intent.succeeded") {
     // Idempotent by construction: Stripe retries, and the same event must not

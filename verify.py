@@ -713,6 +713,13 @@ if "return sameBytes(await hmacHex(" not in _hook:
 if "age > 300" not in _hook:
     fails.append("the webhook lost its timestamp check, so a captured request "
                  "can be replayed forever")
+# A Charge does not inherit the PaymentIntent's metadata, so a refund or
+# dispute arrives with no ref and has to be matched through the intent id.
+# Without this they are silently dropped and the order still reads paid.
+if "obj.payment_intent" not in _hook:
+    fails.append("refunds and disputes are not matched by payment intent id. "
+                 "A Charge does not carry our metadata, so they would arrive "
+                 "with no reference and be silently ignored")
 if "COALESCE(paid,0)=0" not in _hook:
     fails.append("the paid update is no longer idempotent. Stripe retries, "
                  "and a retry must not do anything a second time")
