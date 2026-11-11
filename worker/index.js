@@ -8,6 +8,7 @@
  */
 
 import { handleOutline } from "./outline.js";
+import { handleStripeWebhook } from "./stripehook.js";
 import { runProofCycle, handleApprove, handleProofData,
          sendOrderConfirmation } from "./proof.js";
 
@@ -468,6 +469,11 @@ export default {
       if (request.method !== "POST") return json({ error: "POST only" }, 405);
       return handleCheckout(request, env);
     }
+    // Raw body, no json() wrapper: the signature is over the exact bytes
+    // Stripe sent and a re-serialised copy will not reproduce them.
+    if (url.pathname === "/api/stripe-webhook") {
+      return handleStripeWebhook(request, env);
+    }
     if (url.pathname === "/api/geo") return handleGeo(request);
     // Outlines are pure: the same text in the same face is always the same
     // path, so they cache hard at the edge and a customer retyping a
@@ -531,6 +537,7 @@ export default {
       return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
                     shop_to: !!env.ORDER_TO,
                     stripe: !!env.STRIPE_SECRET_KEY,
+                    webhook: !!env.STRIPE_WEBHOOK_SECRET,
                     pay_mode: env.STRIPE_SECRET_KEY ? "stripe" : "sandbox" });
     }
 

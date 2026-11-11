@@ -677,6 +677,32 @@ if "nothing is charged for artwork you have not seen" in design:
     fails.append("the checkout still promises not to charge before the proof, "
                  "which stopped being true when payment moved to checkout")
 
+# ---- the Stripe webhook -------------------------------------------------
+# Without a verified signature this is a public endpoint that marks any order
+# paid for anyone who can spell the reference. The signature is the entire
+# security model, so each part of it is checked here.
+_hook = (ROOT / "worker" / "stripehook.js").read_text()
+if "STRIPE_WEBHOOK_SECRET" not in _hook or "crypto.subtle" not in _hook:
+    fails.append("the Stripe webhook no longer verifies a signature - it "
+                 "would mark any order paid for anyone who posts to it")
+if "await request.text()" not in _hook:
+    fails.append("the webhook is not reading the RAW body. Stripe signs the "
+                 "exact bytes it sent; a re-serialised copy never matches")
+# The CALL, not the declaration - "sameBytes" alone is satisfied by the
+# function's own signature, which is how four earlier gates in this file
+# passed while the thing they guarded had been removed.
+if "return sameBytes(await hmacHex(" not in _hook:
+    fails.append("signature comparison is no longer constant-time, so a "
+                 "signature can be guessed a byte at a time")
+if "age > 300" not in _hook:
+    fails.append("the webhook lost its timestamp check, so a captured request "
+                 "can be replayed forever")
+if "COALESCE(paid,0)=0" not in _hook:
+    fails.append("the paid update is no longer idempotent. Stripe retries, "
+                 "and a retry must not do anything a second time")
+if 'url.pathname === "/api/stripe-webhook"' not in (ROOT / "worker" / "index.js").read_text():
+    fails.append("the webhook route is not mounted")
+
 # ---- server-side glyph outlining ----------------------------------------
 # The faces the shop cuts with are licensed Microsoft and Monotype fonts. A
 # desktop licence covers installing them and making artwork; it does not cover
