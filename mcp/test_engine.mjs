@@ -568,6 +568,26 @@ const WARM = [
   check(cold.names.length >= 6,
     "with nothing proven the exploration cap bound anyway and the round came "
     + "back with " + cold.names.length + " names");
+  // FOUND LIVE. One proven mechanism cannot compose a round. He killed
+  // deadpan, which left exactly one proven mechanism in his lane, and a round
+  // of four came back as three literal-truth jokes and one riff - the same
+  // joke three times, which is what the diversity caps exist to prevent.
+  const one = E.dealRound(BANK, prof,
+    { seed: "lonely", size: 4, proven: ["lt"], killedMechs: ["dp"] });
+  // DOMINANCE, not distinctness. The first version of this check asked for
+  // two distinct mechanisms and passed with the cap left in: three
+  // literal-truth names plus one exploration slot is two distinct
+  // mechanisms, and it is also the bug. What matters is that no single joke
+  // takes three of the four.
+  const tally = {};
+  for (const n of one.names) {
+    tally[n.mechanism_code] = (tally[n.mechanism_code] || 0) + 1;
+  }
+  const worst = Math.max(...Object.values(tally));
+  check(one.names.length === 4 && worst <= 2,
+    "with one proven mechanism a round of four came back as "
+    + one.names.length + " names, " + worst + " of them the same joke: "
+    + one.names.map((n) => n.name + " (" + n.mechanism_code + ")").join(", "));
 }
 
 // --- gating a riff --------------------------------------------------------

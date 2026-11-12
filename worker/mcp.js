@@ -442,7 +442,8 @@ const TOOLS = [
       const led = await ledgerFor(env, ctx, profile);
       const round = dealRound(bank, profile, {
         size: args.size || 8, exclude: shown, killedMechs: killed,
-        font: args.font || "Arial Bold", riffs, proven: led.proven,
+        font: args.font || "Arial Bold", riffs,
+        proven: led.proven.filter((x) => !killed.includes(x)),
         seed: (sid || now) + ":" + (prior ? prior.rounds + 1 : 1),
       });
       // Exposures. Every name dealt is evidence about its mechanism whether
@@ -570,7 +571,13 @@ const TOOLS = [
       // Rounds of four from here. Eight is a shortlist; four is a decision.
       const round = state.finalists_ready ? null : dealRound(bank, profile, {
         size: ROUND_SIZE, exclude: shown,
-        killedMechs: state.rejected_mechs, riffs, proven: led.proven,
+        killedMechs: state.rejected_mechs, riffs,
+        // His kills come out of the proven set before the exploration cap
+        // sees it. Otherwise a lane with two proven mechanisms, one of them
+        // retired by him, still caps exploration at one slot and the round is
+        // the remaining mechanism three times over.
+        proven: led.proven.filter(
+          (x) => !(state.rejected_mechs || []).includes(x)),
         seed: sid + ":" + rounds,
       });
       if (round) {

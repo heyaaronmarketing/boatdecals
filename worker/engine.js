@@ -393,13 +393,25 @@ export function dealRound(bank, profile, opts = {}) {
   // that were read by a human and then measured.
   const riffCap = Math.min(riffs.length, Math.floor(size / 3));
   // Exploration: at most ONE slot for a mechanism the ledger has not proven
-  // for this lane - but only once the ledger has proven something, because a
-  // cold ledger has proven nothing and capping the round at one name is not
-  // caution, it is an empty round. This is a deliberate reading of the spec's
-  // "unproven mechanisms are exploration, capped at one slot per round": the
-  // cap binds when there is a proven set to fall back on.
+  // for this lane. A deliberate reading of the spec's "unproven mechanisms
+  // are exploration, capped at one slot per round", because taken literally
+  // the cap has two states where it does real damage:
+  //
+  //   * a COLD ledger has proven nothing, so capping the round at one name is
+  //     not caution, it is an empty round;
+  //   * ONE proven mechanism cannot compose a round. Live, a man killed
+  //     deadpan, which left exactly one proven mechanism in his lane, and a
+  //     round of four came back as "Boat", "Pending", "Loading..." and one
+  //     riff - three literal-truth jokes, which is the same joke three times
+  //     and is precisely what the diversity caps exist to prevent.
+  //
+  // So the cap binds once there are at least TWO proven mechanisms to build a
+  // round out of. Below that the ledger does not know enough to be worth
+  // obeying, and the caller passes the set with his killed mechanisms already
+  // subtracted - the ledger knows what lands on strangers, he knows what
+  // lands on him, and he wins.
   const proven = new Set(opts.proven || []);
-  const exploreCap = proven.size ? 1 : Infinity;
+  const exploreCap = proven.size >= 2 ? 1 : Infinity;
 
   const scored = [];
   const rejected = { radio: 0, level: 0, in_joke: 0, fit: 0, tier1: 0,
