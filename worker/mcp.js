@@ -904,6 +904,9 @@ const TOOLS = [
       const site = env.SITE_URL || "https://numbermyboat.com";
 
       const finalists = [];
+      // Spent clauses, shared across the three. The reveal is the three names
+      // together, so no two may lean on the same fact.
+      const usedClauses = new Set();
       for (const name of kept.slice(0, FINALISTS)) {
         const n = byName.get(name.toLowerCase());
         if (!n) continue;
@@ -913,7 +916,7 @@ const TOOLS = [
         const over = overuseGate(n.name);
         finalists.push({
           name: n.name,
-          why_this_one: rationale(n, profile, radio, fit),
+          why_this_one: rationale(n, profile, radio, fit, usedClauses),
           say_it_on_the_radio: radio.readback,
           what_we_checked: gateSummary(radio, fit, over),
           width: { font, widths_in: fit.widths_in,

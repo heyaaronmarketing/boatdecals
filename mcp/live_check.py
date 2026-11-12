@@ -139,8 +139,12 @@ import urllib.error
 
 
 def raw(method, path="/mcp", headers=None, body=None):
-    req = urllib.request.Request(SITE + path, body, headers or {},
-                                 method=method)
+    # The user-agent is not optional. Without it Cloudflare bot management
+    # answers urllib with its own 403 ("error code: 1010") - and the Origin
+    # check below asserts a 403, so the whole transport block passed for the
+    # wrong reason the first time it ran.
+    h = {"user-agent": "nmb-live-check", **(headers or {})}
+    req = urllib.request.Request(SITE + path, body, h, method=method)
     try:
         r = urllib.request.urlopen(req, timeout=30)
         return r.status, r.read().decode()

@@ -671,7 +671,22 @@ const BOAT_LABEL = {
   kayak: "kayak or canoe", jetski: "jet ski",
 };
 
-export function rationale(n, profile, radio, fit) {
+/**
+ * `used` is why this takes a fifth argument.
+ *
+ * The reveal is three names TOGETHER, so distinctness is a property of the
+ * set and not of any one name. The first version gave each finalist the most
+ * specific fact available about itself, which is correct in isolation and
+ * produced this live:
+ *
+ *   Live Bait - ...the joke is that it is simply, boringly true.
+ *   Last Cast - ...the joke is that it is simply, boringly true.
+ *
+ * Two literal-truth names, neither carrying a note, so the ladder landed on
+ * the same rung twice. Passing the clauses already spent lets the second name
+ * fall through to the next rung instead.
+ */
+export function rationale(n, profile, radio, fit, used = null) {
   // At most three clauses. The spec asks for a one-line rationale, and the
   // first version ran to five semicolons - "You asked for deadpan, and this
   // is that; it is a pontoon name and you told us X; it stays clean, which
@@ -710,29 +725,46 @@ export function rationale(n, profile, radio, fit) {
 
   // 3. One fact true of this name and no other, in order of how specific it
   //    is. Every branch is read off the name's own row or its gate result -
-  //    none of it is a guess about the customer.
+  //    none of it is a guess about the customer. The first of these that no
+  //    other finalist has already used is the one that goes in.
+  const ladder = [];
   if (n.note) {
-    bits.push(n.note.replace(/\.$/, "")
+    ladder.push(n.note.replace(/\.$/, "")
       .replace(/^([A-Z])/, (m) => m.toLowerCase()));
-  } else if (radio && radio.spell_out) {
-    bits.push("you will be spelling it out on the radio, which some people "
+  }
+  if (radio && radio.spell_out) {
+    ladder.push("you will be spelling it out on the radio, which some people "
       + "like and some people hate");
-  } else if (radio && radio.visual_only) {
-    bits.push("the punctuation is the punchline, so it only really works "
+  }
+  if (radio && radio.visual_only) {
+    ladder.push("the punctuation is the punchline, so it only really works "
       + "written down");
-  } else if (radio && radio.verdict === "mouthful") {
-    bits.push("it is a long one to say, and worth it");
-  } else if (MECHANISM_PHRASE[n.mechanism_code] && !saidInJoke) {
-    // Skipped when clause 2 already called it an in-joke, which produced
-    // "it is an in-joke for X; an in-joke."
-    bits.push(MECHANISM_PHRASE[n.mechanism_code]);
-  } else if (fit && fit.best_height) {
-    // A real per-name fact for the cases where the mechanism is shared by
-    // everything else in the lane - three in-jokes in a nerd round otherwise
-    // came back with word-for-word identical reasons.
-    bits.push(`it will cut at ${fit.best_height}" tall on what you have`);
-  } else if ((n.themes || []).length) {
-    bits.push(`it reads as a ${(n.themes || [])[0].replace(/_/g, " ")} name`);
+  }
+  if (radio && radio.verdict === "mouthful") {
+    ladder.push("it is a long one to say, and worth it");
+  }
+  // Skipped when clause 2 already called it an in-joke, which produced
+  // "it is an in-joke for X; an in-joke."
+  if (MECHANISM_PHRASE[n.mechanism_code] && !saidInJoke) {
+    ladder.push(MECHANISM_PHRASE[n.mechanism_code]);
+  }
+  if (fit && fit.best_height) {
+    ladder.push(`it will cut at ${fit.best_height}" tall on what you have`);
+  }
+  // The width is the last resort and the only rung that is always its own:
+  // two names are rarely the same number of inches wide.
+  if (fit && fit.widths_in && fit.best_height
+      && fit.widths_in[fit.best_height] != null) {
+    ladder.push(`at ${fit.best_height}" it finishes about `
+      + `${fit.widths_in[fit.best_height]}" across`);
+  }
+  if ((n.themes || []).length) {
+    ladder.push(`it reads as a ${(n.themes || [])[0].replace(/_/g, " ")} name`);
+  }
+  const pick = ladder.find((c) => !(used && used.has(c)));
+  if (pick) {
+    bits.push(pick);
+    if (used) used.add(pick);
   }
 
   if (!bits.length) {

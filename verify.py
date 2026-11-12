@@ -1208,6 +1208,17 @@ if _bank_f.exists():
         if "not a registry" not in _mcp:
             fails.append("the MCP server no longer tells the model that the "
                          "overuse data is market data and not a registry")
+        # mcpInfo() names a privacy page and a support page, and a
+        # directory reviewer will click both. Worker code is not scanned by
+        # the broken-link pass that covers the built pages, so it gets its
+        # own check.
+        for _u in re.findall(r'"https://numbermyboat\.com(/[a-z0-9/-]*)"',
+                             _mcp):
+            _t = (OUT / _u.strip("/") / "index.html") if _u.strip("/") \
+                else (OUT / "index.html")
+            if _u not in ("/mcp",) and not _t.exists():
+                fails.append("the MCP server points callers and reviewers at "
+                             "%s and that page is not built" % _u)
         if "33 CFR 173.27" not in _mcp:
             fails.append("the MCP server no longer states the 3-inch block "
                          "character rule for registration numbers")

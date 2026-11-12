@@ -399,6 +399,46 @@ const deal = (answers, opts = {}) =>
     + "reasons - the reveal reads as generated");
 }
 
+// --- no two finalists may lean on the same fact --------------------------
+{
+  // FOUND LIVE. "Live Bait" and "Last Cast" are both literal-truth names,
+  // both suit a bass boat, and neither carries a note - so the ladder landed
+  // on the same rung twice and the reveal read:
+  //
+  //   Live Bait - ...the joke is that it is simply, boringly true.
+  //   Last Cast - ...the joke is that it is simply, boringly true.
+  //
+  // Correct about each name in isolation, and useless as a reveal. The reveal
+  // is the three names together, so distinctness is a property of the set.
+  const prof = E.profileFrom({ boat: "a 19 foot bass boat",
+                               aboard: "just me and my brother",
+                               vibe: "puns, nothing crude",
+                               transom: "44 inches" });
+  // Same mechanism, no notes: the hard case, not a convenient one.
+  const twins = BANK.filter(
+    (n) => n.mechanism_code === "lt" && !n.note
+           && (n.boat_types || []).includes("bass")).slice(0, 3);
+  check(twins.length >= 2,
+    "the fixture needs at least two note-less names sharing a mechanism");
+  const used = new Set();
+  const said = twins.map((n) => E.rationale(n, prof, G.radioGate(n.name),
+    G.fitGate(n.name, "Arial Bold", 44), used));
+  check(new Set(said).size === said.length,
+    "two finalists sharing a mechanism came back with the same reason:\n   "
+    + said.join("\n   "));
+  // And without the shared set it must still be the old behaviour - this is
+  // what proves the `used` argument is what is doing the work.
+  const solo = twins.map((n) => E.rationale(n, prof, G.radioGate(n.name),
+    G.fitGate(n.name, "Arial Bold", 44)));
+  check(new Set(solo).size < solo.length,
+    "the fixture no longer reproduces the bug, so it proves nothing");
+  // Nothing invented: every clause still has to come from his own answers.
+  for (const r of said) {
+    check(!/grandkid|wife|retire|dog/i.test(r),
+      "the reveal invented a fact he never gave us: " + r);
+  }
+}
+
 // --- gate results in plain words -----------------------------------------
 {
   const n = BANK.find((x) => x.name === "Knot Working")
