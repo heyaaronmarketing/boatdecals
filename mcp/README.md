@@ -276,7 +276,7 @@ the character-count guess passed it cleanly.
 over HTTP POST; a plain GET returns what the server is, for anyone who opens
 the URL in a browser.
 
-Six tools, **every one read-only.** Nothing on this server takes money, writes
+Eight tools, **every one read-only.** Nothing on this server takes money, writes
 a row or sends mail — ordering stays on the site behind the real checkout, so
 an assistant can quote, test and lay out a name but cannot buy on someone's
 behalf. `verify.py` fails the build if a tool loses its `readOnlyHint`, or if
@@ -289,6 +289,8 @@ the file so much as references `db.prepare` or Stripe in code.
 | `test_boat_name` | radio + fit + overuse in one call, the flagship |
 | `check_name_is_new` | novelty against all 1,089 curated names |
 | `measure_lettering` | width in any face at any height, from the real font files |
+| `check_registration_layout` | prefix, shape, unissued letters, spacing, legal height, finished width |
+| `decode_hull_number` | builder, serial, build date, model year from a 12-character HIN |
 | `get_policies` | proof window, shipping, returns, warranty, the 3-inch rule |
 
 It lives on this worker rather than a service of its own precisely so the price
@@ -330,15 +332,55 @@ amount of reading would have found:
    were emitting different sentences to customers — *about 36.0" wide* versus
    *about 36" wide*.
 
-### Still to port
+### `check_registration_layout` and `decode_hull_number` — one implementation, no harness needed
 
-`check_registration_layout` and `decode_hull_number` are the last two of the
-spec's pure-port read tools. Both already have working JavaScript — in
-`engine/validate.py` and `engine/tools.py`, shipped to the browser — so the
-work is moving that logic worker-side **and putting it under the same
-equivalence harness**, not writing it fresh. Doing it without the harness would
-be adding two more unguarded duplicate implementations, which is the thing this
-whole arrangement exists to prevent.
+These two did **not** need the equivalence treatment, because both surfaces are
+JavaScript. `worker/decode.js` is the single implementation, and
+`engine/shared_js.py` inlines that same file into the order form and both free
+tool pages. Not two copies kept in step by a test — the same source in both
+places.
+
+Before this, the registration logic lived only as a JS string inside
+`engine/validate.py` and the HIN logic only inside `engine/tools.py`, so putting
+either on the worker would have created a second copy. Instead:
+
+- `worker/decode.js` — the logic, pure, no DOM, no HTML
+- `worker/decode-data.js` — 56 vessel prefixes, 9 postal confusions, Maine's
+  format exception, California's unissued letters, 96 MIC codes; generated from
+  `engine/content.py` and `engine/tools.py`
+- `engine/validate.py` — **deleted.** It was the second copy.
+- `engine/tools.py`'s `HIN_JS` — reduced to rendering: read the box, call the
+  shared decoder, draw the table.
+
+Messages carry `**bold**` markers rather than HTML, so the page renders
+`<strong>` and the MCP server hands markdown to the model from one string.
+Returning HTML would have had an assistant reading "`<strong>`" aloud to a
+customer; returning plain text would have lost the emphasis the page has always
+had.
+
+**Proven before the switch, because the order form is the checkout path.**
+`worker/decode.js` was compared against the validator it replaced across **490
+inputs** — every vessel prefix in every shape, all nine postal-code
+confusions, and the malformed cases. Identical on verdict, corrected spacing
+and state. The only wording that changed was Maine's, where the old string was
+a hardcoded duplicate of the note in `content.py` and the new one reads the
+real thing.
+
+The old `BNS_VALIDATE` name is kept as a thin shim over the shared module, so
+the order form's callers were not touched at all. All three surfaces were then
+exercised in a real browser.
+
+`verify.py` gates it: the emitted tables must be current, each of the three
+pages must carry the shared decoder, and either decoder reappearing anywhere
+under `engine/` fails the build.
+
+### Honesty limit, carried into the tool
+
+`check_registration_layout` flags and never refuses. The prefix table is
+compiled from secondary sources, states issue sequentially so older hulls carry
+retired formats, and this covers tier 1 of the rules only. An order refused by
+an incomplete validator is a lost sale; an order flagged for the proof is a
+thirty-second check by someone who knows. The tool says so in its own output.
 
 ## The ChatGPT submission
 
@@ -351,9 +393,7 @@ set it 404s, which is the honest answer: we cannot prove anything yet.
 
 ## Next
 
-1. **`check_registration_layout` and `decode_hull_number`** — the last two
-   pure-port tools, each under the equivalence harness (see above).
-2. The remaining bank tags — `style_lanes`, `boat_types`, `themes`,
+1. The remaining bank tags — `style_lanes`, `boat_types`, `themes`,
    `overuse_tier` — which the ranker needs but the gates do not.
 3. Design Studio widget, then the tournament.
 3. The MCP server skeleton with the pure-port read tools:

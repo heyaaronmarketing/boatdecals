@@ -1062,6 +1062,64 @@ if _bank_f.exists():
         fails.append("public/name-bank.json was not built - the MCP novelty "
                      "check has no bank to compare against")
 
+    # ---- one implementation of the decoders ------------------------------
+    # worker/decode.js is run by the MCP server AND inlined into the order
+    # form and both tool pages. That is only true as long as the inlined copy
+    # is regenerated from the source, so it is checked rather than trusted.
+    _dj = ROOT / "worker" / "decode.js"
+    _dd = ROOT / "worker" / "decode-data.js"
+    if not _dj.exists() or not _dd.exists():
+        fails.append("worker/decode.js or decode-data.js is missing - the "
+                     "registration checker and HIN decoder have no source")
+    else:
+        import subprocess as _sp2
+        _b = _dd.read_bytes()
+        _sp2.run([sys.executable, str(ROOT / "mcp" / "build_decode_js.py")],
+                 capture_output=True)
+        if _dd.read_bytes() != _b:
+            fails.append("worker/decode-data.js was stale - it is generated "
+                         "from engine/content.py and engine/tools.py and had "
+                         "drifted. Regenerated; commit it.")
+        _sh_spec = _ilu.spec_from_file_location(
+            "nmb_sh", ROOT / "engine" / "shared_js.py")
+        _sh = _ilu.module_from_spec(_sh_spec)
+        _sh_spec.loader.exec_module(_sh)
+        _want = _sh.decode_js()
+        for _pg in ("design/index.html",
+                    "tools/registration-number-layout-checker/index.html",
+                    "tools/hull-number-decoder/index.html"):
+            _f = OUT / _pg
+            if not _f.exists():
+                fails.append("%s is missing" % _pg)
+                continue
+            _t = _f.read_text(encoding="utf-8")
+            if "window.NMB_DECODE=" not in _t:
+                fails.append("%s does not carry the shared decoder - it has "
+                             "its own copy of the logic again" % _pg)
+            # A couple of distinctive lines, to catch an inlined copy that was
+            # hand-patched instead of regenerated.
+            for _probe in ("function checkRegistration(raw)",
+                           "function decodeHin(raw)"):
+                if _probe not in _t:
+                    fails.append("%s is missing %r from the shared decoder"
+                                 % (_pg, _probe))
+        # A second copy must not reappear. engine/validate.py held the old
+        # registration logic and was deleted when the shared module took over;
+        # these probes catch either decoder being reimplemented anywhere in
+        # the engine, which is how this drifts back apart.
+        for _ef in sorted((ROOT / "engine").glob("*.py")):
+            if _ef.name == "shared_js.py":
+                continue
+            _et = _ef.read_text(encoding="utf-8")
+            if "BNS_POSTAL_MISTAKE" in _et or "window.BNS_VALIDATE = (func" in _et:
+                fails.append("engine/%s has its own registration logic - "
+                             "worker/decode.js is the implementation and "
+                             "engine/shared_js.py ships it to the browser"
+                             % _ef.name)
+            if "MIC[mic]" in _et:
+                fails.append("engine/%s is decoding HINs again - that logic "
+                             "belongs to worker/decode.js only" % _ef.name)
+
     # ---- the deterministic gates ----------------------------------------
     # mcp/test_gates.py pins the radio, overuse and novelty gates. It runs
     # HERE rather than as a separate command because every one of its cases is

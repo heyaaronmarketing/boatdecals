@@ -17,6 +17,8 @@
 import { radioGate, overuseGate, fitGate, noveltyGate, widthIn,
          loadLexicon } from "./gates.js";
 import { D } from "./gates-data.js";
+// The same file the website runs for these two - see engine/shared_js.py.
+import { checkRegistration, decodeHin, toPlain } from "./decode.js";
 
 const PROTOCOL = "2024-11-05";
 const SERVER = { name: "numbermyboat", version: "0.1.0" };
@@ -176,6 +178,98 @@ const TOOLS = [
     async run(args, env, ctx) {
       const names = await ctx.bankNames(env);
       return txt(noveltyGate(String(args.name || "").slice(0, 60), names));
+    },
+  },
+  {
+    name: "check_registration_layout",
+    title: "Check a registration number before we cut it",
+    description:
+      "Checks a state registration number the way we check it before cutting: "
+      + "is the prefix a real vessel prefix (several states differ from the "
+      + "postal code - California boats are CF, not CA), does it read as "
+      + "prefix-numbers-letters, does the state actually issue those letters, "
+      + "and is it spaced the way the rule wants. Also gives the finished "
+      + "width at each legal height. It flags, it never refuses - every order "
+      + "gets a human proof before anything is cut.",
+    annotations: { title: "Check a registration number",
+                   readOnlyHint: true, destructiveHint: false,
+                   idempotentHint: true, openWorldHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        number: { type: "string", maxLength: 24,
+                  description: "As printed on the registration card, "
+                    + "e.g. IA 3717 ZW" },
+        height_in: { type: "number",
+                     description: "Lettering height in inches; 3 is the "
+                       + "federal minimum" },
+        transom_in: { type: "number",
+                      description: "Inches of flat run on the forward hull" },
+      },
+      required: ["number"], additionalProperties: false,
+    },
+    async run(args) {
+      const r = checkRegistration(String(args.number || "").slice(0, 24));
+      const h = Number.isFinite(args.height_in) ? args.height_in : 3;
+      // Registration numbers are block-only by law, so the width is quoted in
+      // a block face rather than whichever face the customer liked.
+      const fit = fitGate(r.fixed || r.compact || String(args.number || ""),
+        "Arial Bold",
+        Number.isFinite(args.transom_in) ? args.transom_in : null, [3, 4, 5, 6]);
+      return txt({
+        number: String(args.number || ""),
+        reads_as: r.fixed,
+        state: r.state,
+        verdict: r.level,
+        note: r.msg ? toPlain(r.msg) : "Reads as a normal state format.",
+        legal_height: h >= 3
+          ? `${h}" clears the 3" federal minimum.`
+          : `${h}" is under the 3" federal minimum - 33 CFR 173.27 requires `
+            + "at least 3 inches. Go up to 3\" or taller.",
+        height_is_legal: h >= 3,
+        block_characters: "We cut registration numbers in plain vertical "
+          + "block only, so that requirement is handled.",
+        width: { font: "Arial Bold", widths_in: fit.widths_in,
+                 accuracy: `+/-${fit.error_pct}%`, notes: fit.reasons },
+        honesty: "This flags problems, it never refuses an order. The prefix "
+          + "table is compiled from secondary sources and states issue "
+          + "sequentially, so older hulls carry retired formats. Every order "
+          + "gets a human proof before anything is cut.",
+      });
+    },
+  },
+  {
+    name: "decode_hull_number",
+    title: "Decode a hull identification number",
+    description:
+      "Reads the 12-character HIN stamped into the starboard side of the "
+      + "transom: who built the boat, its serial, when it was built and its "
+      + "model year. Useful on a used boat. A HIN is not a registration "
+      + "number - the HIN is the builder's and never changes, the "
+      + "registration number is issued by the state and is the one that has "
+      + "to be displayed.",
+    annotations: { title: "Decode a hull identification number",
+                   readOnlyHint: true, destructiveHint: false,
+                   idempotentHint: true, openWorldHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        hin: { type: "string", maxLength: 24,
+               description: "The 12-character hull identification number" },
+      },
+      required: ["hin"], additionalProperties: false,
+    },
+    async run(args) {
+      const r = decodeHin(String(args.hin || "").slice(0, 24));
+      if (!r.ok) return err(r.msg);
+      return txt({
+        hin: r.hin, manufacturer_code: r.mic,
+        manufacturer: r.manufacturer,
+        manufacturer_note: r.manufacturer_note,
+        serial: r.serial, date_code: r.date_code, format: r.format,
+        built: r.built, model_year: r.model_year,
+        notes: r.notes.map(toPlain),
+      });
     },
   },
   {

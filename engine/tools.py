@@ -130,64 +130,39 @@ MIC = {
  "AVL":"Avalon","QWE":"Qwest","PLY":"Playbuoy","WLD":"Weldcraft",
 }
 
+# The DECODING is worker/decode.js - the same file the MCP server runs. This
+# is only the page's rendering: read the box, call the shared decoder, draw the
+# table. Before this, the decode logic lived here in a JS string and nowhere
+# else, so putting it on the worker would have made a second copy of it.
 HIN_JS = r"""
 (function(){
-  var MIC=window.BNS_MIC||{};
+  var D=window.NMB_DECODE; if(!D) return;
   var btn=document.getElementById('hinbtn'); if(!btn) return;
   var inp=document.getElementById('hin'), out=document.getElementById('hinout');
-  var MO={A:'January',B:'February',C:'March',D:'April',E:'May',F:'June',
-          G:'July',H:'August',I:'September',J:'October',K:'November',L:'December'};
-  function esc(s){return String(s).replace(/</g,'&lt;');}
   function go(){
-    var v=(inp.value||'').toUpperCase().replace(/[\s-]/g,'');
+    var r=D.decodeHin(inp.value||'');
     out.classList.add('on');
-    if(v.length<12){
-      out.innerHTML='<p class=bad>A hull identification number is exactly 12 '+
-        'characters. You entered '+v.length+'. Check the starboard side of the '+
-        'transom, up near the top edge.</p>'; return;
-    }
-    if(v.length>12){
-      out.innerHTML='<p class=bad>That is '+v.length+' characters. A HIN is exactly 12 - '+
-        'no more. Drop any trailing text.</p>'; return;
-    }
-    if(!/^[A-Z]{3}/.test(v)){
-      out.innerHTML='<p class=bad>The first three characters should be letters '+
-        '(the manufacturer code). Yours are &ldquo;'+esc(v.slice(0,3))+'&rdquo;.</p>'; return;
-    }
-    var mic=v.slice(0,3), serial=v.slice(3,8), d=v.slice(8,12);
-    var maker=MIC[mic];
-    var rows=[];
-    rows.push(['Manufacturer code (MIC)', mic + (maker ? ' &mdash; <strong>'+maker+'</strong>'
-      : ' &mdash; not in our table. It is a valid-looking code; search the USCG MIC database for the builder.')]);
-    rows.push(['Hull serial number', serial]);
-
-    // Post-1984 format: positions 9-10 = month letter + year digit, 11-12 = model year.
-    var out2='';
-    var m1=d.charAt(0), y1=d.charAt(1), my=d.slice(2);
-    if(MO[m1] && /^\d$/.test(y1) && /^\d{2}$/.test(my)){
-      var modelYear = (parseInt(my,10) > 40 ? '19' : '20') + my;
-      rows.push(['Built', MO[m1]+' '+( (parseInt(my,10)>40?'19':'20') +
-        my.charAt(0) + y1 )]);
-      rows.push(['Model year', modelYear]);
-      out2='<p class=hint style="margin-top:10px">Read as the current (post-August 1984) '+
-        'format: characters 9&ndash;10 are the build month and year, 11&ndash;12 are the model year.</p>';
-    } else if(/^\d{2}/.test(d)) {
-      rows.push(['Date code', d + ' &mdash; this looks like the pre-1984 format, '+
-        'where the last characters are the model year and month.']);
-    } else {
-      rows.push(['Date code', d + ' &mdash; we could not read this as a standard date block. '+
-        'Straight-year formats were common before August 1984.']);
-    }
-    out.innerHTML='<div class=tw><table><tbody>'+rows.map(function(r){
-      return '<tr><th style="width:38%">'+r[0]+'</th><td>'+r[1]+'</td></tr>';
-    }).join('')+'</tbody></table></div>'+out2+
-    '<p style="margin-top:12px"><strong>A HIN is not your registration number.</strong> '+
-    'The HIN is stamped into the hull by the builder and never changes. Your registration '+
-    'number is issued by your state and is the one you have to display in 3-inch letters. '+
-    '<a href="/design/">We cut those for $19 a pair.</a></p>';
+    if(!r.ok){ out.innerHTML='<p class=bad>'+D.toHtml(r.msg)+'</p>'; return; }
+    var rows=[['Manufacturer code (MIC)',
+               r.mic+' &mdash; '+(r.manufacturer
+                 ? '<strong>'+D.toHtml(r.manufacturer)+'</strong>'
+                 : D.toHtml(r.manufacturer_note))],
+              ['Hull serial number', r.serial]];
+    if(r.built) rows.push(['Built', r.built]);
+    if(r.model_year) rows.push(['Model year', r.model_year]);
+    if(!r.built) rows.push(['Date code', r.date_code]);
+    var notes=r.notes.map(function(n){
+      return '<p class=hint style="margin-top:10px">'+D.toHtml(n)+'</p>';
+    }).join('');
+    out.innerHTML='<div class=tw><table><tbody>'+rows.map(function(x){
+      return '<tr><th style="width:38%">'+x[0]+'</th><td>'+x[1]+'</td></tr>';
+    }).join('')+'</tbody></table></div>'+notes+
+    '<p style="margin-top:12px"><a href="/design/">We cut registration '+
+    'numbers for $19 a pair.</a></p>';
   }
   btn.addEventListener('click',go);
-  inp.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();go();}});
+  inp.addEventListener('keydown',function(ev){
+    if(ev.key==='Enter'){ev.preventDefault();go();}});
 })();
 """
 

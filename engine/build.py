@@ -18,7 +18,7 @@ from sharebox import block as share_block
 import order as O
 import mockpay as MP
 import preview as PV
-import validate as VAL
+import shared_js as SH
 import tools as T
 import copy_blocks as CB
 
@@ -816,7 +816,10 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
         parts.append('<script>' + js + '</script>')
     return "".join(parts)
 
-ORDER_JS = PV.data_js() + PV.JS + VAL.data_js() + VAL.JS + O.color_js() + O.JS
+# The registration checker is worker/decode.js, inlined here, with the old
+# BNS_VALIDATE name kept as a shim so the order form's callers are untouched.
+ORDER_JS = (PV.data_js() + PV.JS + SH.decode_js() + SH.SHIM_JS
+            + O.color_js() + O.JS)
 
 # =================================================================== PAGES
 def why_grid(limit=6):
@@ -1993,7 +1996,7 @@ def build_tool_hin():
        "you the builder, serial and age, and USCG documented vessels are searchable in the "
        "federal vessel database, but state registration owner data generally is not open."),
     ]
-    tool_shell(t, body, data + T.HIN_JS, faqs)
+    tool_shell(t, body, SH.decode_js() + T.HIN_JS, faqs)
 
 def build_tool_layout():
     t = TOOLS[3]
@@ -2054,7 +2057,7 @@ def build_tool_layout():
        "six-character number at 3 inches finishes about 13-15 inches wide. The tool above "
        "calculates it for your exact number."),
     ]
-    tool_shell(t, body, VAL.data_js() + VAL.JS + T.LAYOUT_JS, faqs)
+    tool_shell(t, body, SH.decode_js() + SH.SHIM_JS + T.LAYOUT_JS, faqs)
 
 def build_tools_hub():
     path = "/tools/"
