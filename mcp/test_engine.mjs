@@ -519,6 +519,17 @@ const WARM = [
     "the brief must hand the host the customer's own words, verbatim");
   // His wife is aboard and he did not ask for anything crude: dock humor is
   // allowed, jokes at her expense are not, and the brief has to say which.
+  // And the clean ceiling must say WHICH reason it is. The first version told
+  // the model "children or his wife are aboard" even when nobody had said who
+  // was aboard at all - a fact handed to a model that writes rationales.
+  const nobody = E.riffBrief(BANK, E.profileFrom({ boat: "pontoon" }), {},
+                             [], 2);
+  check(nobody.ceiling === "clean" && /nobody has told us/
+    .test(nobody.ceiling_means),
+    "with nobody named aboard the brief must say so rather than invent a "
+    + "family: " + nobody.ceiling_means);
+  check(!/children|wife|grandkid/i.test(nobody.ceiling_means),
+    "the brief invented a family nobody mentioned: " + nobody.ceiling_means);
   check(b.ceiling === "dock" && /expense/.test(b.ceiling_means),
     "a brief for a man with his wife aboard must spell out where the line "
     + "is, got: " + b.ceiling + " / " + b.ceiling_means);

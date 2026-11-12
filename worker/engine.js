@@ -1023,13 +1023,24 @@ export function riffBrief(bank, profile, state, rows, slots) {
     slots_in_the_next_round: slots,
     his_own_words: hooks(profile),
     ceiling: profile.ceiling,
+    // Why the ceiling is what it is, not just what it is. Clean is also the
+    // DEFAULT when nobody said who is aboard, and a brief that tells the
+    // model "children are aboard" when nobody mentioned any is handing it a
+    // fact to write into a rationale.
     ceiling_means: profile.ceiling === "clean"
-      ? "Clean. Children or his wife are aboard, or he asked for nothing "
-        + "crude. No double meanings that only work if you are thinking of "
+      ? (profile.refused_crude
+          ? "Clean, because he asked for nothing crude in those words."
+          : profile.aboard_raw
+          ? `Clean, because of who is aboard: "${profile.aboard_raw}".`
+          : "Clean, because nobody has told us who is usually aboard and "
+            + "that is the way to be wrong.")
+        + " No double meanings that only work if you are thinking of "
         + "something else."
       : profile.ceiling === "dock"
-      ? "Dock humor is fine. Jokes at his wife's expense are not."
-      : "He is on his own or with his friends and asked for it.",
+      ? "Dock humor is fine. Jokes at his partner's expense are not, whether "
+        + "or not he named one."
+      : "He is on his own or with his friends and asked for it. Still his "
+        + "transom, and his family will read it eventually.",
     mechanisms_to_use: usable.map((m) => ({
       code: m, keep_rate: Math.round((p.rates[m].rate || 0) * 100) / 100,
       exposures: p.rates[m].exposures,
