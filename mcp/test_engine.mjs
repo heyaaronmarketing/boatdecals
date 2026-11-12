@@ -16,6 +16,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as G from "../worker/gates.js";
 import * as E from "../worker/engine.js";
+// The MCP server, for the two pure helpers that read the session row.
+import { killCounts, retiredMechs } from "../worker/mcp.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 G._setLexicon(zlib.gunzipSync(
@@ -689,6 +691,27 @@ const BANKN = BANK.map((n) => n.name);
     + "- riffs are built out of somebody's wife, dog or hometown");
   check(d.some((x) => x.kind === "mech" && x.key === "lt"),
     "a riff must still teach the ledger about its mechanism");
+}
+
+// --- the killed_mechs column, which two tools wrote in two shapes ---------
+{
+  // start_naming_session wrote an ARRAY of codes; vote_on_names wrote an
+  // OBJECT of counts, into the same column. Reading the object as an array
+  // silently forgot every mechanism the customer had rejected, so a host that
+  // called start_naming_session again - which is what it does when the
+  // customer adds "oh, and it's a pontoon" - got the jokes he had just
+  // killed, dealt back to him.
+  check(JSON.stringify(killCounts('["hp","pm"]')) === '{"hp":2,"pm":2}',
+    "an array of killed codes must read as two kills each");
+  check(killCounts('{"dp":2,"hp":1}').dp === 2,
+    "a counts object must read as itself");
+  check(JSON.stringify(killCounts(null)) === "{}"
+    && JSON.stringify(killCounts("not json")) === "{}",
+    "a missing or corrupt column must read as no kills, not throw mid-round");
+  check(retiredMechs({ dp: 2, hp: 1 }, {}).join() === "dp",
+    "one kill is a name he did not like; two is the joke not landing");
+  check(!retiredMechs({ dp: 2 }, { dp: 1 }).length,
+    "a mechanism he also kept once must not be retired on kills alone");
 }
 
 for (const f of fails) console.log("FAIL: " + f);

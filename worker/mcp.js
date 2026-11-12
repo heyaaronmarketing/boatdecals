@@ -73,6 +73,38 @@ async function ledgerFor(env, ctx, profile) {
   return { rows, proven: provenFor(rows, lane).proven, lane };
 }
 
+/**
+ * killed_mechs, in whichever shape the column is holding.
+ *
+ * A REAL BUG, found while wiring the brief in. start_naming_session wrote
+ * this column as a JSON array of codes; vote_on_names wrote it as a JSON
+ * object of counts. So calling start_naming_session again after a vote - which
+ * is exactly what a host does when the customer adds "oh, and it's a
+ * pontoon" - parsed an object, concat'd it into an array as a single object,
+ * and silently forgot every mechanism he had rejected. He would have been
+ * dealt the same jokes he had just killed, and nothing would have said so.
+ *
+ * Counts are the canonical shape, because the two-kills rule needs them. An
+ * array is read as two kills each: a host passing killed_mechanisms is
+ * relaying a customer saying "stop offering me these", which is at least as
+ * strong a statement as killing two of them.
+ */
+export function killCounts(raw) {
+  let v = {};
+  try { v = raw ? JSON.parse(raw) : {}; } catch (e) { v = {}; }
+  if (Array.isArray(v)) {
+    return Object.fromEntries(v.filter((m) => typeof m === "string")
+      .map((m) => [m, 2]));
+  }
+  return (v && typeof v === "object") ? v : {};
+}
+
+/** Which mechanisms are retired: killed twice, with nothing of theirs kept. */
+export function retiredMechs(counts, keptMechs) {
+  return Object.keys(counts).filter(
+    (m) => (counts[m] || 0) >= 2 && !((keptMechs || {})[m] > 0));
+}
+
 /** Fire-and-forget accrual. A round must never fail because a counter did. */
 function bump(env, ctx, deltas) {
   if (!ctx.ledgerBump || !deltas.length) return;
@@ -399,8 +431,12 @@ const TOOLS = [
       }
 
       const bank = await ctx.bankRows(env);
-      const killed = (args.killed_mechanisms || [])
-        .concat(prior ? JSON.parse(prior.killed_mechs || "[]") : []);
+      const counts = killCounts(prior ? prior.killed_mechs : null);
+      for (const m of (args.killed_mechanisms || [])) {
+        counts[String(m).slice(0, 8)] = Math.max(2, counts[m] || 0);
+      }
+      const keptMechs = prior ? killCounts(prior.kept_mechs) : {};
+      const killed = retiredMechs(counts, keptMechs);
       const shown = prior ? JSON.parse(prior.shown || "[]") : [];
       const riffs = prior ? JSON.parse(prior.riffs || "[]") : [];
       const led = await ledgerFor(env, ctx, profile);
@@ -429,7 +465,7 @@ const TOOLS = [
            killed_mechs=excluded.killed_mechs, rounds=excluded.rounds`
       ).bind(id, prior ? prior.ts : now, now, JSON.stringify(answers),
              JSON.stringify(profile), JSON.stringify(nextShown),
-             JSON.stringify([...new Set(killed)]), "[]",
+             JSON.stringify(counts), "[]",
              (prior ? prior.rounds : 0) + 1).run();
 
       return txt({
@@ -455,8 +491,9 @@ const TOOLS = [
         // rather than by luck: the mechanisms that have actually been landing
         // in his lane, real exemplars, the house register, and a banned list.
         riff_brief: round.riff_slots > 0
-          ? riffBrief(bank, profile, { shown: nextShown }, led.rows,
-                      round.riff_slots)
+          ? riffBrief(bank, profile, { shown: nextShown,
+              killed_mechs_count: counts, kept_mechs: keptMechs,
+              rejected_mechs: killed }, led.rows, round.riff_slots)
           : null,
         honesty: "Every name here is from our own curated bank, already "
           + "tested. How common a name is comes from market data, not a "
@@ -503,8 +540,8 @@ const TOOLS = [
       const state = applyVote({
         kept: JSON.parse(prior.kept || "[]"),
         killed_names: JSON.parse(prior.killed_names || "[]"),
-        kept_mechs: JSON.parse(prior.kept_mechs || "{}"),
-        killed_mechs_count: JSON.parse(prior.killed_mechs || "{}"),
+        kept_mechs: killCounts(prior.kept_mechs),
+        killed_mechs_count: killCounts(prior.killed_mechs),
       }, bank, args.kept || [], args.killed || []);
 
       const shown = JSON.parse(prior.shown || "[]");
