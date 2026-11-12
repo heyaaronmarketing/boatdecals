@@ -272,6 +272,68 @@ def run():
             check(set(json.loads(t1.group(1))) == set(gates.OVERUSE_T1),
                   "the page's tier-1 overuse list has drifted from gates.py")
 
+    # --- the derived tags ------------------------------------------------
+    # style_lanes, themes, boat_types and overuse_tier are derived (see
+    # taxonomy.py for why these four and not humor_mechanism). Derivation is
+    # only trustworthy if it is checked: a rule that silently stops matching
+    # leaves a field empty, and an empty lane list means a name the ranker can
+    # never deal to anybody.
+    import taxonomy as _tx2
+    nolane = [n["name"] for n in BANK["names"] if not n.get("style_lanes")]
+    check(not nolane,
+          "%d names have no style_lane, so the ranker can never deal them "
+          "(e.g. %s)" % (len(nolane), nolane[:4]))
+    badlane = sorted({l for n in BANK["names"]
+                      for l in n.get("style_lanes", [])} - set(_tx2.LANES))
+    check(not badlane, "lanes outside the vocabulary: %s" % badlane)
+    badtheme = sorted({t for n in BANK["names"]
+                       for t in n.get("themes", [])} - _tx2.THEMES)
+    check(not badtheme, "themes outside the vocabulary: %s" % badtheme)
+    badboat = sorted({b for n in BANK["names"]
+                      for b in n.get("boat_types", [])} - _tx2.BOAT_TYPES)
+    check(not badboat, "boat types outside the vocabulary: %s" % badboat)
+
+    # Every lane must have names in it. A lane the interview can offer but the
+    # bank cannot fill is a dead end in the conversation.
+    from collections import Counter as _LC
+    lanecount = _LC(l for n in BANK["names"] for l in n.get("style_lanes", []))
+    empty = sorted(set(_tx2.LANES) - set(lanecount))
+    check(not empty,
+          "these lanes have no names at all, so the interview can offer "
+          "something the bank cannot fill: %s" % empty)
+    thin = sorted(l for l, c in lanecount.items() if c < 20)
+    check(not thin,
+          "these lanes have fewer than 20 names, which is not enough to deal "
+          "a round from without repeating: %s"
+          % [(l, lanecount[l]) for l in thin])
+
+    # overuse_tier in the bank must agree with the gate. Two copies of that
+    # judgement is how Vitamin Sea ends up a top pick in one surface.
+    drift = [n["name"] for n in BANK["names"]
+             if n.get("overuse_tier") != gates.overuse_gate(n["name"])["tier"]]
+    check(not drift,
+          "%d names carry an overuse_tier that disagrees with the gate "
+          "(e.g. %s)" % (len(drift), drift[:4]))
+    check(any(n.get("overuse_tier") == 1 for n in BANK["names"]),
+          "no name in the bank is tier 1 - the overuse tier was not derived")
+
+    # Themes are allowed to be empty - plenty of names genuinely have none
+    # ("Kevin", "Beige", "TBD") - but not for most of the bank, which would
+    # mean the keyword rules have stopped matching.
+    nothemes = sum(1 for n in BANK["names"] if not n.get("themes"))
+    check(nothemes < 400,
+          "%d of %d names have no theme at all - the keyword rules have "
+          "stopped matching" % (nothemes, len(BANK["names"])))
+
+    # The lane derivation must respect the mechanism: a sincere name is not a
+    # joke and must never be dealt into a joke lane.
+    for n in BANK["names"]:
+        if (n.get("mechanism_code") == "sincere"
+                and n.get("style_lanes") != ["sincere"]):
+            check(False, "%r is sincere but sits in lanes %s - it would be "
+                         "dealt as a joke" % (n["name"], n["style_lanes"]))
+            break
+
     # --- the lexicon is a committed artefact ----------------------------
     lex = HERE / "data" / "lexicon.txt.gz"
     check(lex.exists(), "mcp/data/lexicon.txt.gz is missing - the radio gate "

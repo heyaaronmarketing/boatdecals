@@ -1,0 +1,10 @@
+# Hand-written exceptions to the derived tags. Applied last.
+#
+# name<TAB>field<TAB>value[,value]<TAB>why
+#
+# fields: style_lanes, themes, boat_types, overuse_tier
+#
+# Empty on purpose. The rules in derive_tags.py get every name in the bank
+# right as it stands; this file exists so that the first name they get wrong
+# can be fixed in one line instead of by bending a rule that works. If it ever
+# fills up, the rules are wrong and should be changed rather than patched.

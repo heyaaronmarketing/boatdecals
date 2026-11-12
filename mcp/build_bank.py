@@ -93,12 +93,22 @@ def main():
     import apply_tags
     stats, problems = apply_tags.apply(names)
 
+    # Then derive the four fields that follow from the hand tags and the
+    # site's own categories. Done here, after the join, because the lane
+    # derivation reads mechanism_code and level_code - a sincere name is in the
+    # sincere lane whatever category it sits in.
+    import derive_tags
+    dstats, dproblems = derive_tags.derive(names)
+    problems += dproblems
+
     bank = {
         "note": "DERIVED FILE - do not edit. Run: python3 mcp/build_bank.py",
         "sources": ["engine/namegen.py", "engine/tools.py:FUNNY_GROUPS"],
         "name_count": len(names),
         "categories": sorted({c for r in names for c in r["categories"]}),
         "untagged": sum(1 for r in names if not r["humor_mechanism"]),
+        "lanes": sorted({l for r in names for l in r.get("style_lanes", [])}),
+        "themes_used": sorted({t for r in names for t in r.get("themes", [])}),
         "mechanisms": sorted({r["humor_mechanism"] for r in names
                               if r.get("humor_mechanism")}),
         "names": names,
@@ -115,6 +125,10 @@ def main():
           % bank["untagged"])
     pct = 100.0 * stats["tagged"] / max(stats["total"], 1)
     print("   tagged     %d  (%.1f%%)" % (stats["tagged"], pct))
+    print("   derived    lanes + themes + boat types + overuse tier")
+    print("              %d hand overrides, %d names with no theme, "
+          "%d that suit any boat"
+          % (dstats["overridden"], dstats["no_theme"], dstats["any_boat"]))
     for p_ in problems:
         print("   PROBLEM: %s" % p_)
     if problems:

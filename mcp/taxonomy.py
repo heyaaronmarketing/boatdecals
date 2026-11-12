@@ -75,3 +75,90 @@ def check(mech, level):
         return "unknown humor_level %r (allowed: %s)" % (
             level, " ".join(sorted(LEVELS)))
     return None
+
+
+# ---------------------------------------------------------------------------
+# The remaining three vocabularies. Spec §2.
+# ---------------------------------------------------------------------------
+#
+# WHY THESE ARE DERIVED AND NOT HAND-TAGGED, WHEN MECHANISM WAS NOT.
+#
+# humor_mechanism had to be per-name because the site's categories are
+# THEMATIC, not mechanical: the pontoon lane contains literal truths, puns and
+# deadpan side by side, so no rule could read a mechanism off a category.
+#
+# style_lanes are the opposite. The generator page's own first step is headed
+# "Pick a vibe", and the thing it asks you to pick is the category. The
+# categories ARE the lanes, in the site's own words, chosen by the person who
+# wrote them. Deriving the lane from the category is not a shortcut around the
+# work - it is reading the answer off the place where the decision was already
+# made, and it means a name added to namegen.py arrives with its lane already
+# right instead of waiting for someone to remember to tag it.
+#
+# themes and boat_types are keyword-derived for the same reason: "Walleye
+# Wednesday" is about fishing because it says walleye, and a rule that reads
+# the word will keep being correct for names nobody has written yet.
+#
+# Hand-written exceptions live in mcp/tags/overrides.tsv, which is applied
+# after the rules and reported so the count stays visible.
+
+LANES = {
+    "deadpan": "flat delivery, no wink",
+    "pun": "wordplay, homophones, twists",
+    "absurd": "non-sequitur, surreal",
+    "sincere": "not a joke at all",
+    "dock": "dock-party humor - beer, the ex, the boss",
+    "dark": "mortality, horror, dread",
+    "nerd": "in-jokes for a trade or a discipline",
+    "pontoon_dad": "slow boat, full cooler, lawn-chair energy",
+    "regional": "lands on a local and nobody else",
+    "brag": "retired, paid off, made it",
+    "ironic": "claims the opposite of the truth",
+    "current": "slang that will date",
+}
+
+THEMES = {
+    "money", "fishing", "retirement", "drinking", "marriage", "divorce",
+    "work", "family", "food", "death", "nature", "speed", "slow", "tech",
+    "region", "laziness", "boat_ownership", "weather", "animals", "law",
+}
+
+# Deliberately NOT a complete taxonomy of boats. These are the hulls where a
+# name either fits or looks ridiculous: "Pontoon Of Doom" on a bass boat, or
+# "Dock Rocket (0-5 MPH)" on a 40-foot cruiser. An empty list means the name
+# suits any boat, which is the common case and the right default.
+BOAT_TYPES = {
+    "pontoon", "bass", "runabout", "cruiser", "sail", "kayak", "jetski",
+    "fishing_boat",
+}
+
+# category -> lanes. Several categories legitimately carry two.
+CATEGORY_LANES = {
+    "scratch": ["absurd", "deadpan"],
+    "wtf": ["absurd"],
+    "double": ["pun"],
+    "ironic": ["ironic"],
+    "deadpan": ["deadpan"],
+    "pontoon": ["pontoon_dad"],
+    "existential": ["deadpan", "dark"],
+    "classy": ["sincere"],
+    "horror": ["dark"],
+    "payments": ["ironic", "dock"],
+    "retirement": ["brag"],
+    "nerd": ["nerd"],
+    "corporate": ["nerd"],
+    "divorce": ["dock"],
+    "couples": ["dock"],
+    "midwest": ["regional"],
+    "fishing": ["pun"],
+    "genz": ["current"],
+    "food": ["absurd"],
+    "anagram": ["pun"],
+    "misspelled": ["pun"],
+    "funny:Puns that actually land": ["pun"],
+    "funny:The money jokes": ["ironic", "dock"],
+    "funny:Fishing, specifically": ["pun"],
+    "funny:Retirement bragging": ["brag"],
+    "funny:Marriage commentary (order at your own risk)": ["dock"],
+    "funny:Honest about the drinking": ["dock"],
+}

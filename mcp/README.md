@@ -391,9 +391,79 @@ history, and a secret can be set or rotated with one `wrangler secret put` and
 no deploy — which matters while a submission is waiting on it. With no secret
 set it 404s, which is the honest answer: we cannot prove anything yet.
 
+## The remaining four tags — derived, not hand-tagged
+
+`style_lanes`, `themes`, `boat_types` and `overuse_tier`, in
+`mcp/derive_tags.py`. The bank is now complete on all six fields.
+
+**Why these four are derived when `humor_mechanism` was tagged by hand.** The
+mechanism had to be per-name because the site's categories are *thematic*, not
+mechanical — the pontoon lane holds literal truths, puns and deadpan side by
+side, so no rule could read a mechanism off a category.
+
+Lanes are the opposite. The generator page's first step is headed **"Pick a
+vibe"**, and the thing it asks you to pick is the category. The categories
+*are* the lanes, in the site's own words, chosen by whoever wrote them.
+Deriving the lane from the category is not a shortcut around the work — it is
+reading the answer off the place where the decision was already made, and it
+means a name added to `namegen.py` arrives with its lane already right instead
+of waiting for someone to remember to tag it.
+
+Mechanism then refines it: a `sincere` name is in the sincere lane whatever
+category it sits in, a deadpan mechanism is deadpan even inside the money lane,
+and anything graded `double` joins the dock lane — because that is the lane a
+customer picks when he is telling us who is aboard.
+
+| lane | names |
+|---|---|
+| `pun` | 248 |
+| `deadpan` | 232 |
+| `absurd` | 189 |
+| `dock` | 168 |
+| `ironic` | 120 |
+| `dark` | 100 |
+| `nerd` | 80 |
+| `sincere` | 53 |
+| `pontoon_dad` | 50 |
+| `brag` | 49 |
+| `current` | 40 |
+| `regional` | 39 |
+
+Themes and boat types are keyword-derived, which keeps working for names nobody
+has written yet. 270 names carry no theme and that is correct — "Kevin",
+"Beige" and "TBD" are not *about* anything. 873 suit any boat, which is the
+right default; `boat_types` is deliberately not a taxonomy of boats, just the
+hulls where a name either fits or looks ridiculous.
+
+`overuse_tier` is read from `gates.overuse_gate()`. One judgement, one place,
+and a gate fails the build if the bank's copy disagrees.
+
+### Two bugs the audit caught
+
+1. **The `money` theme had no "money" keyword.** "A Boat Is A Hole You Pour
+   Money In" was not being tagged as a money name.
+2. **It was substring matching.** "Cur_rent_ Affairs" was tagged money via
+   *rent*, "Cof_fee_" via *fee*, "_Bill_board" via *bill*. Every pattern is now
+   anchored at a word start — but not the end, so `divorc` still reaches
+   "divorced".
+
+### Hand overrides
+
+`mcp/tags/overrides.tsv`, applied last, validated against the vocabularies and
+counted. **Currently empty**: the rules get every name in the bank right as it
+stands. It exists so the first name they get wrong can be fixed in one line
+rather than by bending a rule that works — and if it ever fills up, that is a
+signal the rules are wrong, not a thing to quietly accumulate.
+
+Gates, each proven against a deliberate break: no name may have an empty lane
+(the ranker could never deal it), every value must be in its vocabulary, no
+lane may hold fewer than 20 names (you cannot deal a round without repeating),
+the bank's `overuse_tier` must match the gate, and a `sincere` name must never
+sit in a joke lane.
+
 ## Next
 
-1. The remaining bank tags — `style_lanes`, `boat_types`, `themes`,
+1. The Design Studio widget, then the tournament — `style_lanes`, `boat_types`, `themes`,
    `overuse_tier` — which the ranker needs but the gates do not.
 3. Design Studio widget, then the tournament.
 3. The MCP server skeleton with the pure-port read tools:
