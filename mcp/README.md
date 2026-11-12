@@ -801,3 +801,17 @@ python3 engine/build.py      # writes public/catalog.json
 node mcp/test_engine.mjs     # the ranker, the brief, the ledger
 python3 verify.py            # every gate
 ```
+
+To exercise the **warm** ledger path against a real worker — production's
+ledger will be cold for months, and the warm path is the whole feature:
+
+```
+npx wrangler d1 execute boatnumbershop --local --file=schema.sql
+npx wrangler d1 execute boatnumbershop --local --file=mcp/fixtures/warm-ledger.local.sql
+npx wrangler r2 object put nmb-fonts/lexicon.txt.gz --file=mcp/data/lexicon.txt.gz --local
+npx wrangler dev --port 8798
+```
+
+Every number in that fixture is invented, which is why it is `--local` only and
+says so twice. Loading it into the real database would have the brief telling
+customers that invented evidence is "keep-rate in real sessions".
