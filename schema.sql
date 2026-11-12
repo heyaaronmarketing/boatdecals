@@ -107,3 +107,7 @@ CREATE TABLE IF NOT EXISTS naming_sessions (
   harvest_optin INTEGER DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_ts ON naming_sessions(ts);
+
+-- Tournament state. Added with the reveal.
+ALTER TABLE naming_sessions ADD COLUMN killed_names TEXT;  -- JSON
+ALTER TABLE naming_sessions ADD COLUMN kept_mechs TEXT;    -- JSON: what landed

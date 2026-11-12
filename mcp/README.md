@@ -276,7 +276,7 @@ the character-count guess passed it cleanly.
 over HTTP POST; a plain GET returns what the server is, for anyone who opens
 the URL in a browser.
 
-Nine tools. **Eight are read-only; `start_naming_session` writes session state and nothing else.** Nothing on this server takes money, writes
+Eleven tools. **Nine are read-only; `start_naming_session` and `vote_on_names` write session state and nothing else.** Nothing on this server takes money, writes
 a row or sends mail — ordering stays on the site behind the real checkout, so
 an assistant can quote, test and lay out a name but cannot buy on someone's
 behalf. `verify.py` fails the build if a tool loses its `readOnlyHint`, or if
@@ -292,6 +292,8 @@ the file so much as references `db.prepare` or Stripe in code.
 | `check_registration_layout` | prefix, shape, unissued letters, spacing, legal height, finished width |
 | `decode_hull_number` | builder, serial, build date, model year from a 12-character HIN |
 | `start_naming_session` | the interview, then a gated ranked round (**the only tool that writes**) |
+| `vote_on_names` | keeps and kills, mechanism learning, next round of four (**writes**) |
+| `reveal_finalists` | the Final 3 with reasons, readback, gates and a family card |
 | `get_policies` | proof window, shipping, returns, warranty, the 3-inch rule |
 
 It lives on this worker rather than a service of its own precisely so the price
@@ -548,11 +550,70 @@ Two bugs in those gates, found by trying to break them:
 - the first version only counted annotations and would not have noticed a
   second writer.
 
+## The tournament and the reveal
+
+`vote_on_names` and `reveal_finalists`. Round 1 deals eight; after that it is
+rounds of **four**, because four is a decision and eight is a shortlist.
+
+**A vote is about the mechanism, not the name.** A customer who kills two
+homophone puns has told us something far more useful than which two names he
+disliked, and the next round stops offering puns rather than offering two
+different ones. The thresholds:
+
+- **two kills with nothing kept** retires a mechanism. One kill is a name he
+  did not like; two is the joke itself not landing.
+- **one keep protects it** — a mechanism he has liked once is not retired on
+  kills alone.
+- **two keeps and more keeps than kills** marks it proven, which is what a riff
+  brief will later be allowed to write in.
+
+### The reveal, and the one rule that governs it
+
+The rationale is written **from the session profile and nothing else.** Every
+clause is either a fixed phrase or a quotation of something the customer
+actually typed. There is no branch that invents a fact about his boat, his
+family or his job — a reveal that says "perfect for weekends with the
+grandkids" to a man who never mentioned grandchildren is worse than no
+rationale, because it tells him the whole thing was generated.
+
+A real one, for a 19-foot bass boat:
+
+> You asked for pun, and this is that; it is an in-joke for anybody who fishes,
+> so most people will not get it — which is part of the point; it will cut at
+> 6" tall on what you have.
+
+Plus the readback to say aloud, the gates in plain words ("Clear on the radio |
+Fits at 6" tall | Not one we see often"), a deep link into the real order form
+with the name already in it, and a **card to send the family** to vote on.
+
+### Four bugs found by running it, not reading it
+
+1. **"Limit Out" was explained as "an in-joke for *I run a small HVAC
+   company*".** It is angler jargon. The `pj` mechanism deliberately covers a
+   trade, a region and a cohort, and the reveal assumed it was always the
+   trade. Now `inGroupEvidence()` decides *which* group and what unlocks it:
+   a fishing in-joke by the boat, a regional one by the port, a trade one by
+   the job — and none of them by any of the others.
+2. **"Three names for the a 22 foot pontoon."** A leading article has to come
+   off before the heading puts one in front of it.
+3. **All three finalists' reasons read identically**, because every clause came
+   from the shared profile. Each reason now ends with one fact true of that
+   name alone — the bank's own note where it has one ("anagram of Captain"),
+   otherwise the spelling burden, the visual-only joke, or the height it cuts
+   at.
+4. **"it is an in-joke for X; an in-joke."** The mechanism clause duplicated
+   the clause above it.
+
+Also capped at three clauses. The first version ran to five semicolons, which
+nobody reads as a reason — they read it as output.
+
 ## Next
 
-1. The tournament — rounds of four, keeps and kills, narrowing to a Final 3
-2. Riff briefs and the mechanism ledger — proven-for-lane mechanisms, decay
-3. The reveal and the Design Studio widget — `style_lanes`, `boat_types`, `themes`,
+1. Riff briefs and the mechanism ledger — proven-for-lane mechanisms with
+   decay, and `submit_riff_candidates` behind the novelty gate
+2. The Design Studio widget
+3. The social-harvest queue (spec section 10), which is opt-in and
+   owner-approved and should be built last, carefully — `style_lanes`, `boat_types`, `themes`,
    `overuse_tier` — which the ranker needs but the gates do not.
 3. Design Studio widget, then the tournament.
 3. The MCP server skeleton with the pure-port read tools:

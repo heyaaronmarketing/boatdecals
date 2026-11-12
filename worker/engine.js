@@ -250,6 +250,34 @@ const STRONG_LANES = new Set(["dark", "dock", "current", "regional", "nerd",
  * because "we have 1,089 names and showed you 8" is only defensible if the
  * other 1,081 can be accounted for.
  */
+// WHICH in-group? The pj mechanism deliberately covers three kinds of
+// in-joke - a trade, a region, a cohort - and the first version of the reveal
+// assumed it was always the customer's trade. So "Limit Out", which is angler
+// jargon, came back described as "an in-joke for I run a small HVAC company".
+// Wrong, and wrong in the way that tells a customer the whole thing is
+// generated.
+//
+// This returns the evidence that the customer is IN the group, or null. It is
+// used twice: to decide whether an in-joke may be dealt at all, and to name
+// the group correctly when explaining it.
+export function inGroupEvidence(n, profile) {
+  const themes = n.themes || [];
+  const lanes = n.style_lanes || [];
+  if (themes.includes("fishing")) {
+    const fishy = (profile.boat_types || []).some(
+      (b) => b === "bass" || b === "fishing_boat");
+    return fishy ? { group: "anybody who fishes", from: "boat" } : null;
+  }
+  if (themes.includes("region") || lanes.includes("regional")) {
+    return profile.port
+      ? { group: "people from around here", from: "port" } : null;
+  }
+  if (profile.work) {
+    return { group: `"${profile.work}"`, from: "work" };
+  }
+  return null;
+}
+
 function excludeReason(n, profile, radio, fit) {
   if (!radio.dealable) {
     return "radio: " + (radio.reasons[0] || "unusable on a radio");
@@ -261,9 +289,11 @@ function excludeReason(n, profile, radio, fit) {
       : "cruder than the room allows";
   }
   // An in-group joke lands on nobody outside the group. Dealing one to a
-  // stranger is not a risk, it is a wasted slot.
-  if (n.mechanism_code === "pj" && !profile.in_group) {
-    return "an in-joke, and we do not yet know the trade";
+  // stranger is not a risk, it is a wasted slot. Which group matters: a
+  // fishing in-joke is unlocked by the boat, a regional one by the port, a
+  // trade one by the job - not any of them by any of the others.
+  if (n.mechanism_code === "pj" && !inGroupEvidence(n, profile)) {
+    return "an in-joke for a group we have no sign he is in";
   }
   if (fit && fit.verdict === "too_wide") {
     return "will not fit the transom at any height we cut";
@@ -458,4 +488,204 @@ function laneWords(n, profile) {
   if (n.overuse_tier === 2) bits.push("common, but not worn out");
   if (!bits.length) bits.push(n.humor_mechanism);
   return bits.join("; ");
+}
+
+
+// ---------------------------------------------------------------------------
+// The tournament
+// ---------------------------------------------------------------------------
+//
+// Round 1 deals eight. After that it is rounds of four, because four is the
+// most a person will actually compare rather than skim - and because a vote
+// between four is a decision, where a vote between eight is a shortlist.
+//
+// What a vote is FOR is the mechanism, not the name. A customer who kills
+// three homophone puns in a row has told us something far more useful than
+// which three names he disliked, and the next round should stop offering puns
+// rather than offer three different ones.
+export const ROUND_ONE = 8;
+export const ROUND_SIZE = 4;
+export const FINALISTS = 3;
+
+/**
+ * Fold a vote into the session's running state.
+ *
+ * kept/killed are names. Returns the new state plus the mechanism ledger, and
+ * a mechanism is only treated as rejected once it has been killed twice with
+ * no keeps - one kill is a name someone did not like, two is a pattern.
+ */
+export function applyVote(state, bank, kept = [], killed = []) {
+  const byName = new Map(bank.map((n) => [n.name.toLowerCase(), n]));
+  const s = {
+    kept: [...(state.kept || [])],
+    killed_names: [...(state.killed_names || [])],
+    kept_mechs: { ...(state.kept_mechs || {}) },
+    killed_mechs_count: { ...(state.killed_mechs_count || {}) },
+  };
+
+  for (const name of kept) {
+    const n = byName.get(String(name).toLowerCase());
+    if (!n) continue;
+    if (!s.kept.includes(n.name)) s.kept.push(n.name);
+    const m = n.mechanism_code || "?";
+    s.kept_mechs[m] = (s.kept_mechs[m] || 0) + 1;
+  }
+  for (const name of killed) {
+    const n = byName.get(String(name).toLowerCase());
+    if (!n) continue;
+    if (!s.killed_names.includes(n.name)) s.killed_names.push(n.name);
+    const m = n.mechanism_code || "?";
+    s.killed_mechs_count[m] = (s.killed_mechs_count[m] || 0) + 1;
+  }
+
+  // Two kills and no keeps. One kill is a name he did not like; two with
+  // nothing kept is him telling us the joke itself is not landing.
+  const rejected = Object.entries(s.killed_mechs_count)
+    .filter(([m, c]) => c >= 2 && !(s.kept_mechs[m] > 0))
+    .map(([m]) => m);
+
+  // Proven: kept at least twice and kept more than killed. This is what a
+  // riff brief is allowed to write in.
+  const proven = Object.entries(s.kept_mechs)
+    .filter(([m, c]) => c >= 2 && c > (s.killed_mechs_count[m] || 0))
+    .map(([m]) => m);
+
+  return { ...s, rejected_mechs: rejected, proven_mechs: proven,
+           finalists_ready: s.kept.length >= FINALISTS };
+}
+
+// ---------------------------------------------------------------------------
+// The reveal
+// ---------------------------------------------------------------------------
+//
+// THE ONE RULE HERE. The rationale is written from the session profile and
+// nothing else. Every clause below is either a fixed phrase or a quotation of
+// something the customer actually typed - there is no branch that invents a
+// fact about his boat, his family or his job. A reveal that says "perfect for
+// your weekends with the grandkids" to a man who never mentioned grandchildren
+// is worse than no rationale at all, because it tells him the whole thing was
+// generated.
+// How each joke is built, in words a customer would use. The reveal needs
+// this because the other clauses - the lane he asked for, who is aboard - are
+// the same for all three finalists, so without it all three reasons read
+// identically and the whole thing looks generated.
+const MECHANISM_PHRASE = {
+  hp: "it sounds like something else entirely",
+  pm: "two words jammed into one",
+  tt: "a line everybody knows, bent",
+  dp: "it never raises its voice, which is the joke",
+  dm: "it means two things at once, and both are true on a boat",
+  ba: "the letters stand for something",
+  pj: "an in-joke",
+  an: "the letters rearrange into something else",
+  lt: "the joke is that it is simply, boringly true",
+  md: "it sends you one way and lands somewhere else",
+  sincere: "no joke in it at all - it just reads well on a transom",
+};
+
+// "the a 22 foot pontoon" - a leading article has to come off before the
+// heading puts one in front of it.
+export function bareBoat(raw) {
+  return String(raw || "").replace(/^\s*(?:a|an|the|my|our)\s+/i, "").trim();
+}
+
+// Boat types in the words a customer uses. "it is a bass name" reads wrong.
+const BOAT_LABEL = {
+  pontoon: "pontoon", bass: "bass boat", fishing_boat: "fishing boat",
+  runabout: "runabout", cruiser: "cruiser", sail: "sailboat",
+  kayak: "kayak or canoe", jetski: "jet ski",
+};
+
+export function rationale(n, profile, radio, fit) {
+  // At most three clauses. The spec asks for a one-line rationale, and the
+  // first version ran to five semicolons - "You asked for deadpan, and this
+  // is that; it is a pontoon name and you told us X; it stays clean, which
+  // matters with Y aboard; and it never raises its voice; it reads as a boat
+  // ownership name." Nobody reads that as a reason. They read it as output.
+  const bits = [];
+
+  // 1. What he asked for.
+  const lanes = (n.style_lanes || []).filter((l) => profile.lanes.includes(l));
+  if (lanes.length) {
+    bits.push(`You asked for ${lanes.join(" and ")}, and this is that`);
+  }
+
+  // 2. The most specific thing he told us that this name actually answers.
+  //    One of these, in order of how particular it is to him.
+  const bt = (n.boat_types || []).filter(
+    (b) => profile.boat_types.includes(b));
+  let saidInJoke = false;
+  const grp = n.mechanism_code === "pj" ? inGroupEvidence(n, profile) : null;
+  if (grp) {
+    saidInJoke = true;
+    bits.push(`it is an in-joke for ${grp.group}, so most people will not `
+      + "get it - which is part of the point");
+  } else if (profile.port && (n.themes || []).includes("region")) {
+    bits.push(`it reads local, and you are out of ${profile.port}`);
+  } else if (bt.length && profile.boat_raw) {
+    bits.push(`it is a ${BOAT_LABEL[bt[0]] || bt[0]} name, and you told us `
+      + `"${profile.boat_raw}"`);
+  } else if (profile.ceiling === "clean" && profile.aboard_raw
+             && CEILING_WORDS.clean.test(profile.aboard_raw)) {
+    // Only when who is aboard is WHY it has to be clean. For a man whose
+    // answer was "my buddies", "it stays clean" is not a selling point.
+    bits.push(`it stays clean, which matters with "${profile.aboard_raw}" `
+      + "aboard");
+  }
+
+  // 3. One fact true of this name and no other, in order of how specific it
+  //    is. Every branch is read off the name's own row or its gate result -
+  //    none of it is a guess about the customer.
+  if (n.note) {
+    bits.push(n.note.replace(/\.$/, "")
+      .replace(/^([A-Z])/, (m) => m.toLowerCase()));
+  } else if (radio && radio.spell_out) {
+    bits.push("you will be spelling it out on the radio, which some people "
+      + "like and some people hate");
+  } else if (radio && radio.visual_only) {
+    bits.push("the punctuation is the punchline, so it only really works "
+      + "written down");
+  } else if (radio && radio.verdict === "mouthful") {
+    bits.push("it is a long one to say, and worth it");
+  } else if (MECHANISM_PHRASE[n.mechanism_code] && !saidInJoke) {
+    // Skipped when clause 2 already called it an in-joke, which produced
+    // "it is an in-joke for X; an in-joke."
+    bits.push(MECHANISM_PHRASE[n.mechanism_code]);
+  } else if (fit && fit.best_height) {
+    // A real per-name fact for the cases where the mechanism is shared by
+    // everything else in the lane - three in-jokes in a nerd round otherwise
+    // came back with word-for-word identical reasons.
+    bits.push(`it will cut at ${fit.best_height}" tall on what you have`);
+  } else if ((n.themes || []).length) {
+    bits.push(`it reads as a ${(n.themes || [])[0].replace(/_/g, " ")} name`);
+  }
+
+  if (!bits.length) {
+    // The honest floor: how the joke works, rather than an invented reason.
+    bits.push(`It works by ${n.humor_mechanism}`);
+  }
+  return bits.slice(0, 3).join("; ") + ".";
+}
+
+/** Gate results in plain words, for the reveal. Spec section 6. */
+export function gateSummary(radio, fit, over) {
+  const out = [];
+  out.push({
+    clear: "Clear on the radio",
+    sayable: "You will say it twice the first time, then never again",
+    mouthful: "A long one on channel 16",
+    spell_it: "You will be spelling this one out",
+    fail: "Not usable on a radio",
+  }[radio.verdict] || radio.verdict);
+
+  if (fit && fit.best_height) {
+    out.push(`Fits at ${fit.best_height}" tall`);
+  } else if (fit && fit.widths_in) {
+    out.push(`About ${fit.widths_in[4]}" wide at 4"`);
+  }
+  out.push(over.tier === 1 ? "One in every marina"
+    : over.tier === 2 ? "Common, but not worn out"
+    : "Not one we see often");
+  if (radio.visual_only) out.push("The joke needs to be read, not heard");
+  return out;
 }

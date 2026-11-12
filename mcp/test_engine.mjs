@@ -127,6 +127,44 @@ const deal = (answers, opts = {}) =>
     + "actually opening");
 }
 
+{
+  // "Limit Out" is angler jargon. It came back described as "an in-joke for
+  // I run a small HVAC company" - the pj mechanism covers a trade, a region
+  // and a cohort, and the reveal assumed it was always the trade.
+  const fishy = BANK.find((n) => n.mechanism_code === "pj"
+    && (n.themes || []).includes("fishing"));
+  if (fishy) {
+    const hvac = E.profileFrom({ boat: "runabout", aboard: "buddies",
+                                 work: "I run a small HVAC company" });
+    const r = E.rationale(fishy, hvac, G.radioGate(fishy.name), null);
+    check(!r.includes("HVAC"),
+      `${fishy.name} is a fishing in-joke but was explained as an in-joke `
+      + "for the customer's unrelated trade: " + r);
+    // And with no boat to prove he fishes, it should not be dealt at all.
+    check(E.inGroupEvidence(fishy, hvac) === null,
+      `${fishy.name} was treated as an in-joke he is inside, on a runabout `
+      + "with an HVAC job");
+    const angler = E.profileFrom({ boat: "19 foot bass boat",
+                                   aboard: "buddies" });
+    check(E.inGroupEvidence(fishy, angler) !== null,
+      `${fishy.name} should be unlocked by the boat being a bass boat`);
+    const r2 = E.rationale(fishy, angler, G.radioGate(fishy.name), null);
+    check(r2.includes("fishes"),
+      "a fishing in-joke should name the group it is for: " + r2);
+  }
+  // A regional in-joke needs the port, not the job.
+  const regional = BANK.find((n) => n.mechanism_code === "pj"
+    && (n.style_lanes || []).includes("regional"));
+  if (regional) {
+    check(E.inGroupEvidence(regional,
+      E.profileFrom({ boat: "pontoon", work: "dentist" })) === null,
+      `${regional.name} is regional and was unlocked by a job`);
+    check(E.inGroupEvidence(regional,
+      E.profileFrom({ boat: "pontoon", port: "Clear Lake, Iowa" })) !== null,
+      `${regional.name} should be unlocked by a hailing port`);
+  }
+}
+
 // --- fit ------------------------------------------------------------------
 {
   const small = deal({ boat: "kayak", aboard: "just me", transom: "14" });
@@ -242,6 +280,135 @@ const deal = (answers, opts = {}) =>
     + p.transom_in);
   check(E.profileFrom({ transom: "4" }).transom_in === null,
     "an implausible transom should be discarded rather than used");
+}
+
+// --- the tournament -------------------------------------------------------
+{
+  const pun = BANK.find((n) => n.mechanism_code === "hp");
+  const pun2 = BANK.filter((n) => n.mechanism_code === "hp")[1];
+  const dp = BANK.find((n) => n.mechanism_code === "dp");
+  const dp2 = BANK.filter((n) => n.mechanism_code === "dp")[1];
+
+  // One kill is a name he did not like.
+  let st = E.applyVote({}, BANK, [], [pun.name]);
+  check(!st.rejected_mechs.includes("hp"),
+    "one kill rejected a whole mechanism - one kill is a name he did not "
+    + "like, not a verdict on the joke");
+
+  // Two kills with nothing kept is the joke itself not landing.
+  st = E.applyVote(st, BANK, [], [pun2.name]);
+  check(st.rejected_mechs.includes("hp"),
+    "two kills of the same mechanism with no keeps did not reject it");
+
+  // A keep protects it.
+  let st2 = E.applyVote({}, BANK, [dp.name], [dp2.name]);
+  st2 = E.applyVote(st2, BANK, [], [dp2.name]);
+  check(!st2.rejected_mechs.includes("dp"),
+    "a mechanism he has kept once was rejected on kills alone");
+
+  // Proven needs two keeps and more keeps than kills.
+  let st3 = E.applyVote({}, BANK, [dp.name], []);
+  check(!st3.proven_mechs.includes("dp"), "one keep should not prove a mechanism");
+  st3 = E.applyVote(st3, BANK, [dp2.name], []);
+  check(st3.proven_mechs.includes("dp"), "two keeps should prove a mechanism");
+
+  // Finalists.
+  const three = BANK.slice(0, 3).map((n) => n.name);
+  const st4 = E.applyVote({}, BANK, three, []);
+  check(st4.finalists_ready, "three keeps should make the finalists ready");
+  check(!E.applyVote({}, BANK, three.slice(0, 2), []).finalists_ready,
+    "two keeps should not");
+  // A name that is not in the bank must not be invented into the kept list.
+  const st5 = E.applyVote({}, BANK, ["Definitely Not A Bank Name"], []);
+  check(!st5.kept.length,
+    "a vote for a name that is not in the bank was accepted");
+  // Voting twice for the same name must not double-count it.
+  let st6 = E.applyVote({}, BANK, [dp.name], []);
+  st6 = E.applyVote(st6, BANK, [dp.name], []);
+  check(st6.kept.length === 1, "the same keep was counted twice in kept[]");
+}
+
+// --- the reveal must not invent a single fact ----------------------------
+{
+  const n = BANK.find((x) => x.mechanism_code === "dp");
+  // An empty profile. Every clause in the rationale is supposed to be either
+  // a fixed phrase or a quotation of something the customer typed, so with
+  // nothing typed there is nothing to quote.
+  const bare = E.profileFrom({});
+  const r = E.rationale(n, bare, G.radioGate(n.name), null);
+  check(!/"/.test(r),
+    "the rationale quoted something although the customer told us nothing: "
+    + r);
+  for (const invented of ["grandkid", "your boat", "weekend", "family",
+                          "fishing", "retire", "wife"]) {
+    check(!r.toLowerCase().includes(invented),
+      `the rationale invented "${invented}" from an empty profile: ${r}`);
+  }
+  check(!/You asked for/.test(r),
+    "the rationale claimed the customer asked for something when he said "
+    + "nothing: " + r);
+  check(r.length < 160 && r.endsWith("."),
+    "the rationale should be one short line, got " + r.length + " chars: " + r);
+
+  // And with real facts it must quote them rather than paraphrase.
+  const full = E.profileFrom({ boat: "a 22 foot pontoon",
+                               aboard: "my grandkids", vibe: "deadpan",
+                               work: "retired electrician", port: "Clear Lake" });
+  const pontoonDeadpan = BANK.find((x) => (x.style_lanes || []).includes("deadpan")
+    && (x.boat_types || []).includes("pontoon"));
+  if (pontoonDeadpan) {
+    const r2 = E.rationale(pontoonDeadpan, full, G.radioGate(pontoonDeadpan.name), null);
+    check(r2.includes("a 22 foot pontoon"),
+      "the rationale did not quote the customer's own description of the "
+      + "boat: " + r2);
+  }
+  const pj = BANK.find((x) => x.mechanism_code === "pj");
+  const r3 = E.rationale(pj, full, G.radioGate(pj.name), null);
+  check(r3.includes("retired electrician"),
+    "an in-joke's rationale must quote the trade it is an in-joke for: " + r3);
+}
+
+{
+  // The heading read "Three names for the a 22 foot pontoon".
+  check(E.bareBoat("a 22 foot pontoon") === "22 foot pontoon",
+    "a leading article is not being stripped: " + E.bareBoat("a 22 foot pontoon"));
+  for (const [raw, want] of [["my bass boat", "bass boat"],
+                             ["the pontoon", "pontoon"],
+                             ["an old runabout", "old runabout"],
+                             ["pontoon", "pontoon"],
+                             ["", ""]]) {
+    check(E.bareBoat(raw) === want,
+      `bareBoat(${JSON.stringify(raw)}) gave ${JSON.stringify(E.bareBoat(raw))}`);
+  }
+}
+{
+  // All three finalists' reasons read identically, because every clause came
+  // from the shared profile. The mechanism clause is what differs per name.
+  const full = E.profileFrom({ boat: "a 22 foot pontoon",
+                               aboard: "my grandkids", vibe: "deadpan" });
+  const picks = BANK.filter((x) => (x.style_lanes || []).includes("deadpan")
+    && x.humor_level === "clean");
+  const seen = new Set();
+  for (const n of picks.slice(0, 12)) {
+    seen.add(E.rationale(n, full, G.radioGate(n.name), null));
+  }
+  check(seen.size >= 3,
+    "twelve deadpan finalists produced only " + seen.size + " distinct "
+    + "reasons - the reveal reads as generated");
+}
+
+// --- gate results in plain words -----------------------------------------
+{
+  const n = BANK.find((x) => x.name === "Knot Working")
+    || BANK.find((x) => x.mechanism_code === "hp");
+  const sum = E.gateSummary(G.radioGate(n.name),
+    G.fitGate(n.name, "Arial Bold", 60), G.overuseGate(n.name));
+  check(sum.length >= 2, "the gate summary should say at least two things");
+  for (const line of sum) {
+    check(!/verdict|tier|gate|null|undefined|_/.test(line),
+      "the gate summary is leaking internal vocabulary at a customer: "
+      + line);
+  }
 }
 
 for (const f of fails) console.log("FAIL: " + f);

@@ -27,7 +27,9 @@ import { radioGate, overuseGate, fitGate, noveltyGate, widthIn,
 import { D } from "./gates-data.js";
 // The same file the website runs for these two - see engine/shared_js.py.
 import { checkRegistration, decodeHin, toPlain } from "./decode.js";
-import { INTERVIEW, profileFrom, missingQuestions, dealRound } from "./engine.js";
+import { INTERVIEW, profileFrom, missingQuestions, dealRound, applyVote,
+         rationale, gateSummary, bareBoat, ROUND_SIZE,
+         FINALISTS } from "./engine.js";
 
 const PROTOCOL = "2024-11-05";
 const SERVER = { name: "numbermyboat", version: "0.1.0" };
@@ -408,6 +410,175 @@ const TOOLS = [
         honesty: "Every name here is from our own curated bank, already "
           + "tested. How common a name is comes from market data, not a "
           + "registry - we cannot tell anyone what is already on their lake.",
+      });
+    },
+  },
+  {
+    name: "vote_on_names",
+    title: "Keep the ones that landed, kill the ones that did not",
+    description:
+      "Records which names the customer liked and which he did not, then "
+      + "deals the next round of four. Killing names does more than skip "
+      + "them: kill two of the same kind of joke and the engine stops "
+      + "offering that kind of joke altogether, which is the single most "
+      + "useful thing a session learns. Once three names are kept, call "
+      + "reveal_finalists.",
+    annotations: { title: "Keep and kill", readOnlyHint: false,
+                   destructiveHint: false, idempotentHint: false,
+                   openWorldHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        session_id: { type: "string", maxLength: 40 },
+        kept: { type: "array", items: { type: "string", maxLength: 60 },
+                description: "Names he liked, exactly as they were shown" },
+        killed: { type: "array", items: { type: "string", maxLength: 60 },
+                  description: "Names he rejected" },
+      },
+      required: ["session_id"], additionalProperties: false,
+    },
+    async run(args, env, ctx) {
+      await loadLexicon(env);
+      const sid = String(args.session_id || "").slice(0, 40);
+      const prior = await env.DB.prepare(
+        "SELECT * FROM naming_sessions WHERE id = ?").bind(sid).first();
+      if (!prior) {
+        return err("That naming session has expired or never existed. "
+          + "Sessions are kept for 30 days.");
+      }
+      const bank = await ctx.bankRows(env);
+      const profile = JSON.parse(prior.profile || "{}");
+
+      const state = applyVote({
+        kept: JSON.parse(prior.kept || "[]"),
+        killed_names: JSON.parse(prior.killed_names || "[]"),
+        kept_mechs: JSON.parse(prior.kept_mechs || "{}"),
+        killed_mechs_count: JSON.parse(prior.killed_mechs || "{}"),
+      }, bank, args.kept || [], args.killed || []);
+
+      const shown = JSON.parse(prior.shown || "[]");
+      const rounds = (prior.rounds || 0) + 1;
+      const now = new Date().toISOString();
+
+      // Rounds of four from here. Eight is a shortlist; four is a decision.
+      const round = state.finalists_ready ? null : dealRound(bank, profile, {
+        size: ROUND_SIZE, exclude: shown,
+        killedMechs: state.rejected_mechs,
+        seed: sid + ":" + rounds,
+      });
+      const nextShown = round
+        ? shown.concat(round.names.map((n) => n.name)) : shown;
+
+      await env.DB.prepare(
+        `UPDATE naming_sessions SET updated=?, shown=?, kept=?,
+           killed_names=?, kept_mechs=?, killed_mechs=?, rounds=?
+         WHERE id=?`
+      ).bind(now, JSON.stringify(nextShown), JSON.stringify(state.kept),
+             JSON.stringify(state.killed_names),
+             JSON.stringify(state.kept_mechs),
+             JSON.stringify(state.killed_mechs_count), rounds, sid).run();
+
+      return txt({
+        session_id: sid,
+        kept_so_far: state.kept,
+        killed_so_far: state.killed_names.length,
+        finalists_ready: state.finalists_ready,
+        next_round: round ? round.names : null,
+        what_the_session_has_learned: {
+          landing: state.proven_mechs,
+          not_landing: state.rejected_mechs,
+          reading: "Two kills of the same mechanism with nothing kept and we "
+            + "stop offering it. One kill is a name he did not like; two is "
+            + "the joke itself not working.",
+        },
+        next_step: state.finalists_ready
+          ? `He has kept ${state.kept.length}. Call reveal_finalists.`
+          : `Keep going - ${FINALISTS - state.kept.length} more to keep.`,
+      });
+    },
+  },
+  {
+    name: "reveal_finalists",
+    title: "The Final 3, with the reasons and the radio call",
+    description:
+      "The payoff. Takes the names he kept and presents the final three: why "
+      + "each one survived, written from what he actually told us; the radio "
+      + "readback to say out loud; what the gates found in plain words; the "
+      + "width at the height we would cut; and a card he can send his family "
+      + "to vote on. Also the link to order each one.",
+    annotations: { title: "The Final 3", readOnlyHint: true,
+                   destructiveHint: false, idempotentHint: true,
+                   openWorldHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        session_id: { type: "string", maxLength: 40 },
+        font: { type: "string", description: "Defaults to Arial Bold" },
+      },
+      required: ["session_id"], additionalProperties: false,
+    },
+    async run(args, env, ctx) {
+      await loadLexicon(env);
+      const sid = String(args.session_id || "").slice(0, 40);
+      const prior = await env.DB.prepare(
+        "SELECT * FROM naming_sessions WHERE id = ?").bind(sid).first();
+      if (!prior) return err("That naming session has expired.");
+
+      const profile = JSON.parse(prior.profile || "{}");
+      const kept = JSON.parse(prior.kept || "[]");
+      if (!kept.length) {
+        return err("Nothing has been kept yet in this session. Deal a round "
+          + "with start_naming_session and record the keeps with "
+          + "vote_on_names first.");
+      }
+      const bank = await ctx.bankRows(env);
+      const byName = new Map(bank.map((n) => [n.name.toLowerCase(), n]));
+      const font = args.font || "Arial Bold";
+      const site = env.SITE_URL || "https://numbermyboat.com";
+
+      const finalists = [];
+      for (const name of kept.slice(0, FINALISTS)) {
+        const n = byName.get(name.toLowerCase());
+        if (!n) continue;
+        const radio = radioGate(n.name);
+        const fit = fitGate(n.name, font,
+          profile.transom_in != null ? profile.transom_in : null);
+        const over = overuseGate(n.name);
+        finalists.push({
+          name: n.name,
+          why_this_one: rationale(n, profile, radio, fit),
+          say_it_on_the_radio: radio.readback,
+          what_we_checked: gateSummary(radio, fit, over),
+          width: { font, widths_in: fit.widths_in,
+                   tallest_that_fits: fit.best_height,
+                   accuracy: `+/-${fit.error_pct}%` },
+          // Deep link into the real order form with the name already in it.
+          // The buy path is here and in the studio, never in round one.
+          order_it: `${site}/design/?name=${encodeURIComponent(n.name)}`
+            + `&font=${encodeURIComponent(font)}`,
+          see_it_rendered: `${site}/api/outline?t=`
+            + `${encodeURIComponent(n.name)}&f=${encodeURIComponent(font)}`,
+        });
+      }
+
+      return txt({
+        session_id: sid,
+        finalists,
+        // The spec's Final 3 card: something he sends his wife, not a receipt.
+        card_for_the_family: {
+          heading: profile.boat_raw
+            ? `Three names for the ${bareBoat(profile.boat_raw)}`
+            : "Three names for the boat",
+          names: finalists.map((f) => f.name),
+          ask: "Which one? Reply with 1, 2 or 3.",
+          footer: "Cut in Evansdale, Iowa. Free shipping, all 50 states.",
+        },
+        price_note: "A boat name set starts at $23 and a name plus "
+          + "registration numbers is $44. Call price_order for the exact "
+          + "figure once he picks a height.",
+        honesty: "Every reason above is built from what he told us in the "
+          + "interview. Where we had nothing to go on, it says how the joke "
+          + "works instead of inventing a reason.",
       });
     },
   },

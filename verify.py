@@ -1030,7 +1030,7 @@ if _bank_f.exists():
         # tool must declare readOnlyHint:true. The exception is named here so
         # that adding a second writer is a deliberate edit to this gate rather
         # than something that slips in.
-        _WRITERS = {"start_naming_session"}
+        _WRITERS = {"start_naming_session", "vote_on_names"}
         _declared = re.findall(r'name: "(\w+)",\s*\n\s*title:', _mcp)
         _ro = len(re.findall(r"readOnlyHint: true", _mcp))
         _rw = len(re.findall(r"readOnlyHint: false", _mcp))
