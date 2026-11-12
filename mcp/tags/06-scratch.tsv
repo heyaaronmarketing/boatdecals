@@ -1,0 +1,84 @@
+# Batch 4a: scratch (75) - placeholder, boilerplate and bureaucratic names.
+#
+# RULE SET HERE AND USED FOR THE REST OF THE BANK: tt (title twist) covers a
+# twist on any recognisable borrowed phrase - song, film, proverb, and also the
+# stock strings everyone knows by heart (404, Citation Needed, Reply STOP To
+# Cancel, This Side Up). The taxonomy says "song/film/proverb"; a Magic 8-Ball
+# answer works on a reader exactly the way a song title does, and sorting those
+# into "misdirection" would hide the one thing the engine needs to know - that
+# the laugh is borrowed and the reader has to recognise the source.
+404 Boat Not Found	tt	c
+Allegedly	dp	c
+Ask Again Later	tt	c	Magic 8-Ball
+Ask Your Wife	dp	c
+Blink Twice If Stuck	md	c
+Boat	lt	c
+Citation Needed	tt	c	Wikipedia
+Control Group	md	c
+Decaf	md	c
+Decoy	md	c
+Default Name	lt	c
+Does This Float	dp	c
+Draft 1	lt	c
+Déjà Vu (Again)	md	c	the parenthesis is the joke
+Error: Name Too Long	md	c
+Exhibit A	md	c
+Fine Print	md	c
+Hold My Spot	dp	c
+Hypothetically	dp	c
+I Don't Know Her	tt	c
+Insert Name Here	lt	c
+Last Year's Name	dp	c
+Loading Name...	lt	c
+Loading…	lt	c
+May Contain Boat	tt	c	may contain nuts
+Minimum Wake	hp	c	minimum wage
+Name Pending Approval	lt	c
+Name Redacted	lt	c
+New Document	lt	c
+No Comment	dp	c
+Nobody's Boat	dp	c
+Not For Sale (Make Offer)	dp	c
+Not Pictured	lt	c
+Not The Boat You're Looking For	tt	c	Star Wars
+Not To Scale	lt	c
+Objects In Mirror	tt	c	mirror warning
+Optional	dp	c
+Other Boat	lt	c
+Page Intentionally Left Blank	tt	c
+Password123	md	c
+Pending	lt	c
+Placeholder	lt	c
+Plot Twist	md	c
+Previously Owned	lt	c
+Read The Manual	md	c
+Reply STOP To Cancel	tt	c	SMS boilerplate
+Results May Vary	tt	c	disclaimer
+Rhymes With Orange	md	c	nothing does
+Rough Draft	lt	c
+Rounding Error	md	c
+Same Boat	dm	c
+Schrödinger's Boat	tt	c
+See Attached	tt	c	email boilerplate
+See Other Side	lt	c
+Starboard Is Left*	md	c	the asterisk does the work
+Still Loading	lt	c
+TBD	lt	c
+Terms Apply	tt	c
+The Boat Formerly Known As	tt	c	Prince
+The Sequel	md	c
+Third Boat	lt	c
+This Side Up	tt	c	shipping label
+Thought Experiment	md	c
+To Be Continued	tt	c
+Under Review	lt	c
+Unnamed	lt	c
+Unsubscribe	md	c
+Untitled (1)	lt	c
+Version 3 (Final) FINAL	md	c
+Was Here First	dp	c
+Who's Driving?	dp	c
+Whose Boat?	dp	c
+Wrong Boat	md	c
+You Are Here	tt	c	map marker
+Your Ad Here	md	c

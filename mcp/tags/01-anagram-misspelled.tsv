@@ -1,0 +1,77 @@
+# Batch 1: anagram (38) + misspelled (30).
+# These two categories are mechanically unambiguous, which is why they go first
+# - they calibrate the rig before the judgement calls start.
+#
+# NOTE for the radio gate: every name in the misspelled category is built to be
+# heard right and spelled wrong. They SHOULD fail the radio gate. They are in
+# the bank so the engine can demonstrate a failure, not so it can deal them.
+#
+# name<TAB>mechanism<TAB>level<TAB>note
+Actual In	an	c
+Ails Sail	an	c
+Airman	an	c
+Aloft	an	c
+Amber Bream	an	c
+Canoe Ocean	an	c
+Cash Fit	an	c
+Cat Pain	an	c
+Crap	an	d	the anagram is clean, the word on the transom is not
+Curies	an	c
+Diet Tide	an	c
+Edit Tide	an	c
+Epic Rap	an	c
+Growin'	an	c
+Horse Shore	an	c
+Hoser	an	c
+Hoya	an	c
+Lake Kale	an	c
+Lake Leak	an	c	naming your boat Leak is its own joke
+Leek	an	c
+Master Stream	an	c
+Mats Mast	an	c
+No Top On	an	c
+Pots Stop	an	c
+Rancho	an	c
+Reel Leer	an	c
+Rents	an	c
+Reskin	an	c
+Ripe Pier	an	c
+Rule Lure	an	c
+Soar Oars	an	c
+Tag Tear	an	c
+Tamers	an	c
+Terns	an	c
+Tutor	an	c
+Unsets	an	c
+Weak Wake	an	c
+Yell Awe	an	c
+Ahoyy	hp	c
+Anchorz Away	tt	c	Anchors Aweigh
+Big Bote	hp	c
+Boat Goes Fast	lt	c
+Boatiful	pm	c	boat + beautiful
+Bote	hp	c
+Buoyant Bois	hp	c
+Da Bote	hp	c
+Fast Bote Go Zoom	lt	c
+Fysh	hp	c
+Gon Fishn	hp	c
+Kanoe	hp	c
+Kaptin	hp	c
+Lake Lyfe	hp	c
+Lil Bote	hp	c
+Luxery	md	c	claims luxury, cannot spell it
+Marinah	hp	c
+Nautikal	hp	c
+Nawt Guilty	hp	c
+Phloat	hp	c
+Reel Gud	hp	c
+Sea Ya Layter	hp	c
+Seriusly	md	c
+Shure Thing	hp	c
+Speling Bee	md	c	the name about spelling, misspelled
+Thee Boat	hp	c
+Titanik	tt	c	Titanic, which is a choice
+Unsinkabel	md	c	tempting fate, badly spelled
+Yaht	hp	c
+Yott	hp	c

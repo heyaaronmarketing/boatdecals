@@ -1,0 +1,98 @@
+# Batch 9: the 84 names that exist only on /tools/funny-boat-names/ (the other
+# 26 on that page are already tagged through their generator category).
+#
+# THIS IS WHERE LEVEL x LIVES. Everything before this batch graded out c or d;
+# the funny page is the only part of the bank carrying genuine innuendo, and
+# the page says so itself ("order at your own risk"). Nine names are x. Where a
+# reading is ambiguous I have graded UP, not down - a gate that wrongly keeps a
+# clean name away from a family boat costs one name; a gate that wrongly deals
+# a crude one costs the customer his transom and the shop the job.
+#
+# ALSO NOTE: Vitamin Sea and Seas the Day are here. The spec names both as the
+# Tier-1 overuse class by example - they are the two most common boat names in
+# America. Mechanism tagging does not exclude them; the overuse gate will, and
+# these two rows are its first test case.
+Alimony	lt	d
+Aquaholic	pm	d
+Bad Mussel	hp	d	bad muscle
+Baitin Around	hp	x	graded up - it reads crude out loud, and that is the version a stranger hears
+Bent Rod	dm	x
+Boat Vibes Only	lt	c
+Breaking Wind	hp	d	breaking wind, breaking waves
+Chum Bucket	lt	c
+Codfather	tt	c	The Godfather
+Current Sea	hp	c	currency
+Dark & Stormy	dm	d	the drink, and the forecast
+Dawn Patrol	pj	c
+Dead Sticking	pj	c
+Debt Sentence	hp	d	death sentence
+Deep Drop	pj	c
+Depreciating Asset	lt	c
+Drag On	hp	c	dragon
+Dry Powder	pj	c	finance term
+Early Out	lt	c
+Escrow	pj	c
+Full Stringer	pj	c
+Golden Hours	dm	c
+Gone Coastal	hp	c	gone postal
+Gone Fission	hp	c	gone fishin'
+Grandkids Inheritance	md	d
+Happy Hour	dm	d
+Happy Wife	md	d
+Her Boat	lt	d
+Hook Line Sinker	lt	c
+Hooked Up	dm	x
+Joint Account	dm	d
+Just Add Water	tt	c	packet instructions
+Keel Over	dm	c
+Knot Paid For	hp	d	not paid for
+Knot Working	hp	c	not working
+Last Call	dm	d
+Last Cast	lt	c
+Last Resort	dm	c
+Limit Out	pj	c
+Liquid Asset	dm	c
+Liquid Lunch	dm	d
+Live Bait	lt	c
+Loose Change	dm	c
+Margin Call	tt	c
+Marina Del Broke	tt	d	Marina del Rey
+Mistress	md	x
+Multiple Scoregasms	pm	x
+My Turn Next	dp	d
+Net Worth	dm	c
+No More Mondays	lt	c
+One More Round	dm	d
+Our Turn	lt	c
+Painkiller	dm	d	the drink
+Permanent Vacation	tt	c
+Permission Granted	md	d
+Pour Decisions	hp	d	poor decisions
+Pretax	pj	c
+Reel Lucky	hp	c	really lucky
+Rum Runner	dm	d
+Sail La Vie	hp	c	c'est la vie
+Screaming Drag	pj	c
+Seaduction	pm	x	sea + seduction
+Seas the Day	hp	c	seize the day - TIER 1 OVERUSE
+Second Wife	md	d
+Set the Hook	pj	c
+She Said Yes	md	c
+Ship Faced	hp	d	shitfaced
+Ships Happen	hp	d	shit happens
+Sofishticated	pm	c	fish + sophisticated
+Sunk Cost	dm	c
+Tax Write Off	md	d	it is not
+The Compromise	md	d
+The Deductible	md	c
+The Other Woman	md	x
+The Reward	lt	c
+Thirty Years	lt	c
+Tight Lines	pj	c
+Trolling Along	tt	c	rolling along
+Usually Sober	dp	d
+Veto Power	md	d
+Vitamin Sea	hp	c	vitamin C - TIER 1 OVERUSE
+Wave Goodbye	dm	c
+Wet Dream	dm	x
+Worth the Wait	lt	c

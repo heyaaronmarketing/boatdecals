@@ -1,0 +1,45 @@
+# Batch 8d: food (40).
+# The most lt-heavy lane in the bank, and the least funny on paper - Potato
+# Salad is not a joke, it is a declaration. It works anyway, which is worth the
+# engine knowing: lt names need no setup and no shared reference, so they are
+# the safest thing to deal to someone whose lane is still unknown.
+Beef Jerky	lt	c
+Beer Cheese	lt	c
+Bologna Barge	lt	c
+Brats & Boats	lt	c
+Buoy-rrito	pm	c	buoy + burrito
+Buttered Corn	lt	c
+Casserole Cruise	lt	c
+Cheese Plate	lt	c
+Cold Cuts	dm	c
+Cookie Dough	lt	c
+Corn Dog	lt	c
+Crock Pot	lt	c
+Dad's Secret Rub	dm	d
+Deviled Egg	lt	c
+Extra Pickles	lt	c
+Fish Fry Friday	lt	c
+Float Beer	dm	d	root beer float
+Floating Picnic	lt	c
+Gravy Boat	dm	c	a gravy boat is already a boat
+Hot Sauce	lt	c
+Ice Cream Social	lt	c
+Jello Salad	pj	c	Midwest church basement
+Lake Trout Tuesdays	lt	c
+Nacho Average Boat	hp	c	not your average
+Nachos Overboard	md	c
+Pizza Rolls	lt	c
+Pork Chop	lt	c
+Potato Salad	lt	c
+Reel Cheesy	hp	c	really cheesy
+Salt & Vinegar	lt	c
+Second Breakfast	tt	c	Lord of the Rings
+Sloppy Joe	lt	c
+Snack Attack	dm	c
+Snack Size	lt	c
+Soup	lt	c
+Sweet Tea	lt	c
+Tacos On The Water	lt	c
+Walleye Taco	lt	c
+Walleye Wednesday Special	lt	c
+Wet Burrito	lt	c

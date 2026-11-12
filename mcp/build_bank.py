@@ -86,12 +86,21 @@ def main():
         r.setdefault("themes", [])
         r.setdefault("overuse_tier", None)
 
+    # Join the hand-written judgements onto the derived names. This happens
+    # HERE, inside the one command that writes the bank, so there is no window
+    # in which a tagged bank exists on disk untagged - which would let the
+    # engine start up and deal names with no mechanism.
+    import apply_tags
+    stats, problems = apply_tags.apply(names)
+
     bank = {
         "note": "DERIVED FILE - do not edit. Run: python3 mcp/build_bank.py",
         "sources": ["engine/namegen.py", "engine/tools.py:FUNNY_GROUPS"],
         "name_count": len(names),
         "categories": sorted({c for r in names for c in r["categories"]}),
         "untagged": sum(1 for r in names if not r["humor_mechanism"]),
+        "mechanisms": sorted({r["humor_mechanism"] for r in names
+                              if r.get("humor_mechanism")}),
         "names": names,
     }
     DATA.mkdir(exist_ok=True)
@@ -104,6 +113,13 @@ def main():
           % (added, overlapped))
     print("   untagged   %d  (humor_mechanism required before a name is dealt)"
           % bank["untagged"])
+    pct = 100.0 * stats["tagged"] / max(stats["total"], 1)
+    print("   tagged     %d  (%.1f%%)" % (stats["tagged"], pct))
+    for p_ in problems:
+        print("   PROBLEM: %s" % p_)
+    if problems:
+        raise SystemExit("tag files have %d problem(s) - bank written, fix "
+                         "them before building the engine" % len(problems))
     print("-> %s" % (DATA / "name_bank.json"))
 
 

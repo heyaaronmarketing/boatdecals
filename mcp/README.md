@@ -57,14 +57,79 @@ impossible to create without failing the build.
   font lists, block-legal set, free shipping, the 12-hour proof window, and
   bank size/duplicates. Each proven against a deliberate break.
 
+## The tagging pass (mechanism + level) — DONE, 1,089 of 1,089
+
+Spec §2 and §4b: offline data task, no runtime LLM guessing, no name enters the
+bank untagged. Mechanism and level first because the deterministic gates need
+only those two; `style_lanes`, `boat_types`, `themes` and `overuse_tier` remain.
+
+    engine/*.py        the names            (site source, authoritative)
+    mcp/tags/*.tsv     the judgements       (hand-written, authoritative)
+    mcp/data/*.json    the join of the two  (derived, never edited)
+
+Tags are keyed by name, not by row number, so a name that leaves the site fails
+the build instead of silently re-pointing a judgement at its neighbour.
+
+| mechanism | count |
+|---|---|
+| literal truth | 194 |
+| misdirection | 184 |
+| deadpan understatement | 143 |
+| in-group in-joke | 129 |
+| homophone pun | 124 |
+| double meaning | 109 |
+| title twist | 104 |
+| sincere (not a joke) | 53 |
+| anagram | 38 |
+| portmanteau | 11 |
+| backronym | **0** |
+
+Levels: 913 clean, 168 dock, 8 double.
+
+### Three decisions the taxonomy forced
+
+1. **`sincere` is an eleventh value.** §4b's ten all describe how a joke works,
+   and the `classy` lane is 50 names that are not jokes. Tagging Halcyon as
+   deadpan understatement is not a cosmetic error: the riff brief reads
+   mechanisms to decide what to write next, so it would learn that a deadpan
+   lane liked Halcyon and start writing more. `sincere` is a real value but
+   **not** a humor mechanism — `HUMOR_MECHANISMS` excludes it and a gate fails
+   the build if it leaks in. Gate 21's "100% carry a mechanism" still holds.
+
+2. **`profession in-joke` is broadened to in-group in-joke.** The bank has three
+   such lanes, not one: corporate jargon, Midwest dialect (Ope, Hotdish, Pop Not
+   Soda) and Gen Z slang. Same mechanism doing the same work — lands only on a
+   member, invisible to everyone else — so one tag and one rule for the ranker:
+   never deal `pj` until the interview proves membership. The §4b count stays
+   at ten.
+
+3. **`backronym` has no example in the entire bank.** The spec names a mechanism
+   the house has never used. Either it is a gap worth 20 new names or it comes
+   out of the taxonomy; it cannot be taught to the riff engine from exemplars
+   that do not exist. Flagged, not decided.
+
+### What the pass turned up
+
+- **The radio gate's worst cases are already identified.** All 30 `misspelled`
+  names are built to be heard right and spelled wrong — they *should* fail, and
+  they are in the bank so the engine can demonstrate a failure rather than deal
+  one. Separately, `Crappie Attitude` / `Crappie Day` / `Crappie Hour` say a
+  word over VHF that sounds like another word entirely.
+- **`horror` is the most title-twist-heavy lane**, which is a ranker risk: a tt
+  name only lands on someone who knows the source, so a round full of them is a
+  round that may land on nobody.
+- **Every `divorce` name is graded dock**, including the gentle ones. The level
+  field is the only thing keeping that lane away from a man naming the boat he
+  takes his wife out on.
+- **Ambiguous innuendo graded up, not down.** A gate that wrongly withholds a
+  clean name costs one name; one that wrongly deals a crude name costs the
+  customer his transom and the shop the job.
+- `Vitamin Sea` and `Seas the Day` — the spec's named Tier-1 clichés — are both
+  tagged and in the bank. The overuse gate, not the mechanism tag, excludes them.
+
 ## Next
 
-1. **Tag the bank.** Every name needs `humor_mechanism`, `humor_level`,
-   `style_lanes`, `boat_types`, `themes`, `overuse_tier`. Spec §2 and §4b:
-   offline task, human-spot-checked, no runtime LLM guessing. **Nothing in the
-   engine can be built on an untagged bank** — all 1,089 are currently
-   untagged, and the gates deal only tagged names.
-2. The deterministic gates (radio, fit, overuse, photo, dedupe) — pure
+1. The deterministic gates (radio, fit, overuse, photo, dedupe) — pure
    functions, testable without a model, and the thing that makes this not a
    slot machine.
 3. The MCP server skeleton with the pure-port read tools:
@@ -77,7 +142,8 @@ impossible to create without failing the build.
 
 ```
 node mcp/extract_bank.mjs    # generator -> data/_bank_js.json
-python3 mcp/build_bank.py    # + funny names -> data/name_bank.json
+python3 mcp/build_bank.py    # + funny names + tags -> data/name_bank.json
+python3 mcp/apply_tags.py    # tag coverage report on its own
 python3 engine/build.py      # writes public/catalog.json
 python3 verify.py            # gates, including catalog/worker drift
 ```

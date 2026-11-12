@@ -960,6 +960,66 @@ if _bank_f.exists():
             fails.append("bank name %r has no category" % _n["name"])
             break
 
+    # Spec test 21: 100% of names carry a humor_mechanism. This is not
+    # paperwork. The riff brief is built by asking "which mechanisms has this
+    # lane kept?", so an untagged name is invisible to the ledger but still
+    # dealable - it would win rounds and teach the engine nothing. And a name
+    # with no humor_level can be dealt to a man naming the boat his
+    # grandchildren ride in, which is the one mistake that costs a sale and a
+    # reputation at the same time.
+    import importlib.util as _ilu
+    _tx_spec = _ilu.spec_from_file_location("nmb_tax", ROOT / "mcp" / "taxonomy.py")
+    _tx = _ilu.module_from_spec(_tx_spec)
+    _tx_spec.loader.exec_module(_tx)
+
+    _no_mech = [n["name"] for n in _bank["names"] if not n.get("humor_mechanism")]
+    if _no_mech:
+        fails.append("%d bank names carry no humor_mechanism (e.g. %s) - the "
+                     "engine must not deal an untagged name"
+                     % (len(_no_mech), ", ".join(repr(x) for x in _no_mech[:4])))
+    _no_lvl = [n["name"] for n in _bank["names"] if not n.get("humor_level")]
+    if _no_lvl:
+        fails.append("%d bank names carry no humor_level (e.g. %s) - without it "
+                     "the engine cannot keep a dock joke off a family boat"
+                     % (len(_no_lvl), ", ".join(repr(x) for x in _no_lvl[:4])))
+
+    _mech_names = set(_tx.MECHANISMS.values())
+    _lvl_names = set(_tx.LEVELS.values())
+    _bad = sorted({n["humor_mechanism"] for n in _bank["names"]
+                   if n.get("humor_mechanism")} - _mech_names)
+    if _bad:
+        fails.append("bank uses mechanisms outside the taxonomy: %s" % _bad)
+    _bad = sorted({n["humor_level"] for n in _bank["names"]
+                   if n.get("humor_level")} - _lvl_names)
+    if _bad:
+        fails.append("bank uses humor levels outside the taxonomy: %s" % _bad)
+
+    # The §4b taxonomy is a library of ten mechanisms. If a build leaves most of
+    # them with no examples, the riff brief has nothing to show and the engine
+    # degrades to one joke told ten ways - which is what a base model already
+    # does for free.
+    _used = {n["humor_mechanism"] for n in _bank["names"] if n.get("humor_mechanism")}
+    _unused = sorted(set(_tx.HUMOR_MECHANISMS.values()) - _used)
+    if len(_unused) > 2:
+        fails.append("%d of the 10 humor mechanisms have no example in the bank "
+                     "(%s) - the riff brief cannot teach a mechanism it cannot "
+                     "show" % (len(_unused), ", ".join(_unused)))
+
+    # The level grades have to be a real distribution. If every name grades
+    # clean, the gate is decorative and the next crude name sails through it.
+    from collections import Counter as _TagCounter
+    _lvls = _TagCounter(n.get("humor_level") for n in _bank["names"])
+    if _lvls.get("dock", 0) < 20:
+        fails.append("only %d names are graded dock - the humor_level pass was "
+                     "not really done" % _lvls.get("dock", 0))
+
+    # Sincere names are not a joke mechanism. If one is ever handed to the riff
+    # brief as a mechanism to write in, the engine starts producing earnest
+    # one-word nature names in a deadpan round.
+    if "sincere (not a joke)" in _tx.HUMOR_MECHANISMS.values():
+        fails.append("sincere leaked into HUMOR_MECHANISMS - it must never be "
+                     "offered to the riff brief as a mechanism")
+
 # ---- analytics ----------------------------------------------------------
 # GA4 on every public page and on no internal one. A tag that silently stops
 # being emitted looks exactly like a traffic collapse in the reports, and a
