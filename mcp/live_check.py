@@ -118,9 +118,14 @@ except RuntimeError as e:
 r = call("check_registration_layout", {"number": "IA 1234 AB"})
 check(r["verdict"] in ("ok", "check"), "a real layout check returned %r"
       % r["verdict"])
-check(r["width"]["accuracy"] is None,
-      "no boat name was given and the accuracy figure is %r - this printed "
-      "'+/-undefined%%' at a customer" % r["width"]["accuracy"])
+# The accuracy figure is real here: this tool measures the registration
+# NUMBER's own width, so there is something to be accurate about. The
+# "+/-undefined%" only appeared when `number` itself was missing, which is
+# the path validation now refuses at the boundary - the acc() guard stays as
+# the second layer rather than the only one.
+check(r["width"]["accuracy"] == "+/-1.5%",
+      "the width accuracy is %r, not the measured +/-1.5%%"
+      % r["width"]["accuracy"])
 r = call("check_registration_layout", {"number": "IA 1234 AB", "height_in": 2})
 check("33 CFR 173.27" in json.dumps(r),
       "a 2-inch registration number no longer cites the federal minimum")
