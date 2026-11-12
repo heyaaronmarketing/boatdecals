@@ -1013,6 +1013,21 @@ if _bank_f.exists():
         fails.append("only %d names are graded dock - the humor_level pass was "
                      "not really done" % _lvls.get("dock", 0))
 
+    # ---- the deterministic gates ----------------------------------------
+    # mcp/test_gates.py pins the radio, overuse and novelty gates. It runs
+    # HERE rather than as a separate command because every one of its cases is
+    # a decision that was got wrong once already, and a gate that only runs
+    # when somebody remembers to run it is not a gate.
+    _tg_spec = _ilu.spec_from_file_location("nmb_tg", ROOT / "mcp" / "test_gates.py")
+    try:
+        _tg = _ilu.module_from_spec(_tg_spec)
+        _tg_spec.loader.exec_module(_tg)
+        for _f in _tg.run():
+            fails.append("gates: %s" % _f)
+    except Exception as _e:
+        fails.append("the gate tests could not run at all: %s: %s"
+                     % (type(_e).__name__, _e))
+
     # Sincere names are not a joke mechanism. If one is ever handed to the riff
     # brief as a mechanism to write in, the engine starts producing earnest
     # one-word nature names in a deadpan round.

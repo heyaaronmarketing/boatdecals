@@ -658,6 +658,28 @@ export default {
       const d = await handleProofData(request, env);
       return json(d, d.ok ? 200 : 404);
     }
+    // Domain verification for the ChatGPT Apps SDK submission. OpenAI issues
+    // a token and fetches it back from this exact path to prove we control the
+    // domain.
+    //
+    // Served from a SECRET, not from a committed file, for two reasons. The
+    // token is a bearer proof of domain ownership, so it does not belong in a
+    // public git history; and a secret can be set and rotated with one
+    // `wrangler secret put` and no deploy, which matters when the submission
+    // is waiting on it. Before the secret exists this 404s, which is the
+    // honest answer - we cannot prove anything yet.
+    //
+    // Deliberately NOT behind a key: OpenAI fetches it unauthenticated, and a
+    // token that only we can read proves nothing to anybody.
+    if (url.pathname === "/.well-known/openai-apps-challenge") {
+      const tok = env.OPENAI_APPS_TOKEN;
+      if (!tok) return new Response("not configured", { status: 404 });
+      return new Response(tok, {
+        headers: { "Content-Type": "text/plain; charset=utf-8",
+                   "Cache-Control": "no-store" },
+      });
+    }
+
     // The pricing authority. /catalog.json says what can be ordered; this
     // says what it costs, through the SAME priceOf() the order form and the
     // Stripe intent already use. The MCP server quotes from here rather than

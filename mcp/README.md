@@ -127,11 +127,112 @@ Levels: 913 clean, 168 dock, 8 double.
 - `Vitamin Sea` and `Seas the Day` — the spec's named Tier-1 clichés — are both
   tagged and in the bank. The overuse gate, not the mechanism tag, excludes them.
 
+## The deterministic gates — radio, overuse, novelty DONE
+
+`mcp/gates.py`. Pure functions: no model, no network, no randomness. The same
+name gets the same verdict every time, and every verdict can be read out to a
+customer in one sentence. The engine's credibility rests on *testing* names,
+and a test whose answer moves is not a test.
+
+### The radio gate
+
+The scenario is an owner on channel 16 saying his boat's name to somebody who
+has never heard it and has to write it down. Three different things go wrong,
+and they are not the same problem:
+
+| verdict | what it means |
+|---|---|
+| `clear` | says clean and spells itself |
+| `sayable` | a homophone — "say it twice the first time". **Most of this bank.** |
+| `mouthful` | long. Fine on a transom, slow on a radio |
+| `spell_it` | nonstandard spelling or a coinage: spelled out every single time |
+| `fail` | **the rebus class only.** Not dealable. |
+
+Spec test 11 pins the line and the suite asserts it: `Knot On Call` is fine,
+the `Nauti-4-U` class fails. Over the whole bank: **813 clear, 128 sayable,
+119 spell_it, 29 mouthful, 0 refused.**
+
+Zero refused is the point, and it is a test. The bank is curated, so a gate
+that rejects names the shop already sells is miscalibrated, not strict.
+
+**Measured, not assumed.** Against the 30 names in the site's own `misspelled`
+category: **29 of 30 caught.** The one miss is `Boat Goes Fast`, which is not
+misspelled at all — the site files it there because the joke is the grammar.
+Against the 53 `sincere` names: **0 false positives.** Across the rest of the
+bank, 23 of 1,089 are flagged for a spell-out and every one is a genuine
+coinage (Aquaholic, Delulu, Sofishticated, Dadmiral).
+
+**Four wrong versions got there first**, each of which looked fine until it was
+measured. All four are now test cases:
+
+1. It failed `Unsinkable (Terms Apply)` on the grounds that you cannot say a
+   bracket. You do not say the bracket — you say "Unsinkable, terms apply."
+   What is actually lost is the deadpan, because nobody hears an asterisk. So
+   it is not a radio failure at all; it is a separate `visual_only` fact worth
+   telling a customer, and the spoken readback drops the punctuation.
+2. It told customers that `Paid Off`, `Wave Goodbye` and `My Boat Has A Boat`
+   needed spelling out letter by letter. `/usr/share/dict/words` is Webster's
+   1913 and a **headword** list: "pay" but not "paid", "have" but not "has",
+   "hear" but not "heard". 70 names were wrongly flagged.
+3. It reported that "holic" and "rrito" are not words. The names are
+   `Aqua-holic` and `Buoy-rrito`; it was splitting on the hyphen.
+4. It passed only 12 of the 30 deliberately-misspelled names, because
+   Webster's 1913 lists **`bote`, `nawt`, `gud`, `shure`, `thee`, `bois` and
+   `da`** as real archaic words. That is the honest cost of a free dictionary
+   with no frequency data, and an explicit `ARCHAIC_COLLISIONS` list handles it.
+
+The respelling detector **generalises** rather than matching the bank: it is
+built from the inverse of the substitutions people actually make (`k`→`c`,
+`ph`→`f`, `y`→`i`, doubled final letter, `ote`→`oat`), applied up to twice,
+each result checked against the lexicon. So it finds respellings nobody has
+written yet, and it reports *what the listener will write*: say this and they
+write "Boat".
+
+### The lexicon
+
+`mcp/data/lexicon.txt.gz`, 176,664 words, built by `build_lexicon.py` from
+`/usr/share/dict/words` + `/usr/share/dict/propernames` + ~100 shop-specific
+and modern additions. **Derived and committed**, the same as the name bank: a
+deterministic gate must answer identically on this Mac, on a CI box and in the
+worker, and that system file exists on exactly one of the three.
+
+### The overuse gate
+
+Tier 1 (29 names) is the one-in-every-marina class the spec names by example:
+Serenity, Vitamin Sea, Seas the Day. Excluded from top picks, never silently
+dropped, never shown without the note. Tier 2 (28) is common but not worn out.
+
+**The honesty limit is enforced in code, not just documented.** We have no
+registry and cannot see any particular marina, so `claims_are_honest()`
+rejects "at your marina", "on your lake", "already taken" and four more, and a
+test runs every tier note through it. "Common everywhere" is true. "Taken at
+your marina" is a claim the first customer who checked would catch us on.
+
+### The novelty gate
+
+Bigram Dice coefficient against all 1,089 bank names, reporting the closest
+match rather than a yes/no. A model handed this bank and told to be creative
+returns a near-copy of something already in it, confidently, and it reads as
+new until somebody searches. `Knot Workin` does not pass.
+
+## The ChatGPT submission
+
+`/.well-known/openai-apps-challenge` is live in the worker, served from the
+`OPENAI_APPS_TOKEN` **secret** rather than a committed file. The token is a
+bearer proof of domain ownership, so it does not belong in a public git
+history, and a secret can be set or rotated with one `wrangler secret put` and
+no deploy — which matters while a submission is waiting on it. With no secret
+set it 404s, which is the honest answer: we cannot prove anything yet.
+
 ## Next
 
-1. The deterministic gates (radio, fit, overuse, photo, dedupe) — pure
-   functions, testable without a model, and the thing that makes this not a
-   slot machine.
+1. **The fit gate** — the last of the four the reveal needs. It wants real
+   font metrics, not text rules, and the ten faces live in R2, so the plan is
+   to pull per-character advances once from `/api/outline` (which measures the
+   actual TTFs) and bake them: the same derived-and-committed pattern as the
+   lexicon. The site's browser estimate today is `chars × 2.5" + spaces ×
+   1.5"` at a fixed 4", with no idea which face is selected.
+2. The photo gate (spec 1.5 excludes photo entry from the MVP).
 3. The MCP server skeleton with the pure-port read tools:
    `get_products`, `configure_order`, `check_registration_layout`,
    `decode_hull_number`, `get_policies`. These need no naming engine and make
