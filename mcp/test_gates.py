@@ -29,6 +29,13 @@ BANK = json.loads((HERE / "data" / "name_bank.json").read_text())
 NAMES = [n["name"] for n in BANK["names"]]
 
 
+def gates_charset():
+    """Exactly what worker/outline.js will cut. The metrics table has to cover
+    all of it or the fit gate silently drops characters."""
+    return ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+            "0123456789 .,'&!?@#:/()+-")
+
+
 def run():
     fails = []
 
@@ -144,6 +151,126 @@ def run():
     check(nv["novel"], "a genuinely new name must pass the novelty gate "
                        "(closest was %r at %s)" % (nv["closest"],
                                                    nv["similarity"]))
+
+    # --- the fit gate ----------------------------------------------------
+    met = gates.metrics()["fonts"]
+    cat = json.loads((HERE.parent / "public" / "catalog.json").read_text())
+    for f in cat["options"]["fonts"]:
+        check(f["name"] in met,
+              "no font metrics for %r - the fit gate cannot measure a face the "
+              "shop sells, and it must not guess" % f["name"])
+    for label, m in met.items():
+        missing = [c for c in gates_charset() if c not in m["advance"]]
+        check(not missing,
+              "%s is missing advances for %s - a character counted as zero "
+              "width is how a 20-inch name gets quoted at 14"
+              % (label, " ".join(repr(c) for c in missing[:6])))
+
+    # Font-blindness was the bug. These two faces must come out materially
+    # different at the same cap height, or the metrics are not being read.
+    narrow, _ = gates.width_in("Knot Working", "Impact", 4)
+    wide, _ = gates.width_in("Knot Working", "Snap ITC", 4)
+    check(wide > narrow * 1.3,
+          "Impact and Snap ITC measure within 30%% of each other (%.1f vs "
+          "%.1f) - the fit gate is not actually reading per-face metrics"
+          % (narrow, wide))
+
+    # The old browser formula under-read by 24-41%. Pin the real number so a
+    # regression to a character-count guess fails here.
+    w, _ = gates.width_in("Wet Couch", "Arial Bold", 4)
+    check(29.5 < w < 31.5,
+          '"Wet Couch" at 4" in Arial Bold should measure about 30.4" wide, '
+          "got %.1f" % w)
+    # Widths must scale linearly with cap height - it is the same outline.
+    w3, _ = gates.width_in("Wet Couch", "Arial Bold", 3)
+    check(abs(w3 * (4.0 / 3.0) - w) < 0.05,
+          "width does not scale linearly with cap height: 3in=%.2f 4in=%.2f"
+          % (w3, w))
+
+    # An unsupported character is reported, never counted as zero.
+    _, miss = gates.width_in("Wet\u2744Couch", "Arial Bold", 4)
+    check(miss, "an uncuttable character must be reported by the fit gate")
+
+    fg = gates.fit_gate("Knot Working", "Arial Bold", 96)
+    check(fg["verdict"] == "fits", "a 38in name on a 96in run should fit, got "
+                                   "%s" % fg["verdict"])
+    fg = gates.fit_gate("Knot Working", "Arial Bold", 26)
+    check(fg["verdict"] == "too_wide",
+          "a 38in name at 4in on a 26in run must not report a fit, got %s"
+          % fg["verdict"])
+    check(fg["best_height"] is None, "too_wide must offer no height")
+    # Spec test 11: too wide for the stated transom is excluded OR
+    # height-capped, with the fit shown.
+    fg = gates.fit_gate("Wet Couch", "Arial Bold", 34)
+    check(fg["verdict"] == "height_capped",
+          "spec test 11 wants a height cap with the fit shown, got %s"
+          % fg["verdict"])
+    check(fg["best_height"] and fg["best_height"] < 6,
+          "a height cap must name the height that fits")
+    check(any('"' in r for r in fg["reasons"]),
+          "the height cap must show the customer the actual measurement")
+
+    # --- registration numbers are law, not taste -------------------------
+    check(not gates.registration_gate("IA 3717 ZW", "Snap ITC", 3)["legal"],
+          "a script face must not be legal for registration numbers")
+    check(not gates.registration_gate("IA 3717 ZW", "Arial Bold", 2)["legal"],
+          'under 3" must not be legal for registration numbers')
+    check(gates.registration_gate("IA 3717 ZW", "Arial Bold", 3)["legal"],
+          '3" block characters must be legal')
+
+    # --- the site must not re-invent either fact -------------------------
+    # The spec's hardest rule is one implementation. The generator page carries
+    # copies of the metrics and the overuse tiers for the browser; if they
+    # drift from the authority, the free tool contradicts the paid engine.
+    page = (HERE.parent / "public" / "tools" / "boat-name-generator"
+            / "index.html")
+    if not page.exists():
+        check(False, "the boat-name-generator page is missing")
+    else:
+        html = page.read_text(encoding="utf-8")
+        check("window.NMB_REF=" in html,
+              "the generator page no longer carries the measured font metrics "
+              "- it has gone back to guessing widths")
+        # Carrying the table is not the same as USING it. The first version of
+        # this test checked only that the table was present, so reverting
+        # width() to a character count passed cleanly - the table sat there
+        # unread. Check the call, and check the old guess is gone.
+        check("widthFace(" in html and "window.NMB_REF, 4)" in html,
+              "the page carries the measured metrics but width() no longer "
+              "reads them - a table nobody calls is not a source of truth")
+        for guess in ("length*2.5", "length * 2.5", "length*2.5 +"):
+            check(guess not in html,
+                  "the old character-count width formula (%r) is back on the "
+                  "page; it under-read real widths by 24-41%%" % guess)
+        import re as _re
+        m = _re.search(r"window\.NMB_REF=\{cap:([0-9.]+),adv:\{(.*?)\}\};",
+                       html)
+        if not m:
+            check(False, "could not read the emitted metrics off the page")
+        else:
+            ref = met["Arial Bold"]
+            check(abs(float(m.group(1)) - ref["cap_ratio"]) < 1e-5,
+                  "the page's cap ratio has drifted from font_metrics.json")
+            got = dict(_re.findall(r'"((?:[^"\\]|\\.)*)":([0-9.]+)',
+                                   m.group(2)))
+            bad = [c for c in "ABCWabcw 0127"
+                   if abs(float(got.get(c, -1))
+                          - ref["advance"][c] / ref["upm"]) > 1e-4]
+            check(not bad,
+                  "the page's advance widths have drifted from "
+                  "font_metrics.json for: %s" % bad)
+
+        # The honesty limit, on the live page this time.
+        for claim in ("check your marina first",
+                      "you will not meet another one"):
+            check(claim not in html.lower(),
+                  "the generator page still says %r - we have market data, "
+                  "not a registry, and must not imply we can see a "
+                  "customer's marina" % claim)
+        t1 = _re.search(r"window\.NMB_T1=(\[.*?\]);", html)
+        if t1:
+            check(set(json.loads(t1.group(1))) == set(gates.OVERUSE_T1),
+                  "the page's tier-1 overuse list has drifted from gates.py")
 
     # --- the lexicon is a committed artefact ----------------------------
     lex = HERE / "data" / "lexicon.txt.gz"

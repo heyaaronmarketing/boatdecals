@@ -22,7 +22,9 @@ HONESTY LIMITS, enforced in code below:
     built on homophones; "Knot Working" is a great name, and a gate that
     killed it would be a gate that killed the product.
 """
+import functools
 import gzip
+import json
 import pathlib
 import re
 import unicodedata
@@ -221,6 +223,7 @@ def _initialism(token):
     return t.isupper() and not _is_word(t.lower())
 
 
+@functools.lru_cache(maxsize=40000)
 def _is_word(t):
     """Is this a standard English word, allowing for inflection?
 
@@ -255,6 +258,7 @@ def _is_word(t):
     return False
 
 
+@functools.lru_cache(maxsize=20000)
 def _respelling(token):
     """The standard word this token is a respelling of, or None.
 
@@ -287,6 +291,7 @@ def _respelling(token):
     return None
 
 
+@functools.lru_cache(maxsize=20000)
 def _nonstandard(token):
     """(is_nonstandard, heard_as). heard_as is the word a listener will write.
 
@@ -345,6 +350,12 @@ def _spoken(name):
 
 def radio_gate(name):
     """Can this be written down from hearing it once?
+
+    Deliberately NOT memoised, although the scalar helpers below it are. This
+    returns a mutable dict, and lru_cache would hand every caller the same
+    object - one caller adding a field would silently change what every later
+    caller sees. The helpers it leans on are cached instead, which is where the
+    cost actually was: a full pass over the 1,089-name bank runs in 0.06s.
 
     Returns a dict:
       verdict   'clear' | 'sayable' | 'mouthful' | 'spell_it' | 'fail'
@@ -589,3 +600,166 @@ def claims_are_honest(text):
         if bad in t:
             return bad
     return None
+
+
+# ---------------------------------------------------------------------------
+# The fit gate
+# ---------------------------------------------------------------------------
+#
+# The only gate that cannot be done with text rules, because the answer is
+# physical: will this name, in this face, at this height, actually go on the
+# flat run of his hull?
+#
+# The site's browser estimate is `chars * 2.5" + spaces * 1.5"` at a fixed 4
+# inches with no idea which face is selected. Playbill at 4 inches and Arial
+# Bold at 4 inches are not the same width. This gate measures instead, from
+# per-character advance widths pulled out of the ten real TTFs - the same files
+# that cut the vinyl - and baked by build_font_metrics.py.
+#
+# Measured error of the model against whole strings: 1.43% worst case across
+# all ten faces (kerning, which summing advances cannot see). That number is
+# reported to the customer rather than hidden, because it is far smaller than
+# the error in his own tape measure and saying so is what makes the figure
+# believable.
+
+METRICS_F = HERE / "data" / "font_metrics.json"
+FIT_ERROR_PCT = 1.5          # measured; see build_font_metrics.py --check
+HEIGHTS_IN = (3, 4, 5, 6)    # the four the site sells
+# Leave the lettering some air. A name that is exactly as wide as the flat run
+# is a name touching the rubrail at both ends, and it looks like a mistake even
+# when it fits.
+COMFORT = 0.90
+
+_MET = None
+
+
+def metrics():
+    global _MET
+    if _MET is None:
+        if not METRICS_F.exists():
+            raise RuntimeError(
+                "no %s - run python3 mcp/build_font_metrics.py. The fit gate "
+                "will not fall back to a guess: a made-up width is how a "
+                "customer ends up holding vinyl that does not fit his boat."
+                % METRICS_F)
+        _MET = json.loads(METRICS_F.read_text())
+    return _MET
+
+
+def width_in(name, font, height_in):
+    """Width of this lettering, in inches, at that cap height.
+
+    Returns (width, unsupported_characters). Unsupported characters are
+    REPORTED rather than counted as zero width - treating them as zero is how
+    a 20-inch name is quoted at 14 inches.
+    """
+    m = metrics()["fonts"].get(font)
+    if not m:
+        raise KeyError("no metrics for %r - the ten faces are %s"
+                       % (font, ", ".join(sorted(metrics()["fonts"]))))
+    total, missing = 0, []
+    for ch in name:
+        a = m["advance"].get(ch)
+        if a is None:
+            missing.append(ch)
+        else:
+            total += a
+    # advance units -> em -> inches. cap_ratio converts a cap height, which is
+    # what "3 inch letters" means and what the states legislate, into an em.
+    em_in = height_in / m["cap_ratio"]
+    return (total / m["upm"]) * em_in, sorted(set(missing))
+
+
+def fit_gate(name, font="Arial Bold", transom_in=None, heights=HEIGHTS_IN):
+    """Will it fit, and how tall can it go?
+
+    transom_in is the flat run the owner says he has above the waterline. With
+    no transom given this still answers the useful half - how wide it comes out
+    at each height the shop sells.
+    """
+    name = (name or "").strip()
+    if not name:
+        return {"verdict": "fail", "reasons": ["No name given."]}
+    try:
+        widths, missing = {}, []
+        for h in heights:
+            w, miss = width_in(name, font, h)
+            widths[h] = round(w, 1)
+            missing = miss
+    except KeyError as e:
+        return {"verdict": "unknown_font", "reasons": [str(e)]}
+
+    out = {"font": font, "name": name,
+           "widths_in": widths,
+           "error_pct": FIT_ERROR_PCT,
+           "unsupported": missing,
+           "reasons": []}
+
+    if missing:
+        out["reasons"].append(
+            "We cannot cut %s in this face, so the width below leaves it out. "
+            "Ask before you order." % " ".join(repr(c) for c in missing))
+
+    if transom_in is None:
+        out["verdict"] = "measured"
+        out["best_height"] = max(heights)
+        out["reasons"].append(
+            'At %d" tall it finishes about %s" wide, give or take %.1f%%. '
+            "Measure the flat run above your waterline before you order."
+            % (max(heights), widths[max(heights)], FIT_ERROR_PCT))
+        return out
+
+    usable = transom_in * COMFORT
+    fits = {h: widths[h] <= usable for h in heights}
+    out["fits"] = fits
+    out["transom_in"] = transom_in
+    out["usable_in"] = round(usable, 1)
+
+    ok = [h for h in heights if fits[h]]
+    if not ok:
+        out["verdict"] = "too_wide"
+        out["best_height"] = None
+        out["reasons"].append(
+            'This one does not fit. Even at %d" tall it runs about %s" wide '
+            'and you have %s" of flat run to work with. Shorter name, or we '
+            "split it over two lines."
+            % (min(heights), widths[min(heights)], transom_in))
+        return out
+
+    best = max(ok)
+    out["best_height"] = best
+    if best == max(heights):
+        out["verdict"] = "fits"
+        out["reasons"].append(
+            'Fits at every height we cut. At %d" tall it is about %s" wide on '
+            'a %s" run.' % (best, widths[best], transom_in))
+    else:
+        out["verdict"] = "height_capped"
+        out["reasons"].append(
+            'Fits up to %d" tall - about %s" wide. At %d" it would run %s" '
+            'and that is more than your %s" of flat run.'
+            % (best, widths[best], best + 1, widths[best + 1], transom_in))
+    return out
+
+
+# Registration numbers are not a style choice. 33 CFR 173.27 requires plain
+# block characters at least 3 inches tall, which is why the catalog carries a
+# block_legal flag per face and why this is a gate and not a suggestion.
+def registration_gate(number, font, height_in):
+    """Is this a legal registration-number set?"""
+    reasons, ok = [], True
+    if height_in < 3:
+        ok = False
+        reasons.append('Registration numbers have to be at least 3" tall - '
+                       "that is federal, not a shop rule (33 CFR 173.27).")
+    blk = {f["name"] for f in json.loads(
+        (HERE.parent / "public" / "catalog.json").read_text()
+    )["options"]["fonts"] if f["block_legal"]}
+    if font not in blk:
+        ok = False
+        reasons.append("%s is not a plain block face, so it cannot be used for "
+                       "registration numbers. The block faces are %s."
+                       % (font, ", ".join(sorted(blk))))
+    if ok:
+        reasons.append('Plain block characters at %d" - legal.' % height_in)
+    return {"legal": ok, "reasons": reasons}

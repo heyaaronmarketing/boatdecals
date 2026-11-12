@@ -123,6 +123,64 @@ def font_buttons():
     return "".join(out)
 
 
+
+# ---------------------------------------------------------------------------
+# Data the browser needs, emitted from the ONE source for each fact.
+# ---------------------------------------------------------------------------
+#
+# Two things on this page used to be invented locally and both were wrong:
+#
+#   width()      was `chars * 2.5" + spaces * 1.5"` at a fixed 4 inches with no
+#                idea which face was selected. It under-read "Knot Working" in
+#                Arial Bold by 17%, and Impact is 35% narrower than Arial Bold
+#                at the same cap height - a spread the formula could not see.
+#
+#   uniqueness   printed "You will not meet another one of these" for anything
+#                outside two categories. It said that about Vitamin Sea, which
+#                is one of the most common boat names in America, and it told
+#                other customers to "check your marina first" - implying we
+#                know something about their marina. We do not.
+#
+# So both now come from the authority: per-character advance widths measured
+# out of the real TTFs (mcp/data/font_metrics.json) and the overuse tiers from
+# mcp/gates.py. verify.py fails the build if the emitted copies drift.
+
+# Three faces, not one: the default block face plus the narrowest and widest
+# the shop cuts, so the page can quote a real spread instead of one number
+# that is wrong for nine faces out of ten.
+REF_FACE = "Arial Bold"
+NARROW_FACE = "Impact"
+WIDE_FACE = "Snap ITC"
+
+
+def data_js():
+    """window constants for the generator page. Derived, never hand-written."""
+    import json as _json
+    import pathlib as _pl
+    import sys as _sys
+    root = _pl.Path(__file__).resolve().parent.parent
+    met = _json.loads((root / "mcp" / "data" / "font_metrics.json").read_text())
+    _sys.path.insert(0, str(root / "mcp"))
+    import gates as _g
+
+    out = []
+    for key, face in (("REF", REF_FACE), ("NAR", NARROW_FACE),
+                      ("WID", WIDE_FACE)):
+        m = met["fonts"][face]
+        adv = ",".join('"%s":%.5f' % (c.replace("\\", "\\\\")
+                                        .replace('"', '\\"'),
+                                      a / m["upm"])
+                       for c, a in sorted(m["advance"].items()))
+        out.append('window.NMB_%s={cap:%.6f,adv:{%s}};'
+                   % (key, m["cap_ratio"], adv))
+    out.append('window.NMB_FACES={ref:%s,nar:%s,wid:%s};'
+               % (_json.dumps(REF_FACE), _json.dumps(NARROW_FACE),
+                  _json.dumps(WIDE_FACE)))
+    out.append("window.NMB_T1=%s;" % _json.dumps(sorted(_g.OVERUSE_T1)))
+    out.append("window.NMB_T2=%s;" % _json.dumps(sorted(_g.OVERUSE_T2)))
+    return "".join(out)
+
+
 def markup():
     return """
 <div class="panel ngpanel">
@@ -369,8 +427,36 @@ function pick(k, avoid){
 
 /* The three tests the page promises, run on every card. */
 function letters(n){ return n.replace(/[^A-Za-z0-9]/g,'').length; }
-function width(n){
-  return Math.round(n.replace(/\s/g,'').length*2.5 + (n.split(/\s+/).length-1)*1.5);
+/* Real widths, from advance widths measured out of the actual TTFs. The old
+   version was chars*2.5 + spaces*1.5 and under-read a 12-character name in
+   Arial Bold by about 17%. See engine/namegen.py data_js(). */
+function widthFace(n, F, h){
+  var t=0, i, a;
+  for(i=0;i<n.length;i++){
+    a = F.adv[n.charAt(i)];
+    if(a === undefined) a = F.adv['n'] || 0.5;   /* never silently zero */
+    t += a;
+  }
+  return t * (h / F.cap);
+}
+function width(n){ return Math.round(widthFace(n, window.NMB_REF, 4)); }
+function widthRange(n, h){
+  var a = widthFace(n, window.NMB_NAR, h), b = widthFace(n, window.NMB_WID, h);
+  return [Math.round(Math.min(a,b)), Math.round(Math.max(a,b))];
+}
+/* Overuse, from mcp/gates.py. The honest limit: we have market data, not a
+   registry. We cannot see any particular marina and must never imply we can. */
+function overuse(n){
+  var k = String(n||'').toLowerCase().replace(/[^a-z0-9 ]+/g,'').replace(/\s+/g,' ').trim();
+  function has(list){
+    for(var i=0;i<list.length;i++){
+      if(list[i].toLowerCase().replace(/[^a-z0-9 ]+/g,'').replace(/\s+/g,' ').trim()===k) return true;
+    }
+    return false;
+  }
+  if(has(window.NMB_T1||[])) return 1;
+  if(has(window.NMB_T2||[])) return 2;
+  return 0;
 }
 function radio(n){
   var L=letters(n), w=n.trim().split(/\s+/).length, p=/[^A-Za-z0-9\s']/.test(n);
@@ -480,13 +566,18 @@ function openModal(x){
   $('#ngmtests').innerHTML=
     '<div class=ngtest><b>Radio call</b>'+r[1].replace('Radio: ','')+' — '+L
       +' letters, '+w+' word'+(w>1?'s':'')+'</div>'
-   +'<div class=ngtest><b>Transom width at 4" tall</b>'+f[1]+' (approx.)</div>'
+   +'<div class=ngtest><b>Transom width at 4&quot; tall</b>'+f[1]
+     +' in '+esc(window.NMB_FACES.ref)+' &middot; '+widthRange(x.n,4)[0]+'&ndash;'
+     +widthRange(x.n,4)[1]+'&quot; depending on the face</div>'
    +'<div class=ngtest><b>Spell test</b>'
      +(/[^A-Za-z\s']/.test(x.n)?'Has symbols or numbers — you will be spelling this one'
                                :'Phonetic enough. Good.')+'</div>'
-   +'<div class=ngtest><b>Uniqueness</b>'
-     +(['classy','fishing'].indexOf(x.cat)>-1?'Check your marina first'
-                                             :'You will not meet another one of these')+'</div>';
+   +'<div class=ngtest><b>How common</b>'
+     +(overuse(x.n)===1?'One in every marina &mdash; this is one of the most '
+         +'common boat names in the country'
+      :overuse(x.n)===2?'Common, but not worn out'
+      :'Not one we see often. We have market data, not a registry, so we '
+         +'cannot tell you what is already on your lake.')+'</div>';
   $('#ngmsave').textContent = saved.indexOf(x.n)>-1 ? 'Saved ♥' : 'Save';
   $('#ngmcut').href=cutUrl(x.n);
   $('#ngmodal').classList.add('open');

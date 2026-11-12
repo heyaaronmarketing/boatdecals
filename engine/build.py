@@ -1877,7 +1877,8 @@ def build_tool_names():
     ]
     tool_shell(t, body + share_block(
         '/tools/boat-name-generator/', U('/tools/boat-name-generator/'),
-        '/assets/share/name-wet-couch.png'), NG.NAMES_JS, faqs)
+        '/assets/share/name-wet-couch.png'),
+            NG.data_js() + NG.NAMES_JS, faqs)
 
 def build_tool_funny():
     t = TOOLS[1]

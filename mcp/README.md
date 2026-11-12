@@ -127,7 +127,7 @@ Levels: 913 clean, 168 dock, 8 double.
 - `Vitamin Sea` and `Seas the Day` — the spec's named Tier-1 clichés — are both
   tagged and in the bank. The overuse gate, not the mechanism tag, excludes them.
 
-## The deterministic gates — radio, overuse, novelty DONE
+## The deterministic gates — all four DONE
 
 `mcp/gates.py`. Pure functions: no model, no network, no randomness. The same
 name gets the same verdict every time, and every verdict can be read out to a
@@ -215,6 +215,61 @@ match rather than a yes/no. A model handed this bank and told to be creative
 returns a near-copy of something already in it, confidently, and it reads as
 new until somebody searches. `Knot Workin` does not pass.
 
+### The fit gate
+
+The only one that cannot be done with text rules, because the answer is
+physical: will this name, in this face, at this height, go on the flat run of
+his hull?
+
+`mcp/data/font_metrics.json` carries **per-character advance widths measured
+out of all ten real TTFs** — the same files that cut the vinyl. Eight of the
+ten live only in R2, so `build_font_metrics.py` pulls them from the worker's
+own `/api/outline`, which loads the font and reports `advance`, `upm` and
+`capRatio`. Pulled once, committed, never needed at gate time.
+
+Summing advances cannot see kerning, so that error was **measured rather than
+assumed**: worst case **1.43%** across all ten faces, and the gate reports
+that number to the customer instead of hiding it. It is far smaller than the
+error in his own tape measure, and saying so is what makes the figure
+believable.
+
+Verdicts: `fits` / `height_capped` / `too_wide` / `measured` (no transom
+given) / `unknown_font`. An uncuttable character is **reported, never counted
+as zero width** — treating it as zero is how a 20-inch name gets quoted at 14.
+
+`registration_gate()` is separate because it is law, not taste: 33 CFR 173.27
+wants plain block characters at least 3 inches tall, so a script face and a
+2-inch height are both hard failures with the rule cited.
+
+### What the fit gate found on the live site
+
+The generator page was computing `chars × 2.5" + spaces × 1.5"` at a fixed 4
+inches, **with no idea which face was selected**. It was not slightly off:
+
+| name | page said | actually | |
+|---|---|---|---|
+| Wet Couch | 21.5" | **30.4"** | +41% |
+| The Undertow | 29" | **39"** | +34% |
+| Knot Working | 29" | **38.1"** | +31% |
+| Walleye Wednesday | 42" | **56"** | +33% |
+
+A customer was measuring his transom against a number up to nine inches
+short. And the spread across faces is enormous — Walleye Wednesday runs 37" in
+Impact and 65" in Snap ITC, which one formula cannot express.
+
+**Also fixed, same page:** the "Uniqueness" line printed *"You will not meet
+another one of these"* for anything outside two categories, and told everyone
+else to *"check your marina first."* The first claim was being made about
+names like Vitamin Sea; the second implies we can see his marina. Both are
+exactly the honesty limit spec §4a names. The line now reads from the real
+overuse tiers and says plainly that we have market data, not a registry.
+
+The page now carries the measured metrics and the tier lists as emitted data
+from the same authorities, and four gates fail the build if the copies drift —
+including one that checks `width()` actually **calls** the table, because the
+first version of that test only checked the table was present and a revert to
+the character-count guess passed it cleanly.
+
 ## The ChatGPT submission
 
 `/.well-known/openai-apps-challenge` is live in the worker, served from the
@@ -226,13 +281,14 @@ set it 404s, which is the honest answer: we cannot prove anything yet.
 
 ## Next
 
-1. **The fit gate** — the last of the four the reveal needs. It wants real
-   font metrics, not text rules, and the ten faces live in R2, so the plan is
-   to pull per-character advances once from `/api/outline` (which measures the
-   actual TTFs) and bake them: the same derived-and-committed pattern as the
-   lexicon. The site's browser estimate today is `chars × 2.5" + spaces ×
-   1.5"` at a fixed 4", with no idea which face is selected.
-2. The photo gate (spec 1.5 excludes photo entry from the MVP).
+1. **The MCP server skeleton** with the pure-port read tools — `get_products`,
+   `configure_order`, `check_registration_layout`, `decode_hull_number`,
+   `get_policies`. These need no naming engine: the catalog, `/api/price`, the
+   gates, `engine/validate.py` and the HIN decoder in `engine/tools.py` are all
+   built. This is what makes the server real and submittable.
+2. The remaining bank tags — `style_lanes`, `boat_types`, `themes`,
+   `overuse_tier` — which the ranker needs but the gates do not.
+3. Design Studio widget, then the tournament.
 3. The MCP server skeleton with the pure-port read tools:
    `get_products`, `configure_order`, `check_registration_layout`,
    `decode_hull_number`, `get_policies`. These need no naming engine and make
