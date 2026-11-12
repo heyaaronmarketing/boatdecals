@@ -709,7 +709,42 @@ and one that quietly halves the ledger on every refresh is a trap.
 does the same on the first of the month, guarded on the hour as well as the day
 — without that guard it would halve the window twenty-four times in a day.
 
-### Seven deliberate breaks, seven caught
+### What the first live session showed
+
+Ran it against production as a retired Deere man with his wife and dog aboard.
+The riff pipeline worked first time — two of six candidates survived, each of
+the four drops a different gate, and "Deere Diary" won a slot in round two as
+`source: riff`. Five things did not, and none of them were visible in a test:
+
+1. **The brief claimed its exemplars were "chosen by keep-rate in real
+   sessions" while every rate in the table was zero.** Exposures accrue the
+   moment a round is dealt, and the check asked whether any name had a *row*
+   rather than whether any name had ever been *kept*. Forty exposures and no
+   keeps is a denominator, not a ranking signal — and this is the exact
+   dishonesty the gate on that sentence exists to prevent, so the gate was
+   watching the wrong variable.
+2. **A cold ledger produced a brief with zero exemplars**, because the fallback
+   read the ledger's exploring list and a cold ledger's is empty. A brief with
+   nothing in it is a model free-associating.
+3. **"Mayday, mayday, this is Loading...."** — four dots, on the one screen the
+   whole session builds towards.
+4. **"Three names for the 22 foot pontoon" over a card with two names on it.**
+   The card a man forwards to his wife should not miscount itself.
+5. **The brief told the host "children or his wife are aboard" when nobody had
+   said who was aboard at all.** Clean is also the *default*. A fact handed to
+   the one component whose entire job is writing rationales from facts.
+
+Then a warm ledger was seeded into a local D1 — production will be cold for
+months and the warm path is the whole feature — and that found the sixth: the
+fixture customer killed deadpan, leaving exactly **one** proven mechanism in
+his lane, and round two came back as "Boat", "Pending", "Loading…" and one
+riff. Three literal-truth jokes. The exploration cap was doing it: with one
+proven mechanism left, every slot that was not exploration had to be that
+mechanism. **The cap now binds only once there are at least two proven
+mechanisms to build a round out of**, and his kills come out of the proven set
+before the cap sees it.
+
+### Nine deliberate breaks, and the three that got away
 
 Every rule above was tested by removing it:
 
@@ -722,12 +757,26 @@ Every rule above was tested by removing it:
 | riff text filed in the permanent ledger | the privacy test |
 | novelty gate skipped | a word-for-word bank name passed as invention |
 | top-half median replaced with a pass-everything bar | bottom-half keep-rates called proven |
+| exposure data read as keep data | exemplars claimed as keep-rate-chosen with every rate at zero |
+| cold-ledger exemplar fallback removed | a brief with no exemplars at all |
+| exploration cap binding on one proven mechanism | a round of four, three of them the same joke |
 
-The riff cap one is worth keeping in mind: the **round of eight did not catch
-it**. All six riffs share the category `riff`, so the diversity cap held them
-to two whether the riff cap existed or not. A third of four is one, so four is
-where the two caps disagree — and that is the case that fails. A test that
-passes with the feature deleted is not a test.
+Three of these broke cleanly and the test said nothing, which is the only
+interesting part of the exercise:
+
+- **The riff cap.** A round of eight did not catch it. All six riffs share the
+  category `riff`, so the diversity cap held them to two whether the riff cap
+  existed or not. A third of four is one, so four is where the two caps
+  disagree — and that is the case that fails.
+- **The cold-ledger fallback.** The "break" replaced the assignment and left
+  the guard below it intact, so the feature still worked. Breaking a line is
+  not the same as removing a feature.
+- **The exploration cap.** The test asked for two distinct mechanisms in a
+  round of four and passed with the cap left in — because three literal-truth
+  names plus one exploration slot *is* two distinct mechanisms, and is also the
+  bug. What matters is dominance: no single joke may take three of the four.
+
+A test that passes with the feature deleted is not a test.
 
 One verify gate was weak the same way: `if _w not in _mcp` let the writer tool
 be renamed to `submit_riffs` and still pass, because the old name appeared in
