@@ -783,6 +783,95 @@ be renamed to `submit_riffs` and still pass, because the old name appeared in
 another tool's description. It now checks the **declared** tool names. A gate
 that reads prose is not a gate.
 
+## What the smoke test found
+
+`mcp/live_check.py` runs the server against production. It failed on two of
+its own assertions the first time, and both assertions were right.
+
+### price_order quoted $19 for every product
+
+`BASE` in `worker/index.js` is keyed by the labels the **website's form**
+posts — `"Registration numbers"`, `"Boat name"`, `"Both"`. The MCP tool takes
+`numbers` / `name` / `both` and passed those straight into `priceOf`, which
+matched nothing and fell through its `?? 19` default. So an assistant quoted
+**$19 for a $29 name and $19 for a $44 bundle**, silently, on every quote at
+three inches. `get_products` advertises a *third* set of names — the catalog
+ids — so a model reading the catalog and then pricing what it read was
+guaranteed to miss.
+
+The spec's hardest rule is one pricing source, and the gate for it checked
+only that `priceOf` was *called*. It always was. **Calling the one pricing
+function with a vocabulary it does not speak is exactly as wrong as keeping a
+second copy of the price, and it fails more quietly.** There is now one alias
+table beside the prices themselves, and the gate resolves every value of the
+tool's own enum — and every product id in `catalog.json` — against the real
+table.
+
+Quotes price strictly and error on an unknown product. The order path stays
+lenient, because this repo's standing judgement is that losing a real order to
+a stale cached page is worse, and that row carries a `mismatch` flag.
+
+One level up, the same class: the catalog derives every price from one dict in
+`content.py`, the worker hardcodes three labels, and the gate holding them
+together checked only the `19`. Raising `name_from` would have left the site
+advertising the new figure while the card charged the old one. All three are
+now checked, in both directions.
+
+### The server never validated arguments
+
+`dispatch()` handed `params.arguments` to the tool and never read the schema.
+A call to `check_registration_layout` with the parameter misnamed — `text`
+instead of `number` — was accepted, read nothing, and returned:
+
+```json
+{ "number": "", "verdict": "ok", "height_is_legal": true,
+  "note": "Reads as a normal state format." }
+```
+
+A model would tell a customer their registration layout is fine having checked
+nothing at all. Every schema already said
+`required: [...], additionalProperties: false`; nothing read it.
+
+Clients are meant to validate locally, and the ones that do were never the
+problem. **The call that arrives with a hallucinated parameter name is by
+definition from a client that did not** — which is exactly when the server has
+to be the one that checks. Returned as a tool error rather than a `-32602`, so
+the model can read it and fix its own call, and the message says plainly that
+nothing was checked.
+
+Removing the one line in `dispatch()` that calls the validator leaves every
+unit test for `validate()` passing. That one needed a gate, not a test.
+
+### Two stale claims and an `undefined`
+
+`initialize`'s instructions — the first thing every client reads — said
+"Every tool here is read-only" for as long as three tools have written. The
+plain-GET response said the same. And `+/-undefined%` reached customer-facing
+output from `fitGate`'s no-name path, which carries no `error_pct`.
+
+### The ledger was learning from me
+
+Two verification runs against production left it reading:
+
+```
+deadpan  hp   exp=2   keeps=2   rate=1.0     <- a riff a script kept twice
+deadpan  dp   exp=4   keeps=0   kills=4      <- a script killing a slice
+any      lt   exp=23  keeps=2                <- seven short of PROVEN
+```
+
+Seven more exposures and the brief would have started telling a host model
+that literal-truth jokes are proven in the deadpan lane, on evidence a `for`
+loop produced — the fabricated-evidence failure the warm fixture shouts about
+in its header, arriving through the back door.
+
+So **`live_check.py`'s writing half refuses to run unless the ledger is
+empty**, and wipes it afterwards. The invariant is the point: it only ever
+runs against a ledger it is allowed to destroy, and it proves it is allowed by
+requiring there to be nothing there. The first real customer makes the ledger
+non-empty for good, and from then on the script does only its read-only half —
+which is the right answer, because by then the full flow belongs on local D1
+with the warm fixture.
+
 ## Next
 
 1. The Design Studio widget (spec §5/§6)
