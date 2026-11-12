@@ -131,6 +131,78 @@ check("33 CFR 173.27" in json.dumps(r),
       "a 2-inch registration number no longer cites the federal minimum")
 print("argument boundary: ok")
 
+# ---------------------------------------------------------------------------
+# The transport. A connector that cannot be added is not a connector, and
+# every one of these was wrong when the server was first called "live".
+# ---------------------------------------------------------------------------
+import urllib.error
+
+
+def raw(method, path="/mcp", headers=None, body=None):
+    req = urllib.request.Request(SITE + path, body, headers or {},
+                                 method=method)
+    try:
+        r = urllib.request.urlopen(req, timeout=30)
+        return r.status, r.read().decode()
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode()
+
+
+# GET and DELETE must be refused: this is a Streamable HTTP endpoint, there is
+# no stream to open and no session to delete. GET used to answer 200 with a
+# friendly JSON blob, which is neither a stream nor a refusal.
+for meth in ("GET", "DELETE"):
+    st, _ = raw(meth)
+    check(st == 405, "%s /mcp returned %s, not 405" % (meth, st))
+st, _ = raw("GET", "/mcp-info")
+check(st == 200, "/mcp-info returned %s - the human-readable description "
+                 "has nowhere to live" % st)
+
+# Origin. A wildcard on an endpoint that writes is a standing invitation.
+st, _ = raw("POST", headers={"content-type": "application/json",
+                             "origin": "https://evil.example.com"},
+            body=b'{"jsonrpc":"2.0","id":1,"method":"ping"}')
+check(st == 403, "a POST from an arbitrary website origin returned %s, not "
+                 "403 - any page could open naming sessions in our database"
+      % st)
+st, _ = raw("POST", headers={"content-type": "application/json",
+                             "origin": "https://claude.ai"},
+            body=b'{"jsonrpc":"2.0","id":1,"method":"ping"}')
+check(st == 200, "a POST from claude.ai returned %s" % st)
+st, _ = raw("POST", headers={"content-type": "application/json"},
+            body=b'{"jsonrpc":"2.0","id":1,"method":"ping"}')
+check(st == 200, "a POST with no Origin at all returned %s - that is every "
+                 "real MCP client" % st)
+
+# The header mirror the current revision requires.
+st, _ = raw("POST", headers={"content-type": "application/json",
+                             "mcp-method": "tools/list"},
+            body=b'{"jsonrpc":"2.0","id":1,"method":"tools/call",'
+                 b'"params":{"name":"get_products"}}')
+check(st == 400, "a Mcp-Method header contradicting the body returned %s - "
+                 "a proxy routing on the header and this server acting on "
+                 "the body would be two sources of truth" % st)
+st, body = raw("POST", headers={"content-type": "application/json",
+                                "mcp-protocol-version": "1999-01-01"},
+               body=b'{"jsonrpc":"2.0","id":1,"method":"ping"}')
+check(st == 400 and "supported" in body,
+      "an unsupported protocol version returned %s without the supported "
+      "list" % st)
+
+# The version we claim. "2024-11-05" named the deprecated HTTP+SSE transport,
+# which this server has never implemented.
+for asked in ("2026-07-28", "2025-06-18"):
+    st, body = raw("POST", headers={"content-type": "application/json",
+                                    "mcp-protocol-version": asked},
+                   body=('{"jsonrpc":"2.0","id":1,"method":"initialize",'
+                         '"params":{"protocolVersion":"%s","capabilities":{},'
+                         '"clientInfo":{"name":"probe","version":"1"}}}'
+                         % asked).encode())
+    got = json.loads(body)["result"]["protocolVersion"]
+    check(got == asked,
+          "client asked for %s and the server answered %s" % (asked, got))
+print("transport: ok")
+
 # What every client reads first.
 init = urllib.request.Request(SITE + "/mcp", json.dumps(
     {"jsonrpc": "2.0", "id": 1, "method": "initialize",

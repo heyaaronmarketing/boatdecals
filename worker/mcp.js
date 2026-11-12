@@ -38,8 +38,24 @@ import { INTERVIEW, profileFrom, missingQuestions, dealRound, applyVote,
          laneKeys, provenFor, ledgerDeltas, riffBrief,
          gateRiff, cardHeading } from "./engine.js";
 
-const PROTOCOL = "2024-11-05";
-const SERVER = { name: "numbermyboat", version: "0.1.0" };
+/**
+ * Protocol versions, newest first.
+ *
+ * This said "2024-11-05", which was wrong in a way that mattered: that
+ * revision's transport is HTTP+SSE - a GET that opens a stream and sends an
+ * `endpoint` event - and this server has never had one. It was advertising a
+ * transport it does not implement. What it actually speaks is Streamable
+ * HTTP: one POST per message, a JSON object back, no sessions, no GET stream,
+ * nothing resumable. That is the shape 2025-03-26 introduced and the shape
+ * 2026-07-28 narrowed to, so every version in this list is one this server
+ * can honestly answer for.
+ *
+ * On initialize we echo the version the client asked for when we speak it,
+ * rather than talking it down to our floor.
+ */
+const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
+const PROTOCOL = PROTOCOLS[0];
+const SERVER = { name: "numbermyboat", version: "0.2.0" };
 
 /** Catalog, read once per isolate from the site's own built file. */
 let CATALOG = null;
@@ -1021,9 +1037,10 @@ const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id,
 async function dispatch(msg, env, ctx) {
   const { id, method, params } = msg || {};
   switch (method) {
-    case "initialize":
+    case "initialize": {
+      const asked = params && params.protocolVersion;
       return rpcOk(id, {
-        protocolVersion: PROTOCOL,
+        protocolVersion: PROTOCOLS.includes(asked) ? asked : PROTOCOL,
         capabilities: { tools: { listChanged: false } },
         serverInfo: SERVER,
         instructions:
@@ -1039,6 +1056,7 @@ async function dispatch(msg, env, ctx) {
           + "On how common a name is we have market data, not a registry - "
           + "never tell a customer a name is taken at their marina.",
       });
+    }
     case "notifications/initialized":
     case "initialized":
       return null;                       // notification: no reply
@@ -1073,28 +1091,138 @@ async function dispatch(msg, env, ctx) {
   }
 }
 
-export async function handleMcp(request, env, ctx) {
-  const cors = {
-    "access-control-allow-origin": "*",
-    "access-control-allow-headers": "content-type, mcp-protocol-version",
-    "access-control-allow-methods": "POST, OPTIONS",
-  };
-  if (request.method === "OPTIONS") return new Response(null, { headers: cors });
-  if (request.method === "GET") {
-    // A plain GET is a person or a crawler, not a client. Say what this is.
-    return new Response(JSON.stringify({
-      server: SERVER, protocol: PROTOCOL,
-      transport: "JSON-RPC 2.0 over HTTP POST",
-      tools: TOOLS.map((t) => t.name),
-      writes: TOOLS.filter((t) => !t.annotations.readOnlyHint)
-        .map((t) => t.name),
-      note: "Nothing here takes money or touches an order. The tools listed "
-        + "under `writes` store naming-session state for 30 days and nothing "
-        + "else. POST a JSON-RPC request here.",
-    }, null, 1), { headers: { "content-type": "application/json", ...cors } });
+/**
+ * Origin validation. A spec MUST, and not only on paper.
+ *
+ * This server sent `access-control-allow-origin: *` and never looked at the
+ * Origin header, which meant any page on any website could make a visitor's
+ * browser POST to /mcp and open naming sessions in our database. No auth, no
+ * money and no personal data at stake, and the rows purge in 30 days - but it
+ * is an unauthenticated write from an arbitrary origin, and the transport
+ * spec requires a 403 for exactly this (DNS rebinding).
+ *
+ * A real MCP client connects from a server and sends no Origin at all, so
+ * the check costs legitimate traffic nothing. Localhost is allowed because
+ * that is where the MCP Inspector runs.
+ */
+const ORIGIN_OK = [
+  /^https:\/\/(?:[a-z0-9-]+\.)*numbermyboat\.com$/i,
+  /^https:\/\/(?:[a-z0-9-]+\.)*claude\.(?:ai|com)$/i,
+  /^https:\/\/(?:[a-z0-9-]+\.)*anthropic\.com$/i,
+  /^https:\/\/(?:[a-z0-9-]+\.)*(?:chatgpt|openai)\.com$/i,
+  /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i,
+];
+function originAllowed(origin) {
+  if (!origin) return true;            // server-to-server: no Origin at all
+  return ORIGIN_OK.some((re) => re.test(origin));
+}
+
+/**
+ * The header mirror, per 2026-07-28.
+ *
+ * Clients mirror `method` and `params.name` into Mcp-Method and Mcp-Name so
+ * that proxies can route without parsing the body. The server has to reject a
+ * mismatch, or a load balancer routing on the header and this server acting
+ * on the body are two different sources of truth for the same call.
+ *
+ * Only checked when the header is actually present: older clients do not send
+ * these, and this server still answers them.
+ */
+function headerMismatch(request, msg) {
+  const h = (n) => request.headers.get(n);
+  const m = h("mcp-method");
+  if (m && msg && msg.method && m !== msg.method) {
+    return `Mcp-Method header "${m}" does not match body method `
+      + `"${msg.method}"`;
   }
+  const nm = h("mcp-name");
+  if (nm && msg && msg.params) {
+    const body = msg.params.name || msg.params.uri;
+    const dec = nm.startsWith("=?base64?") && nm.endsWith("?=")
+      ? (() => { try { return atob(nm.slice(9, -2)); } catch { return nm; } })()
+      : nm;
+    if (body && dec !== body) {
+      return `Mcp-Name header "${dec}" does not match body "${body}"`;
+    }
+  }
+  const pv = h("mcp-protocol-version");
+  const meta = msg && msg.params && msg.params._meta;
+  const inBody = meta && meta["io.modelcontextprotocol/protocolVersion"];
+  if (pv && inBody && pv !== inBody) {
+    return `MCP-Protocol-Version header "${pv}" does not match _meta `
+      + `"${inBody}"`;
+  }
+  if (pv && !PROTOCOLS.includes(pv)) {
+    return null;    // handled as unsupported-version below, not a mismatch
+  }
+  return null;
+}
+
+/**
+ * What a person or a crawler gets. Served at /mcp-info, not at /mcp, because
+ * the MCP endpoint itself must refuse anything but POST.
+ */
+export function mcpInfo() {
+  return {
+    server: SERVER,
+    protocol_versions: PROTOCOLS,
+    transport: "Streamable HTTP - one JSON-RPC request per HTTP POST to "
+      + "/mcp, a JSON object back. No GET stream, no sessions, nothing "
+      + "resumable.",
+    endpoint: "https://numbermyboat.com/mcp",
+    tools: TOOLS.map((t) => ({
+      name: t.name, title: t.title,
+      writes: !t.annotations.readOnlyHint,
+    })),
+    what_it_will_not_do: [
+      "take money or create an order - checkout is on the website",
+      "tell anyone a boat name is already taken at their marina; we have "
+        + "market data, not a registry",
+      "store anything that identifies a person. The three writing tools "
+        + "store naming-session answers for 30 days, joined to nothing.",
+    ],
+    privacy: "https://numbermyboat.com/privacy/",
+    support: "https://numbermyboat.com/contact/",
+  };
+}
+
+export async function handleMcp(request, env, ctx) {
+  const origin = request.headers.get("origin");
+  const cors = {
+    // Echo the origin we validated rather than "*". A wildcard on an endpoint
+    // that writes is a standing invitation.
+    "access-control-allow-origin": origin || "*",
+    "access-control-allow-headers":
+      "content-type, mcp-protocol-version, mcp-method, mcp-name",
+    "access-control-allow-methods": "POST, OPTIONS",
+    "vary": "origin",
+  };
+  if (!originAllowed(origin)) {
+    return new Response(JSON.stringify({
+      jsonrpc: "2.0",
+      error: { code: -32600, message: "Origin not allowed" },
+    }), { status: 403,
+          headers: { "content-type": "application/json" } });
+  }
+  if (request.method === "OPTIONS") return new Response(null, { headers: cors });
+  // GET and DELETE MUST be 405 on a Streamable HTTP endpoint. This returned
+  // 200 with a friendly JSON description of the server, which is worse than
+  // unhelpful: a client that probes GET is specifically looking for a legacy
+  // HTTP+SSE stream and an `endpoint` event, and a 200 with a JSON body is
+  // neither that nor a refusal. The human-readable version moved to
+  // /mcp-info, which the body below points at.
   if (request.method !== "POST") {
-    return new Response("POST only", { status: 405, headers: cors });
+    return new Response(JSON.stringify({
+      jsonrpc: "2.0",
+      error: {
+        code: -32600,
+        message: "This is a Streamable HTTP MCP endpoint: POST JSON-RPC here. "
+          + "There is no GET stream and no session to delete. For a "
+          + "human-readable description see /mcp-info.",
+      },
+    }), { status: 405,
+          headers: { "content-type": "application/json", allow: "POST, OPTIONS",
+                     ...cors } });
   }
 
   let body;
@@ -1109,6 +1237,26 @@ export async function handleMcp(request, env, ctx) {
   const many = Array.isArray(body);
   const msgs = many ? body : [body];
   const out = [];
+  // Header/body agreement, before anything is dispatched.
+  for (const m of msgs) {
+    const mm = headerMismatch(request, m);
+    if (mm) {
+      return new Response(JSON.stringify(rpcErr(m && m.id, -32020, mm)), {
+        status: 400,
+        headers: { "content-type": "application/json", ...cors } });
+    }
+  }
+  // A protocol version we do not speak gets the error the spec names, with
+  // the list, so the client can retry at a version we do.
+  const pv = request.headers.get("mcp-protocol-version");
+  if (pv && !PROTOCOLS.includes(pv)) {
+    return new Response(JSON.stringify({
+      jsonrpc: "2.0", id: null,
+      error: { code: -32600, message: `unsupported protocol version ${pv}`,
+               data: { supported: PROTOCOLS } },
+    }), { status: 400,
+          headers: { "content-type": "application/json", ...cors } });
+  }
   for (const m of msgs) {
     const r = await dispatch(m, env, ctx);
     if (r) out.push(r);

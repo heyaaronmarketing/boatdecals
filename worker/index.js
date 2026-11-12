@@ -8,7 +8,7 @@
  */
 
 import { handleOutline } from "./outline.js";
-import { handleMcp } from "./mcp.js";
+import { handleMcp, mcpInfo } from "./mcp.js";
 import { monthlyReview } from "./engine.js";
 import { handleStripeWebhook } from "./stripehook.js";
 import { runProofCycle, handleApprove, handleProofData,
@@ -868,6 +868,12 @@ export default {
     // price an assistant quotes comes from the SAME priceOf() below that the
     // order form and the card charge use - a separate service would have meant
     // a second copy of the price, which is the one thing the spec forbids.
+    // The human-readable description of the MCP server. It used to be what
+    // GET /mcp returned, which the transport spec forbids - that endpoint
+    // must refuse anything but POST.
+    if (url.pathname === "/mcp-info" || url.pathname === "/mcp-info/") {
+      return json(mcpInfo());
+    }
     if (url.pathname === "/mcp" || url.pathname === "/mcp/") {
       return handleMcp(request, env, { priceOf, bankNames, bankRows,
                                       ledgerRows, ledgerBump });
