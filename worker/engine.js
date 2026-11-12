@@ -636,6 +636,22 @@ export function bareBoat(raw) {
   return String(raw || "").replace(/^\s*(?:a|an|the|my|our)\s+/i, "").trim();
 }
 
+/**
+ * The card's heading, counting what is actually on the card.
+ *
+ * It said "Three names for the 22 foot pontoon" over a card with two names on
+ * it, because the heading hardcoded the word while reveal_finalists happily
+ * reveals whatever has been kept. The one thing a man forwards to his wife
+ * should not miscount itself.
+ */
+export function cardHeading(count, boatRaw) {
+  const word = ["No", "One name", "Two names", "Three names"][count]
+    || count + " names";
+  const head = count === 1 ? "One name" : word;
+  const boat = bareBoat(boatRaw);
+  return head + " for the " + (boat || "boat");
+}
+
 // Boat types in the words a customer uses. "it is a bass name" reads wrong.
 const BOAT_LABEL = {
   pontoon: "pontoon", bass: "bass boat", fishing_boat: "fishing boat",
@@ -922,7 +938,12 @@ export function exemplarsFor(bank, mechs, rows, want = 5) {
       keeps[r.key] = (r.w_keeps || 0) / r.w_exposures;
     }
   }
-  const haveKeepData = Object.keys(keeps).length > 0;
+  // KEEP data, not EXPOSURE data. The first version asked whether any name
+  // had a row, and live it answered yes within minutes - every name dealt
+  // accrues an exposure - so the brief told the model its exemplars were
+  // "the highest keep-rate names" while every rate in the table was zero.
+  // Forty exposures and no keeps is not a ranking signal, it is a denominator.
+  const haveKeepData = Object.values(keeps).some((v) => v > 0);
   const pool = bank.filter((n) => mechs.includes(n.mechanism_code));
   pool.sort((a, b) => {
     const d = (keeps[b.name] || 0) - (keeps[a.name] || 0);
@@ -974,8 +995,24 @@ export function riffBrief(bank, profile, state, rows, slots) {
   // slot and the round stops being the best we have.
   const explore = p.exploring.filter((m) => !killed.has(m))[0] || null;
 
-  const ex = exemplarsFor(bank, usable.length ? usable : p.exploring.slice(0, 3),
-                          rows);
+  // WHICH mechanisms the exemplars demonstrate. Proven ones when there are
+  // any; otherwise the mechanisms that actually exist in his lane, read off
+  // the bank. The first version fell back to the ledger's exploring list,
+  // which on a genuinely cold ledger is empty - so a brand-new lane got a
+  // brief with ZERO exemplars, which teaches the host nothing, which means it
+  // free-associates, which is the one thing the brief exists to prevent.
+  let demo = usable;
+  if (!demo.length) {
+    const inLane = {};
+    for (const n of bank) {
+      if (!(n.style_lanes || []).includes(lane) && lane !== "any") continue;
+      if (killed.has(n.mechanism_code)) continue;
+      inLane[n.mechanism_code] = (inLane[n.mechanism_code] || 0) + 1;
+    }
+    demo = Object.entries(inLane).sort((a, b) => b[1] - a[1])
+      .slice(0, 3).map(([m]) => m);
+  }
+  const ex = exemplarsFor(bank, demo, rows);
   return {
     how_to_use: "Invent inside this brief and submit with "
       + "submit_riff_candidates. Everything you send is gated: radio, fit, "
@@ -1001,6 +1038,15 @@ export function riffBrief(bank, profile, state, rows, slots) {
     one_slot_for_something_unproven: explore
       ? { code: explore, status: "exploration - at most one name in the "
             + "round may use it" }
+      : p.cold ? { code: null, status: "the whole round is exploration while "
+            + "the ledger is cold, so the cap does not bind yet" } : null,
+    // On a cold ledger `mechanisms_to_use` is empty, and an empty list is not
+    // an instruction. This says what to do instead, in the same breath.
+    until_the_ledger_has_data: p.cold || !usable.length
+      ? { mechanisms: demo,
+          reading: "No evidence yet, so these are simply the mechanisms this "
+            + "lane is built out of. Work from the exemplars and the house "
+            + "style, not from a keep-rate that does not exist." }
       : null,
     ledger_status: p.cold
       ? "COLD. No mechanism has the " + LEDGER.min_exposures + " exposures "

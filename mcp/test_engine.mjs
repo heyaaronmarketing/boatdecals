@@ -440,6 +440,31 @@ const lrow = (kind, lane, key, exp, keeps, kills = 0) =>
   check(/no keep data/.test(b.exemplars_chosen_by),
     "with no keep data the brief must not claim its exemplars are the "
     + "highest keep-rate names: " + b.exemplars_chosen_by);
+  // FOUND LIVE. A cold ledger still accrues an exposure for every name the
+  // moment the first round is dealt, and the first version read "any name has
+  // a row" as "we have keep data" - so within minutes of going live the brief
+  // was telling the model its exemplars were the highest keep-rate names
+  // while every rate in the table was zero.
+  const exposedOnly = BANK.slice(0, 40).map(
+    (n) => lrow("name", "any", n.name, 12, 0));
+  const b2 = E.riffBrief(BANK, E.profileFrom(DEADPAN), {}, exposedOnly, 2);
+  check(/no keep data/.test(b2.exemplars_chosen_by),
+    "forty names with exposures and zero keeps were read as keep data: "
+    + b2.exemplars_chosen_by);
+  // FOUND LIVE. A cold ledger produced a brief with no exemplars at all,
+  // because the fallback read the ledger's exploring list, which on a cold
+  // ledger is empty. A brief with nothing in it is a model free-associating.
+  check(b.exemplars.length >= 3,
+    "a cold-ledger brief carried only " + b.exemplars.length + " exemplars - "
+    + "there is nothing for the host to work from and it will invent");
+  check(b.until_the_ledger_has_data
+    && b.until_the_ledger_has_data.mechanisms.length >= 1,
+    "an empty mechanisms_to_use list is not an instruction; the brief must "
+    + "say what to do instead while the ledger is cold");
+  check(b.exemplars.every((e) => b.until_the_ledger_has_data.mechanisms
+    .includes(e.mechanism_code)),
+    "the cold brief's exemplars do not demonstrate the mechanisms it told "
+    + "the host to use");
 }
 {
   // Thirty exposures and not one keep is not "top half of a field of one".
@@ -691,6 +716,20 @@ const BANKN = BANK.map((n) => n.name);
     + "- riffs are built out of somebody's wife, dog or hometown");
   check(d.some((x) => x.kind === "mech" && x.key === "lt"),
     "a riff must still teach the ledger about its mechanism");
+}
+
+// --- the card a man forwards to his wife ---------------------------------
+{
+  // FOUND LIVE. It said "Three names for the 22 foot pontoon" over a card
+  // with two names on it: the heading hardcoded the word, while the reveal
+  // happily reveals whatever has been kept.
+  check(E.cardHeading(2, "a 22 foot pontoon")
+    === "Two names for the 22 foot pontoon",
+    "the card miscounted itself: " + E.cardHeading(2, "a 22 foot pontoon"));
+  check(E.cardHeading(1, "my bass boat") === "One name for the bass boat",
+    "got: " + E.cardHeading(1, "my bass boat"));
+  check(E.cardHeading(3, null) === "Three names for the boat",
+    "got: " + E.cardHeading(3, null));
 }
 
 // --- the killed_mechs column, which two tools wrote in two shapes ---------

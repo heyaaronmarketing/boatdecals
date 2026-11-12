@@ -139,9 +139,16 @@ function nonstandard(token) {
 
 function spoken(name) {
   let s = String(name || "").replace(/[*†‡]/g, "");
-  s = s.replace(/[([{]/g, ", ").replace(/[)\]}]/g, "");
+  // The space before the bracket goes too, or the readback reads
+  // "Unsinkable , Terms Apply" with a space in front of the comma.
+  s = s.replace(/\s*[([{]\s*/g, ", ").replace(/[)\]}]/g, "");
   s = s.replace(/&/g, " and ").replace(/%/g, " percent");
-  return s.replace(/\s+/g, " ").trim().replace(/^,|,$/g, "").trim();
+  s = s.replace(/\s+/g, " ").trim().replace(/^,|,$/g, "").trim();
+  // Trailing punctuation comes off, because the readback puts a full stop
+  // after it. The bank has "Loading..." and "Pending" in it, and the reveal
+  // was saying "Mayday, mayday, this is Loading....", with four dots, on the
+  // one screen the whole session is building towards.
+  return s.replace(/[\u2026.,;:!?-]+$/, "").trim();
 }
 
 export function radioGate(name) {

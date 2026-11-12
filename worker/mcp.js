@@ -36,7 +36,7 @@ import { checkRegistration, decodeHin, toPlain } from "./decode.js";
 import { INTERVIEW, profileFrom, missingQuestions, dealRound, applyVote,
          rationale, gateSummary, bareBoat, ROUND_SIZE, FINALISTS,
          laneKeys, provenFor, ledgerDeltas, riffBrief,
-         gateRiff } from "./engine.js";
+         gateRiff, cardHeading } from "./engine.js";
 
 const PROTOCOL = "2024-11-05";
 const SERVER = { name: "numbermyboat", version: "0.1.0" };
@@ -810,9 +810,7 @@ const TOOLS = [
         finalists,
         // The spec's Final 3 card: something he sends his wife, not a receipt.
         card_for_the_family: {
-          heading: profile.boat_raw
-            ? `Three names for the ${bareBoat(profile.boat_raw)}`
-            : "Three names for the boat",
+          heading: cardHeading(finalists.length, profile.boat_raw),
           names: finalists.map((f) => f.name),
           ask: "Which one? Reply with 1, 2 or 3.",
           footer: "Cut in Evansdale, Iowa. Free shipping, all 50 states.",

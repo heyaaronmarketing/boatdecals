@@ -342,11 +342,17 @@ def _spoken(name):
     read: nobody says "Unsinkable open bracket terms apply close bracket."
     """
     s = re.sub(r"[*\u2020\u2021]", "", name or "")
-    s = re.sub(r"[\(\[\{]", ", ", s)
+    # The space before the bracket goes too, or the readback reads
+    # "Unsinkable , Terms Apply" with a space in front of the comma.
+    s = re.sub(r"\s*[\(\[\{]\s*", ", ", s)
     s = re.sub(r"[\)\]\}]", "", s)
     s = s.replace("&", " and ").replace("%", " percent")
     s = re.sub(r"\s+", " ", s).strip().strip(",").strip()
-    return s
+    # Trailing punctuation comes off, because the readback puts a full stop
+    # after it. The bank has "Loading..." and "Pending" in it, and the reveal
+    # was saying "Mayday, mayday, this is Loading....", with four dots, on the
+    # one screen the whole session is building towards.
+    return re.sub(r"[\u2026.,;:!?\-]+$", "", s).strip()
 
 
 def radio_gate(name):
