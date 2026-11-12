@@ -111,35 +111,88 @@ const LANE_WORDS = {
 // offers a man naming his grandkids' boat something he has to apologise for.
 const CEILING_WORDS = {
   // Children present: clean only, no exceptions.
-  clean: new RegExp("grandkid|grand.?child|grandson|granddaughter|kid|"
-    + "child|son\\b|daughter|family|church|baby|niece|nephew|school", "i"),
+  clean: new RegExp("\\b(?:grandkid|grand.?child|grandson|granddaughter|kid|"
+    + "child|son|daughter|family|church|baby|niece|nephew|school)\\b", "i"),
   // Partner aboard: dock humor is fine, jokes at her expense are not.
-  dock: /wife|husband|girlfriend|boyfriend|partner|spouse|her\b|she\b/i,
+  //
+  // THE LEADING \b IS NOT DECORATION. Without it, /her\b/ matches inside
+  // "brother" - so "me and my brother" set the ceiling to dock and the live
+  // engine dealt Alimony, Yes Dear and Ask Her to a man who had just asked
+  // for nothing crude. "mother", "father", "other" and "together" did the
+  // same. A trailing boundary alone is worse than none, because it looks
+  // careful.
+  dock: /\b(?:wife|husband|girlfriend|boyfriend|partner|spouse|her|she)\b/i,
   // Just the owner or his friends.
-  double: /buddies|buddy|friends|boys|guys|alone|just me|myself|crew/i,
+  double: /\b(?:buddies|buddy|friends|boys|guys|alone|just me|myself|crew)\b/i,
 };
+
+// Every pattern in the tables above is anchored at a word start. The tables
+// are written as plain alternations for readability; this wraps them once, so
+// a future addition cannot forget.
+function anchored(table) {
+  const out = {};
+  for (const [k, re] of Object.entries(table)) {
+    out[k] = new RegExp("\\b(?:" + re.source + ")", re.flags.includes("i")
+      ? "i" : "");
+  }
+  return out;
+}
+const BOATS_A = anchored(BOAT_WORDS);
+const LANES_A = anchored(LANE_WORDS);
+
+// Negation. "deadpan, nothing crude" matched the dock lane on the word
+// "crude" and the live engine dealt him crude names BECAUSE he asked not to
+// have them. A clause that starts with a negator says what to avoid, and
+// avoiding crudeness also lowers the ceiling - it is a stronger statement
+// than any guess from who is aboard.
+const NEGATORS = new RegExp(
+  "^\\s*(?:but\\s+)?(?:no|not|nothing|none|never|avoid|without|anything"
+  + "\\s+but|rather\\s+not|don'?t|less|keep\\s+it\\s+away|skip|minus)\\b",
+  "i");
+const CRUDE_WORDS = /\b(?:crude|dirty|blue|raunchy|filthy|rude|vulgar|off.?colou?r|dock)\b/i;
+
+function clauses(text) {
+  return String(text || "").split(/[,;.]|\bbut\b|\band\b/i)
+    .map((c) => c.trim()).filter(Boolean);
+}
 
 export function profileFrom(answers) {
   const a = Object.fromEntries(
     Object.entries(answers || {}).map(([k, v]) => [k, String(v || "").trim()]));
 
-  const boat_types = Object.entries(BOAT_WORDS)
+  const boat_types = Object.entries(BOATS_A)
     .filter(([, re]) => re.test(a.boat || "")).map(([k]) => k);
-  const lanes = Object.entries(LANE_WORDS)
-    .filter(([, re]) => re.test(a.vibe || "")).map(([k]) => k);
+
+  // Read the vibe answer clause by clause so a negated clause subtracts
+  // instead of adding.
+  const wanted = new Set(), avoided = new Set();
+  let refused_crude = false;
+  for (const c of clauses(a.vibe)) {
+    const neg = NEGATORS.test(c);
+    for (const [k, re] of Object.entries(LANES_A)) {
+      if (re.test(c)) (neg ? avoided : wanted).add(k);
+    }
+    if (neg && CRUDE_WORDS.test(c)) refused_crude = true;
+  }
+  for (const k of avoided) wanted.delete(k);
+  const lanes = [...wanted];
 
   // Ceiling: default to CLEAN when nobody said. Defaulting the other way puts
   // the burden of the mistake on the customer, and he is the one whose transom
   // it is.
   let ceiling = "clean";
   const aboard = a.aboard || "";
-  if (CEILING_WORDS.clean.test(aboard)) {
+  if (refused_crude) {
+    // He said it in his own words. Nothing about who is aboard overrides a
+    // customer telling us plainly what he does not want.
+    ceiling = "clean";
+  } else if (CEILING_WORDS.clean.test(aboard)) {
     ceiling = "clean";
   } else if (CEILING_WORDS.double.test(aboard)) {
     ceiling = "double";
   } else if (CEILING_WORDS.dock.test(aboard)) {
     ceiling = "dock";
-  } else if (/dock|crude|raunchy|dirty|filthy/i.test(a.vibe || "")) {
+  } else if (!refused_crude && wanted.has("dock")) {
     // He asked for it in the vibe answer even though he did not say who is
     // aboard. That is consent to dock humor, not to a double entendre.
     ceiling = "dock";
@@ -160,8 +213,12 @@ export function profileFrom(answers) {
     port: a.port || null,
     aboard_raw: aboard || null,
     // Only true if the customer asked for the common names by name.
-    wants_popular: /popular|common|classic|well.?known|most ?used/i
-      .test(a.vibe || ""),
+    // Also clause-aware: "nothing common" is not a request for common names.
+    wants_popular: clauses(a.vibe).some(
+      (c) => !NEGATORS.test(c)
+        && /\b(?:popular|common|classic|well.?known|most ?used)\b/i.test(c)),
+    avoided_lanes: [...avoided],
+    refused_crude,
     // The in-group lanes stay shut until the interview proves membership.
     in_group: !!(a.work || "").trim(),
     answered: Object.keys(a).filter((k) => a[k]),
@@ -210,6 +267,13 @@ function excludeReason(n, profile, radio, fit) {
   }
   if (fit && fit.verdict === "too_wide") {
     return "will not fit the transom at any height we cut";
+  }
+  // An avoided lane is an exclusion, not a penalty. He did not say he was
+  // lukewarm about puns, he said not puns.
+  const avoided = (profile.avoided_lanes || [])
+    .filter((l) => (n.style_lanes || []).includes(l));
+  if (avoided.length) {
+    return "the " + avoided[0] + " lane, which he asked us to leave out";
   }
   return null;
 }
@@ -291,7 +355,7 @@ export function dealRound(bank, profile, opts = {}) {
 
   const scored = [];
   const rejected = { radio: 0, level: 0, in_joke: 0, fit: 0, tier1: 0,
-                     killed_mechanism: 0, already_seen: 0 };
+                     avoided_lane: 0, killed_mechanism: 0, already_seen: 0 };
 
   for (const n of bank) {
     if (exclude.has(n.name.toLowerCase())) { rejected.already_seen++; continue; }
@@ -304,6 +368,7 @@ export function dealRound(bank, profile, opts = {}) {
       if (why.startsWith("radio")) rejected.radio++;
       else if (why.includes("clean") || why.includes("cruder")) rejected.level++;
       else if (why.includes("in-joke")) rejected.in_joke++;
+      else if (why.includes("leave out")) rejected.avoided_lane++;
       else rejected.fit++;
       continue;
     }

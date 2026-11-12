@@ -60,6 +60,59 @@ const deal = (answers, opts = {}) =>
     + "nothing but clean names - the ceiling is too tight to be useful");
 }
 
+// --- two bugs that reached production, now pinned -----------------------
+{
+  // "me and my brother" set the ceiling to DOCK, because /her\b/ matches
+  // inside "brother". The live engine dealt Alimony, Yes Dear and Ask Her to
+  // a man who had asked for nothing crude. "mother", "father", "other" and
+  // "together" all did the same.
+  for (const aboard of ["me and my brother", "my mother", "my father",
+                        "the other half of the family", "all of us together"]) {
+    const p = E.profileFrom({ boat: "pontoon", aboard });
+    check(p.ceiling === "clean",
+      `"${aboard}" produced ceiling ${p.ceiling} - a substring match on `
+      + "her/she is setting the ceiling again");
+  }
+  // And the words that SHOULD set it still do.
+  check(E.profileFrom({ boat: "pontoon", aboard: "my wife" }).ceiling === "dock",
+    '"my wife" must still reach the dock ceiling');
+  check(E.profileFrom({ boat: "pontoon",
+                        aboard: "she comes along" }).ceiling === "dock",
+    '"she comes along" must still reach the dock ceiling');
+}
+{
+  // "deadpan, nothing crude" matched the dock lane on the word "crude", so
+  // the engine dealt him crude names because he asked not to have them.
+  const p = E.profileFrom({ boat: "pontoon", aboard: "buddies",
+                            vibe: "deadpan, nothing crude" });
+  check(p.ceiling === "clean",
+    "a customer who said 'nothing crude' got ceiling " + p.ceiling);
+  check(p.lanes.includes("deadpan") && !p.lanes.includes("dock"),
+    "'deadpan, nothing crude' produced lanes " + p.lanes);
+  const r = deal({ boat: "pontoon", aboard: "me and my brother",
+                   vibe: "deadpan, nothing crude" });
+  check(!r.names.some((n) => n.level !== "clean"),
+    "'nothing crude' still produced non-clean names: "
+    + r.names.filter((n) => n.level !== "clean").map((n) => n.name));
+  check(!r.names.some((n) => n.lanes.includes("dock")),
+    "'nothing crude' still produced dock-lane names");
+}
+{
+  // A lane he asked us to leave out is an exclusion, not a nudge.
+  const r = deal({ boat: "pontoon", aboard: "buddies",
+                   vibe: "not puns, something absurd" });
+  check(!r.names.some((n) => n.lanes.includes("pun")),
+    "the customer said 'not puns' and got "
+    + r.names.filter((n) => n.lanes.includes("pun")).map((n) => n.name));
+  check(r.rejected.avoided_lane > 0,
+    "an avoided lane set nothing aside");
+  // Negation must not invert a plain request.
+  check(E.profileFrom({ vibe: "something popular" }).wants_popular,
+    "'something popular' must still ask for popular names");
+  check(!E.profileFrom({ vibe: "nothing common" }).wants_popular,
+    "'nothing common' must not be read as a request for common names");
+}
+
 // --- in-group jokes stay shut until the trade is known --------------------
 {
   const r = deal({ boat: "runabout", aboard: "buddies", vibe: "nerd" });
