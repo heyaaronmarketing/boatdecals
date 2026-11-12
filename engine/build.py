@@ -346,6 +346,31 @@ def og_copy(path, title, desc):
     return html.unescape(title)[:60], html.unescape(desc)[:110]
 
 
+# Google Analytics 4. Loaded on every page, but only on the real domain:
+# gated on location.hostname so the workers.dev staging copy and any local
+# build stay out of the property. Without that gate every deploy test and
+# every preview click lands in the same reports as real customers, and the
+# numbers quietly stop meaning anything.
+#
+# Google Signals and ad personalisation are BOTH OFF. The privacy policy says
+# "we do not run advertising trackers", and that stays true: this measures
+# traffic and nothing is handed to the ad products. Turning either on is a
+# policy change, not a settings change.
+GA_ID = "G-P2QBX2TXPX"
+GA_HOST = "numbermyboat.com"
+
+GA_TAG = (
+ '<script>if(location.hostname==="%(host)s"||location.hostname==="www.%(host)s"){'
+ 'var s=document.createElement("script");s.async=true;'
+ 's.src="https://www.googletagmanager.com/gtag/js?id=%(id)s";'
+ 'document.head.appendChild(s);'
+ 'window.dataLayer=window.dataLayer||[];'
+ 'function gtag(){dataLayer.push(arguments);}window.gtag=gtag;'
+ 'gtag("js",new Date());'
+ 'gtag("config","%(id)s",{allow_google_signals:false,'
+ 'allow_ad_personalization_signals:false});}</script>'
+ % {"id": GA_ID, "host": GA_HOST})
+
 def head(title, desc, path, schema, noindex=False):
     canon = U(path)
     robots = ('<meta name="robots" content="noindex,follow">' if noindex else
@@ -376,12 +401,16 @@ def head(title, desc, path, schema, noindex=False):
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>%s</style>
 <script type="application/ld+json">%s</script>
+%s
 </head><body>
 <a class="skip" href="#main">Skip to the order form</a>""" % (
     e(_title(html.unescape(title))), e(html.unescape(desc)), canon, robots,
     _ogtype, e(_ot), e(_od), canon, e(B),
     _img, _img, _imgtype, e(_oalt), e(_ot), e(_od), _img, e(_oalt),
-    CSS, json.dumps(schema, separators=(',', ':')))
+    CSS, json.dumps(schema, separators=(',', ':')),
+    # Internal pages are not customer journeys and would skew the reports:
+    # /brand/ is a file library, /proof/ is one customer's own order.
+    "" if noindex else GA_TAG)
 
 # The four headline claims, in one place. proof_band() spells each one out;
 # the hero badges are the short form. Both read from here so they cannot drift.
@@ -2724,14 +2753,24 @@ def build_legal():
       "<h2>What we collect</h2>"
       "<p>When you send an order we collect what you typed into the form: your name, "
       "email, optional phone, the lettering you want, your boat details and any notes. "
-      "That is it. We do not run advertising trackers or sell data to anybody.</p>"
+      "That is it. We do not run advertising trackers and we do not sell data to "
+      "anybody.</p>"
+      "<h2>Analytics</h2>"
+      "<p>We use Google Analytics to count visits and see which pages people "
+      "read, so we know what to write more of. It tells us how many people came "
+      "and roughly where from &mdash; not who you are, and it is never joined to "
+      "your order. Google's advertising features are switched off, so nothing "
+      "here follows you around the internet. Browser &ldquo;Do Not Track&rdquo; "
+      "and any ad blocker will stop it, and nothing on the site breaks if you "
+      "block it.</p>"
       "<h2>Why we hold it</h2>"
       "<p>To cut your order, take payment, ship it and deal with a warranty claim later. "
       "We keep order records as long as we need them for accounting and warranty "
       "purposes.</p>"
       "<h2>Who else sees it</h2>"
       "<p>Our email provider, our payment processor and our shipping carrier &mdash; each "
-      "only the part they need. Nobody else.</p>"
+      "only the part they need, and Google Analytics, which sees page views and "
+      "never sees your order. Nobody else.</p>"
       "<h2>Your choices</h2>"
       "<p>Email <a href=\"mailto:" + SITE["email"] + "\">" + SITE["email"] + "</a> to see "
       "what we hold on you, correct it, or have it deleted.</p>"

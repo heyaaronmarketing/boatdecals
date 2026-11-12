@@ -878,6 +878,56 @@ if "COALESCE(ship_line1,'')=''" not in _hook0:
     fails.append("the webhook would overwrite a validated checkout address "
                  "with whatever was later typed into Stripe")
 
+# ---- analytics ----------------------------------------------------------
+# GA4 on every public page and on no internal one. A tag that silently stops
+# being emitted looks exactly like a traffic collapse in the reports, and a
+# tag on /brand/ or /proof/ quietly pollutes them instead.
+_GA = "G-P2QBX2TXPX"
+_ga_pub = _ga_int = 0
+for _f in OUT.rglob("index.html"):
+    _t = _f.read_text()
+    _has = _GA in _t
+    if 'content="noindex' in _t:
+        if _has:
+            fails.append("GA4 is on the internal page %s"
+                         % _f.relative_to(OUT))
+        _ga_int += 1
+    else:
+        if not _has:
+            fails.append("GA4 is missing from %s" % _f.relative_to(OUT))
+        _ga_pub += 1
+        if _t.count(_GA) != 2:   # the script src and the config call
+            fails.append("GA4 appears %d times on %s - a double tag counts "
+                         "every pageview twice"
+                         % (_t.count(_GA), _f.relative_to(OUT)))
+if _ga_pub < 50:
+    fails.append("only %d public pages carry GA4" % _ga_pub)
+
+_home = (OUT / "index.html").read_text()
+# Staging and local builds must stay out of the property, or deploy testing
+# lands in the same reports as real customers.
+if 'location.hostname==="numbermyboat.com"' not in _home:
+    fails.append("the GA4 tag is no longer gated to the live hostname - "
+                 "workers.dev and local traffic would pollute the property")
+# The privacy policy promises no advertising trackers. These two switches are
+# what keep that true; turning either on is a policy change.
+for _flag in ("allow_google_signals:false",
+              "allow_ad_personalization_signals:false"):
+    if _flag not in _home:
+        fails.append("GA4 %s is gone - the privacy policy says we run no "
+                     "advertising trackers" % _flag)
+if "async=true" not in _home and "async = true" not in _home:
+    fails.append("the GA4 script is no longer async and would block rendering")
+
+# The policy has to describe what the site actually does.
+_priv = (OUT / "privacy" / "index.html").read_text()
+if "Google Analytics" not in _priv:
+    fails.append("the site runs Google Analytics but the privacy policy does "
+                 "not mention it")
+if "Nobody else" in _priv and "Google Analytics, which sees page views" not in _priv:
+    fails.append('the privacy policy still claims "Nobody else" sees data '
+                 "while GA4 is running")
+
 # ---- where orders go ----------------------------------------------------
 # ORDER_TO used to be a Worker secret, which meant the answer to "where do
 # order emails go?" could not be read from the repo at all - and a wrong
