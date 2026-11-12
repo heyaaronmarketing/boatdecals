@@ -112,6 +112,95 @@ function bump(env, ctx, deltas) {
     (e) => console.log("ledger write failed", e && e.message));
 }
 
+/**
+ * Validate arguments against a tool's own inputSchema.
+ *
+ * A REAL BUG, and the dangerous kind. dispatch() handed
+ * `params.arguments || {}` straight to the tool and never looked at the
+ * schema, so a call to check_registration_layout with the parameter misnamed
+ * - `text` instead of `number` - was accepted, read nothing, and came back
+ * with:
+ *
+ *     { "number": "", "verdict": "ok", "note": "Reads as a normal state
+ *       format.", "height_is_legal": true }
+ *
+ * A model would tell a customer their registration layout is fine having
+ * checked nothing at all. Every schema here already said
+ * `required: ["number"], additionalProperties: false`; nothing read it.
+ *
+ * Clients are supposed to validate locally, and the ones that do were never
+ * the problem. The call that arrives with a hallucinated parameter name is by
+ * definition from a client that did not, which is exactly when the server
+ * has to be the one that checks. Returned as a tool error rather than a
+ * -32602 so the model can read it and fix its own call.
+ */
+export function validate(schema, v, where = "arguments") {
+  if (!schema) return null;
+  const t = schema.type;
+  if (t === "object") {
+    if (v === null || typeof v !== "object" || Array.isArray(v)) {
+      return `${where} must be an object`;
+    }
+    const props = schema.properties || {};
+    for (const r of (schema.required || [])) {
+      const got = v[r];
+      if (got === undefined || got === null || got === "") {
+        return `${where}.${r} is required`;
+      }
+    }
+    for (const k of Object.keys(v)) {
+      if (props[k]) {
+        const e = validate(props[k], v[k], `${where}.${k}`);
+        if (e) return e;
+      } else if (schema.additionalProperties === false) {
+        const known = Object.keys(props);
+        return `${where} has no parameter "${k}"`
+          + (known.length ? ` - it takes ${known.join(", ")}` : "");
+      } else if (schema.additionalProperties
+                 && typeof schema.additionalProperties === "object") {
+        const e = validate(schema.additionalProperties, v[k],
+                           `${where}.${k}`);
+        if (e) return e;
+      }
+    }
+    return null;
+  }
+  if (v === undefined || v === null) return null;   // optional, not given
+  if (t === "array") {
+    if (!Array.isArray(v)) return `${where} must be an array`;
+    if (schema.maxItems && v.length > schema.maxItems) {
+      return `${where} takes at most ${schema.maxItems} items`;
+    }
+    for (let i = 0; i < v.length; i++) {
+      const e = validate(schema.items, v[i], `${where}[${i}]`);
+      if (e) return e;
+    }
+    return null;
+  }
+  if (t === "string") {
+    if (typeof v !== "string") return `${where} must be a string`;
+    if (schema.maxLength && v.length > schema.maxLength) {
+      return `${where} is longer than ${schema.maxLength} characters`;
+    }
+  } else if (t === "number" || t === "integer") {
+    if (typeof v !== "number" || !isFinite(v)) {
+      return `${where} must be a number`;
+    }
+  } else if (t === "boolean") {
+    if (typeof v !== "boolean") return `${where} must be true or false`;
+  }
+  if (schema.enum && !schema.enum.includes(v)) {
+    return `${where} must be one of ${schema.enum.join(", ")}`;
+  }
+  return null;
+}
+
+/** The +/- figure, or nothing. fitGate's no-name path carries no error_pct,
+ *  and the template printed "+/-undefined%" at a customer. If there is no
+ *  measurement there is no accuracy, and saying so is the honest output. */
+const acc = (fit) =>
+  fit && fit.error_pct != null ? `+/-${fit.error_pct}%` : null;
+
 const txt = (o) => ({
   content: [{ type: "text", text: JSON.stringify(o, null, 1) }],
 });
@@ -161,9 +250,12 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        kind: { type: "string", enum: ["numbers", "name", "both"],
+        kind: { type: "string",
+                enum: ["numbers", "name", "both",
+                       "registration-numbers", "boat-name"],
                 description: "numbers = registration numbers, name = boat "
-                  + "name, both = the bundle" },
+                  + "name, both = the bundle. The ids get_products returns "
+                  + "are accepted too." },
         height: { type: "string", enum: ["3", "4", "5", "6"],
                   description: "Lettering height in inches" },
         outline: { type: "boolean",
@@ -172,10 +264,18 @@ const TOOLS = [
       required: ["kind"], additionalProperties: false,
     },
     async run(args, env, ctx) {
-      const amount = ctx.priceOf({
-        kind: args.kind, height: args.height || "3",
-        outline: args.outline ? "yes" : "",
-      });
+      // STRICT. A quote that silently prices an unrecognised product as the
+      // cheapest thing we sell is how this tool came to answer $19 for a $44
+      // bundle. Nothing is lost by erroring on a quote.
+      let amount;
+      try {
+        amount = ctx.priceOf({
+          kind: args.kind, height: args.height || "3",
+          outline: args.outline ? "yes" : "",
+        }, true);
+      } catch (e) {
+        return err(e.message);
+      }
       return txt({
         amount_usd: amount, shipping_usd: 0,
         priced: { kind: args.kind, height: args.height || "3",
@@ -231,7 +331,7 @@ const TOOLS = [
                  notes: radio.reasons },
         fit: { font, widths_in: fit.widths_in, verdict: fit.verdict,
                tallest_that_fits: fit.best_height,
-               accuracy: `+/-${fit.error_pct}%`, notes: fit.reasons },
+               accuracy: acc(fit), notes: fit.reasons },
         how_common: { tier: over.tier, note: over.note,
                       honesty: "Market data, not a registry. We cannot tell "
                         + "you what is already on your lake or at your "
@@ -309,7 +409,7 @@ const TOOLS = [
         block_characters: "We cut registration numbers in plain vertical "
           + "block only, so that requirement is handled.",
         width: { font: "Arial Bold", widths_in: fit.widths_in,
-                 accuracy: `+/-${fit.error_pct}%`, notes: fit.reasons },
+                 accuracy: acc(fit), notes: fit.reasons },
         honesty: "This flags problems, it never refuses an order. The prefix "
           + "table is compiled from secondary sources and states issue "
           + "sequentially, so older hulls carry retired formats. Every order "
@@ -802,7 +902,7 @@ const TOOLS = [
           what_we_checked: gateSummary(radio, fit, over),
           width: { font, widths_in: fit.widths_in,
                    tallest_that_fits: fit.best_height,
-                   accuracy: `+/-${fit.error_pct}%` },
+                   accuracy: acc(fit) },
           // Deep link into the real order form with the name already in it.
           // The buy path is here and in the studio, never in round one.
           order_it: `${site}/design/?name=${encodeURIComponent(n.name)}`
@@ -929,9 +1029,12 @@ async function dispatch(msg, env, ctx) {
         instructions:
           "Number My Boat cuts boat registration numbers and boat-name "
           + "lettering in Evansdale, Iowa and ships to all 50 states free. "
-          + "Every tool here is read-only: quote, test and measure freely, "
-          + "but ordering happens on the website. Price through price_order "
-          + "rather than adding figures up. Registration numbers are legally "
+          + "Quote, test and measure freely: nothing here takes money or "
+          + "touches an order, and ordering happens on the website. Three "
+          + "tools write, and only to their own naming session - "
+          + "start_naming_session, vote_on_names and submit_riff_candidates - "
+          + "which is kept for 30 days and joined to nothing. Price through "
+          + "price_order rather than adding figures up. Registration numbers are legally "
           + "required to be plain block characters at least 3 inches tall. "
           + "On how common a name is we have market data, not a registry - "
           + "never tell a customer a name is taken at their marina.",
@@ -951,6 +1054,11 @@ async function dispatch(msg, env, ctx) {
     case "tools/call": {
       const t = BY_NAME.get(params && params.name);
       if (!t) return rpcErr(id, -32602, `no tool named ${params && params.name}`);
+      const bad = validate(t.inputSchema, (params && params.arguments) || {});
+      if (bad) {
+        return rpcOk(id, err(`${t.name}: ${bad}. Nothing was checked - this `
+          + `is not a result, it is a rejected call.`));
+      }
       try {
         return rpcOk(id, await t.run((params && params.arguments) || {},
                                       env, ctx));
@@ -978,7 +1086,11 @@ export async function handleMcp(request, env, ctx) {
       server: SERVER, protocol: PROTOCOL,
       transport: "JSON-RPC 2.0 over HTTP POST",
       tools: TOOLS.map((t) => t.name),
-      note: "All tools are read-only. POST a JSON-RPC request here.",
+      writes: TOOLS.filter((t) => !t.annotations.readOnlyHint)
+        .map((t) => t.name),
+      note: "Nothing here takes money or touches an order. The tools listed "
+        + "under `writes` store naming-session state for 30 days and nothing "
+        + "else. POST a JSON-RPC request here.",
     }, null, 1), { headers: { "content-type": "application/json", ...cors } });
   }
   if (request.method !== "POST") {

@@ -1021,7 +1021,8 @@ if _bank_f.exists():
         fails.append("worker/mcp.js is gone - there is no MCP server")
     else:
         _mcp = _mcpf.read_text()
-        if "handleMcp" not in (ROOT / "worker" / "index.js").read_text():
+        _wi0 = (ROOT / "worker" / "index.js").read_text()
+        if "handleMcp" not in _wi0:
             fails.append("the MCP server is not mounted on the worker")
         # Every tool must declare itself read-only. The server takes no money
         # and writes nothing; the moment a tool does, it needs its own review
@@ -1054,6 +1055,44 @@ if _bank_f.exists():
                 fails.append("%s is listed as a permitted writer but no tool "
                              "declares that name - it was renamed or removed "
                              "and the allowlist was not" % _w)
+        # The validator must be CALLED, not merely present. Removing the one
+        # line in dispatch() that calls it leaves every unit test for
+        # validate() passing and the server wide open again - which is how
+        # check_registration_layout came to answer verdict "ok" to a call it
+        # had not read. Unit tests cover the function; only a gate covers the
+        # wiring.
+        if "validate(t.inputSchema" not in _mcp:
+            fails.append("worker/mcp.js no longer validates tool arguments "
+                         "against inputSchema in dispatch() - a call with a "
+                         "misnamed parameter would be answered rather than "
+                         "rejected")
+        if "export function validate" not in _mcp:
+            fails.append("the MCP argument validator is gone")
+        # Every schema has to be enforceable: a tool that declares no
+        # required fields and no additionalProperties:false cannot be
+        # validated into anything.
+        for _blk in re.finditer(r'name: "(\w+)",\n\s*title:', _mcp):
+            _nm = _blk.group(1)
+            _seg = _mcp[_blk.start():_blk.start() + 7000]
+            _i, _j = _seg.find("inputSchema"), _seg.find("async run")
+            if _i < 0 or _j < _i:
+                continue
+            _sch = _seg[_i:_j]
+            if "additionalProperties: false" not in _sch:
+                fails.append("%s's inputSchema does not set "
+                             "additionalProperties:false, so a hallucinated "
+                             "parameter would be silently ignored" % _nm)
+        # "+/-undefined%" reached a customer through this template.
+        if "error_pct}%" in _mcp and "error_pct != null" not in _mcp:
+            fails.append("the MCP server prints the accuracy figure without "
+                         "checking it exists - fitGate's no-name path has no "
+                         "error_pct and this printed '+/-undefined%'")
+        # The first thing every client reads is `initialize`, and it said
+        # "Every tool here is read-only" for as long as three of them wrote.
+        if "Every tool here is read-only" in _mcp or \
+                "All tools are read-only" in _mcp:
+            fails.append("the MCP server still tells every client that every "
+                         "tool is read-only, and three of them write")
         if "destructiveHint: false" not in _mcp:
             fails.append("MCP tools are missing destructiveHint - OpenAI and "
                          "Anthropic both read the annotations")
@@ -1061,6 +1100,60 @@ if _bank_f.exists():
         if "ctx.priceOf(" not in _mcp:
             fails.append("the MCP server is no longer pricing through "
                          "priceOf() - it has grown its own copy of the price")
+        # AND IT MUST SPEAK THE SAME VOCABULARY. This gate used to check only
+        # that priceOf was CALLED, which it always was - while the slugs the
+        # tool passed it ("numbers", "name", "both") matched nothing in BASE,
+        # fell through priceOf's `?? 19` default, and quoted $19 for a $29
+        # name and a $44 bundle, silently, for every quote at three inches.
+        # Calling the one pricing function with a vocabulary it does not speak
+        # is exactly as wrong as keeping a second copy of the price, and it
+        # fails more quietly. So: every value in the tool's own enum must
+        # resolve to a real row in the price table.
+        _m_enum = re.search(
+            r'kind: \{ type: "string",\s*\n?\s*enum: \[([^\]]*)\]', _mcp)
+        _base = re.search(r"const BASE = \{(.*?)\n\};", _wi0, re.S)
+        _alias = re.search(r"const KIND_ALIAS = \{(.*?)\n\};", _wi0, re.S)
+        if not _m_enum:
+            fails.append("price_order's kind enum could not be read - this "
+                         "gate is the only thing checking that the MCP "
+                         "server and the price table agree on product names")
+        elif not _base or not _alias:
+            fails.append("BASE or KIND_ALIAS is gone from worker/index.js - "
+                         "the price table and its vocabulary live together "
+                         "on purpose")
+        else:
+            _labels = set(re.findall(r'"([^"]+)":', _base.group(1)))
+            _al = dict(re.findall(r'"([^"]+)":\s*"([^"]+)"', _alias.group(1)))
+            for _k in re.findall(r'"([^"]+)"', _m_enum.group(1)):
+                _res = _al.get(_k, _k)
+                if _res not in _labels:
+                    fails.append("price_order offers kind=%r, which resolves "
+                                 "to %r and is not in the price table - it "
+                                 "would be quoted as the cheapest thing we "
+                                 "sell" % (_k, _res))
+            for _k, _v in _al.items():
+                if _v not in _labels:
+                    fails.append("KIND_ALIAS maps %r to %r, which is not a "
+                                 "row in BASE" % (_k, _v))
+            # catalog.json advertises a third set of names. A model reads them
+            # from get_products and then prices what it read.
+            try:
+                _cat = json.loads((OUT / "catalog.json").read_text())
+                for _pr in _cat.get("products", []):
+                    _pid = _pr.get("id")
+                    if _pid and (_al.get(_pid, _pid) not in _labels):
+                        fails.append("get_products advertises the product id "
+                                     "%r and price_order cannot price it - a "
+                                     "model reading the catalog and pricing "
+                                     "what it read gets the wrong number"
+                                     % _pid)
+            except Exception:
+                pass
+        # The strict path exists because the lenient one hid the bug above.
+        if "ctx.priceOf(" in _mcp and ", true)" not in _mcp:
+            fails.append("the MCP server is pricing leniently again - an "
+                         "unknown product would be quoted as the cheapest "
+                         "thing we sell instead of erroring")
         # Scan CODE, not prose. This file explains at length why price_order
         # exists separately from /api/checkout and what a Stripe PaymentIntent
         # costs us - and the first version of this gate failed the build on

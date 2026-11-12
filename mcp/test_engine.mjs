@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 import * as G from "../worker/gates.js";
 import * as E from "../worker/engine.js";
 // The MCP server, for the two pure helpers that read the session row.
-import { killCounts, retiredMechs } from "../worker/mcp.js";
+import { killCounts, retiredMechs, validate } from "../worker/mcp.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 G._setLexicon(zlib.gunzipSync(
@@ -747,6 +747,124 @@ const BANKN = BANK.map((n) => n.name);
     + "- riffs are built out of somebody's wife, dog or hometown");
   check(d.some((x) => x.kind === "mech" && x.key === "lt"),
     "a riff must still teach the ledger about its mechanism");
+}
+
+// --- the argument boundary ----------------------------------------------
+{
+  // FOUND LIVE, and the dangerous kind. dispatch() handed params.arguments
+  // straight to the tool and never read the schema, so a call to
+  // check_registration_layout with the parameter misnamed - `text` instead of
+  // `number` - was accepted, read nothing, and came back verdict "ok",
+  // height_is_legal true. A model would tell a customer their registration
+  // layout is fine having checked nothing at all.
+  const layout = {
+    type: "object",
+    properties: {
+      number: { type: "string", maxLength: 24 },
+      height_in: { type: "number" },
+      transom_in: { type: "number" },
+    },
+    required: ["number"], additionalProperties: false,
+  };
+  check(validate(layout, { text: "IA 1234 AB", state: "IA" }),
+    "the exact live call that slipped through is still accepted");
+  check(/number is required/.test(validate(layout, {}) || ""),
+    "a missing required parameter must say which one: "
+    + validate(layout, {}));
+  check(/no parameter "state"/.test(
+    validate(layout, { number: "IA 1234 AB", state: "IA" }) || ""),
+    "an unknown parameter must be named back, not ignored");
+  check(!validate(layout, { number: "IA 1234 AB" }),
+    "a valid call was rejected: " + validate(layout, { number: "IA 1" }));
+  check(!validate(layout, { number: "IA 1", height_in: 3 }),
+    "an optional number was rejected");
+  check(validate(layout, { number: "IA 1", height_in: "3" }),
+    "a string was accepted where the schema says number - the tool would "
+    + "compare it arithmetically and get it wrong");
+  // An empty string is not an answer to a required field. This is the real
+  // shape of the live bug: args.number was undefined and the tool treated it
+  // as "no number given" rather than as a broken call.
+  check(validate(layout, { number: "" }),
+    "an empty required string was accepted");
+  check(validate(layout, { number: "x".repeat(30) }),
+    "a 30-character registration number was accepted past maxLength 24");
+}
+{
+  // The enum, which is what stands between a model and a wrong price now
+  // that price_order is strict.
+  const price = {
+    type: "object",
+    properties: {
+      kind: { type: "string", enum: ["numbers", "name", "both"] },
+      outline: { type: "boolean" },
+    },
+    required: ["kind"], additionalProperties: false,
+  };
+  check(/one of numbers, name, both/.test(
+    validate(price, { kind: "name-plus-port" }) || ""),
+    "an off-enum product was accepted: "
+    + validate(price, { kind: "name-plus-port" }));
+  check(validate(price, { kind: "name", outline: "yes" }),
+    'outline: "yes" was accepted where the schema says boolean');
+  check(!validate(price, { kind: "both", outline: true }), "a valid quote "
+    + "was rejected");
+}
+{
+  // Nested: the riff candidates array, where a model is most likely to
+  // improvise a field name.
+  const riffs = {
+    type: "object",
+    properties: {
+      session_id: { type: "string", maxLength: 40 },
+      candidates: {
+        type: "array", maxItems: 12,
+        items: {
+          type: "object",
+          properties: { name: { type: "string", maxLength: 40 },
+                        mechanism: { type: "string" },
+                        why: { type: "string", maxLength: 160 } },
+          required: ["name", "mechanism"], additionalProperties: false,
+        },
+      },
+    },
+    required: ["session_id", "candidates"], additionalProperties: false,
+  };
+  check(!validate(riffs, { session_id: "abc",
+    candidates: [{ name: "Deere Diary", mechanism: "hp" }] }),
+    "a valid riff batch was rejected");
+  check(/candidates\[0\]\.mechanism is required/.test(validate(riffs,
+    { session_id: "abc", candidates: [{ name: "Deere Diary" }] }) || ""),
+    "a riff with no mechanism must be named by index");
+  check(/candidates\[1\] has no parameter "joke"/.test(validate(riffs,
+    { session_id: "abc", candidates: [
+      { name: "A", mechanism: "dp" },
+      { name: "B", mechanism: "dp", joke: "a pun" }] }) || ""),
+    "an improvised field inside the array was ignored");
+  check(validate(riffs, { session_id: "abc",
+    candidates: new Array(13).fill({ name: "A", mechanism: "dp" }) }),
+    "thirteen candidates were accepted past maxItems 12");
+  check(validate(riffs, { session_id: "abc", candidates: "Deere Diary" }),
+    "a bare string was accepted where the schema says array");
+}
+{
+  // The interview answers use additionalProperties AS A SCHEMA, not false -
+  // the keys are the customer's own question ids. Both branches have to work.
+  const start = {
+    type: "object",
+    properties: {
+      answers: { type: "object",
+                 additionalProperties: { type: "string", maxLength: 400 } },
+    },
+    additionalProperties: false,
+  };
+  check(!validate(start, { answers: { boat: "pontoon", port: "Clear Lake" } }),
+    "a real interview was rejected");
+  check(validate(start, { answers: { boat: "x".repeat(500) } }),
+    "a 500-character answer was accepted past maxLength 400");
+  check(validate(start, { answers: { boat: 22 } }),
+    "a number was accepted where an interview answer must be text");
+  check(!validate(start, {}), "an empty call to start the interview was "
+    + "rejected - nothing in it is required");
 }
 
 // --- the card a man forwards to his wife ---------------------------------

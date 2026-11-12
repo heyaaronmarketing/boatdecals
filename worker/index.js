@@ -22,6 +22,34 @@ const BASE = {
   "Numbers + name": 44,
   "Something else": 22,
 };
+/**
+ * The other two vocabularies for the same three products, resolved here.
+ *
+ * A REAL BUG, and the spec's hardest rule broken from the inside. BASE is
+ * keyed by the labels the website's own form posts. The MCP server's
+ * price_order takes "numbers" / "name" / "both" and passed them straight into
+ * priceOf, which matched nothing and fell through to `?? 19` - so an
+ * assistant quoted $19 for a boat name ($29) and $19 for the bundle ($44),
+ * silently, for every quote at three inches. get_products advertises a THIRD
+ * set of names, the catalog ids, so a model reading the catalog and then
+ * pricing what it read was guaranteed to miss.
+ *
+ * The lesson is not "add a map". It is that calling the one pricing function
+ * with a vocabulary it does not speak is exactly as wrong as keeping a second
+ * copy of the price, and it fails more quietly. One table, every name any
+ * surface uses, next to the prices themselves - and verify.py now checks the
+ * tool's own enum against it.
+ */
+const KIND_ALIAS = {
+  // MCP price_order
+  "numbers": "Registration numbers",
+  "name": "Boat name",
+  "both": "Both",
+  // catalog.json / get_products ids
+  "registration-numbers": "Registration numbers",
+  "boat-name": "Boat name",
+};
+
 const HEIGHT_ADD = { "3": 0, "4": 4, "5": 8, "6": 13 };
 const UPGRADE_ADD = {
   "Premium 8-year cast vinyl": 8,
@@ -50,8 +78,24 @@ const BASE_MIN = 19, BASE_MAX = 200;
 const BLOCK_FONTS = ["Arial Bold", "Arial Black", "Impact",
   "OCR A Extended", "MS Gothic"];
 
-function priceOf(d) {
-  let n = BASE[d.kind] ?? 19;
+/**
+ * The price. One function, one table, every surface.
+ *
+ * `strict` throws on a product name this table does not know, instead of
+ * quietly pricing it as the cheapest thing we sell. The order path stays
+ * lenient on purpose - this repo's standing judgement is that losing a real
+ * order over a stale cached page is worse than quietly correcting it, and the
+ * order row carries a `mismatch` flag for exactly that. A quote is different:
+ * nothing is lost by erroring, and a wrong number told to a customer by an
+ * assistant is worse than no number. So the MCP server asks for strict.
+ */
+function priceOf(d, strict = false) {
+  const kind = KIND_ALIAS[d.kind] || d.kind;
+  if (strict && !(kind in BASE)) {
+    throw new Error(`no price for ${JSON.stringify(d.kind)} - the products `
+      + `are ${Object.keys(KIND_ALIAS).join(", ")}`);
+  }
+  let n = BASE[kind] ?? 19;
   n += HEIGHT_ADD[String(d.height || "3")] ?? 0;
   // Pipe-delimited: an upgrade label may legitimately contain a comma, and
   // splitting on "," silently dropped those line items (and undercharged).
