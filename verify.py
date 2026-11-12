@@ -133,8 +133,32 @@ else:
         fails.append("PREFIX_STATE drifted between content.py and the worker: %s"
                      % sorted(_d)[:6])
 
-if '"Registration numbers": %d' % PRICE["numbers"] not in wjs:
-    fails.append("worker BASE disagrees with content.PRICE")
+# ALL THREE PRODUCTS, not just the cheapest one. This gate checked only
+# "Registration numbers": 19 - so raising the name price in content.py would
+# have left the site advertising the new figure, the catalog deriving a new
+# bundle price from it, and the worker still charging the old one on the card.
+# The catalog derives every price from this one dict, including the bundle
+# (numbers + name - 4); worker/index.js hardcodes the three labels, so the
+# three have to be checked against the source that computes them.
+_WANT_BASE = {
+    "Registration numbers": PRICE["numbers"],
+    "Boat name": PRICE["name_from"],
+    "Both": PRICE["numbers"] + PRICE["name_from"] - 4,
+    # The retired label older cached pages may still post.
+    "Numbers + name": PRICE["numbers"] + PRICE["name_from"] - 4,
+}
+_mb = re.search(r"const BASE = \{(.*?)\n\};", wjs, re.S)
+if not _mb:
+    fails.append("worker BASE is gone - nothing holds the price")
+else:
+    _have = {k: int(v) for k, v in
+             re.findall(r'"([^"]+)":\s*(\d+)', _mb.group(1))}
+    for _lbl, _want in _WANT_BASE.items():
+        if _have.get(_lbl) != _want:
+            fails.append("worker BASE[%r] is %r and content.PRICE says %d - "
+                         "the site would advertise one price and the card "
+                         "would charge another"
+                         % (_lbl, _have.get(_lbl), _want))
 
 # The radio VALUE is a contract between the form, the worker and every row in
 # D1; the LABEL beside it is free text. Catch a rename of the value that does
