@@ -270,6 +270,76 @@ including one that checks `width()` actually **calls** the table, because the
 first version of that test only checked the table was present and a revert to
 the character-count guess passed it cleanly.
 
+## The MCP server
+
+`worker/mcp.js`, mounted at **`/mcp`** on the site's own worker. JSON-RPC 2.0
+over HTTP POST; a plain GET returns what the server is, for anyone who opens
+the URL in a browser.
+
+Six tools, **every one read-only.** Nothing on this server takes money, writes
+a row or sends mail — ordering stays on the site behind the real checkout, so
+an assistant can quote, test and lay out a name but cannot buy on someone's
+behalf. `verify.py` fails the build if a tool loses its `readOnlyHint`, or if
+the file so much as references `db.prepare` or Stripe in code.
+
+| tool | what it does |
+|---|---|
+| `get_products` | the catalog: products, heights, 8 colours, 10 faces, which are block-legal |
+| `price_order` | the real price, through the **same `priceOf()`** the order form and the card charge use |
+| `test_boat_name` | radio + fit + overuse in one call, the flagship |
+| `check_name_is_new` | novelty against all 1,089 curated names |
+| `measure_lettering` | width in any face at any height, from the real font files |
+| `get_policies` | proof window, shipping, returns, warranty, the 3-inch rule |
+
+It lives on this worker rather than a service of its own precisely so the price
+an assistant quotes comes from the same function as the charge. **Verified:**
+four configurations priced identically through `/mcp`, through `/api/price`,
+and against production — $19, $39, $44, $23.
+
+The `initialize` response carries the honesty limits as instructions, so they
+reach the model and not just the code: price through `price_order`,
+registration numbers are legally 3-inch block characters, and *never tell a
+customer a name is taken at their marina.*
+
+### The architecture decision, stated plainly
+
+The server has to be reachable over HTTPS by Claude's directory and by
+ChatGPT, so it runs on the Worker — JavaScript. The gates' 1,089-name
+validation corpus is Python. Both halves are real and neither can be deleted,
+so the split is deliberate and narrow:
+
+- **Data** has one definition, in `mcp/gates.py`, emitted to
+  `worker/gates-data.js` by `build_gates_js.py`. The rebus tokens, homophones,
+  respelling rules, archaic collisions, overuse tiers and font metrics cannot
+  drift because there is only one of each. A stale emitted file fails the build.
+- **Logic** exists twice, ~150 lines each. That is the real cost, and it is
+  paid for by `mcp/test_equivalence.py`, which runs **both implementations over
+  all 1,089 bank names plus 27 edge fixtures and compares every field** —
+  verdict, dealable, readback, score, every reason string, every width at every
+  height, the overuse tier and its note. Not a spot check.
+- **The lexicon** is 509 KB gzipped and lives in R2, loaded once per isolate,
+  the same proven pattern as the ten fonts.
+
+Two real bugs came straight out of that comparison, neither of which any
+amount of reading would have found:
+
+1. **Python rounds half to even; JavaScript rounds half up.** `round(8.45, 1)`
+   is `8.4` in Python and `8.5` in JS, so the site and the MCP server quoted
+   different widths for "Aloft" in Impact. Both now round half up.
+2. **`"%s" % 36.0` is `"36.0"`; JS gives `"36"`.** The two implementations
+   were emitting different sentences to customers — *about 36.0" wide* versus
+   *about 36" wide*.
+
+### Still to port
+
+`check_registration_layout` and `decode_hull_number` are the last two of the
+spec's pure-port read tools. Both already have working JavaScript — in
+`engine/validate.py` and `engine/tools.py`, shipped to the browser — so the
+work is moving that logic worker-side **and putting it under the same
+equivalence harness**, not writing it fresh. Doing it without the harness would
+be adding two more unguarded duplicate implementations, which is the thing this
+whole arrangement exists to prevent.
+
 ## The ChatGPT submission
 
 `/.well-known/openai-apps-challenge` is live in the worker, served from the
@@ -281,11 +351,8 @@ set it 404s, which is the honest answer: we cannot prove anything yet.
 
 ## Next
 
-1. **The MCP server skeleton** with the pure-port read tools — `get_products`,
-   `configure_order`, `check_registration_layout`, `decode_hull_number`,
-   `get_policies`. These need no naming engine: the catalog, `/api/price`, the
-   gates, `engine/validate.py` and the HIN decoder in `engine/tools.py` are all
-   built. This is what makes the server real and submittable.
+1. **`check_registration_layout` and `decode_hull_number`** — the last two
+   pure-port tools, each under the equivalence harness (see above).
 2. The remaining bank tags — `style_lanes`, `boat_types`, `themes`,
    `overuse_tier` — which the ranker needs but the gates do not.
 3. Design Studio widget, then the tournament.

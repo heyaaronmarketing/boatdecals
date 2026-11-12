@@ -1013,6 +1013,55 @@ if _bank_f.exists():
         fails.append("only %d names are graded dock - the humor_level pass was "
                      "not really done" % _lvls.get("dock", 0))
 
+    # ---- the MCP server --------------------------------------------------
+    # Structural, not behavioural - the behaviour is exercised against a real
+    # worker. What is gated here is the things that must never slip:
+    _mcpf = ROOT / "worker" / "mcp.js"
+    if not _mcpf.exists():
+        fails.append("worker/mcp.js is gone - there is no MCP server")
+    else:
+        _mcp = _mcpf.read_text()
+        if "handleMcp" not in (ROOT / "worker" / "index.js").read_text():
+            fails.append("the MCP server is not mounted on the worker")
+        # Every tool must declare itself read-only. The server takes no money
+        # and writes nothing; the moment a tool does, it needs its own review
+        # and this gate should be the thing that forces it.
+        _ntools = _mcp.count("name: \"")
+        _nread = _mcp.count("readOnlyHint: true")
+        if _nread < 6 or _nread * 2 < _ntools:
+            fails.append("only %d readOnlyHint:true among roughly %d MCP tool "
+                         "entries - every tool on this server must be "
+                         "read-only" % (_nread, _ntools))
+        if "destructiveHint: false" not in _mcp:
+            fails.append("MCP tools are missing destructiveHint - OpenAI and "
+                         "Anthropic both read the annotations")
+        # It must price through the one function, never its own arithmetic.
+        if "ctx.priceOf(" not in _mcp:
+            fails.append("the MCP server is no longer pricing through "
+                         "priceOf() - it has grown its own copy of the price")
+        # Scan CODE, not prose. This file explains at length why price_order
+        # exists separately from /api/checkout and what a Stripe PaymentIntent
+        # costs us - and the first version of this gate failed the build on
+        # its own comment. Strip the comment lines first.
+        _mcp_code = "\n".join(
+            l for l in _mcp.splitlines()
+            if not l.strip().startswith(("//", "*", "/*"))).lower()
+        for _bad in ("/api/checkout", "db.prepare", "resend.com", "stripe"):
+            if _bad in _mcp_code:
+                fails.append("worker/mcp.js references %r - this server is "
+                             "read-only and must not take money, write rows "
+                             "or send mail" % _bad)
+        # The honesty limit has to reach the model, not just the code.
+        if "not a registry" not in _mcp:
+            fails.append("the MCP server no longer tells the model that the "
+                         "overuse data is market data and not a registry")
+        if "33 CFR 173.27" not in _mcp:
+            fails.append("the MCP server no longer states the 3-inch block "
+                         "character rule for registration numbers")
+    if not (OUT / "name-bank.json").exists():
+        fails.append("public/name-bank.json was not built - the MCP novelty "
+                     "check has no bank to compare against")
+
     # ---- the deterministic gates ----------------------------------------
     # mcp/test_gates.py pins the radio, overuse and novelty gates. It runs
     # HERE rather than as a separate command because every one of its cases is
@@ -1027,6 +1076,38 @@ if _bank_f.exists():
     except Exception as _e:
         fails.append("the gate tests could not run at all: %s: %s"
                      % (type(_e).__name__, _e))
+
+    # ---- python vs worker ------------------------------------------------
+    # The MCP server runs on the Worker, so the gates exist in JavaScript too.
+    # Two implementations of the moat is exactly what the one-implementation
+    # rule exists to prevent, so they are compared over every bank name on
+    # every field. If node is missing this reports that rather than passing.
+    _eq_spec = _ilu.spec_from_file_location(
+        "nmb_eq", ROOT / "mcp" / "test_equivalence.py")
+    try:
+        _eq = _ilu.module_from_spec(_eq_spec)
+        _eq_spec.loader.exec_module(_eq)
+        for _f in _eq.run()[:6]:
+            fails.append("gates: %s" % _f)
+    except Exception as _e:
+        fails.append("the python/worker gate comparison could not run: %s: %s"
+                     % (type(_e).__name__, _e))
+
+    # The emitted tables must be current. gates-data.js is derived from
+    # gates.py; a stale copy means the worker is running yesterday's rules.
+    _gd = ROOT / "worker" / "gates-data.js"
+    if not _gd.exists():
+        fails.append("worker/gates-data.js is missing - rebuild it with "
+                     "python3 mcp/build_gates_js.py")
+    else:
+        import subprocess as _sp
+        _before = _gd.read_bytes()
+        _sp.run([sys.executable, str(ROOT / "mcp" / "build_gates_js.py")],
+                capture_output=True)
+        if _gd.read_bytes() != _before:
+            fails.append("worker/gates-data.js was stale - it is generated "
+                         "from mcp/gates.py and had drifted. It has been "
+                         "regenerated; commit it.")
 
     # Sincere names are not a joke mechanism. If one is ever handed to the riff
     # brief as a mechanism to write in, the engine starts producing earnest

@@ -25,6 +25,7 @@ HONESTY LIMITS, enforced in code below:
 import functools
 import gzip
 import json
+import math
 import pathlib
 import re
 import unicodedata
@@ -633,6 +634,27 @@ COMFORT = 0.90
 _MET = None
 
 
+def _r1(x):
+    """Round to one decimal, HALF UP.
+
+    Python's round() is half-to-EVEN: round(8.45, 1) is 8.4 while JavaScript's
+    Math.round(8.45*10)/10 is 8.5. The equivalence test caught this on "Aloft"
+    in Impact - 8.4 here, 8.5 in the worker - which would have shipped as the
+    MCP server and the website quoting different widths for the same name in
+    the same face. Both sides now round half up.
+    """
+    return math.floor(x * 10 + 0.5) / 10
+
+
+def _inch(x):
+    """Format inches the way JavaScript stringifies a number: 36, not 36.0.
+
+    Same reason. Python's "%s" % 36.0 is "36.0" and JS gives "36", so the two
+    implementations were emitting different sentences to customers.
+    """
+    return "%g" % _r1(x)
+
+
 def metrics():
     global _MET
     if _MET is None:
@@ -684,7 +706,7 @@ def fit_gate(name, font="Arial Bold", transom_in=None, heights=HEIGHTS_IN):
         widths, missing = {}, []
         for h in heights:
             w, miss = width_in(name, font, h)
-            widths[h] = round(w, 1)
+            widths[h] = _r1(w)
             missing = miss
     except KeyError as e:
         return {"verdict": "unknown_font", "reasons": [str(e)]}
@@ -706,14 +728,14 @@ def fit_gate(name, font="Arial Bold", transom_in=None, heights=HEIGHTS_IN):
         out["reasons"].append(
             'At %d" tall it finishes about %s" wide, give or take %.1f%%. '
             "Measure the flat run above your waterline before you order."
-            % (max(heights), widths[max(heights)], FIT_ERROR_PCT))
+            % (max(heights), _inch(widths[max(heights)]), FIT_ERROR_PCT))
         return out
 
     usable = transom_in * COMFORT
     fits = {h: widths[h] <= usable for h in heights}
     out["fits"] = fits
     out["transom_in"] = transom_in
-    out["usable_in"] = round(usable, 1)
+    out["usable_in"] = _r1(usable)
 
     ok = [h for h in heights if fits[h]]
     if not ok:
@@ -723,7 +745,7 @@ def fit_gate(name, font="Arial Bold", transom_in=None, heights=HEIGHTS_IN):
             'This one does not fit. Even at %d" tall it runs about %s" wide '
             'and you have %s" of flat run to work with. Shorter name, or we '
             "split it over two lines."
-            % (min(heights), widths[min(heights)], transom_in))
+            % (min(heights), _inch(widths[min(heights)]), _inch(transom_in)))
         return out
 
     best = max(ok)
@@ -732,13 +754,14 @@ def fit_gate(name, font="Arial Bold", transom_in=None, heights=HEIGHTS_IN):
         out["verdict"] = "fits"
         out["reasons"].append(
             'Fits at every height we cut. At %d" tall it is about %s" wide on '
-            'a %s" run.' % (best, widths[best], transom_in))
+            'a %s" run.' % (best, _inch(widths[best]), _inch(transom_in)))
     else:
         out["verdict"] = "height_capped"
         out["reasons"].append(
             'Fits up to %d" tall - about %s" wide. At %d" it would run %s" '
             'and that is more than your %s" of flat run.'
-            % (best, widths[best], best + 1, widths[best + 1], transom_in))
+            % (best, _inch(widths[best]), best + 1,
+               _inch(widths[best + 1]), _inch(transom_in)))
     return out
 
 

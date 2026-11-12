@@ -8,6 +8,7 @@
  */
 
 import { handleOutline } from "./outline.js";
+import { handleMcp } from "./mcp.js";
 import { handleStripeWebhook } from "./stripehook.js";
 import { runProofCycle, handleApprove, handleProofData,
          sendOrderConfirmation } from "./proof.js";
@@ -312,6 +313,19 @@ async function emailShop(env, o) {
 
 const esc = s => String(s).replace(/[&<>"]/g,
   c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+
+// The curated name bank, for the MCP novelty check. Read from the site's own
+// served copy and held per isolate: it is 1,089 names and never changes
+// between deploys, so fetching it once is the whole cost.
+let BANK_NAMES = null;
+async function bankNames(env) {
+  if (BANK_NAMES) return BANK_NAMES;
+  const r = await env.ASSETS.fetch("https://numbermyboat.com/name-bank.json");
+  if (!r.ok) throw new Error("name-bank.json is not being served");
+  BANK_NAMES = (await r.json()).names;
+  return BANK_NAMES;
+}
 
 const json = (o, status = 200, brief = false) => new Response(JSON.stringify(o), {
   status, headers: { "content-type": "application/json; charset=utf-8",
@@ -658,6 +672,15 @@ export default {
       const d = await handleProofData(request, env);
       return json(d, d.ok ? 200 : 404);
     }
+    // The MCP server. One endpoint, JSON-RPC over POST, every tool read-only.
+    // It lives on this worker rather than a service of its own so that the
+    // price an assistant quotes comes from the SAME priceOf() below that the
+    // order form and the card charge use - a separate service would have meant
+    // a second copy of the price, which is the one thing the spec forbids.
+    if (url.pathname === "/mcp" || url.pathname === "/mcp/") {
+      return handleMcp(request, env, { priceOf, bankNames });
+    }
+
     // Domain verification for the ChatGPT Apps SDK submission. OpenAI issues
     // a token and fetches it back from this exact path to prove we control the
     // domain.
