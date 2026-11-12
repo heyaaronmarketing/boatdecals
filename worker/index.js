@@ -327,6 +327,18 @@ async function bankNames(env) {
   return BANK_NAMES;
 }
 
+// The TAGGED bank, for the ranker. name-bank.json is names only, which is all
+// the novelty check needs; the engine needs the lanes, themes, levels and
+// mechanisms too, so it reads the full file. Held per isolate.
+let BANK_ROWS = null;
+async function bankRows(env) {
+  if (BANK_ROWS) return BANK_ROWS;
+  const r = await env.ASSETS.fetch("https://numbermyboat.com/name-bank-full.json");
+  if (!r.ok) throw new Error("name-bank-full.json is not being served");
+  BANK_ROWS = (await r.json()).names;
+  return BANK_ROWS;
+}
+
 const json = (o, status = 200, brief = false) => new Response(JSON.stringify(o), {
   status, headers: { "content-type": "application/json; charset=utf-8",
                      // Geo varies per visitor, so it is private-cacheable only.
@@ -528,6 +540,13 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runProofCycle(env).then((r) =>
       console.log("proof cycle", JSON.stringify(r))));
+    // Naming sessions hold what somebody told us - a trade, a story, who is
+    // aboard. Thirty days, then gone. A retention promise nothing enforces is
+    // not a retention promise, so it runs on the same cron as the proofs.
+    ctx.waitUntil(env.DB.prepare(
+      "DELETE FROM naming_sessions WHERE ts < datetime('now', '-30 days')")
+      .run().then((r) => console.log("sessions purged",
+        (r.meta && r.meta.changes) || 0)));
   },
 
   async fetch(request, env) {
@@ -678,7 +697,7 @@ export default {
     // order form and the card charge use - a separate service would have meant
     // a second copy of the price, which is the one thing the spec forbids.
     if (url.pathname === "/mcp" || url.pathname === "/mcp/") {
-      return handleMcp(request, env, { priceOf, bankNames });
+      return handleMcp(request, env, { priceOf, bankNames, bankRows });
     }
 
     // Domain verification for the ChatGPT Apps SDK submission. OpenAI issues

@@ -77,3 +77,33 @@ ALTER TABLE orders ADD COLUMN ship_line2 TEXT;
 ALTER TABLE orders ADD COLUMN ship_city  TEXT;
 ALTER TABLE orders ADD COLUMN ship_state TEXT;
 ALTER TABLE orders ADD COLUMN ship_zip   TEXT;
+
+-- Naming Engine sessions. Added with the MCP naming engine.
+--
+-- This is the first thing on the site that stores what somebody TOLD us rather
+-- than what they ordered: a trade, a story, who is usually aboard. So it is
+-- deliberately short-lived and deliberately not joined to anything.
+--
+--   * a random id, no account, no email, nothing that identifies a person
+--   * never joined to an order; there is no foreign key and no column for one
+--   * purged after 30 days by the scheduled handler
+--   * harvest_optin defaults to 0, and nothing from a session may be used for
+--     anything public without it (spec section 10)
+--
+-- The privacy policy had to change for this table to exist. It said "when you
+-- send an order we collect what you typed into the form... that is it", which
+-- would have been false the moment this stored a story about somebody's
+-- father-in-law.
+CREATE TABLE IF NOT EXISTS naming_sessions (
+  id            TEXT PRIMARY KEY,
+  ts            TEXT NOT NULL,
+  updated       TEXT NOT NULL,
+  answers       TEXT,                  -- JSON: the interview, as typed
+  profile       TEXT,                  -- JSON: derived, what the ranker reads
+  shown         TEXT,                  -- JSON: names already dealt
+  killed_mechs  TEXT,                  -- JSON: mechanisms the customer rejected
+  kept          TEXT,                  -- JSON: names the customer kept
+  rounds        INTEGER DEFAULT 0,
+  harvest_optin INTEGER DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_ts ON naming_sessions(ts);

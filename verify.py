@@ -1026,12 +1026,28 @@ if _bank_f.exists():
         # Every tool must declare itself read-only. The server takes no money
         # and writes nothing; the moment a tool does, it needs its own review
         # and this gate should be the thing that forces it.
-        _ntools = _mcp.count("name: \"")
-        _nread = _mcp.count("readOnlyHint: true")
-        if _nread < 6 or _nread * 2 < _ntools:
-            fails.append("only %d readOnlyHint:true among roughly %d MCP tool "
-                         "entries - every tool on this server must be "
-                         "read-only" % (_nread, _ntools))
+        # One tool writes session state (start_naming_session). Every other
+        # tool must declare readOnlyHint:true. The exception is named here so
+        # that adding a second writer is a deliberate edit to this gate rather
+        # than something that slips in.
+        _WRITERS = {"start_naming_session"}
+        _declared = re.findall(r'name: "(\w+)",\s*\n\s*title:', _mcp)
+        _ro = len(re.findall(r"readOnlyHint: true", _mcp))
+        _rw = len(re.findall(r"readOnlyHint: false", _mcp))
+        if _declared and len(_declared) != _ro + _rw:
+            fails.append("%d MCP tools declared but only %d carry a "
+                         "readOnlyHint - every tool needs one, both "
+                         "directories read it"
+                         % (len(_declared), _ro + _rw))
+        if _rw != len(_WRITERS):
+            fails.append("%d MCP tools declare readOnlyHint:false but only %s "
+                         "may write. A new writer needs a deliberate change "
+                         "here and a look at the privacy policy."
+                         % (_rw, sorted(_WRITERS)))
+        for _w in _WRITERS:
+            if _w not in _mcp:
+                fails.append("%s is gone but is still listed as the only "
+                             "permitted writer" % _w)
         if "destructiveHint: false" not in _mcp:
             fails.append("MCP tools are missing destructiveHint - OpenAI and "
                          "Anthropic both read the annotations")
@@ -1043,10 +1059,24 @@ if _bank_f.exists():
         # exists separately from /api/checkout and what a Stripe PaymentIntent
         # costs us - and the first version of this gate failed the build on
         # its own comment. Strip the comment lines first.
-        _mcp_code = "\n".join(
+        _mcp_nc = "\n".join(
             l for l in _mcp.splitlines()
-            if not l.strip().startswith(("//", "*", "/*"))).lower()
-        for _bad in ("/api/checkout", "db.prepare", "resend.com", "stripe"):
+            if not l.strip().startswith(("//", "*", "/*")))
+        _mcp_code = _mcp_nc.lower()
+        # The session writer needs DB.prepare, so a flat ban no longer works.
+        # Instead: the only table the MCP server may name is naming_sessions.
+        for _tbl in re.findall(
+                r"(?:INSERT INTO|DELETE FROM|FROM|UPDATE|JOIN)\s+([a-z_]+)",
+                _mcp_nc):
+            if _tbl not in ("naming_sessions",):
+                fails.append("worker/mcp.js reads or writes the %r table - "
+                             "the only table this server may touch is "
+                             "naming_sessions" % _tbl)
+        if "naming_sessions" in _mcp_code and "30 days" not in _mcp:
+            fails.append("the MCP server stores naming sessions but no longer "
+                         "states the 30-day retention it promises in the "
+                         "privacy policy")
+        for _bad in ("/api/checkout", "resend.com", "stripe"):
             if _bad in _mcp_code:
                 fails.append("worker/mcp.js references %r - this server is "
                              "read-only and must not take money, write rows "
@@ -1058,9 +1088,45 @@ if _bank_f.exists():
         if "33 CFR 173.27" not in _mcp:
             fails.append("the MCP server no longer states the 3-inch block "
                          "character rule for registration numbers")
+    _wi = (ROOT / "worker" / "index.js").read_text()
+    if "naming_sessions" in _mcp and "DELETE FROM naming_sessions" not in _wi:
+        fails.append("naming sessions are stored but nothing purges them - a "
+                     "retention promise nothing enforces is not a promise")
+    _pp = (OUT / "privacy" / "index.html")
+    if _pp.exists():
+        _pt = _pp.read_text()
+        if "naming_sessions" in _mcp and "30 days" not in _pt:
+            fails.append("the privacy policy does not mention the naming "
+                         "assistant's 30-day retention, and the site now "
+                         "stores interview answers")
+        if "That is it." in _pt:
+            fails.append("the privacy policy still says order data is all we "
+                         "collect - the naming assistant stores interview "
+                         "answers too")
+    if not (OUT / "name-bank-full.json").exists():
+        fails.append("public/name-bank-full.json was not built - the ranker "
+                     "has no tagged bank to read")
     if not (OUT / "name-bank.json").exists():
         fails.append("public/name-bank.json was not built - the MCP novelty "
                      "check has no bank to compare against")
+
+    # ---- the naming engine -----------------------------------------------
+    # Tested in JavaScript because it only ever runs on the worker - no Python
+    # twin, so nothing to keep in step. The ceiling case is the one that
+    # matters: a name dealt to a man naming the boat his grandchildren ride in.
+    _eng = ROOT / "mcp" / "test_engine.mjs"
+    if not _eng.exists():
+        fails.append("mcp/test_engine.mjs is missing - the ranker is untested")
+    else:
+        _p = subprocess.run(["node", str(_eng)], capture_output=True,
+                            text=True, cwd=str(ROOT))
+        if _p.returncode:
+            for _l in (_p.stdout or "").splitlines():
+                if _l.startswith("FAIL:"):
+                    fails.append("engine: %s" % _l[6:])
+            if not any(f.startswith("engine:") for f in fails):
+                fails.append("the engine tests would not run: %s"
+                             % (_p.stderr or "")[-300:])
 
     # ---- one implementation of the decoders ------------------------------
     # worker/decode.js is run by the MCP server AND inlined into the order

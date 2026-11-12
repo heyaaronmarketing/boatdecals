@@ -6,19 +6,28 @@
  * and the gates are already here. A separate service would have meant a second
  * copy of the price - which is the one thing the spec forbids outright.
  *
- * EVERY TOOL HERE IS READ-ONLY. Nothing in this file takes money, writes a
- * row, or sends mail. Ordering stays on the site behind the real checkout, so
- * an assistant can quote, test and lay out a name but cannot buy on someone's
- * behalf. That is also why `price_order` exists separately from the order
- * endpoint: quoting a price used to mean calling /api/checkout, which mints a
- * Stripe PaymentIntent, and an assistant quoting prices all day would have
- * buried the account in abandoned intents.
+ * NOTHING HERE TAKES MONEY OR TOUCHES AN ORDER. Ordering stays on the site
+ * behind the real checkout, so an assistant can quote, test and lay out a name
+ * but cannot buy on someone's behalf. That is also why `price_order` exists
+ * separately from the order endpoint: quoting a price used to mean calling
+ * /api/checkout, which mints a Stripe PaymentIntent, and an assistant quoting
+ * prices all day would have buried the account in abandoned intents.
+ *
+ * EIGHT TOOLS ARE READ-ONLY. ONE IS NOT, and it is worth being exact rather
+ * than keeping a tidier claim: `start_naming_session` writes a row to
+ * naming_sessions, because the engine has to remember what it has already
+ * dealt and which jokes the customer rejected. It writes session state and
+ * nothing else - no order, no payment, no mail, no column that identifies a
+ * person - and the row is purged after 30 days. The privacy policy was
+ * updated for it. verify.py enforces the split: that tool may write, the other
+ * eight may not, and none of them may reach an order or a card.
  */
 import { radioGate, overuseGate, fitGate, noveltyGate, widthIn,
          loadLexicon } from "./gates.js";
 import { D } from "./gates-data.js";
 // The same file the website runs for these two - see engine/shared_js.py.
 import { checkRegistration, decodeHin, toPlain } from "./decode.js";
+import { INTERVIEW, profileFrom, missingQuestions, dealRound } from "./engine.js";
 
 const PROTOCOL = "2024-11-05";
 const SERVER = { name: "numbermyboat", version: "0.1.0" };
@@ -269,6 +278,136 @@ const TOOLS = [
         serial: r.serial, date_code: r.date_code, format: r.format,
         built: r.built, model_year: r.model_year,
         notes: r.notes.map(toPlain),
+      });
+    },
+  },
+  {
+    name: "start_naming_session",
+    title: "Name a boat properly - interview, then a gated round",
+    description:
+      "Runs the real naming process rather than listing names. Asks what the "
+      + "boat is, who is usually aboard, what kind of name they want and how "
+      + "much flat run they have, then deals a round of up to eight names "
+      + "from a bank of 1,089 curated ones - every one already tested for the "
+      + "radio, measured against their transom, and checked against the names "
+      + "you see at every ramp. Pass the answers you have; it will say what "
+      + "else it needs. Pass the session id back to get another round, and "
+      + "killed_mechanisms to stop it offering the same kind of joke again.",
+    annotations: { title: "Name a boat properly",
+                   readOnlyHint: false,        // writes session state only
+                   destructiveHint: false, idempotentHint: false,
+                   openWorldHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        session_id: { type: "string", maxLength: 40,
+                      description: "Omit to start; pass it back to continue" },
+        answers: {
+          type: "object",
+          description: "Interview answers in the customer's own words. Keys: "
+            + "boat, aboard, vibe, transom, work, story, port. All optional "
+            + "except boat.",
+          additionalProperties: { type: "string", maxLength: 400 },
+        },
+        killed_mechanisms: {
+          type: "array", items: { type: "string" },
+          description: "Short codes of joke mechanisms the customer has "
+            + "rejected - hp, pm, tt, dp, dm, ba, pj, an, lt, md",
+        },
+        font: { type: "string", description: "Defaults to Arial Bold" },
+        size: { type: "number", description: "Names per round, 6-8" },
+      },
+      additionalProperties: false,
+    },
+    async run(args, env, ctx) {
+      await loadLexicon(env);
+      const now = new Date().toISOString();
+      let prior = null;
+      const sid = String(args.session_id || "").slice(0, 40);
+
+      if (sid) {
+        prior = await env.DB.prepare(
+          "SELECT * FROM naming_sessions WHERE id = ?").bind(sid).first();
+        if (!prior) {
+          return err("That naming session has expired or never existed. "
+            + "Sessions are kept for 30 days. Start a new one by leaving "
+            + "session_id out.");
+        }
+      }
+
+      const answers = { ...(prior ? JSON.parse(prior.answers || "{}") : {}),
+                        ...(args.answers || {}) };
+      // Bound what is stored. Nothing here needs an essay, and a long free
+      // text field is the one place a customer might paste something we have
+      // no business keeping.
+      for (const k of Object.keys(answers)) {
+        if (!INTERVIEW.some((q) => q.id === k)) { delete answers[k]; continue; }
+        answers[k] = String(answers[k] || "").slice(0, 400);
+      }
+
+      const profile = profileFrom(answers);
+      const missing = missingQuestions(profile, answers);
+
+      if (!answers.boat) {
+        return txt({
+          session_id: null,
+          next_questions: INTERVIEW.filter((q) => q.required || !answers[q.id])
+            .map((q) => ({ id: q.id, ask: q.ask, why: q.why,
+                           required: !!q.required })),
+          note: "Ask what the boat is first - it decides which names fit. The "
+            + "rest can come as they talk; nothing is dealt until we know who "
+            + "is aboard, because that sets how blue a name may be.",
+        });
+      }
+
+      const bank = await ctx.bankRows(env);
+      const killed = (args.killed_mechanisms || [])
+        .concat(prior ? JSON.parse(prior.killed_mechs || "[]") : []);
+      const shown = prior ? JSON.parse(prior.shown || "[]") : [];
+      const round = dealRound(bank, profile, {
+        size: args.size || 8, exclude: shown, killedMechs: killed,
+        font: args.font || "Arial Bold",
+        seed: (sid || now) + ":" + (prior ? prior.rounds + 1 : 1),
+      });
+
+      const id = sid || crypto.randomUUID().replace(/-/g, "").slice(0, 24);
+      const nextShown = shown.concat(round.names.map((n) => n.name));
+      await env.DB.prepare(
+        `INSERT INTO naming_sessions
+           (id, ts, updated, answers, profile, shown, killed_mechs, kept,
+            rounds, harvest_optin)
+         VALUES (?,?,?,?,?,?,?,?,?,0)
+         ON CONFLICT(id) DO UPDATE SET
+           updated=excluded.updated, answers=excluded.answers,
+           profile=excluded.profile, shown=excluded.shown,
+           killed_mechs=excluded.killed_mechs, rounds=excluded.rounds`
+      ).bind(id, prior ? prior.ts : now, now, JSON.stringify(answers),
+             JSON.stringify(profile), JSON.stringify(nextShown),
+             JSON.stringify([...new Set(killed)]), "[]",
+             (prior ? prior.rounds : 0) + 1).run();
+
+      return txt({
+        session_id: id,
+        round: (prior ? prior.rounds : 0) + 1,
+        names: round.names,
+        still_worth_asking: missing.map((q) => ({ id: q.id, ask: q.ask,
+                                                  why: q.why })),
+        // The engine says what it filtered and why. 1,089 in and 8 out is only
+        // defensible if the other 1,081 can be accounted for.
+        how_this_round_was_built: {
+          names_in_bank: round.considered,
+          passed_every_gate: round.eligible,
+          dealt: round.names.length,
+          set_aside: round.rejected,
+          reading: "radio = unusable on a VHF; level = cruder than who is "
+            + "aboard allows; in_joke = needs a trade we have not been told; "
+            + "fit = will not go on the transom at any height; tier1 = one of "
+            + "the names at every ramp in America",
+        },
+        riff_slots_available: round.riff_slots,
+        honesty: "Every name here is from our own curated bank, already "
+          + "tested. How common a name is comes from market data, not a "
+          + "registry - we cannot tell anyone what is already on their lake.",
       });
     },
   },

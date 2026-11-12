@@ -276,7 +276,7 @@ the character-count guess passed it cleanly.
 over HTTP POST; a plain GET returns what the server is, for anyone who opens
 the URL in a browser.
 
-Eight tools, **every one read-only.** Nothing on this server takes money, writes
+Nine tools. **Eight are read-only; `start_naming_session` writes session state and nothing else.** Nothing on this server takes money, writes
 a row or sends mail — ordering stays on the site behind the real checkout, so
 an assistant can quote, test and lay out a name but cannot buy on someone's
 behalf. `verify.py` fails the build if a tool loses its `readOnlyHint`, or if
@@ -291,6 +291,7 @@ the file so much as references `db.prepare` or Stripe in code.
 | `measure_lettering` | width in any face at any height, from the real font files |
 | `check_registration_layout` | prefix, shape, unissued letters, spacing, legal height, finished width |
 | `decode_hull_number` | builder, serial, build date, model year from a 12-character HIN |
+| `start_naming_session` | the interview, then a gated ranked round (**the only tool that writes**) |
 | `get_policies` | proof window, shipping, returns, warranty, the 3-inch rule |
 
 It lives on this worker rather than a service of its own precisely so the price
@@ -461,9 +462,97 @@ lane may hold fewer than 20 names (you cannot deal a round without repeating),
 the bank's `overuse_tier` must match the gate, and a `sincere` name must never
 sit in a joke lane.
 
+## The naming engine — interview and ranker
+
+`worker/engine.js`, exposed as the MCP tool `start_naming_session`. This is the
+part the gates were built for.
+
+Pure functions of (bank, profile): no model, no randomness beyond an explicit
+seed. A round is **reproducible from its session**, which is the only way a
+complaint about a round can ever be investigated.
+
+### The interview
+
+Seven questions, one required. Every one exists because it *changes what may be
+dealt* — a question that would not change the round is not asked, and each
+carries a `why` that a gate enforces.
+
+The consequential one is **"who is usually aboard?"** It sets the ceiling on how
+blue a name can be, and it **defaults to clean when nobody says.** Defaulting
+the other way puts the cost of the mistake on the customer, and it is his
+transom.
+
+### What the ranker refuses
+
+The spec's one hard rule is that it never returns an unfiltered list. A real
+round, for a man naming a 22-foot pontoon with his grandkids aboard:
+
+```
+bank 1089 -> passed every gate 734 -> dealt 8
+set aside: level 176, in_joke 124, fit 46, tier1 9, radio 0
+```
+
+- **level** — cruder than who is aboard allows
+- **in_joke** — needs a trade the interview has not been told. An in-group
+  joke lands on nobody outside the group, so dealing one to a stranger is not
+  a risk, it is a wasted slot
+- **fit** — will not go on the transom at any height we cut
+- **tier1** — one of the names at every ramp, unless he asked for popular ones
+
+Every round reports that breakdown. 1,089 in and 8 out is only defensible if
+the other 1,081 can be accounted for.
+
+### Three bugs in the first ranker, all of them invisible in a demo
+
+1. **Alphabetical bias.** Ties were broken by name, so rounds came out *Actual
+   In, Airman, Ails Sail, Alder & Oak, Alimony, Amicable, Ask Her* — which
+   looks exactly like a list read off the top of a file, because it was. Ties
+   now break on a seeded hash, still reproducible.
+2. **A round of eight divorce jokes.** The dock lane spans divorce, money and
+   marriage — three separate categories, so the category cap never bound.
+   Capped by **theme** as well as mechanism and category.
+3. **"Mortality Barge" was the top pick for a man with grandkids aboard.** It
+   is clean and genuinely deadpan, so the lane hit scored and the `dark` lane
+   cost nothing. A loud lane the customer did not ask for is now a penalty.
+
+### Sessions, and the privacy work they forced
+
+`naming_sessions` in D1 is the first thing on this site that stores what
+somebody **told** us rather than what they ordered — a trade, a story, who is
+aboard. So:
+
+- a random id, no account, nothing that identifies a person
+- never joined to an order; there is no column for one
+- **purged after 30 days** by the existing cron, because a retention promise
+  nothing enforces is not a promise, and a gate checks the purge still exists
+- `harvest_optin` defaults to 0
+
+**The privacy policy said "we collect what you typed into the order form…
+that is it."** That would have been false the moment a session stored a story
+about somebody's father-in-law. It now has a section on the naming assistant,
+and a gate fails the build if the old sentence comes back.
+
+### One tool is no longer read-only, and the gate says so by name
+
+`start_naming_session` writes session state. Eight tools remain read-only.
+Rather than keep a tidier claim, `verify.py` enforces the exact split: that one
+tool may write, the other eight may not, **the only table the whole server may
+name is `naming_sessions`**, and none of them may reach an order or a card.
+
+Two bugs in those gates, found by trying to break them:
+
+- the table check lowercased the source before matching uppercase SQL, so it
+  never matched `FROM orders` and happily matched the words "from hearing" in a
+  tool description. Case is the discriminator: SQL keywords here are uppercase,
+  prose is not.
+- the first version only counted annotations and would not have noticed a
+  second writer.
+
 ## Next
 
-1. The Design Studio widget, then the tournament — `style_lanes`, `boat_types`, `themes`,
+1. The tournament — rounds of four, keeps and kills, narrowing to a Final 3
+2. Riff briefs and the mechanism ledger — proven-for-lane mechanisms, decay
+3. The reveal and the Design Studio widget — `style_lanes`, `boat_types`, `themes`,
    `overuse_tier` — which the ranker needs but the gates do not.
 3. Design Studio widget, then the tournament.
 3. The MCP server skeleton with the pure-port read tools:
