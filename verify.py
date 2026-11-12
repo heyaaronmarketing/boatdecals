@@ -1030,7 +1030,8 @@ if _bank_f.exists():
         # tool must declare readOnlyHint:true. The exception is named here so
         # that adding a second writer is a deliberate edit to this gate rather
         # than something that slips in.
-        _WRITERS = {"start_naming_session", "vote_on_names"}
+        _WRITERS = {"start_naming_session", "vote_on_names",
+                    "submit_riff_candidates"}
         _declared = re.findall(r'name: "(\w+)",\s*\n\s*title:', _mcp)
         _ro = len(re.findall(r"readOnlyHint: true", _mcp))
         _rw = len(re.findall(r"readOnlyHint: false", _mcp))
@@ -1044,10 +1045,15 @@ if _bank_f.exists():
                          "may write. A new writer needs a deliberate change "
                          "here and a look at the privacy policy."
                          % (_rw, sorted(_WRITERS)))
+        # Against the DECLARED tool names, not a substring of the file. The
+        # first version used `_w not in _mcp` and renaming the tool to
+        # submit_riffs passed clean, because the old name still appeared in
+        # another tool's description. A gate that reads prose is not a gate.
         for _w in _WRITERS:
-            if _w not in _mcp:
-                fails.append("%s is gone but is still listed as the only "
-                             "permitted writer" % _w)
+            if _w not in _declared:
+                fails.append("%s is listed as a permitted writer but no tool "
+                             "declares that name - it was renamed or removed "
+                             "and the allowlist was not" % _w)
         if "destructiveHint: false" not in _mcp:
             fails.append("MCP tools are missing destructiveHint - OpenAI and "
                          "Anthropic both read the annotations")
@@ -1109,6 +1115,74 @@ if _bank_f.exists():
     if not (OUT / "name-bank.json").exists():
         fails.append("public/name-bank.json was not built - the MCP novelty "
                      "check has no bank to compare against")
+
+    # ---- the performance ledger -----------------------------------------
+    # The ledger is the only table on this site that LEARNS, and the only
+    # naming table that outlives the 30-day session purge. Both of those are
+    # fine for exactly one reason - it holds nothing personal - so that is
+    # what is gated here, along with the decay that makes "proven" mean
+    # something this month rather than last year.
+    _sch = (ROOT / "schema.sql").read_text()
+    _eng_src = (ROOT / "worker" / "engine.js").read_text()
+    if "CREATE TABLE IF NOT EXISTS ledger" in _sch:
+        _led = _sch.split("CREATE TABLE IF NOT EXISTS ledger")[1].split(");")[0]
+        for _col in ("session", "answers", "story", "email", "profile",
+                     "order", "ip", "ua"):
+            if _col in _led.lower():
+                fails.append("the ledger table has a %r column - this is the "
+                             "one naming table that outlives the 30-day "
+                             "purge and it may hold nothing but (lane, "
+                             "mechanism, counters)" % _col)
+        if "nothing personal" not in _sch.lower():
+            fails.append("schema.sql no longer records WHY the ledger is "
+                         "allowed to outlive the session purge")
+        # A careless retention sweep that took the ledger with it would
+        # silently delete the learning loop and nothing would ever say so.
+        if "DELETE FROM ledger" in _wi:
+            fails.append("something deletes from the ledger - the counters "
+                         "are aggregate and are meant to survive the session "
+                         "purge; decay is a halving, not a delete")
+        # Riff text must never reach it. mcp.js cannot name the table at all
+        # (the allowlist above), so the remaining risk is engine.js filing a
+        # riff as a name row.
+        if 'it.source !== "riff"' not in _eng_src:
+            fails.append("engine.js no longer keeps riff text out of the "
+                         "ledger - a riff is built out of somebody's wife, "
+                         "dog or hometown and the ledger is permanent")
+        if "w_exposures / 2" not in _wi:
+            fails.append("nothing halves the ledger's window - without the "
+                         "decay a mechanism that stopped landing in October "
+                         "still reads as proven in December")
+        if "w_exposures / 2" in _wi and "getUTCHours() === 0" not in _wi:
+            fails.append("the monthly review is not guarded on the hour, and "
+                         "it runs on an HOURLY cron - it would halve the "
+                         "window twenty-four times in a day")
+        if "/api/mech-review" in _wi:
+            _blk = _wi.split('"/api/mech-review"')[1][:400]
+            if "PROOF_RUN_KEY" not in _blk:
+                fails.append("/api/mech-review is not behind the owner key")
+    # The brief is a set of claims made to a model, which writes them into a
+    # rationale a customer reads. Two of those claims must stay honest.
+    if "COLD" not in _eng_src:
+        fails.append("the riff brief no longer declares a cold ledger - it "
+                     "would present exemplars as evidence when nothing has "
+                     "ever been kept")
+    if "no keep data" not in _eng_src:
+        fails.append("the riff brief no longer says how its exemplars were "
+                     "chosen - claiming they are the highest keep-rate names "
+                     "before anything has been kept is a lie the host model "
+                     "will repeat")
+    for _need, _why in (
+            ("noveltyGate(name, bankNames)",
+             "riffs are no longer novelty-checked, so a model can hand back "
+             "one of our own 1,089 names as its own invention"),
+            ("Math.floor(size / 3)",
+             "the riff cap is gone - riffs are at most a third of a round"),
+            ("nExplore >= exploreCap",
+             "the exploration cap is gone - an unproven mechanism may take "
+             "at most one slot in a round")):
+        if _need not in _eng_src:
+            fails.append(_why)
 
     # ---- the naming engine -----------------------------------------------
     # Tested in JavaScript because it only ever runs on the worker - no Python

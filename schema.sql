@@ -111,3 +111,52 @@ CREATE INDEX IF NOT EXISTS idx_sessions_ts ON naming_sessions(ts);
 -- Tournament state. Added with the reveal.
 ALTER TABLE naming_sessions ADD COLUMN killed_names TEXT;  -- JSON
 ALTER TABLE naming_sessions ADD COLUMN kept_mechs TEXT;    -- JSON: what landed
+
+-- Riffs the host model invented and the server gated, for this session only.
+ALTER TABLE naming_sessions ADD COLUMN riffs TEXT;        -- JSON: survivors
+
+-- ---------------------------------------------------------------------------
+-- The performance ledger. Added with riff briefs.
+--
+-- What has actually been landing, per lane, per joke mechanism - and per bank
+-- name, which is what picks the exemplars a riff brief shows the host model.
+-- This is the only table on the site that learns.
+--
+-- IT HOLDS NOTHING PERSONAL, and that is load-bearing rather than incidental:
+-- it is the one naming table that outlives the 30-day session purge, so it is
+-- (lane, mechanism, three integers) and nothing else. No session id, no free
+-- text, no column that could carry a story somebody told us. Riff TEXT never
+-- reaches it either - a riff is built out of a man's wife, his dog or his
+-- hometown, so a riff accrues to its mechanism's counters and its own words
+-- stay in the session row that gets deleted.
+--
+-- Two sets of counters on purpose. The lifetime columns are the all-time
+-- figure for the monthly review to show. The w_ columns are the window the
+-- proven/unproven decision is actually made on, and the monthly review HALVES
+-- them after it snapshots - an exponential decay with a one-month half-life,
+-- because a lifetime keep-rate barely moves and a mechanism that stopped
+-- landing in October would still read as proven in December.
+CREATE TABLE IF NOT EXISTS ledger (
+  kind         TEXT NOT NULL,          -- 'mech' | 'name'
+  lane         TEXT NOT NULL,          -- style lane the customer asked for, or 'any'
+  key          TEXT NOT NULL,          -- mechanism code, or the bank name
+  exposures    INTEGER DEFAULT 0,
+  keeps        INTEGER DEFAULT 0,
+  kills        INTEGER DEFAULT 0,
+  w_exposures  INTEGER DEFAULT 0,
+  w_keeps      INTEGER DEFAULT 0,
+  w_kills      INTEGER DEFAULT 0,
+  updated      TEXT,
+  PRIMARY KEY (kind, lane, key)
+);
+
+-- Monthly snapshots. The review is a DIFF - what crossed the threshold, what
+-- decayed out - and a diff needs a previous state, so each review writes what
+-- was proven at the moment it ran.
+CREATE TABLE IF NOT EXISTS ledger_review (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts       TEXT NOT NULL,
+  proven   TEXT,      -- JSON: { lane: [mechanism codes] }
+  report   TEXT       -- JSON: the full review output, as the owner saw it
+);
+CREATE INDEX IF NOT EXISTS idx_ledger_review_ts ON ledger_review(ts);

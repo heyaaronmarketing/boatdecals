@@ -375,6 +375,8 @@ function seeded(seed) {
  * opts.size        how many names (6-8 per spec)
  * opts.exclude     names already shown or killed
  * opts.killedMechs mechanisms the customer has rejected this session
+ * opts.riffs       gated riff rows from submit_riff_candidates
+ * opts.proven      mechanisms proven for this lane, from the ledger
  * opts.seed        for reproducibility
  */
 export function dealRound(bank, profile, opts = {}) {
@@ -382,6 +384,22 @@ export function dealRound(bank, profile, opts = {}) {
   const exclude = new Set((opts.exclude || []).map((s) => String(s).toLowerCase()));
   const killed = new Set(opts.killedMechs || []);
   const font = opts.font || "Arial Bold";
+  const riffs = (opts.riffs || []).filter(
+    (r) => r && r.name && !exclude.has(r.name.toLowerCase())
+           && !killed.has(r.mechanism_code));
+  // Riffs are at most a third of a round. The spec's cap, and it is the right
+  // one: a riff is a name nobody has read before it was shown, built in one
+  // pass from a stranger's words, and the rest of the round is 1,089 names
+  // that were read by a human and then measured.
+  const riffCap = Math.min(riffs.length, Math.floor(size / 3));
+  // Exploration: at most ONE slot for a mechanism the ledger has not proven
+  // for this lane - but only once the ledger has proven something, because a
+  // cold ledger has proven nothing and capping the round at one name is not
+  // caution, it is an empty round. This is a deliberate reading of the spec's
+  // "unproven mechanisms are exploration, capped at one slot per round": the
+  // cap binds when there is a proven set to fall back on.
+  const proven = new Set(opts.proven || []);
+  const exploreCap = proven.size ? 1 : Infinity;
 
   const scored = [];
   const rejected = { radio: 0, level: 0, in_joke: 0, fit: 0, tier1: 0,
@@ -412,6 +430,19 @@ export function dealRound(bank, profile, opts = {}) {
     scored.push({ n, radio, fit, score: scoreName(n, profile, radio, fit) });
   }
 
+  // Riffs compete in the same pool rather than being handed a slot. They get
+  // a bonus because they are built out of his own words - the dog, the lake,
+  // the job - and that is material no bank name can have. They do not get a
+  // free pass: a weak riff still loses to a strong bank name, which is the
+  // only thing that keeps the riff slots worth having.
+  for (const r of riffs) {
+    const radio = radioGate(r.name);
+    const fit = profile.transom_in
+      ? fitGate(r.name, font, profile.transom_in) : null;
+    scored.push({ n: r, radio, fit, riff: true,
+                  score: scoreName(r, profile, radio, fit) + 30 });
+  }
+
   // Tie-break on a seeded hash of the name, NOT alphabetically. Sorting ties
   // by name produced rounds that read "Actual In, Airman, Ails Sail, Alder &
   // Oak, Alimony, Amicable, Ask Her" - which looks exactly like a canned list
@@ -428,6 +459,7 @@ export function dealRound(bank, profile, opts = {}) {
   // mechanism and two per category, relaxed only if that cannot fill a round.
   const picked = [];
   const perMech = {}, perCat = {}, perTheme = {};
+  let nRiffs = 0, nExplore = 0;
   for (const pass of [1, 2, 3]) {
     const mechCap = pass === 1 ? 2 : pass === 2 ? 3 : 99;
     const catCap = pass === 1 ? 2 : pass === 2 ? 3 : 99;
@@ -443,9 +475,16 @@ export function dealRound(bank, profile, opts = {}) {
       const m = c.n.mechanism_code || "?";
       const cat = (c.n.categories || ["?"])[0];
       const themes = (c.n.themes || []);
+      // The two spec caps are hard and survive every relaxation pass below.
+      // The diversity caps are mine and may relax to fill a round; these two
+      // may not, which is the difference between a house rule and a rule.
+      if (c.riff && nRiffs >= riffCap) continue;
+      if (!proven.has(m) && nExplore >= exploreCap) continue;
       if ((perMech[m] || 0) >= mechCap) continue;
       if ((perCat[cat] || 0) >= catCap) continue;
       if (themes.some((t) => (perTheme[t] || 0) >= themeCap)) continue;
+      if (c.riff) nRiffs++;
+      if (!proven.has(m)) nExplore++;
       perMech[m] = (perMech[m] || 0) + 1;
       perCat[cat] = (perCat[cat] || 0) + 1;
       for (const t of themes) perTheme[t] = (perTheme[t] || 0) + 1;
@@ -466,15 +505,23 @@ export function dealRound(bank, profile, opts = {}) {
             note: "Give us the flat run and we will tell you if it fits." },
       how_common: overuseGate(c.n.name).tier,
       lanes: c.n.style_lanes, mechanism: c.n.humor_mechanism,
+      // The code as well as the English. The host needs it to pass
+      // killed_mechanisms back, and the ledger needs it to file the vote.
+      mechanism_code: c.n.mechanism_code,
       level: c.n.humor_level,
-      source: "bank",
+      source: c.riff ? "riff" : "bank",
     })),
     // Accountability: 1,089 names in, eight out, and here is where the rest
     // went. Without this the engine is a black box asking to be trusted.
     considered: bank.length,
     eligible: scored.length,
     rejected,
-    riff_slots: Math.floor(size / 3),   // spec: riffs are at most a third
+    // Spec: riffs are at most a third of a round. This is what is LEFT, so
+    // the host knows how many to bother inventing.
+    riff_slots: Math.max(0, Math.floor(size / 3) - nRiffs),
+    riffs_dealt: nRiffs,
+    exploration_slots_used: nExplore,
+    exploration_cap: proven.size ? 1 : null,
     seed: String(opts.seed || "round"),
   };
 }
@@ -687,5 +734,430 @@ export function gateSummary(radio, fit, over) {
     : over.tier === 2 ? "Common, but not worn out"
     : "Not one we see often");
   if (radio.visual_only) out.push("The joke needs to be read, not heard");
+  return out;
+}
+
+
+// ---------------------------------------------------------------------------
+// The performance ledger
+// ---------------------------------------------------------------------------
+//
+// What "proven" means, and why it is a table rather than an opinion.
+//
+// "Be funny" is not a prompt. The bank is 1,089 names that somebody judged
+// funny once, in a room, in advance - which is a hypothesis, not evidence.
+// The ledger is the evidence: every name and every mechanism accrues
+// exposures, keeps and kills from real sessions, and a mechanism is only
+// called proven for a lane once it has been seen enough times to mean
+// something.
+//
+// DECAY IS WHY THERE ARE TWO SETS OF COUNTERS. A lifetime keep-rate barely
+// moves: a mechanism that landed all year and stopped landing in October will
+// still read as proven in December, which is exactly the failure the spec
+// calls out. So the window counters are HALVED at every monthly review after
+// the snapshot is taken - an exponential decay with a one-month half-life.
+// Proven status is computed from the window; the lifetime counters are kept
+// only so the review can show the all-time figure beside the current one.
+//
+// NOTHING IN THIS TABLE IS PERSONAL. A row is (lane, mechanism, three
+// integers). It is never joined to a session, carries no id, no free text and
+// no name a customer typed - which is the only reason it is allowed to
+// outlive the 30-day session purge. Riff text in particular never reaches it:
+// a riff feeds the mechanism's counters and its own words stay in the session
+// row that gets deleted. See `ledgerDeltas`.
+export const LEDGER = {
+  // Spec defaults, owner-tunable. Thirty exposures is roughly four rounds.
+  min_exposures: 30,
+  // A mechanism with thirty exposures and not one keep is not "top half of a
+  // field of one" - it is a mechanism nobody has ever liked. Without this
+  // floor, a single eligible mechanism at a 0% keep-rate is its own median
+  // and gets called proven.
+  min_keep_rate: 0.01,
+  half_life_reviews: 1,
+};
+
+/**
+ * Which lanes a session's evidence is filed under.
+ *
+ * The question the ledger answers is "does this joke land on people who asked
+ * for deadpan", so the key is the lane the CUSTOMER asked for, not the lane
+ * the name happens to sit in. A session with no stated lane still has to go
+ * somewhere, and "any" is also written on every session so there is always a
+ * fallback for a cold lane.
+ */
+export function laneKeys(profile) {
+  const ls = (profile && profile.lanes) || [];
+  return [...new Set([...ls, "any"])];
+}
+
+/**
+ * Proven-for-lane, from ledger rows.
+ *
+ * rows: [{ kind, lane, key, w_exposures, w_keeps, w_kills }]
+ * Returns { proven, exploring, rates, cold } for one lane.
+ */
+export function provenFor(rows, lane, cfg = LEDGER) {
+  const mine = (rows || []).filter(
+    (r) => r.kind === "mech" && r.lane === lane);
+  const rates = {};
+  for (const r of mine) {
+    const exp = r.w_exposures || 0;
+    rates[r.key] = { exposures: exp, keeps: r.w_keeps || 0,
+                     kills: r.w_kills || 0,
+                     rate: exp ? (r.w_keeps || 0) / exp : 0 };
+  }
+  const eligible = Object.entries(rates)
+    .filter(([, v]) => v.exposures >= cfg.min_exposures);
+  if (!eligible.length) {
+    return { proven: [], exploring: Object.keys(rates), rates, cold: true };
+  }
+  // Top half for the lane, by keep-rate. Half the field is proven by
+  // construction, which is the point: proven is relative to what else we
+  // have, not an absolute bar nobody clears.
+  const sorted = eligible.map(([, v]) => v.rate).sort((a, b) => a - b);
+  const mid = sorted.length % 2
+    ? sorted[(sorted.length - 1) / 2]
+    : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
+  const proven = eligible
+    .filter(([, v]) => v.rate >= mid && v.rate >= cfg.min_keep_rate)
+    .map(([k]) => k);
+  const exploring = Object.keys(rates).filter((k) => !proven.includes(k));
+  return { proven, exploring, rates, cold: false, median_keep_rate: mid };
+}
+
+/**
+ * The deltas a round or a vote owes the ledger.
+ *
+ * Returned rather than written here so the engine stays a pure function and
+ * the only SQL in the naming engine lives in one place. `names` are the names
+ * dealt or voted on; each needs its mechanism, which the caller has from the
+ * bank row or the riff row.
+ *
+ * Riff names are counted under kind "mech" only. Their text is deliberately
+ * not filed as a name row: a riff is built out of a customer's dog, his wife
+ * or his hometown, and the ledger is the one table here that outlives the
+ * 30-day purge.
+ */
+export function ledgerDeltas(profile, items, field) {
+  const lanes = laneKeys(profile);
+  const out = [];
+  for (const it of items || []) {
+    const mech = it.mechanism_code || "?";
+    for (const lane of lanes) {
+      out.push({ kind: "mech", lane, key: mech, field, n: 1 });
+    }
+    if (it.source !== "riff" && it.name) {
+      out.push({ kind: "name", lane: "any", key: it.name, field, n: 1 });
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// The riff brief
+// ---------------------------------------------------------------------------
+//
+// The host model never free-associates. It gets a brief: the customer's own
+// raw material, the mechanisms that have actually been landing in his lane,
+// real exemplars of those mechanisms, the house register, and a banned list.
+// Then it invents inside those walls and submits through
+// submit_riff_candidates, where everything is gated exactly like a bank name
+// plus a novelty check.
+//
+// This is the whole reason the server makes zero LLM calls and is still
+// expected to be funnier than a prompt: creativity happens in the host, taste
+// is a table, and the gates are the floor.
+export const HOUSE_STYLE = {
+  register: "Deadpan. The name does not announce that it is a joke, and it "
+    + "never explains itself. If it needs a wink it is not the name.",
+  double_meanings: "Left unexplained. A double meaning the customer has to "
+    + "catch is the one he repeats at the ramp; one that is spelled out is a "
+    + "caption.",
+  furniture: "Faux-official is the house furniture - 'It remains on file.', "
+    + "'(Terms Apply)', 'Pending Review'. Use it dry, never twice in a "
+    + "round.",
+  length: "Short. Two or three words. It has to be said once on a radio and "
+    + "read from another boat.",
+  never: [
+    "meme-speak, hashtags, emoji, leetspeak, anything with a number for a "
+      + "word",
+    "deliberate misspelling for the sake of it - the radio gate will kill it "
+      + "and the customer will be spelling it out for a decade",
+    "explaining the joke in the name",
+    "a name built on a word the customer did not give us",
+  ],
+};
+
+const MEME_SPEAK = [
+  "rizz", "sigma", "based", "no cap", "slaps", "lowkey", "vibes only",
+  "it's giving", "main character", "era", "unalive", "skibidi", "gyat",
+  "fr fr", "ohio", "aura",
+];
+
+/** The customer's own raw material, in his words. Nothing inferred. */
+export function hooks(profile) {
+  const h = {};
+  if (profile.boat_raw) h.boat = profile.boat_raw;
+  if (profile.port) h.port = profile.port;
+  if (profile.work) h.work = profile.work;
+  if (profile.story) h.story = profile.story;
+  if (profile.aboard_raw) h.aboard = profile.aboard_raw;
+  return h;
+}
+
+/**
+ * Exemplars: real instances of a mechanism, best first.
+ *
+ * Best means highest keep-rate once there is keep data, and until then the
+ * cleanest instances we have - a short name that is clear on a radio and is
+ * not one of the names at every ramp. The brief SAYS which of the two it is,
+ * because a brief claiming "these are the highest keep-rate names" when
+ * nothing has ever been kept is lying to the model, and the model will write
+ * it into a rationale.
+ */
+export function exemplarsFor(bank, mechs, rows, want = 5) {
+  const keeps = {};
+  for (const r of (rows || [])) {
+    if (r.kind === "name" && (r.w_exposures || 0) > 0) {
+      keeps[r.key] = (r.w_keeps || 0) / r.w_exposures;
+    }
+  }
+  const haveKeepData = Object.keys(keeps).length > 0;
+  const pool = bank.filter((n) => mechs.includes(n.mechanism_code));
+  pool.sort((a, b) => {
+    const d = (keeps[b.name] || 0) - (keeps[a.name] || 0);
+    if (d) return d;
+    return (a.overuse_tier || 0) - (b.overuse_tier || 0)
+      || (a.char_count || 0) - (b.char_count || 0)
+      || a.name.localeCompare(b.name);
+  });
+  const out = [];
+  const per = {};
+  for (const n of pool) {
+    const m = n.mechanism_code;
+    if ((per[m] || 0) >= 2 && out.length >= mechs.length) continue;
+    per[m] = (per[m] || 0) + 1;
+    out.push({ name: n.name, mechanism: n.humor_mechanism,
+               mechanism_code: m,
+               keep_rate: keeps[n.name] != null
+                 ? Math.round(keeps[n.name] * 100) / 100 : null,
+               note: n.note || null });
+    if (out.length >= want) break;
+  }
+  return { exemplars: out,
+           chosen_by: haveKeepData
+             ? "keep-rate in real sessions"
+             : "no keep data for these yet, so these are the cleanest "
+               + "instances we have: clear on the radio, short, not one of "
+               + "the names at every ramp" };
+}
+
+/**
+ * Assemble the brief.
+ *
+ * state is the session's running tournament state (kept/killed mechanisms).
+ * rows are the ledger rows. slots is how many riffs the next round can take.
+ */
+export function riffBrief(bank, profile, state, rows, slots) {
+  const lane = (profile.lanes || [])[0] || "any";
+  const p = provenFor(rows, lane);
+  // A mechanism the customer killed is out of the brief entirely, even if it
+  // is the best-performing mechanism we have. He has told us about his own
+  // boat; the ledger is about everyone else's.
+  const killed = new Set([...(state.rejected_mechs || []),
+                          ...Object.keys(state.killed_mechs_count || {})
+                            .filter((m) => (state.killed_mechs_count[m] || 0)
+                              >= 2 && !(state.kept_mechs || {})[m])]);
+  const usable = p.proven.filter((m) => !killed.has(m));
+  // One slot, and only one, may try something the ledger has not proven.
+  // Exploration is how the ledger ever learns a new mechanism; more than one
+  // slot and the round stops being the best we have.
+  const explore = p.exploring.filter((m) => !killed.has(m))[0] || null;
+
+  const ex = exemplarsFor(bank, usable.length ? usable : p.exploring.slice(0, 3),
+                          rows);
+  return {
+    how_to_use: "Invent inside this brief and submit with "
+      + "submit_riff_candidates. Everything you send is gated: radio, fit, "
+      + "overuse, crudeness against who is aboard, and a novelty check "
+      + "against all 1,089 bank names. Failures are dropped, not shown. You "
+      + "do not choose the round - the ranker does, from what survives.",
+    lane,
+    slots_in_the_next_round: slots,
+    his_own_words: hooks(profile),
+    ceiling: profile.ceiling,
+    ceiling_means: profile.ceiling === "clean"
+      ? "Clean. Children or his wife are aboard, or he asked for nothing "
+        + "crude. No double meanings that only work if you are thinking of "
+        + "something else."
+      : profile.ceiling === "dock"
+      ? "Dock humor is fine. Jokes at his wife's expense are not."
+      : "He is on his own or with his friends and asked for it.",
+    mechanisms_to_use: usable.map((m) => ({
+      code: m, keep_rate: Math.round((p.rates[m].rate || 0) * 100) / 100,
+      exposures: p.rates[m].exposures,
+      status: "proven for this lane",
+    })),
+    one_slot_for_something_unproven: explore
+      ? { code: explore, status: "exploration - at most one name in the "
+            + "round may use it" }
+      : null,
+    ledger_status: p.cold
+      ? "COLD. No mechanism has the " + LEDGER.min_exposures + " exposures "
+        + "it takes to call it proven in this lane yet, so nothing below is "
+        + "evidence - treat the exemplars as house style and nothing more."
+      : "Proven means at least " + LEDGER.min_exposures + " exposures in "
+        + "this lane and a keep-rate in the top half of the lane, measured "
+        + "on a one-month half-life so a mechanism that stops landing falls "
+        + "out.",
+    exemplars: ex.exemplars,
+    exemplars_chosen_by: ex.chosen_by,
+    house_style: HOUSE_STYLE,
+    do_not_use: {
+      mechanisms_he_killed: [...killed],
+      names_already_shown: (state.shown || []).length,
+      meme_speak: MEME_SPEAK,
+      and: "any Tier-1 name - the ones on a boat at every ramp. The overuse "
+        + "gate will reject them anyway.",
+    },
+    novelty_rule: "A riff that is a near-copy of a bank name is a copy, not "
+      + "creativity, and the novelty gate rejects it. Build on HIS words - "
+      + "the dog, the job, the lake, the story - not on our names.",
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Gating a riff
+// ---------------------------------------------------------------------------
+//
+// A riff arrives as text from a model with no tags, so it gets the same gates
+// a bank name got plus a novelty check, and it gets them here rather than in
+// gates.py because riffs only ever exist on the worker - there is no second
+// implementation to keep in step.
+//
+// WHAT THIS CANNOT DO, said plainly: a word list cannot catch a double
+// meaning. That is what a double meaning is. So the crude screen below is a
+// floor for the overt cases, and the real protection for a man with his
+// grandchildren aboard is that the brief states the ceiling, riffs are capped
+// at a third of a round, and every riff still has to beat bank names that
+// were read by a human before they were banked.
+const CRUDE_STEMS = new RegExp(
+  "\\b(?:fuck\\w*|shit\\w*|piss\\w*|cunt\\w*|cock|dick\\w*|tits?|titty|"
+  + "boob\\w*|arse|ass(?:hole|hat)|bitch\\w*|whore|slut|bastard|wank\\w*|"
+  + "bang(?:ing|er)|horny|nude|naked|strip(?:per|ping)|sex\\w*|orgy|"
+  + "erect\\w*|hooters|blow ?job|hump(?:ing|er)?|screw(?:ing)?|"
+  + "seaman|semen|poop|turd|fart\\w*)\\b", "i");
+
+const MEME_RX = new RegExp("\\b(?:" + MEME_SPEAK.map(
+  (m) => m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/ /g, "\\s+"))
+  .join("|") + ")\\b", "i");
+
+/**
+ * Gate one riff candidate.
+ *
+ * Returns { ok: true, row } or { ok: false, reason }. The reason is for the
+ * log and the owner, never for the customer: a name shown with an apology is
+ * worse than a name never shown.
+ */
+export function gateRiff(cand, profile, bankNames, deps, opts = {}) {
+  const { radioGate, overuseGate, fitGate, noveltyGate } = deps;
+  const name = String((cand && cand.name) || "").trim().replace(/\s+/g, " ");
+  const mech = String((cand && cand.mechanism) || "").trim().toLowerCase();
+
+  if (!name) return { ok: false, name: "", reason: "empty" };
+  if (name.length > 40) {
+    return { ok: false, name, reason: "longer than anything we cut" };
+  }
+  if (!/^[\x20-\x7E\u00C0-\u024F]+$/.test(name)) {
+    return { ok: false, name, reason: "characters the cutter has no path for" };
+  }
+  if (!MECHANISM_PHRASE[mech]) {
+    return { ok: false, name,
+             reason: `unknown mechanism "${mech}" - one of `
+               + Object.keys(MECHANISM_PHRASE).join(", ") };
+  }
+  if (MEME_RX.test(name)) {
+    return { ok: false, name, reason: "meme-speak, which the house style bans "
+             + "and which dates a transom in eighteen months" };
+  }
+  if (profile.ceiling !== "double" && CRUDE_STEMS.test(name)) {
+    return { ok: false, name,
+             reason: "cruder than the room allows - " + profile.ceiling };
+  }
+  const radio = radioGate(name);
+  if (!radio.dealable) {
+    return { ok: false, name,
+             reason: "radio: " + (radio.reasons[0] || "unusable on a radio") };
+  }
+  const over = overuseGate(name);
+  if (over.tier === 1 && !profile.wants_popular) {
+    return { ok: false, name, reason: "a name on a boat at every ramp" };
+  }
+  const nov = noveltyGate(name, bankNames);
+  if (!nov.novel) {
+    return { ok: false, name, reason: nov.reason };
+  }
+  const font = opts.font || "Arial Bold";
+  const fit = profile.transom_in ? fitGate(name, font, profile.transom_in)
+    : null;
+  if (fit && fit.verdict === "too_wide") {
+    return { ok: false, name,
+             reason: "will not fit the transom at any height we cut" };
+  }
+  return {
+    ok: true, name,
+    row: {
+      name, mechanism_code: mech, humor_mechanism: MECHANISM_PHRASE[mech],
+      // A riff has no hand-tagged lane. It is his material in his lane, which
+      // is the only honest thing to say about it.
+      style_lanes: (profile.lanes || []).slice(),
+      themes: [], boat_types: (profile.boat_types || []).slice(),
+      // UNRATED, not "clean", and not the session's ceiling either. Both of
+      // those are claims we cannot make: a model wrote this name one second
+      // ago and nobody has read it. It was screened for overt crudeness
+      // against the ceiling at submission - that is all, and the level says
+      // so rather than borrowing a grade from a name a human graded.
+      // LEVEL_RANK has no entry for it, so it ranks as 0 and passes the
+      // ceiling check it already passed once at submission.
+      humor_level: "unrated",
+      overuse_tier: over.tier, char_count: name.length,
+      categories: ["riff"], source: "riff",
+      note: cand && cand.why ? String(cand.why).slice(0, 160) : null,
+      novelty: nov.similarity,
+    },
+    radio, fit, over, novelty: nov,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// The monthly review
+// ---------------------------------------------------------------------------
+//
+// The ledger is only a learning loop if somebody looks at it, so the review
+// is an output rather than a state of the database: what crossed the
+// threshold this month, what decayed out, and what is still exploring. The
+// diff is against the previous snapshot, which is why snapshots are stored.
+export function monthlyReview(rows, prevByLane, cfg = LEDGER) {
+  const lanes = [...new Set((rows || [])
+    .filter((r) => r.kind === "mech").map((r) => r.lane))].sort();
+  const out = { lanes: {}, crossed: [], decayed: [] };
+  for (const lane of lanes) {
+    const p = provenFor(rows, lane, cfg);
+    const was = new Set((prevByLane || {})[lane] || []);
+    const now = new Set(p.proven);
+    const crossed = [...now].filter((m) => !was.has(m));
+    const decayed = [...was].filter((m) => !now.has(m));
+    out.lanes[lane] = {
+      proven: [...now], exploring: p.exploring, cold: p.cold,
+      crossed, decayed,
+      median_keep_rate: p.median_keep_rate != null
+        ? Math.round(p.median_keep_rate * 1000) / 1000 : null,
+      rates: Object.fromEntries(Object.entries(p.rates).map(([k, v]) => [
+        k, { exposures: v.exposures, keeps: v.keeps, kills: v.kills,
+             keep_rate: Math.round(v.rate * 1000) / 1000 }])),
+    };
+    for (const m of crossed) out.crossed.push(lane + ":" + m);
+    for (const m of decayed) out.decayed.push(lane + ":" + m);
+  }
   return out;
 }

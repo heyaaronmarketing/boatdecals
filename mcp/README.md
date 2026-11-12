@@ -607,20 +607,140 @@ with the name already in it, and a **card to send the family** to vote on.
 Also capped at three clauses. The first version ran to five semicolons, which
 nobody reads as a reason — they read it as output.
 
+## Riff briefs and the performance ledger
+
+The bank is 1,089 names somebody judged funny once, in a room, in advance.
+That is a hypothesis, not evidence. The ledger is the evidence.
+
+### What "proven" means
+
+`ledger` holds `(kind, lane, key, exposures, keeps, kills)` and nothing else —
+`kind` is `mech` or `name`, `lane` is the lane the **customer asked for**,
+because the question is "does this joke land on people who asked for deadpan",
+not "which lane is this name filed in". Every session also files under `any`,
+so a cold lane always has a fallback.
+
+A mechanism is proven for a lane once it has **≥30 exposures** in that lane and
+a **keep-rate in the top half of the lane**. Half the field is proven by
+construction, which is the point: proven is relative to what else we have, not
+an absolute bar nobody clears. One extra floor: a mechanism with thirty
+exposures and zero keeps is not "top half of a field of one", it is a mechanism
+nobody has ever liked, so a keep-rate of zero disqualifies it outright.
+
+### Why there are two sets of counters
+
+A lifetime keep-rate barely moves. A mechanism that landed all year and stopped
+landing in October still reads as proven in December — which is the exact
+failure the spec names. So the `w_` columns are the window the decision is made
+on, and the monthly review **halves them after it snapshots**: an exponential
+decay with a one-month half-life. The lifetime columns survive only so the
+review can show the all-time figure beside the current one.
+
+### It holds nothing personal, and that is load-bearing
+
+The ledger is the only naming table that outlives the 30-day session purge, and
+it is allowed to because a row is a lane, a mechanism and three integers. No
+session id, no free text, nothing a customer typed. **Riff text never reaches
+it**: a riff is built out of a man's wife, his dog or his hometown, so a riff
+accrues to its mechanism's counters and its own words stay in the session row
+that gets deleted. `verify.py` fails the build on a ledger column named
+anything like a person, on a `DELETE FROM ledger`, and on `engine.js` losing
+the line that keeps riff names out.
+
+Its SQL lives in `worker/index.js`, not `worker/mcp.js`, so that the gate on
+the MCP server can keep saying **the only table it names is
+`naming_sessions`** — absolutely, with no list of exceptions. That gate is what
+stands between an assistant and the orders table.
+
+### The brief
+
+The host model never free-associates. Before it riffs it gets:
+
+- **his own words**, verbatim — the boat, the lake, the job, the story
+- **the ceiling**, and what the line actually is ("dock humor is fine, jokes at
+  his wife's expense are not")
+- **the mechanisms that have been landing in his lane**, with their real
+  keep-rates — and *only* proven ones
+- **one slot** for something unproven, named as exploration, because that is
+  how the ledger ever learns a new mechanism
+- **3–5 exemplars** of those mechanisms, and whether they were chosen by
+  keep-rate or, before there is any keep data, as the cleanest instances we
+  have. A brief claiming "these are the highest keep-rate names" when nothing
+  has ever been kept is a lie the host will write into a rationale, so the
+  brief says which it is and `verify.py` fails if that sentence disappears.
+- **the house register** — deadpan, double meanings left unexplained, the
+  faux-official furniture, short enough to say once on a radio
+- **a banned list** — mechanisms he has killed, meme-speak, Tier-1 names
+
+The killed-mechanism subtraction is the whole point of the tournament: the
+ledger knows what lands on strangers, he knows what lands on him, and he wins.
+
+### `submit_riff_candidates`
+
+The only path by which a non-bank name enters a round. Every candidate gets the
+radio gate, the width against his transom, the overuse check, a crude screen
+against the ceiling, and a **novelty check against all 1,089 bank names** —
+a near-copy is a copy, not creativity. Failures are dropped with reasons for
+the log, never shown to the customer with an apology.
+
+Riffs then compete in the same pool as bank names with a bonus, because they
+are built out of material no bank name can have. They do **not** get a free
+slot: a weak riff still loses, which is the only thing that keeps the slots
+worth having. Two hard caps survive every relaxation pass — riffs are at most
+**a third** of a round, and an unproven mechanism takes at most **one** slot.
+
+A riff's `humor_level` is recorded as `unrated`, not `clean` and not the
+session's ceiling. Both would be claims we cannot make about a name a model
+wrote one second ago that nobody has read.
+
+**What this cannot do, said plainly:** a word list cannot catch a double
+meaning — that is what a double meaning is. The crude screen is a floor for
+the overt cases. The real protection for a man with his grandchildren aboard is
+that the brief states the ceiling, riffs are capped at a third of a round, and
+every riff still has to beat names a human read before they were banked.
+
+### The monthly review
+
+`/api/mech-review?k=…` behind the owner key. **Read-only by default** — it
+shows what the review would say without snapshotting or decaying anything,
+because the useful version of this is a page Ryan can open whenever he likes
+and one that quietly halves the ledger on every refresh is a trap.
+`&commit=1` records the month's snapshot and applies the decay; the hourly cron
+does the same on the first of the month, guarded on the hour as well as the day
+— without that guard it would halve the window twenty-four times in a day.
+
+### Seven deliberate breaks, seven caught
+
+Every rule above was tested by removing it:
+
+| Break | Caught by |
+|---|---|
+| exploration cap deleted | a round of eight dealt 4 unproven mechanisms |
+| riff third-of-a-round cap deleted | a round of **four** dealt 2 riffs |
+| brief stops excluding killed mechanisms | the Round 2 brief offered `dp` back |
+| zero-keep floor removed | 40 exposures / 0 keeps called proven |
+| riff text filed in the permanent ledger | the privacy test |
+| novelty gate skipped | a word-for-word bank name passed as invention |
+| top-half median replaced with a pass-everything bar | bottom-half keep-rates called proven |
+
+The riff cap one is worth keeping in mind: the **round of eight did not catch
+it**. All six riffs share the category `riff`, so the diversity cap held them
+to two whether the riff cap existed or not. A third of four is one, so four is
+where the two caps disagree — and that is the case that fails. A test that
+passes with the feature deleted is not a test.
+
+One verify gate was weak the same way: `if _w not in _mcp` let the writer tool
+be renamed to `submit_riffs` and still pass, because the old name appeared in
+another tool's description. It now checks the **declared** tool names. A gate
+that reads prose is not a gate.
+
 ## Next
 
-1. Riff briefs and the mechanism ledger — proven-for-lane mechanisms with
-   decay, and `submit_riff_candidates` behind the novelty gate
-2. The Design Studio widget
-3. The social-harvest queue (spec section 10), which is opt-in and
-   owner-approved and should be built last, carefully — `style_lanes`, `boat_types`, `themes`,
-   `overuse_tier` — which the ranker needs but the gates do not.
-3. Design Studio widget, then the tournament.
-3. The MCP server skeleton with the pure-port read tools:
-   `get_products`, `configure_order`, `check_registration_layout`,
-   `decode_hull_number`, `get_policies`. These need no naming engine and make
-   the server real.
-4. Design Studio widget, then the tournament.
+1. The Design Studio widget (spec §5/§6)
+2. The social-harvest queue (spec §10), which is opt-in and owner-approved and
+   should be built last, carefully
+3. `backronym` still has zero bank examples — either fill the gap with ~20 new
+   names or drop it from the taxonomy
 
 ## Commands
 
@@ -629,5 +749,6 @@ node mcp/extract_bank.mjs    # generator -> data/_bank_js.json
 python3 mcp/build_bank.py    # + funny names + tags -> data/name_bank.json
 python3 mcp/apply_tags.py    # tag coverage report on its own
 python3 engine/build.py      # writes public/catalog.json
-python3 verify.py            # gates, including catalog/worker drift
+node mcp/test_engine.mjs     # the ranker, the brief, the ledger
+python3 verify.py            # every gate
 ```

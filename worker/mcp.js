@@ -13,14 +13,20 @@
  * /api/checkout, which mints a Stripe PaymentIntent, and an assistant quoting
  * prices all day would have buried the account in abandoned intents.
  *
- * EIGHT TOOLS ARE READ-ONLY. ONE IS NOT, and it is worth being exact rather
- * than keeping a tidier claim: `start_naming_session` writes a row to
- * naming_sessions, because the engine has to remember what it has already
- * dealt and which jokes the customer rejected. It writes session state and
- * nothing else - no order, no payment, no mail, no column that identifies a
- * person - and the row is purged after 30 days. The privacy policy was
- * updated for it. verify.py enforces the split: that tool may write, the other
- * eight may not, and none of them may reach an order or a card.
+ * NINE TOOLS ARE READ-ONLY. THREE ARE NOT, and it is worth being exact rather
+ * than keeping a tidier claim: `start_naming_session`, `vote_on_names` and
+ * `submit_riff_candidates` write to naming_sessions, because the engine has to
+ * remember what it has already dealt, which jokes the customer rejected, and
+ * which riffs survived the gates. They write session state and nothing else -
+ * no order, no payment, no mail, no column that identifies a person - and the
+ * row is purged after 30 days. The privacy policy was updated for it.
+ * verify.py enforces the split: those three may write, the other nine may
+ * not, and none of them may reach an order or a card.
+ *
+ * The performance ledger those three feed is aggregate and lives outside this
+ * file on purpose - (lane, mechanism, three integers), no session id, no text
+ * a customer typed. The SQL for it is in worker/index.js so that the gate on
+ * this file can keep saying the only table it names is naming_sessions.
  */
 import { radioGate, overuseGate, fitGate, noveltyGate, widthIn,
          loadLexicon } from "./gates.js";
@@ -28,8 +34,9 @@ import { D } from "./gates-data.js";
 // The same file the website runs for these two - see engine/shared_js.py.
 import { checkRegistration, decodeHin, toPlain } from "./decode.js";
 import { INTERVIEW, profileFrom, missingQuestions, dealRound, applyVote,
-         rationale, gateSummary, bareBoat, ROUND_SIZE,
-         FINALISTS } from "./engine.js";
+         rationale, gateSummary, bareBoat, ROUND_SIZE, FINALISTS,
+         laneKeys, provenFor, ledgerDeltas, riffBrief,
+         gateRiff } from "./engine.js";
 
 const PROTOCOL = "2024-11-05";
 const SERVER = { name: "numbermyboat", version: "0.1.0" };
@@ -42,6 +49,35 @@ async function catalog(env) {
   if (!r.ok) throw new Error("catalog.json is not being served");
   CATALOG = await r.json();
   return CATALOG;
+}
+
+/**
+ * Everything the ledger has to say about one session, in one place.
+ *
+ * Two questions get asked at the same three moments: which mechanisms are
+ * proven for this customer's lane, and what should the brief show. Reading
+ * them together means one query per tool call rather than three.
+ */
+async function ledgerFor(env, ctx, profile) {
+  if (!ctx.ledgerRows) return { rows: [], proven: [] };
+  let rows = [];
+  try {
+    rows = await ctx.ledgerRows(env, laneKeys(profile));
+  } catch (e) {
+    // A cold ledger and a broken ledger must both degrade to "we have no
+    // evidence yet", never to a failed round. The customer is mid-sentence.
+    console.log("ledger read failed", e && e.message);
+    return { rows: [], proven: [] };
+  }
+  const lane = (profile.lanes || [])[0] || "any";
+  return { rows, proven: provenFor(rows, lane).proven, lane };
+}
+
+/** Fire-and-forget accrual. A round must never fail because a counter did. */
+function bump(env, ctx, deltas) {
+  if (!ctx.ledgerBump || !deltas.length) return;
+  ctx.ledgerBump(env, deltas).catch(
+    (e) => console.log("ledger write failed", e && e.message));
 }
 
 const txt = (o) => ({
@@ -366,11 +402,19 @@ const TOOLS = [
       const killed = (args.killed_mechanisms || [])
         .concat(prior ? JSON.parse(prior.killed_mechs || "[]") : []);
       const shown = prior ? JSON.parse(prior.shown || "[]") : [];
+      const riffs = prior ? JSON.parse(prior.riffs || "[]") : [];
+      const led = await ledgerFor(env, ctx, profile);
       const round = dealRound(bank, profile, {
         size: args.size || 8, exclude: shown, killedMechs: killed,
-        font: args.font || "Arial Bold",
+        font: args.font || "Arial Bold", riffs, proven: led.proven,
         seed: (sid || now) + ":" + (prior ? prior.rounds + 1 : 1),
       });
+      // Exposures. Every name dealt is evidence about its mechanism whether
+      // or not the customer ever votes - a name shown and ignored is the
+      // denominator the keep-rate needs.
+      bump(env, ctx, ledgerDeltas(profile, round.names.map(
+        (n) => ({ name: n.name, mechanism_code: n.mechanism_code,
+                  source: n.source })), "exposures"));
 
       const id = sid || crypto.randomUUID().replace(/-/g, "").slice(0, 24);
       const nextShown = shown.concat(round.names.map((n) => n.name));
@@ -407,6 +451,13 @@ const TOOLS = [
             + "the names at every ramp in America",
         },
         riff_slots_available: round.riff_slots,
+        // The brief. This is how the host model is made funny on purpose
+        // rather than by luck: the mechanisms that have actually been landing
+        // in his lane, real exemplars, the house register, and a banned list.
+        riff_brief: round.riff_slots > 0
+          ? riffBrief(bank, profile, { shown: nextShown }, led.rows,
+                      round.riff_slots)
+          : null,
         honesty: "Every name here is from our own curated bank, already "
           + "tested. How common a name is comes from market data, not a "
           + "registry - we cannot tell anyone what is already on their lake.",
@@ -457,15 +508,39 @@ const TOOLS = [
       }, bank, args.kept || [], args.killed || []);
 
       const shown = JSON.parse(prior.shown || "[]");
+      const riffs = JSON.parse(prior.riffs || "[]");
       const rounds = (prior.rounds || 0) + 1;
       const now = new Date().toISOString();
+
+      // Keeps and kills, filed against the mechanism, per lane. This is the
+      // only place in the whole build where a human being's taste becomes
+      // data, so it happens on the vote and nowhere else.
+      const byN = new Map(bank.map((n) => [n.name.toLowerCase(), n]));
+      const asRows = (list) => (list || []).map((x) => {
+        const b = byN.get(String(x).toLowerCase());
+        if (b) return { name: b.name, mechanism_code: b.mechanism_code };
+        const r = riffs.find(
+          (q) => q.name.toLowerCase() === String(x).toLowerCase());
+        return r ? { name: r.name, mechanism_code: r.mechanism_code,
+                     source: "riff" } : null;
+      }).filter(Boolean);
+      const led = await ledgerFor(env, ctx, profile);
+      bump(env, ctx, [
+        ...ledgerDeltas(profile, asRows(args.kept), "keeps"),
+        ...ledgerDeltas(profile, asRows(args.killed), "kills"),
+      ]);
 
       // Rounds of four from here. Eight is a shortlist; four is a decision.
       const round = state.finalists_ready ? null : dealRound(bank, profile, {
         size: ROUND_SIZE, exclude: shown,
-        killedMechs: state.rejected_mechs,
+        killedMechs: state.rejected_mechs, riffs, proven: led.proven,
         seed: sid + ":" + rounds,
       });
+      if (round) {
+        bump(env, ctx, ledgerDeltas(profile, round.names.map(
+          (n) => ({ name: n.name, mechanism_code: n.mechanism_code,
+                    source: n.source })), "exposures"));
+      }
       const nextShown = round
         ? shown.concat(round.names.map((n) => n.name)) : shown;
 
@@ -484,6 +559,14 @@ const TOOLS = [
         killed_so_far: state.killed_names.length,
         finalists_ready: state.finalists_ready,
         next_round: round ? round.names : null,
+        // Round 2's brief, with the mechanisms he has already killed taken
+        // out of it. That subtraction is the whole point of the tournament:
+        // the ledger knows what lands on strangers, he knows what lands on
+        // him, and he wins.
+        riff_brief: round && round.riff_slots > 0
+          ? riffBrief(bank, profile, { ...state, shown: nextShown },
+                      led.rows, round.riff_slots)
+          : null,
         what_the_session_has_learned: {
           landing: state.proven_mechs,
           not_landing: state.rejected_mechs,
@@ -494,6 +577,124 @@ const TOOLS = [
         next_step: state.finalists_ready
           ? `He has kept ${state.kept.length}. Call reveal_finalists.`
           : `Keep going - ${FINALISTS - state.kept.length} more to keep.`,
+      });
+    },
+  },
+  {
+    name: "submit_riff_candidates",
+    title: "Submit your own names for gating",
+    description:
+      "The only way a name you invented can enter a round. Send names built "
+      + "from the customer's own material - his dog, his lake, his trade, the "
+      + "story he told - following the riff_brief the round returned. Every "
+      + "one is gated exactly like a bank name: the radio test, the width "
+      + "against his transom, the overuse check, how crude it is against who "
+      + "is aboard, and a novelty check against all 1,089 bank names so a "
+      + "near-copy is rejected as a copy rather than passed off as "
+      + "creativity. Survivors join the next round at no more than a third of "
+      + "it; the rest are dropped. You do not choose the round - the ranker "
+      + "does, from what survives.",
+    annotations: { title: "Submit riffs for gating",
+                   readOnlyHint: false,       // writes session state only
+                   destructiveHint: false, idempotentHint: false,
+                   openWorldHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        session_id: { type: "string", maxLength: 40 },
+        candidates: {
+          type: "array", maxItems: 12,
+          description: "Up to twelve. Send more than the slots available - "
+            + "most of a good batch will fail a gate, and that is the "
+            + "system working.",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", maxLength: 40,
+                      description: "The name exactly as it would be cut" },
+              mechanism: { type: "string",
+                           description: "How the joke is built: hp homophone, "
+                             + "pm portmanteau, tt title twist, dp deadpan, "
+                             + "dm double meaning, ba backronym, pj in-joke, "
+                             + "an anagram, lt literal truth, md "
+                             + "misdirection, sincere no joke at all" },
+              why: { type: "string", maxLength: 160,
+                     description: "One line on what of his it is built from. "
+                       + "Shown back to him at the reveal, so it must be "
+                       + "true." },
+            },
+            required: ["name", "mechanism"], additionalProperties: false,
+          },
+        },
+        font: { type: "string", description: "Defaults to Arial Bold" },
+      },
+      required: ["session_id", "candidates"], additionalProperties: false,
+    },
+    async run(args, env, ctx) {
+      await loadLexicon(env);
+      const sid = String(args.session_id || "").slice(0, 40);
+      const prior = await env.DB.prepare(
+        "SELECT * FROM naming_sessions WHERE id = ?").bind(sid).first();
+      if (!prior) {
+        return err("That naming session has expired or never existed. "
+          + "Sessions are kept for 30 days.");
+      }
+      const profile = JSON.parse(prior.profile || "{}");
+      const held = JSON.parse(prior.riffs || "[]");
+      const shown = JSON.parse(prior.shown || "[]");
+      const bankN = await ctx.bankNames(env);
+      const seen = new Set([...held.map((r) => r.name.toLowerCase()),
+                            ...shown.map((n) => String(n).toLowerCase())]);
+      const deps = { radioGate, overuseGate, fitGate, noveltyGate };
+
+      const kept = [], dropped = [];
+      for (const cand of (args.candidates || []).slice(0, 12)) {
+        const g = gateRiff(cand, profile, bankN, deps,
+                           { font: args.font || "Arial Bold" });
+        if (!g.ok) { dropped.push({ name: g.name, reason: g.reason }); continue; }
+        if (seen.has(g.name.toLowerCase())) {
+          dropped.push({ name: g.name, reason: "already submitted" });
+          continue;
+        }
+        seen.add(g.name.toLowerCase());
+        kept.push(g);
+      }
+
+      const riffs = held.concat(kept.map((g) => g.row));
+      await env.DB.prepare(
+        "UPDATE naming_sessions SET updated = ?, riffs = ? WHERE id = ?")
+        .bind(new Date().toISOString(), JSON.stringify(riffs.slice(-24)), sid)
+        .run();
+
+      return txt({
+        session_id: sid,
+        survived: kept.map((g) => ({
+          name: g.row.name,
+          mechanism: g.row.humor_mechanism,
+          radio: { verdict: g.radio.verdict, readback: g.radio.readback,
+                   will_spell_it: g.radio.spell_out },
+          fit: g.fit
+            ? { verdict: g.fit.verdict, tallest_that_fits: g.fit.best_height }
+            : { note: "No transom measurement in this session." },
+          how_common: g.over.tier,
+          distance_from_the_nearest_bank_name: g.novelty.similarity,
+        })),
+        dropped: dropped.length,
+        // Per-name reasons, for the log and for the next batch - not for the
+        // customer. A name shown with an apology is worse than a name never
+        // shown, and this endpoint is how the host learns which walls it keeps
+        // walking into.
+        why_they_dropped: dropped,
+        next_step: kept.length
+          ? "Call vote_on_names to deal the next round - the survivors are in "
+            + "the pool now and will be ranked against the bank like anything "
+            + "else. Riffs are capped at a third of a round."
+          : "Nothing survived. Read why_they_dropped, then send another batch "
+            + "built on his own words rather than on our names.",
+        honesty: "We gate what can be measured: the radio, the width, how "
+          + "common it is, how crude the words are. A word list cannot catch "
+          + "a double meaning - that is what a double meaning is - so the "
+          + "ceiling in the brief is yours to honour, not ours to enforce.",
       });
     },
   },
@@ -532,7 +733,13 @@ const TOOLS = [
           + "vote_on_names first.");
       }
       const bank = await ctx.bankRows(env);
-      const byName = new Map(bank.map((n) => [n.name.toLowerCase(), n]));
+      // Riffs that survived the gates and then won a round are finalists like
+      // any other name. Leaving them out of this map meant a customer could
+      // keep three names, one of them built from his own dog, and get a Final
+      // 2 with no explanation of where the third went.
+      const riffs = JSON.parse(prior.riffs || "[]");
+      const byName = new Map([...bank, ...riffs]
+        .map((n) => [n.name.toLowerCase(), n]));
       const font = args.font || "Arial Bold";
       const site = env.SITE_URL || "https://numbermyboat.com";
 

@@ -9,6 +9,7 @@
 
 import { handleOutline } from "./outline.js";
 import { handleMcp } from "./mcp.js";
+import { monthlyReview } from "./engine.js";
 import { handleStripeWebhook } from "./stripehook.js";
 import { runProofCycle, handleApprove, handleProofData,
          sendOrderConfirmation } from "./proof.js";
@@ -339,6 +340,95 @@ async function bankRows(env) {
   return BANK_ROWS;
 }
 
+// ---------------------------------------------------------------------------
+// The performance ledger
+// ---------------------------------------------------------------------------
+//
+// The SQL lives here rather than in the MCP server for one reason worth
+// stating: worker/mcp.js is gated so that the only table it may name is
+// naming_sessions, and that gate is the thing standing between an assistant
+// and the orders table. Keeping the ledger's two statements out here keeps
+// that claim true and absolute instead of true-with-a-list.
+//
+// Nothing in these rows identifies anybody. See schema.sql.
+
+/** Counters for the lanes a session cares about, plus every bank name row. */
+async function ledgerRows(env, lanes) {
+  if (!env.DB) return [];
+  const ls = [...new Set([...(lanes || []), "any"])];
+  const marks = ls.map(() => "?").join(",");
+  const r = await env.DB.prepare(
+    `SELECT kind, lane, key, exposures, keeps, kills,
+            w_exposures, w_keeps, w_kills
+       FROM ledger
+      WHERE (kind = 'mech' AND lane IN (${marks})) OR kind = 'name'`)
+    .bind(...ls).all();
+  return (r.results || []);
+}
+
+/**
+ * Apply deltas from engine.ledgerDeltas. One statement per row, batched.
+ *
+ * Both counter sets move together on the way up; only the review halves the
+ * window set on the way down.
+ */
+async function ledgerBump(env, deltas) {
+  if (!env.DB || !deltas || !deltas.length) return 0;
+  const now = new Date().toISOString();
+  const col = { exposures: ["exposures", "w_exposures"],
+                keeps: ["keeps", "w_keeps"], kills: ["kills", "w_kills"] };
+  const stmts = [];
+  for (const d of deltas) {
+    const c = col[d.field];
+    if (!c) continue;
+    stmts.push(env.DB.prepare(
+      `INSERT INTO ledger (kind, lane, key, ${c[0]}, ${c[1]}, updated)
+            VALUES (?,?,?,?,?,?)
+       ON CONFLICT(kind, lane, key) DO UPDATE SET
+         ${c[0]} = ${c[0]} + excluded.${c[0]},
+         ${c[1]} = ${c[1]} + excluded.${c[1]},
+         updated = excluded.updated`)
+      .bind(d.kind, d.lane, String(d.key).slice(0, 60), d.n, d.n, now));
+  }
+  if (!stmts.length) return 0;
+  await env.DB.batch(stmts);
+  return stmts.length;
+}
+
+/**
+ * The monthly review: snapshot, diff, then decay the window.
+ *
+ * Idempotent-ish by design - running it twice in a month shows an empty diff
+ * the second time and halves the window again, which is why the cron only
+ * fires it on the first of the month and the manual endpoint says so.
+ */
+async function runLedgerReview(env, { decay = true } = {}) {
+  if (!env.DB) return { error: "no database" };
+  const all = await env.DB.prepare(
+    `SELECT kind, lane, key, exposures, keeps, kills,
+            w_exposures, w_keeps, w_kills FROM ledger`).all();
+  const rows = all.results || [];
+  const last = await env.DB.prepare(
+    "SELECT proven FROM ledger_review ORDER BY id DESC LIMIT 1").first();
+  const prev = last ? JSON.parse(last.proven || "{}") : {};
+  const report = monthlyReview(rows, prev);
+  const proven = Object.fromEntries(
+    Object.entries(report.lanes).map(([l, v]) => [l, v.proven]));
+  const now = new Date().toISOString();
+  await env.DB.prepare(
+    "INSERT INTO ledger_review (ts, proven, report) VALUES (?,?,?)")
+    .bind(now, JSON.stringify(proven), JSON.stringify(report)).run();
+  if (decay) {
+    // The half-life. Integer division, so a counter of 1 falls to 0 and a
+    // mechanism nobody has shown in months leaves the ledger's window
+    // entirely rather than lingering at one exposure forever.
+    await env.DB.prepare(
+      `UPDATE ledger SET w_exposures = w_exposures / 2,
+                         w_keeps = w_keeps / 2, w_kills = w_kills / 2`).run();
+  }
+  return { ts: now, decayed_window: decay, ...report };
+}
+
 const json = (o, status = 200, brief = false) => new Response(JSON.stringify(o), {
   status, headers: { "content-type": "application/json; charset=utf-8",
                      // Geo varies per visitor, so it is private-cacheable only.
@@ -547,6 +637,17 @@ export default {
       "DELETE FROM naming_sessions WHERE ts < datetime('now', '-30 days')")
       .run().then((r) => console.log("sessions purged",
         (r.meta && r.meta.changes) || 0)));
+    // The learning loop. Once a month, on the first, in the first hour: what
+    // crossed the proven threshold, what decayed out, and then the window is
+    // halved. Guarded on the hour as well as the day because this cron runs
+    // hourly and a review that ran twenty-four times would halve the window
+    // into nothing in a single day.
+    const d = new Date();
+    if (d.getUTCDate() === 1 && d.getUTCHours() === 0) {
+      ctx.waitUntil(runLedgerReview(env).then((r) =>
+        console.log("ledger review", JSON.stringify(
+          { crossed: r.crossed, decayed: r.decayed }))));
+    }
   },
 
   async fetch(request, env) {
@@ -583,6 +684,33 @@ export default {
     // Runs the cycle on demand. Sends real email, so it is useless without
     // the key and refuses outright if none is configured - an unguarded
     // version of this is a button anybody can press to mail our customers.
+    // The monthly review, for the owner. Read-only by default: it shows what
+    // the review WOULD say without snapshotting or decaying anything, because
+    // the useful version of this is a thing Ryan can open whenever he likes,
+    // and a page that quietly halves the ledger every time he refreshes it is
+    // a trap. `&commit=1` runs the real one.
+    if (url.pathname === "/api/mech-review") {
+      const k = env.PROOF_RUN_KEY;
+      if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
+      if (!env.DB) return json({ error: "no database" }, 503);
+      if (url.searchParams.get("commit") === "1") {
+        return json(await runLedgerReview(env));
+      }
+      const all = await env.DB.prepare(
+        `SELECT kind, lane, key, exposures, keeps, kills,
+                w_exposures, w_keeps, w_kills FROM ledger`).all();
+      const last = await env.DB.prepare(
+        "SELECT ts, proven FROM ledger_review ORDER BY id DESC LIMIT 1")
+        .first();
+      return json({
+        preview: true,
+        note: "Nothing was written and the decay window was not touched. "
+          + "Add &commit=1 to record this as the month's review.",
+        last_review: last ? last.ts : null,
+        ...monthlyReview(all.results || [],
+          last ? JSON.parse(last.proven || "{}") : {}),
+      });
+    }
     if (url.pathname === "/api/proof-run") {
       const key = env.PROOF_RUN_KEY;
       if (!key || url.searchParams.get("k") !== key) return json({ error: "no" }, 404);
@@ -697,7 +825,8 @@ export default {
     // order form and the card charge use - a separate service would have meant
     // a second copy of the price, which is the one thing the spec forbids.
     if (url.pathname === "/mcp" || url.pathname === "/mcp/") {
-      return handleMcp(request, env, { priceOf, bankNames, bankRows });
+      return handleMcp(request, env, { priceOf, bankNames, bankRows,
+                                      ledgerRows, ledgerBump });
     }
 
     // Domain verification for the ChatGPT Apps SDK submission. OpenAI issues

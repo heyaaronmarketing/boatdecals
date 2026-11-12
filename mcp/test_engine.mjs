@@ -411,6 +411,286 @@ const deal = (answers, opts = {}) =>
   }
 }
 
+
+// --- the ledger and the riff brief (spec test 21) -------------------------
+//
+// Every case here is a claim the brief makes to the host model. A brief that
+// says "these mechanisms are proven" when nothing is proven, or that offers
+// back a mechanism the customer just killed, is worse than no brief: the host
+// writes it into a rationale and the customer is told his own taste out loud,
+// wrongly.
+const DEADPAN = { boat: "a 22 foot pontoon", aboard: "my wife and I",
+                  vibe: "deadpan", transom: "48 inches" };
+
+/** Build ledger rows the way the table would hold them. */
+const lrow = (kind, lane, key, exp, keeps, kills = 0) =>
+  ({ kind, lane, key, exposures: exp, keeps, kills,
+     w_exposures: exp, w_keeps: keeps, w_kills: kills });
+
+{
+  // Cold ledger: nothing is proven, and the brief must SAY so rather than
+  // dress up the exemplars as evidence.
+  const p = E.provenFor([], "deadpan");
+  check(p.cold && !p.proven.length, "an empty ledger must be cold");
+  const b = E.riffBrief(BANK, E.profileFrom(DEADPAN), {}, [], 2);
+  check(/COLD/.test(b.ledger_status),
+    "a cold ledger must be declared as cold in the brief, not implied");
+  check(/no keep data/.test(b.exemplars_chosen_by),
+    "with no keep data the brief must not claim its exemplars are the "
+    + "highest keep-rate names: " + b.exemplars_chosen_by);
+}
+{
+  // Thirty exposures and not one keep is not "top half of a field of one".
+  const p = E.provenFor([lrow("mech", "deadpan", "dp", 40, 0)], "deadpan");
+  check(!p.proven.length,
+    "a mechanism with forty exposures and zero keeps was called proven");
+}
+{
+  // The threshold. Twenty-nine exposures is not enough; thirty is.
+  check(!E.provenFor([lrow("mech", "deadpan", "dp", 29, 10)], "deadpan")
+    .proven.length, "29 exposures cleared a 30-exposure threshold");
+  check(E.provenFor([lrow("mech", "deadpan", "dp", 30, 10)], "deadpan")
+    .proven.includes("dp"), "30 exposures did not clear the threshold");
+}
+
+// A warm deadpan lane: dp and lt are landing, hp and md are not.
+const WARM = [
+  lrow("mech", "deadpan", "dp", 120, 30),
+  lrow("mech", "deadpan", "lt", 90, 20),
+  lrow("mech", "deadpan", "hp", 100, 4),
+  lrow("mech", "deadpan", "md", 60, 2),
+  lrow("mech", "deadpan", "pm", 8, 3),      // not enough exposures yet
+];
+{
+  const p = E.provenFor(WARM, "deadpan");
+  check(p.proven.includes("dp") && p.proven.includes("lt"),
+    "the two mechanisms with the best keep-rates were not proven: "
+    + JSON.stringify(p.proven));
+  check(!p.proven.includes("hp") && !p.proven.includes("md"),
+    "a bottom-half keep-rate was called proven: " + JSON.stringify(p.proven));
+  check(p.exploring.includes("pm"),
+    "a mechanism under the exposure threshold must be exploration");
+}
+{
+  // Spec test 21: only proven-for-lane mechanisms, and at least three
+  // exemplars.
+  const b = E.riffBrief(BANK, E.profileFrom(DEADPAN), {}, WARM, 2);
+  const codes = b.mechanisms_to_use.map((m) => m.code);
+  check(codes.length && codes.every((c) => ["dp", "lt"].includes(c)),
+    "the brief offered an unproven mechanism in mechanisms_to_use: "
+    + JSON.stringify(codes));
+  check(b.exemplars.length >= 3,
+    "the brief carried only " + b.exemplars.length + " exemplars; the spec "
+    + "asks for at least three");
+  check(b.exemplars.every((e) => ["dp", "lt"].includes(e.mechanism_code)),
+    "an exemplar does not use a mechanism the brief told the host to use");
+  check(b.one_slot_for_something_unproven
+    && !["dp", "lt"].includes(b.one_slot_for_something_unproven.code),
+    "the brief did not offer its single exploration slot");
+  check(Object.keys(b.his_own_words).length >= 2
+    && b.his_own_words.boat === DEADPAN.boat,
+    "the brief must hand the host the customer's own words, verbatim");
+  // His wife is aboard and he did not ask for anything crude: dock humor is
+  // allowed, jokes at her expense are not, and the brief has to say which.
+  check(b.ceiling === "dock" && /expense/.test(b.ceiling_means),
+    "a brief for a man with his wife aboard must spell out where the line "
+    + "is, got: " + b.ceiling + " / " + b.ceiling_means);
+}
+{
+  // Spec test 21: a mechanism killed in Round 1 is out of the Round 2 brief.
+  const state = E.applyVote({}, BANK,
+    [], BANK.filter((n) => n.mechanism_code === "dp").slice(0, 2)
+          .map((n) => n.name));
+  check(state.rejected_mechs.includes("dp"),
+    "two kills of the same mechanism with no keeps did not retire it");
+  const b = E.riffBrief(BANK, E.profileFrom(DEADPAN), state, WARM, 2);
+  check(!b.mechanisms_to_use.some((m) => m.code === "dp"),
+    "a mechanism the customer killed twice in Round 1 came back in the "
+    + "Round 2 brief, which is the one thing a vote is supposed to prevent");
+  check(b.do_not_use.mechanisms_he_killed.includes("dp"),
+    "the brief must tell the host what he killed, not just omit it");
+  check(!b.exemplars.some((e) => e.mechanism_code === "dp"),
+    "the brief's exemplars are still demonstrating the killed mechanism");
+}
+{
+  // Spec test 21: an unproven mechanism occupies at most one slot in a round.
+  const prof = E.profileFrom(DEADPAN);
+  const r = E.dealRound(BANK, prof,
+    { seed: "explore", size: 8, proven: ["dp", "lt"] });
+  const unproven = r.names.filter(
+    (n) => !["dp", "lt"].includes(n.mechanism_code));
+  check(unproven.length <= 1,
+    "a round dealt " + unproven.length + " names on mechanisms the ledger "
+    + "has not proven; the cap is one: "
+    + unproven.map((n) => n.name + " (" + n.mechanism_code + ")").join(", "));
+  check(r.names.length >= 4,
+    "the exploration cap starved the round down to " + r.names.length);
+  // And with a cold ledger the cap must NOT bind, or every round is one name.
+  const cold = E.dealRound(BANK, prof, { seed: "explore", size: 8 });
+  check(cold.names.length >= 6,
+    "with nothing proven the exploration cap bound anyway and the round came "
+    + "back with " + cold.names.length + " names");
+}
+
+// --- gating a riff --------------------------------------------------------
+const DEPS = { radioGate: G.radioGate, overuseGate: G.overuseGate,
+               fitGate: G.fitGate, noveltyGate: G.noveltyGate };
+const BANKN = BANK.map((n) => n.name);
+{
+  const prof = E.profileFrom(DEADPAN);
+  const g = E.gateRiff({ name: "Deere Diary", mechanism: "hp",
+                         why: "he spent thirty years at the Deere plant" },
+                       prof, BANKN, DEPS);
+  check(g.ok, "a clean two-word riff was rejected: " + g.reason);
+  check(g.row.source === "riff" && g.row.mechanism_code === "hp",
+    "a gated riff must be tagged as a riff");
+  check(g.row.humor_level === "unrated",
+    "a riff must be recorded as unrated - nobody has read it, so calling it "
+    + "clean is a claim we cannot make");
+}
+{
+  // Spec test 21: a near-copy of a bank name is a copy, not creativity.
+  const target = BANK.find((n) => n.name.split(" ").length === 2).name;
+  const g = E.gateRiff({ name: target, mechanism: "dp" },
+                       E.profileFrom(DEADPAN), BANKN, DEPS);
+  check(!g.ok && /bank/i.test(g.reason || ""),
+    "a word-for-word copy of the bank name \"" + target + "\" passed the "
+    + "novelty gate");
+  const near = E.gateRiff({ name: target + "s", mechanism: "dp" },
+                          E.profileFrom(DEADPAN), BANKN, DEPS);
+  check(!near.ok, "a near-copy of \"" + target + "\" passed the novelty gate");
+}
+{
+  // The rebus class. Already dead in the radio gate; it must stay dead when
+  // a model submits it rather than when the bank contains it.
+  const g = E.gateRiff({ name: "Nauti-4-U", mechanism: "hp" },
+                       E.profileFrom(DEADPAN), BANKN, DEPS);
+  check(!g.ok, "\"Nauti-4-U\" was accepted as a riff");
+}
+{
+  const prof = E.profileFrom({ boat: "pontoon", aboard: "my grandkids",
+                               vibe: "deadpan" });
+  // Overt crudeness, under a ceiling of grandchildren. "Ship Happens" would
+  // have proved nothing here - it dies on the novelty gate, because it is
+  // already in the bank as "Ships Happen" - so this is a name the crude
+  // screen is the only thing standing in front of.
+  const g = E.gateRiff({ name: "Nude Awakening", mechanism: "tt" }, prof,
+                       BANKN, DEPS);
+  check(!g.ok && /crude/.test(g.reason || ""),
+    "a crude riff survived a clean ceiling: " + (g.reason || "accepted"));
+  // And the same name is allowed when a man on his own asked for it. The
+  // screen is a ceiling, not a taste.
+  const ok = E.gateRiff({ name: "Nude Awakening", mechanism: "tt" },
+    E.profileFrom({ boat: "bass boat", aboard: "just me",
+                    vibe: "double entendre, dock humor" }), BANKN, DEPS);
+  check(ok.ok, "the crude screen is refusing a man on his own who asked for "
+    + "it, which makes it a taste rather than a ceiling: " + ok.reason);
+}
+{
+  const prof = E.profileFrom(DEADPAN);
+  check(!E.gateRiff({ name: "Lowkey Nauti", mechanism: "dp" }, prof, BANKN,
+                    DEPS).ok, "meme-speak survived the riff gate");
+  check(!E.gateRiff({ name: "Fine", mechanism: "zz" }, prof, BANKN, DEPS).ok,
+    "a riff with an invented mechanism code was accepted");
+  const long = E.gateRiff(
+    { name: "The Boat That My Father In Law Sold Me Twice", mechanism: "lt" },
+    prof, BANKN, DEPS);
+  check(!long.ok, "a 44-character name was accepted for a 48-inch transom");
+}
+{
+  // Riffs are at most a third of a round, and they have to actually get in.
+  const prof = E.profileFrom(DEADPAN);
+  const riffs = ["Deere Diary", "Second Shift", "Pension Plan", "Clocked Out",
+                 "Line Speed", "Union Dues"].map((name) => {
+    const g = E.gateRiff({ name, mechanism: "dp" }, prof, BANKN, DEPS);
+    return g.ok ? g.row : null;
+  }).filter(Boolean);
+  check(riffs.length >= 4, "the riff fixtures do not survive their own "
+    + "gates: only " + riffs.length + " of 6");
+  const r = E.dealRound(BANK, prof, { seed: "riffs", size: 8, riffs });
+  const got = r.names.filter((n) => n.source === "riff");
+  check(got.length <= 2,
+    "a round of eight dealt " + got.length + " riffs; the cap is a third");
+  check(got.length >= 1,
+    "six gated riffs built from his own words and not one reached a round of "
+    + "eight - the bonus is not working");
+  check(r.riff_slots === Math.floor(8 / 3) - got.length,
+    "riff_slots must report what is LEFT so the host knows whether to invent "
+    + "more");
+  // A ROUND OF FOUR, which is what every round after the first actually is.
+  // The round of eight above does not prove the cap on its own: the riffs all
+  // share the category "riff", so the diversity cap holds them to two whether
+  // the riff cap exists or not, and deleting the riff cap changed nothing.
+  // Four is where the two caps disagree - a third of four is one - so this is
+  // the case that fails if the cap is removed.
+  const four = E.dealRound(BANK, prof, { seed: "riffs", size: 4, riffs });
+  const g4 = four.names.filter((n) => n.source === "riff");
+  check(g4.length <= 1,
+    "a round of four dealt " + g4.length + " riffs; a third of four is one: "
+    + g4.map((n) => n.name).join(", "));
+  check(four.names.length === 4,
+    "the riff cap starved a round of four down to " + four.names.length);
+}
+
+// --- the monthly review ---------------------------------------------------
+{
+  // Spec test 21: after simulated keeps and kills, one mechanism crosses the
+  // threshold and one decays out, and both are visible in the review.
+  const before = { deadpan: ["dp", "hp"] };
+  const now = [
+    lrow("mech", "deadpan", "dp", 120, 30),   // still landing
+    lrow("mech", "deadpan", "hp", 120, 2),    // stopped landing
+    lrow("mech", "deadpan", "lt", 60, 18),    // crossed
+  ];
+  const rev = E.monthlyReview(now, before);
+  check(rev.crossed.includes("deadpan:lt"),
+    "a mechanism that crossed the threshold is not in the review: "
+    + JSON.stringify(rev.crossed));
+  check(rev.decayed.includes("deadpan:hp"),
+    "a mechanism whose keep-rate collapsed did not decay out: "
+    + JSON.stringify(rev.decayed));
+  check(rev.lanes.deadpan.rates.hp.keeps === 2
+    && rev.lanes.deadpan.rates.dp.exposures === 120,
+    "the review must show the real counts beside the verdict");
+}
+{
+  // The decay itself. Halving the window is what makes an old win fade, so
+  // check the arithmetic the review relies on rather than trusting it.
+  const stale = [lrow("mech", "deadpan", "dp", 30, 12)];
+  check(E.provenFor(stale, "deadpan").proven.includes("dp"),
+    "a mechanism at the threshold should be proven before any decay");
+  const halved = stale.map((r) => ({ ...r,
+    w_exposures: Math.floor(r.w_exposures / 2),
+    w_keeps: Math.floor(r.w_keeps / 2) }));
+  check(!E.provenFor(halved, "deadpan").proven.includes("dp"),
+    "one month of decay with no new exposures left a mechanism proven on "
+    + "fifteen exposures - the window is not actually decaying");
+}
+{
+  // Where evidence is filed. A session that asked for deadpan files under
+  // deadpan AND under 'any', so a cold lane always has a fallback.
+  const d = E.ledgerDeltas(E.profileFrom(DEADPAN),
+    [{ name: "Halcyon", mechanism_code: "sincere" }], "keeps");
+  const lanes = d.filter((x) => x.kind === "mech").map((x) => x.lane).sort();
+  check(lanes.join(",") === "any,deadpan",
+    "a deadpan session's evidence must file under its lane and 'any', got "
+    + lanes.join(","));
+  check(d.some((x) => x.kind === "name" && x.key === "Halcyon"),
+    "bank names must accrue their own keep-rate - it is what picks exemplars");
+}
+{
+  // The privacy line that makes the ledger allowed to outlive the session
+  // purge: a riff's TEXT never reaches it.
+  const d = E.ledgerDeltas(E.profileFrom(DEADPAN),
+    [{ name: "Marjorie's Mistake", mechanism_code: "lt", source: "riff" }],
+    "keeps");
+  check(!d.some((x) => x.kind === "name"),
+    "a riff's text was filed in the ledger, which outlives the 30-day purge "
+    + "- riffs are built out of somebody's wife, dog or hometown");
+  check(d.some((x) => x.kind === "mech" && x.key === "lt"),
+    "a riff must still teach the ledger about its mechanism");
+}
+
 for (const f of fails) console.log("FAIL: " + f);
 if (fails.length) {
   console.log("\n" + fails.length + " engine test(s) failed");
