@@ -878,6 +878,88 @@ if "COALESCE(ship_line1,'')=''" not in _hook0:
     fails.append("the webhook would overwrite a validated checkout address "
                  "with whatever was later typed into Stripe")
 
+# ---- the catalog --------------------------------------------------------
+# /catalog.json is what the MCP server, the product feeds and any assistant
+# read. If it drifts from the worker's own pricing, a chat assistant quotes
+# one number while the wizard charges another, and the shop is arguing with a
+# customer holding a screenshot. So the catalog is checked against the
+# worker's tables, not merely against itself.
+_cat_f = OUT / "catalog.json"
+if not _cat_f.exists():
+    fails.append("catalog.json was not built - the MCP server and the feeds "
+                 "have no catalog to read")
+else:
+    _cat = json.loads(_cat_f.read_text())
+    _wj5 = (ROOT / "worker" / "index.js").read_text()
+
+    def _worker_num(name):
+        m = re.search(r'"%s":\s*(\d+)' % re.escape(name), _wj5)
+        return int(m.group(1)) if m else None
+
+    for _p in _cat["products"]:
+        _want = {"registration-numbers": "Registration numbers",
+                 "boat-name": "Boat name", "both": "Both"}[_p["id"]]
+        _got = _worker_num(_want)
+        if _got != _p["from"]:
+            fails.append("catalog says %s is $%s but the worker charges $%s"
+                         % (_p["id"], _p["from"], _got))
+
+    for _h in _cat["options"]["heights_in"]:
+        _got = _worker_num(_h["in"])
+        if _got != _h["add"]:
+            fails.append('catalog says %s" adds $%s, worker adds $%s'
+                         % (_h["in"], _h["add"], _got))
+
+    _m = re.search(r"const OUTLINE_ADD = (\d+)", _wj5)
+    if not _m or int(_m.group(1)) != _cat["options"]["outline"]["add"]:
+        fails.append("catalog outline price disagrees with the worker")
+
+    # The catalog must describe the SAME options the order form offers, or an
+    # assistant offers a color or a font the customer cannot actually buy.
+    for _c in _cat["options"]["colors"]:
+        if 'value="%s"' % _c["name"] not in design and _c["name"] not in design:
+            fails.append("catalog offers the color %s but the order form does "
+                         "not" % _c["name"])
+    from content import FONTS as _FONTS
+    if len(_cat["options"]["fonts"]) != len(_FONTS):
+        fails.append("catalog lists %d fonts, the site has %d"
+                     % (len(_cat["options"]["fonts"]), len(_FONTS)))
+    # Registration numbers are block-only by law; the catalog has to say which
+    # faces qualify or the assistant will offer Snap ITC for a reg number.
+    _blk = [f["name"] for f in _cat["options"]["fonts"] if f["block_legal"]]
+    _site_blk = [f[0] for f in _FONTS if f[3]]
+    if sorted(_blk) != sorted(_site_blk):
+        fails.append("catalog block-legal fonts %s != site %s"
+                     % (sorted(_blk), sorted(_site_blk)))
+
+    if _cat["shipping"]["us"] != 0:
+        fails.append("catalog no longer says US shipping is free")
+    if _cat["fulfillment"]["proof_hours"] != 12:
+        fails.append("catalog proof window is not 12 hours")
+
+# The pricing authority must exist, or the catalog points callers at a 404.
+if '/api/price' not in (ROOT / "worker" / "index.js").read_text():
+    fails.append("/api/price is gone - the catalog names it as the pricing "
+                 "authority and the MCP server prices through it")
+
+# ---- the naming engine's bank -------------------------------------------
+# Derived from the site's own two name sources. If the extractor silently
+# produces a short bank, the engine starts dealing thin rounds and nobody
+# notices until sessions stop converting.
+_bank_f = ROOT / "mcp" / "data" / "name_bank.json"
+if _bank_f.exists():
+    _bank = json.loads(_bank_f.read_text())
+    if _bank["name_count"] < 1000:
+        fails.append("name bank has only %d names - the extractor is losing "
+                     "the bank" % _bank["name_count"])
+    _dupes = len(_bank["names"]) - len({n["name"].lower() for n in _bank["names"]})
+    if _dupes:
+        fails.append("name bank has %d duplicate names" % _dupes)
+    for _n in _bank["names"][:50]:
+        if not _n["categories"]:
+            fails.append("bank name %r has no category" % _n["name"])
+            break
+
 # ---- analytics ----------------------------------------------------------
 # GA4 on every public page and on no internal one. A tag that silently stops
 # being emitted looks exactly like a traffic collapse in the reports, and a

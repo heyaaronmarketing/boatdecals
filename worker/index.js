@@ -658,6 +658,39 @@ export default {
       const d = await handleProofData(request, env);
       return json(d, d.ok ? 200 : 404);
     }
+    // The pricing authority. /catalog.json says what can be ordered; this
+    // says what it costs, through the SAME priceOf() the order form and the
+    // Stripe intent already use. The MCP server quotes from here rather than
+    // re-deriving, because a chat assistant quoting $19 while the wizard
+    // charges $23 is an argument with a customer holding a screenshot.
+    //
+    // Read-only and public: it takes no money and stores nothing. Same shape
+    // of body as /api/checkout so the two cannot drift apart in use.
+    if (url.pathname === "/api/price") {
+      let d = {};
+      if (request.method === "POST") {
+        try { d = await request.json(); } catch { return json({ error: "bad request" }, 400); }
+      } else {
+        d = Object.fromEntries(url.searchParams);
+      }
+      const o = d.order || d;
+      const amount = priceOf(o);
+      return json({
+        ok: true,
+        amount,
+        currency: "usd",
+        shipping: 0,
+        // Echoed back so a caller can see what was actually priced rather
+        // than what it thought it sent - the undercharge bug that shipped in
+        // November was exactly this, an empty object pricing as the base.
+        priced: {
+          kind: o.kind || "Registration numbers",
+          height: String(o.height || "3"),
+          outline: !!(o.outline || o.finish === "outline"),
+          upgrades: String(o.upgrades || ""),
+        },
+      });
+    }
     if (url.pathname === "/api/health") {
       return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
                     shop_to: !!env.ORDER_TO,
