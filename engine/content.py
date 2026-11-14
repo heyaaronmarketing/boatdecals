@@ -133,6 +133,31 @@ PRICE = {
 # or stops matching. Submit with: python3 mcp/indexnow.py
 INDEXNOW_KEY = "26928a3ecc7144db8956fa776b142f7e"
 
+# ------------------------------------------------------------- AI crawlers
+# Every answer engine that publishes a user-agent, named explicitly in
+# robots.txt. The list is long on purpose; see the comment where it is
+# written out in engine/build.py.
+AI_CRAWLERS = [
+    # OpenAI: training, live-fetch-on-behalf-of-a-user, and search index
+    "GPTBot", "ChatGPT-User", "OAI-SearchBot",
+    # Anthropic. Claude-Web and anthropic-ai are retired names kept because
+    # a stale crawler config somewhere may still send them.
+    "ClaudeBot", "Claude-SearchBot", "Claude-Web", "anthropic-ai",
+    # Perplexity: index, and fetch-for-this-answer
+    "PerplexityBot", "Perplexity-User",
+    # Google's AI surfaces are opt-out via these, NOT via Googlebot
+    "Google-Extended", "GoogleOther",
+    "Applebot-Extended",
+    "meta-externalagent", "FacebookBot",
+    "Amazonbot", "cohere-ai", "MistralAI-User", "Diffbot",
+    # Common Crawl feeds a lot of training sets and some retrieval
+    "CCBot",
+    # ByteDance. Noisy, but it feeds Doubao's answers.
+    "Bytespider",
+    # Not an AI engine; here so the one explicit list covers search too.
+    "Bingbot",
+]
+
 # Derived, so no second copy of the arithmetic exists anywhere.
 # Entry bundle: 3-inch numbers plus the smallest name band, less the bundle
 # discount. 28 + 38 - 10 = 56.

@@ -887,6 +887,36 @@ export default {
                     pay_mode: env.STRIPE_SECRET_KEY ? "stripe" : "sandbox" });
     }
 
+    // THE TRAILING-SLASH 307, which this site had on every bare-path URL.
+    //
+    // Workers Static Assets answers GET /pricing with a 307 to /pricing/.
+    // A 307 is "temporary - do not consolidate", so Google indexes
+    // /pricing and /pricing/ as two URLs and splits the ranking signals
+    // between them. Every inbound link written without the slash - and
+    // people write them without the slash - pays that tax.
+    //
+    // Measured on production before this went in:
+    //   GET /pricing                                307 -> /pricing/
+    //   GET /boat-lettering                         307 -> /boat-lettering/
+    //   GET /guides/boat-registration-number-rules  307 -> .../rules/
+    //
+    // A 301 says the same thing permanently and Google reconsolidates
+    // within a few weeks of re-crawling. Nothing else changes: the
+    // destination was already correct, only its permanence was wrong.
+    //
+    // Scoped narrowly. GET and HEAD only, because redirecting a POST
+    // loses its body. Nothing already ending in "/". Nothing whose last
+    // segment contains a dot, which is how a file is told from a page -
+    // /sitemap.xml, /robots.txt, /catalog.json, the IndexNow key file and
+    // every asset must be served, not redirected. The API routes and /mcp
+    // have already returned long before this line.
+    if ((request.method === "GET" || request.method === "HEAD")
+        && !url.pathname.endsWith("/")
+        && !url.pathname.slice(url.pathname.lastIndexOf("/")).includes(".")) {
+      return Response.redirect(
+        url.origin + url.pathname + "/" + url.search, 301);
+    }
+
     const res = await env.ASSETS.fetch(request);
     // Static HTML is cheap to regenerate and we deploy often; keep it short so a
     // price change is not stuck in a CDN for a day.

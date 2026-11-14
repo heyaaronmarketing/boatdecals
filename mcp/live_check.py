@@ -236,6 +236,24 @@ def raw(method, path="/mcp", headers=None, body=None):
         return e.code, e.read().decode()
 
 
+# The trailing-slash redirect, against production, because a structural gate
+# in verify.py can only prove the code is there - not that Cloudflare is
+# serving it. Workers Static Assets answers a bare path with a 307 by default,
+# and a 307 tells Google not to consolidate the two URLs.
+for _p in ("/pricing", "/boat-lettering", "/guides/boat-registration-number-rules"):
+    _st, _ = raw("GET", _p)
+    check(_st == 301,
+          "GET %s returned %s, not 301 - /pricing and /pricing/ would be "
+          "indexed as two URLs with the ranking split between them"
+          % (_p, _st))
+# And the exemptions, which matter more than the redirect: these must be
+# SERVED, not redirected into a directory that does not exist.
+for _p in ("/robots.txt", "/sitemap.xml", "/catalog.json", "/llms.txt"):
+    _st, _ = raw("GET", _p)
+    check(_st == 200, "GET %s returned %s - the redirect is eating files"
+          % (_p, _st))
+print("trailing slash: 301, and files still served")
+
 # GET and DELETE must be refused: this is a Streamable HTTP endpoint, there is
 # no stream to open and no session to delete. GET used to answer 200 with a
 # friendly JSON blob, which is neither a stream nor a refusal.

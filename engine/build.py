@@ -4,7 +4,7 @@
 import json, os, pathlib, re, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
-                     INDEXNOW_KEY,
+                     INDEXNOW_KEY, AI_CRAWLERS,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
                      LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href, STRIPE_PK,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL,
@@ -3413,19 +3413,21 @@ def build_static():
         (OUT / ("%s.txt" % INDEXNOW_KEY)).write_text(
             INDEXNOW_KEY, encoding="utf-8")
 
+    # Named one by one rather than left to the wildcard above. Two reasons:
+    # several of these check for their own user-agent before crawling at
+    # all, and naming them survives a future decision to block unknown
+    # bots - which would otherwise silently take this site out of the
+    # answer engines it is built to be quoted by.
+    #
+    # Allowing a crawler is not endorsing it. The judgement here is that a
+    # shop whose guides exist to be cited is better off in every index than
+    # out of some of them, and nothing on this site is worth withholding.
     (OUT / "robots.txt").write_text(
       "User-agent: *\nAllow: /\n\n"
       "# Answer engines are explicitly welcome - the guides and tools are written to be\n"
       "# quoted, and we would rather be the cited source than invisible.\n"
-      "User-agent: GPTBot\nAllow: /\n"
-      "User-agent: OAI-SearchBot\nAllow: /\n"
-      "User-agent: ChatGPT-User\nAllow: /\n"
-      "User-agent: ClaudeBot\nAllow: /\n"
-      "User-agent: Claude-SearchBot\nAllow: /\n"
-      "User-agent: PerplexityBot\nAllow: /\n"
-      "User-agent: Google-Extended\nAllow: /\n"
-      "User-agent: Applebot-Extended\nAllow: /\n"
-      "User-agent: Bingbot\nAllow: /\n\n"
+      + "".join("User-agent: %s\nAllow: /\n" % b for b in AI_CRAWLERS)
+      + "\n"
       "Sitemap: %s\n" % U("/sitemap.xml"), encoding="utf-8")
 
     urls = "".join(

@@ -1710,6 +1710,80 @@ if _bank_f.exists():
         fails.append("sincere leaked into HUMOR_MECHANISMS - it must never be "
                      "offered to the riff brief as a mechanism")
 
+# ---- the trailing-slash redirect ----------------------------------------
+# Workers Static Assets answers GET /pricing with a 307 to /pricing/, and a
+# 307 means "temporary, do not consolidate" - so Google indexes the two URLs
+# separately and splits the ranking between them. Every inbound link written
+# without the slash pays that tax, and people write them without the slash.
+#
+# This gate is structural; mcp/live_check.py proves it functionally against
+# production, because the only honest proof is a real request.
+_rd = re.search(r"if \(\(request\.method === \"GET\".{0,420}?\n    \}",
+                wjs, re.S)
+if not _rd:
+    fails.append("the trailing-slash redirect is gone from worker/index.js - "
+                 "bare paths would 307 again and Google would index /pricing "
+                 "and /pricing/ as two URLs")
+else:
+    _r = _rd.group(0)
+    if "301" not in _r:
+        fails.append("the trailing-slash redirect is not a 301 - a 307 tells "
+                     "Google not to consolidate the two URLs, which is the "
+                     "whole bug")
+    if "HEAD" not in _r:
+        fails.append("the trailing-slash redirect ignores HEAD - crawlers "
+                     "use it, and they would still see a 307")
+    if 'includes(".")' not in _r:
+        fails.append("the trailing-slash redirect no longer exempts paths "
+                     "with a dot in the last segment - /sitemap.xml, "
+                     "/robots.txt, the IndexNow key file and every asset "
+                     "would redirect into a directory that does not exist")
+    if "endsWith(\"/\")" not in _r:
+        fails.append("the trailing-slash redirect does not exempt paths that "
+                     "already end in a slash - that is an infinite loop")
+# It has to sit AFTER the API routes, or /api/price and /mcp get redirected
+# instead of answered.
+# Anchored to the MATCHED redirect block, not to the first occurrence of
+# 'request.method === "GET"' in the file - which is somewhere else entirely.
+# The first version reported that /api/price and /mcp were being redirected
+# while a local worker was answering both with a 200, which is the only
+# reason it was caught: a structural gate that contradicts a live request is
+# wrong about the structure, not about the request.
+_i_rd = _rd.start() if _rd else -1
+_i_as = wjs.find("env.ASSETS.fetch(request)")
+for _route in ("/api/price", "/api/checkout", "/mcp"):
+    _i_r = wjs.find('url.pathname === "%s"' % _route)
+    if 0 < _i_rd < _i_r:
+        fails.append("the trailing-slash redirect runs before %s is handled - "
+                     "that route would be redirected instead of answered"
+                     % _route)
+if 0 < _i_as < _i_rd:
+    fails.append("the trailing-slash redirect runs after ASSETS.fetch, so it "
+                 "never runs at all")
+
+# ---- the AI crawler allow-list -------------------------------------------
+# This site exists to be quoted by answer engines. Several of these check for
+# their own user-agent before crawling at all, so a name missing here is a
+# search surface the site is simply absent from.
+from content import AI_CRAWLERS as _BOTS                      # noqa: E402
+_rb = (OUT / "robots.txt").read_text()
+_missing_bots = [b for b in _BOTS
+                 if not re.search(r"^User-agent:\s*%s\s*$" % re.escape(b),
+                                  _rb, re.M)]
+if _missing_bots:
+    fails.append("robots.txt does not name %d AI crawler(s) that "
+                 "content.AI_CRAWLERS lists: %s"
+                 % (len(_missing_bots), ", ".join(_missing_bots)))
+for _b in _BOTS:
+    _m = re.search(r"^User-agent:\s*%s\s*$\n(.*?)$" % re.escape(_b),
+                   _rb, re.M)
+    if _m and not _m.group(1).strip().lower().startswith("allow"):
+        fails.append("robots.txt names %s but the next line is %r, not an "
+                     "Allow - the site would be invisible to it"
+                     % (_b, _m.group(1).strip()[:40]))
+if "Sitemap: " not in _rb:
+    fails.append("robots.txt lost its Sitemap line")
+
 # ---- IndexNow ------------------------------------------------------------
 # Two halves, and a submission is rejected unless both are true: the key, and
 # a file at /<key>.txt whose entire contents are that key. The file is what
