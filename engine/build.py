@@ -409,7 +409,7 @@ GA_TAG = (
 # edge for proxied origins, it does not reliably reach a Worker's own
 # responses, and an injection we cannot see in the build is one verify.py
 # cannot gate.
-CF_BEACON_TOKEN = ""     # 32 hex characters. Empty = not wired up yet.
+CF_BEACON_TOKEN = "8bcafbc68cba489581f4d474b1fcb6a6"
 
 # ------------------------------------------------- Bing Webmaster Tools
 #
