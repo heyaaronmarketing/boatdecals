@@ -78,6 +78,47 @@ req = urllib.request.Request(SITE + "/mcp", json.dumps(
 tools = json.load(urllib.request.urlopen(req, timeout=30))["result"]["tools"]
 writers = sorted(t["name"] for t in tools
                  if not t["annotations"].get("readOnlyHint"))
+
+# ---------------------------------------------------------------------------
+# Is the thing we are testing the thing in this working copy?
+#
+# Two independent reads, because either alone can be stale for a dull reason:
+# the PRICE the deployed worker charges, and the SHAPE of the price_order
+# tool. If the deployed build predates this checkout, say so in one line and
+# stop - every price assertion below would otherwise fail, loudly and for the
+# wrong reason, and the output would look like a broken server rather than an
+# unpushed commit.
+sys.path.insert(0, os.path.join(ROOT, "engine"))
+from content import PRICE as _REPO_PRICE            # noqa: E402
+
+_live_base = json.load(urllib.request.urlopen(urllib.request.Request(
+    SITE + "/api/price", json.dumps({"kind": "numbers", "height": "3"}).encode(),
+    {"content-type": "application/json",
+     "user-agent": "nmb-live-check"}), timeout=30)).get("amount")
+_po = next((t for t in tools if t["name"] == "price_order"), None)
+_po_props = set((_po or {}).get("inputSchema", {}).get("properties", {}))
+_repo_base = _REPO_PRICE["numbers"]
+
+if _live_base != _repo_base or "boatname" not in _po_props:
+    print("")
+    print("  %s is running an OLDER BUILD than this working copy." % SITE)
+    print("")
+    print("    deployed:  base price $%s, price_order takes %s"
+          % (_live_base, ", ".join(sorted(_po_props)) or "nothing"))
+    print("    this repo: base price $%s, and price_order must take boatname "
+          "and font" % _repo_base)
+    print("")
+    print("  Nothing is wrong with the server and nothing is wrong with this")
+    print("  script. This is a POST-deploy check and the deploy has not")
+    print("  landed. Push to origin/main, wait for Workers Builds, then run")
+    print("  this again:")
+    print("")
+    print("      git push origin main")
+    print("      python3 -I mcp/live_check.py")
+    print("")
+    print("  (If you did just push, Workers Builds takes a minute or two and")
+    print("  a rollout is not atomic - give it a moment and re-run.)")
+    sys.exit(2)
 print("%d tools live" % len(tools))
 print("writers: %s" % ", ".join(writers))
 check(writers == ["start_naming_session", "submit_riff_candidates",
