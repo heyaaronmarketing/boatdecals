@@ -376,11 +376,87 @@ GA_TAG = (
  'allow_ad_personalization_signals:false});}</script>'
  % {"id": GA_ID, "host": GA_HOST})
 
+# ------------------------------------------------- Cloudflare Web Analytics
+#
+# A SECOND, INDEPENDENT COUNT. Not redundancy for its own sake: GA4 is the
+# single most blocked script on the web, so the one number we have for "how
+# many people came" is systematically short by an unknown amount, and the
+# amount differs by audience. Boat owners on a phone at a marina are not the
+# same blocking population as a desktop office visitor. Two counts that
+# disagree by a stable ratio tell you the ratio; one count tells you nothing
+# about what it is missing.
+#
+# It is also the count that survives GA going away - a blocked script, a
+# consent change, a property misconfigured. Having the other one already
+# running for months is worth more than standing it up afterwards.
+#
+# COOKIELESS, which is why it needs no banner and no consent gate. Cloudflare
+# Web Analytics sets no cookie, stores no identifier and does not fingerprint;
+# it samples the Navigation Timing and Core Web Vitals the browser already
+# has. That is a real difference from GA4, not a marketing line, and it is the
+# reason this can ship without touching the privacy page.
+#
+# THE TOKEN IS PUBLIC. It identifies a site, not an account, and it is visible
+# in the page source of every site using this - so it belongs in the repo next
+# to GA_ID rather than in a Worker secret. Treating it as a secret would only
+# mean nobody could rebuild the site without one.
+#
+# Get it: Cloudflare dashboard -> the numbermyboat.com account -> Analytics &
+# Logs -> Web Analytics -> Add a site -> numbermyboat.com. Copy the token out
+# of the snippet it shows (the value of data-cf-beacon's "token") and paste it
+# below. Do NOT use the "Automatic Setup" toggle: it injects the beacon at the
+# edge for proxied origins, it does not reliably reach a Worker's own
+# responses, and an injection we cannot see in the build is one verify.py
+# cannot gate.
+CF_BEACON_TOKEN = ""     # 32 hex characters. Empty = not wired up yet.
+
+# ------------------------------------------------- Bing Webmaster Tools
+#
+# Google is verified by a DNS TXT record on the apex, which is the better
+# method - it covers every subdomain and no rebuild can break it. Bing's
+# equivalent would be a CNAME; this is the meta-tag method instead, because
+# that is what Aaron had in hand.
+#
+# WHY BING IS WORTH THE TAG even though it is a rounding error of search
+# share: its index is what ChatGPT search reads. This site is built to be
+# quoted by answer engines - the guides, the tools and llms.txt all exist for
+# that - and being absent from the index those engines read is a different
+# kind of problem from being ranked badly in it.
+#
+# HOMEPAGE ONLY. Bing verifies by fetching the root URL and looking for this
+# tag, so that is the only page that needs it, and 55 copies of a string
+# nobody reads is 55 copies. The fragility that buys - someone changes how /
+# is built, the tag silently vanishes, and Bing quietly unverifies the site
+# months later with no email anyone reads - is covered by a gate in verify.py
+# rather than by hoping.
+BING_VERIFY = "F6596C0CCF272F32D4D68CF7A018E9A4"
+BING_TAG = ('<meta name="msvalidate.01" content="%s">' % BING_VERIFY
+            if BING_VERIFY else "")
+
+# Host-gated for exactly the reason GA is: the staging worker at
+# boatdecals.aironz.workers.dev serves these same pages, and a beacon that
+# fires there mixes our own test traffic into the customer numbers. The
+# staging site is the one place every page gets loaded by someone who is never
+# going to buy anything.
+#
+# Built by script rather than written as a plain <script src> tag so that the
+# hostname check can wrap it at all. A dynamically created script is async by
+# default, which is what the beacon wants anyway - it reports after load.
+CF_TAG = ('' if not CF_BEACON_TOKEN else
+ '<script>if(location.hostname==="%(host)s"||location.hostname==="www.%(host)s"){'
+ 'var b=document.createElement("script");b.defer=true;'
+ 'b.src="https://static.cloudflareinsights.com/beacon.min.js";'
+ 'b.setAttribute("data-cf-beacon",JSON.stringify({token:"%(tok)s"}));'
+ 'document.head.appendChild(b);}</script>'
+ % {"tok": CF_BEACON_TOKEN, "host": GA_HOST})
+
 def head(title, desc, path, schema, noindex=False):
     canon = U(path)
     robots = ('<meta name="robots" content="noindex,follow">' if noindex else
       '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">')
     _ot, _od = og_copy(path, title, desc)
+    # Verification tags go on the root only - that is the URL Bing fetches.
+    _verify = BING_TAG if path == "/" else ""
     _img = U(og_image(path))
     # Guides are articles; everything else is a page of the shop.
     _ogtype = "article" if path.startswith("/guides/") and path != "/guides/" else "website"
@@ -414,8 +490,10 @@ def head(title, desc, path, schema, noindex=False):
     _img, _img, _imgtype, e(_oalt), e(_ot), e(_od), _img, e(_oalt),
     CSS, json.dumps(schema, separators=(',', ':')),
     # Internal pages are not customer journeys and would skew the reports:
-    # /brand/ is a file library, /proof/ is one customer's own order.
-    "" if noindex else GA_TAG)
+    # /brand/ is a file library, /proof/ is one customer's own order. Both
+    # counts follow the same rule, or the two reports cover different sites
+    # and the comparison between them means nothing.
+    _verify + ("" if noindex else GA_TAG + CF_TAG))
 
 # The four headline claims, in one place. proof_band() spells each one out;
 # the hero badges are the short form. Both read from here so they cannot drift.
@@ -2809,6 +2887,12 @@ def build_legal():
       "here follows you around the internet. Browser &ldquo;Do Not Track&rdquo; "
       "and any ad blocker will stop it, and nothing on the site breaks if you "
       "block it.</p>"
+      "<p>We also use Cloudflare Web Analytics, which counts the same visits a "
+      "second time. It sets no cookie, stores no identifier and does not "
+      "fingerprint your browser &mdash; it reads the page-timing figures your "
+      "browser already measured and reports those. The reason for having two "
+      "is dull: ad blockers stop the Google one, so on its own it undercounts "
+      "by an amount we cannot see. Neither is joined to your order.</p>"
       "<h2>Why we hold it</h2>"
       "<p>To cut your order, take payment, ship it and deal with a warranty claim later. "
       "We keep order records as long as we need them for accounting and warranty "
@@ -2816,8 +2900,9 @@ def build_legal():
       "30 days, as above.</p>"
       "<h2>Who else sees it</h2>"
       "<p>Our email provider, our payment processor and our shipping carrier &mdash; each "
-      "only the part they need, and Google Analytics, which sees page views and "
-      "never sees your order. Nobody else.</p>"
+      "only the part they need, and Google Analytics and Cloudflare Web Analytics, "
+      "which see page views and never see your order. Cloudflare also serves the "
+      "site itself, so it handles every request by definition. Nobody else.</p>"
       "<h2>Your choices</h2>"
       "<p>Email <a href=\"mailto:" + SITE["email"] + "\">" + SITE["email"] + "</a> to see "
       "what we hold on you, correct it, or have it deleted.</p>"

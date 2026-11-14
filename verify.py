@@ -7,6 +7,10 @@ import html, json, pathlib, re, subprocess, sys
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "public"
 fails = []
+# Things that are not wrong but that someone has to finish. A note never fails
+# the build - it exists so a deliberately half-finished thing (a beacon with
+# no token yet) says so on every run instead of being quietly forgotten.
+notes = []
 
 r = subprocess.run([sys.executable, "-m", "py_compile"] +
                    [str(p) for p in (ROOT / "engine").glob("*.py")],
@@ -1745,14 +1749,108 @@ for _flag in ("allow_google_signals:false",
 if "async=true" not in _home and "async = true" not in _home:
     fails.append("the GA4 script is no longer async and would block rendering")
 
+# ---- Cloudflare Web Analytics -------------------------------------------
+# The second, independent count. Cookieless, so it needs no consent gate - but
+# it is still a third party receiving page views, so the privacy policy has to
+# say so, and it must follow GA4's rules exactly or the two reports cover
+# different sites and comparing them means nothing.
+import importlib as _il                                   # noqa: E402
+_bld = _il.import_module("build")
+_CFT = getattr(_bld, "CF_BEACON_TOKEN", None)
+if _CFT is None:
+    fails.append("CF_BEACON_TOKEN is gone from build.py - Cloudflare Web "
+                 "Analytics was wired up deliberately")
+elif not _CFT:
+    # Not an error. The plumbing ships with no token until someone pastes one
+    # in from the dashboard; what must NOT happen is a half-wired beacon going
+    # out and firing with an invalid token.
+    notes.append("Cloudflare Web Analytics is wired but has no token yet - "
+                 "no beacon is emitted. Paste the site token into "
+                 "CF_BEACON_TOKEN in engine/build.py.")
+    for _f in OUT.rglob("index.html"):
+        if "cloudflareinsights" in _f.read_text():
+            fails.append("a Cloudflare beacon is on %s with no token set - it "
+                         "would fire against nothing"
+                         % _f.relative_to(OUT))
+else:
+    if not re.fullmatch(r"[0-9a-f]{32}", _CFT):
+        fails.append("CF_BEACON_TOKEN is %r, which is not a 32-character hex "
+                     "site token - the beacon would report to nothing"
+                     % _CFT[:12])
+    _cf_pub = 0
+    for _f in OUT.rglob("index.html"):
+        _t = _f.read_text()
+        _has = "cloudflareinsights" in _t
+        if 'content="noindex' in _t:
+            if _has:
+                fails.append("the Cloudflare beacon is on the internal page "
+                             "%s" % _f.relative_to(OUT))
+        else:
+            if not _has:
+                fails.append("the Cloudflare beacon is missing from %s - the "
+                             "two counts no longer cover the same site"
+                             % _f.relative_to(OUT))
+            else:
+                _cf_pub += 1
+            if _t.count("cloudflareinsights") > 1:
+                fails.append("the Cloudflare beacon appears twice on %s"
+                             % _f.relative_to(OUT))
+    if _cf_pub and _cf_pub != _ga_pub:
+        fails.append("the Cloudflare beacon is on %d public pages and GA4 is "
+                     "on %d - the two counts cover different sites, so any "
+                     "comparison between them is meaningless"
+                     % (_cf_pub, _ga_pub))
+    # Same hostname gate as GA4, for the same reason: the staging worker
+    # serves these same pages and nobody there is going to buy anything.
+    _home_cf = (OUT / "index.html").read_text()
+    _i = _home_cf.find("cloudflareinsights")
+    if _i > 0:
+        _window = _home_cf[max(0, _i - 400):_i]
+        if 'location.hostname==="numbermyboat.com"' not in _window:
+            fails.append("the Cloudflare beacon is not gated to the live "
+                         "hostname - staging and local traffic would land in "
+                         "the same report as real customers")
+    if "Cloudflare Web Analytics" not in (OUT / "privacy" / "index.html").read_text():
+        fails.append("the site runs Cloudflare Web Analytics but the privacy "
+                     "policy does not mention it")
+
+# ---- Bing Webmaster Tools ------------------------------------------------
+# Verification by meta tag, on the root only, because the root is the URL Bing
+# fetches to check. The failure this gates against is silent and slow: the tag
+# stops being emitted, nobody notices, and months later Bing unverifies the
+# site - which also takes away the index that ChatGPT search reads.
+_bing = getattr(_bld, "BING_VERIFY", None)
+if _bing:
+    if not re.fullmatch(r"[0-9A-F]{32}", _bing):
+        fails.append("BING_VERIFY is not a 32-character hex token: %r"
+                     % _bing[:12])
+    _hp = (OUT / "index.html").read_text()
+    _tag = '<meta name="msvalidate.01" content="%s">' % _bing
+    if _tag not in _hp:
+        fails.append("the Bing verification tag is missing from the homepage "
+                     "- Bing will unverify the site and we lose the index "
+                     "ChatGPT search reads")
+    elif _hp.index(_tag) > _hp.index("</head>"):
+        fails.append("the Bing verification tag is outside <head>, where no "
+                     "crawler looks for it")
+    if _hp.count("msvalidate.01") > 1:
+        fails.append("the Bing verification tag appears more than once on the "
+                     "homepage")
+    _elsewhere = [_f.relative_to(OUT) for _f in OUT.rglob("index.html")
+                  if _f != OUT / "index.html" and "msvalidate" in _f.read_text()]
+    if _elsewhere:
+        fails.append("the Bing verification tag has spread to %d other "
+                     "page(s), starting with %s - only the root needs it"
+                     % (len(_elsewhere), _elsewhere[0]))
+
 # The policy has to describe what the site actually does.
 _priv = (OUT / "privacy" / "index.html").read_text()
 if "Google Analytics" not in _priv:
     fails.append("the site runs Google Analytics but the privacy policy does "
                  "not mention it")
-if "Nobody else" in _priv and "Google Analytics, which sees page views" not in _priv:
+if "Nobody else" in _priv and "Google Analytics and Cloudflare Web Analytics" not in _priv:
     fails.append('the privacy policy still claims "Nobody else" sees data '
-                 "while GA4 is running")
+                 "while two analytics providers are running")
 
 # ---- where orders go ----------------------------------------------------
 # ORDER_TO used to be a Worker secret, which meant the answer to "where do
@@ -2093,6 +2191,8 @@ elif not _shape:
 
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))
+if notes:
+    print("\nTO FINISH:"); [print("  -", n) for n in notes]
 if fails:
     print("\nFAILED:"); [print("  -", f) for f in fails]; sys.exit(1)
 print("all gates pass")
