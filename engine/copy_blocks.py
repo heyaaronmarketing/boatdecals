@@ -57,7 +57,7 @@ you can help it. The adhesive is still curing.</li>
 # cut on 2026-10-23; the warranty and shipping pages still carry those terms in
 # full, they just no longer lead the product pages.
 WHY_US = [
- ("$19 a pair, published",
+ ("$28 a pair, published",
   "Every competitor makes you build a design before showing a price. Ours is on the "
   "page and it includes shipping."),
  ("Proof in 12 hours, then 1-2 days",
@@ -96,7 +96,8 @@ HOW_IT_WORKS_STEPS = [
 #   * the question is phrased the way a person types it, not the way we would
 #     title a section
 #   * the FIRST SENTENCE is the whole answer. No preamble, no "it depends"
-#   * the specifics are in it - 3 inches, 33 CFR 173.27, $19, 12-hour proof
+#   * the specifics are in it - 3 inches, 33 CFR 173.27, the price, the
+#     12-hour proof
 #   * one shop question per guide at most, and only where it actually follows
 GUIDE_FAQS = {
  "boat-registration-number-rules": [
@@ -144,7 +145,7 @@ GUIDE_FAQS = {
    "bracket-mounted plate for inflatables and boats with no suitable flat surface, "
    "which is the exception rather than the rule."),
   ("Do both sides of the boat need registration numbers?",
-   "Yes, both sides, forward half, same number. That is the entire reason our $19 "
+   "Yes, both sides, forward half, same number. That is the entire reason our "
    "price is for a pair rather than a single set."),
  ],
  "how-to-apply-boat-lettering": [
@@ -266,8 +267,8 @@ GUIDE_FAQS = {
  ],
  "boat-registration-number-cost": [
   ("How much do boat registration numbers cost?",
-   "$19 a pair from us, with free shipping, which covers both sides of the bow. "
-   "Across the market, online sets run roughly $10 to $25 a pair; a sign shop will "
+   "$28 a pair from us, with free shipping, which covers both sides of the bow. "
+   "Across the market, web prices for a pair run about $15 to $39; a sign shop will "
    "usually quote $9 to $15 but asks you to specify everything yourself."),
   ("Why are some boat registration numbers so much cheaper?",
    "Because they are cut as loose individual characters rather than pre-spaced on "
@@ -277,8 +278,9 @@ GUIDE_FAQS = {
    "Yes, free to all 50 states and DC. A $12 set with $6 shipping is an $18 set, "
    "which is the comparison that actually matters when you are shopping around."),
   ("How much does a boat name decal cost?",
-   "From $29, including shipping. Most transom names land between $29 and $79, and "
-   "price follows the finished size of the decal rather than the number of letters."),
+   "From $38, including shipping. Most transom names land between $38 and $68, and "
+   "price follows the width the finished decal measures rather than the number of "
+   "letters."),
   ("How long does it take to get boat registration numbers?",
    "Posted 1-2 business days after you approve the proof, then 3 to 6 days in "
   "standard post. If you "

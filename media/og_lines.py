@@ -19,20 +19,20 @@ Those are the pure-fun cards and they double as a demo of the script face.
 
 # path -> dict(main, kicker, hull, script)
 LINES = {
- "/": dict(main="EVERYONE ELSE|HIDES THE PRICE", kicker="ours is $19 a pair",
+ "/": dict(main="EVERYONE ELSE|HIDES THE PRICE", kicker="ours is $28 a pair",
            hull="navy"),
 
  "/boat-registration-numbers/": dict(
-     main="3 INCHES.|BOTH SIDES.|$19.", kicker="legal in all 50 states",
+     main="3 INCHES.|BOTH SIDES.|$28.", kicker="legal in all 50 states",
      hull="black"),
  "/boat-lettering/": dict(main="Nauti Buoy", script=True,
      kicker="we cut whatever you call her", hull="white"),
 
  "/design/": dict(main="TYPE IT.|SEE IT.|SEND IT.",
      kicker="no designer, no proof, no queue", hull="green"),
- "/pricing/": dict(main="THE PRICE IS|ON THE PAGE", kicker="$19 a pair, shipped",
+ "/pricing/": dict(main="THE PRICE IS|ON THE PAGE", kicker="$28 a pair, shipped",
      hull="navy"),
- "/gallery/": dict(main="WHAT $19|LOOKS LIKE|ON A HULL", kicker="gallery",
+ "/gallery/": dict(main="WHAT $28|LOOKS LIKE|ON A HULL", kicker="gallery",
      hull="teal"),
 
  "/registration-numbers/": dict(main="YOUR PREFIX|ISN'T WHAT|YOU THINK",
@@ -92,7 +92,7 @@ LINES = {
  "/for/sailboats/": dict(main="CURVED TRANSOM?|SEND A PHOTO.",
      kicker="we lay it out from your measurement", hull="white"),
  "/for/bass-boats/": dict(main="METALFLAKE IS|THE EASIEST|SURFACE THERE IS",
-     kicker="bass boat numbers, $19", hull="black"),
+     kicker="bass boat numbers, $28", hull="black"),
 
  # ---- the rest ----
  "/warranty/": dict(main="WE SAY WHAT|ISN'T COVERED", kicker="warranty and returns",
@@ -119,7 +119,7 @@ def state_card(i, name, ab, postal):
         return dict(main="%s IS %s|NOT %s" % (name.upper(), ab, postal),
                     kicker="yes, really", hull=hull)
     return dict(main="%s BOATS|START WITH %s" % (name.upper(), ab),
-                kicker="%s registration numbers, $19" % name, hull=hull)
+                kicker="%s registration numbers, $28" % name, hull=hull)
 
 
 # ------------------------------------------------------- photo cards
@@ -131,27 +131,27 @@ def state_card(i, name, ab, postal):
 # path -> (photo id, headline, sub-line, badge top, badge bottom)
 _PHOTOS = {
     "/": ("AL-01", "LEGAL BOAT|NUMBERS",
-          "BOTH SIDES - PRE-SPACED - POSTED NEXT DAY", "$19", "A PAIR"),
+          "BOTH SIDES - PRE-SPACED - POSTED NEXT DAY", "$28", "A PAIR"),
     "/design/": ("AL-10", "DESIGN YOURS|IN A MINUTE",
-                 "TYPE IT - SEE IT - SEND IT", "$19", "A PAIR"),
+                 "TYPE IT - SEE IT - SEND IT", "$28", "A PAIR"),
     "/boat-registration-numbers/": ("AL-02", "3-INCH BLOCK|BOTH SIDES",
-                 "PRE-SPACED ON ONE SHEET", "$19", "A PAIR"),
+                 "PRE-SPACED ON ONE SHEET", "$28", "A PAIR"),
     "/boat-lettering/": ("AL-03", "NAME IT|PROPERLY",
-                 "TEN FONTS - PRE-SPACED - FREE SHIPPING", "$29", "TO START"),
+                 "TEN FONTS - PRE-SPACED - FREE SHIPPING", "$38", "TO START"),
     "/pricing/": ("PR-1", "THE PRICE IS|ON THE PAGE",
-                 "SHIPPING INCLUDED, ALL 50 STATES", "$19", "A PAIR"),
+                 "SHIPPING INCLUDED, ALL 50 STATES", "$28", "A PAIR"),
     "/for/jon-boats/": ("AL-04", "JON BOAT|NUMBERS",
-                 "BARE ALUMINUM, NO PROBLEM", "$19", "A PAIR"),
+                 "BARE ALUMINUM, NO PROBLEM", "$28", "A PAIR"),
     "/for/jet-skis-and-pwc/": ("AL-05", "PWC|NUMBERS",
-                 "HIGH-TACK FILM, FREE ON EVERY PWC ORDER", "$19", "A PAIR"),
+                 "HIGH-TACK FILM, FREE ON EVERY PWC ORDER", "$28", "A PAIR"),
     "/for/kayaks-and-canoes/": ("AL-06", "KAYAK|NUMBERS",
-                 "HIGH-TACK, BECAUSE PLASTIC FIGHTS BACK", "$19", "A PAIR"),
+                 "HIGH-TACK, BECAUSE PLASTIC FIGHTS BACK", "$28", "A PAIR"),
     "/for/pontoon-boats/": ("AL-07", "PONTOON|NUMBERS",
-                 "TEXTURED RAILS NEED HIGH-TACK", "$19", "A PAIR"),
+                 "TEXTURED RAILS NEED HIGH-TACK", "$28", "A PAIR"),
     "/for/sailboats/": ("AL-08", "SAILBOAT|LETTERING",
-                 "CURVED TRANSOMS LAID OUT FROM YOUR PHOTO", "$29", "TO START"),
+                 "CURVED TRANSOMS LAID OUT FROM YOUR PHOTO", "$38", "TO START"),
     "/for/bass-boats/": ("AL-10", "BASS BOAT|NUMBERS",
-                 "METALFLAKE IS THE EASY ONE", "$19", "A PAIR"),
+                 "METALFLAKE IS THE EASY ONE", "$28", "A PAIR"),
 }
 
 
@@ -183,7 +183,7 @@ def photo_spec(path):
     if m and m.group(1) in _STATE_AB:
         name, ab = _STATE_AB[m.group(1)]
         return ("ST-" + ab, "%s BOAT|NUMBERS" % name.upper(),
-                "%s PREFIX - 3-INCH BLOCK - BOTH SIDES" % ab, "$19", "A PAIR")
+                "%s PREFIX - 3-INCH BLOCK - BOTH SIDES" % ab, "$28", "A PAIR")
     return None
 
 

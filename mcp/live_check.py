@@ -89,21 +89,64 @@ r = call("test_boat_name", {"name": "Loading…"})
 check(r["radio"]["readback"] == "Mayday, mayday, this is Loading.",
       "the readback is %r - trailing punctuation is back"
       % r["radio"]["readback"])
-# The price, in all three vocabularies the site uses for the same three
-# products. This is where price_order quoted $19 for a $44 bundle.
-for kind, want in (("numbers", 19), ("name", 29), ("both", 44),
-                   ("registration-numbers", 19), ("boat-name", 29)):
-    r = call("price_order", {"kind": kind, "height": "3"})
-    check(r["amount_usd"] == want,
-          "price_order(%s) at 3 inches = $%s, should be $%s"
-          % (kind, r["amount_usd"], want))
+# The price, in all the vocabularies the site uses for the same three
+# products. This is where price_order quoted the registration-number base for
+# the bundle, in every vocabulary, silently.
+#
+# The figures are read from the deployed /api/price rather than written in
+# here, because a constant in a smoke test is a fourth copy of the price list
+# - and a smoke test that asserts last month's figure fails for the wrong
+# reason on the day the price changes. What is being checked is that the MCP
+# tool and the website's own pricing authority answer the SAME number for the
+# same order, which is the thing that would send a customer an argument.
+#
+# "Ox" is the lettering for the name cases: a boat name is priced by the
+# width it finishes at, so a quote needs the text and the face.
+def api_price(args):
+    """The website's own pricing authority, over HTTP, as a customer hits it."""
+    body = json.dumps(args).encode()
+    req = urllib.request.Request(SITE + "/api/price", body, {
+        "content-type": "application/json", "user-agent": "nmb-live-check"})
+    return json.load(urllib.request.urlopen(req, timeout=30))
+
+
+NAME_CASE = {"boatname": "Ox", "font": "Arial Bold"}
+for kind, body in (("numbers", {}), ("name", NAME_CASE), ("both", NAME_CASE),
+                   ("registration-numbers", {}), ("boat-name", NAME_CASE)):
+    args = dict(kind=kind, height="3", **body)
+    r = call("price_order", args)
+    authority = api_price(args)
+    check(r["amount_usd"] == authority["amount"],
+          "price_order(%s) says $%s and /api/price says $%s - an assistant "
+          "would quote one and the card would charge the other"
+          % (kind, r["amount_usd"], authority["amount"]))
+    check(r["amount_usd"] >= 28,
+          "price_order(%s) at 3 inches = $%s, which is below the cheapest "
+          "thing the shop sells" % (kind, r["amount_usd"]))
 try:
     call("price_order", {"kind": "name-plus-port"})
     fails.append("price_order accepted a product we do not sell and quoted "
                  "a number for it")
 except RuntimeError:
     pass
-print("prices: ok in every vocabulary")
+# A boat name is priced by the width it finishes at, so a quote without the
+# lettering is a question the tool cannot answer. It must refuse rather than
+# quote the cheapest band - that is the undercharge bug's shape.
+try:
+    q = call("price_order", {"kind": "name", "height": "3"})
+    fails.append("price_order quoted $%s for a boat name without being told "
+                 "what the name is - it cannot know the width, so that "
+                 "figure is a guess" % q.get("amount_usd"))
+except RuntimeError:
+    pass
+# The bundle discount, live. The site advertises a flat saving in four places.
+_n = call("price_order", {"kind": "numbers", "height": "3"})["amount_usd"]
+_m = call("price_order", dict(kind="name", height="3", **NAME_CASE))["amount_usd"]
+_b = call("price_order", dict(kind="both", height="3", **NAME_CASE))["amount_usd"]
+check(_b == _n + _m - 10,
+      "the live bundle is $%s and the parts are $%s + $%s, so the saving is "
+      "$%s and the site advertises $10" % (_b, _n, _m, _n + _m - _b))
+print("prices: ok in every vocabulary, and they match /api/price")
 
 # The boundary. A misnamed parameter must be refused, not answered - this
 # exact call came back verdict "ok" having read nothing.

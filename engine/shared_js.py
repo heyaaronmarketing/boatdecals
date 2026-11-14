@@ -70,3 +70,82 @@ window.BNS_VALIDATE = (function(){
   return {check: check, clean: D.clean};
 })();
 """
+
+
+def _fn(src, name):
+    """One named export out of a JS module, by brace matching.
+
+    Used to lift `widthIn` out of worker/gates.js rather than copying it. The
+    alternative - a second width function written for the browser - is the bug
+    this repo exists to not have: the order form would quote a name in one
+    band while the worker charged another, and the customer would be holding
+    the screenshot. verify.py checks that what lands in the page is still
+    character-for-character what is in the worker file.
+    """
+    i = src.index("export function %s(" % name)
+    j = src.index("{", i)
+    depth = 0
+    for k in range(j, len(src)):
+        if src[k] == "{":
+            depth += 1
+        elif src[k] == "}":
+            depth -= 1
+            if depth == 0:
+                return src[i:k + 1].replace("export function", "function", 1)
+    raise AssertionError("unbalanced braces reading %s" % name)
+
+
+def price_js():
+    """The pricing function, as a browser IIFE exposing window.NMB_PRICE.
+
+    THE POINT. The order form shows a running total from step 1, and the
+    button says "Pay $71". The worker charges what IT calculates and never
+    what the browser posts - which is right, but it means the two have to
+    agree, and for a year they agreed only because a human kept two copies of
+    the same arithmetic in step. They did not always: the form's own total
+    fell through to the base price for a bundle, so a six-inch pair with an
+    outline displayed as the cheapest thing in the shop.
+
+    Now there is one implementation. worker/price.js is inlined here, with the
+    generated price table and the one width function it needs, and the figure
+    on the button is produced by the same code that produces the figure on the
+    card. A disagreement is no longer possible, so it no longer needs testing
+    for - which is a better outcome than a test.
+    """
+    import json
+
+    data = (ROOT / "worker" / "price-data.js").read_text(encoding="utf-8")
+    logic = (ROOT / "worker" / "price.js").read_text(encoding="utf-8")
+    gates = (ROOT / "worker" / "gates.js").read_text(encoding="utf-8")
+    gdata = (ROOT / "worker" / "gates-data.js").read_text(encoding="utf-8")
+
+    data = _strip_module(data, drop_import=False)
+    data = data.replace("const P = ", "var P = ", 1)
+
+    # The WHOLE table, upgrade prices included. The first version of this
+    # stripped UPGRADE_ADD out, because one upgrade label carried a
+    # film-life year figure and inlining it would have published that figure
+    # on thirty pages - which verify.py's claims gate caught. Stripping it
+    # worked only because the form renders no upgrades step, so it left the
+    # form and the card disagreeing about the price of any order that had
+    # one, conditional on a feature nobody had built yet. The upgrade was
+    # renamed instead. If the form ever grows that step, the running total
+    # will already be right.
+
+    # Only the font metrics, not the whole gates bundle. The order form has no
+    # use for the rebus tokens or the 1,089-name overuse tiers, and the page
+    # is already heavy.
+    body = gdata[gdata.index("{"):gdata.rindex(";")]
+    fonts = json.loads(body)["FONTS"]
+
+    return ("/* SHARED: worker/price.js + the widthIn() from worker/gates.js,\n"
+            "   inlined by engine/shared_js.price_js(). One implementation -\n"
+            "   edit the worker files, not this. The price table itself comes\n"
+            "   from engine/content.py via mcp/build_price_js.py. */\n"
+            "(function(){\n"
+            + data + "\n"
+            + "var D = {FONTS: " + json.dumps(fonts, sort_keys=True) + "};\n"
+            + _fn(gates, "widthIn") + "\n"
+            + _strip_module(logic) + "\n"
+            "window.NMB_PRICE={priceOf:priceOf,breakdown:priceBreakdown,"
+            "nameBand:nameBand,FROM:FROM,OUTLINE_ADD:OUTLINE_ADD};\n})();\n")

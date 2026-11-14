@@ -90,7 +90,7 @@ NAME_JS = r"""
     }
     out.innerHTML='<div class=names>'+res.map(function(n){
       return '<div>'+n.replace(/</g,'&lt;')+'</div>';}).join('')+'</div>'+
-      '<a class="btn lg" href="/design/">Put one of these on the transom &middot; from $29</a>';
+      '<a class="btn lg" href="/design/">Put one of these on the transom &middot; from $38</a>';
     out.classList.add('on');
   }
   document.getElementById('spin').addEventListener('click',spin);
@@ -158,7 +158,7 @@ HIN_JS = r"""
       return '<tr><th style="width:38%">'+x[0]+'</th><td>'+x[1]+'</td></tr>';
     }).join('')+'</tbody></table></div>'+notes+
     '<p style="margin-top:12px"><a href="/design/">We cut registration '+
-    'numbers for $19 a pair.</a></p>';
+    'numbers for $28 a pair.</a></p>';
   }
   btn.addEventListener('click',go);
   inp.addEventListener('keydown',function(ev){
@@ -235,7 +235,7 @@ LAYOUT_JS = r"""
       '<p style="margin-top:12px">Your set will finish roughly <strong>'+w+
       '&quot; wide</strong> per side at '+h+'&quot; tall. Measure the forward half of your '+
       'hull before you order &mdash; you need that much flat run above the waterline.</p>'+
-      (pass?'<a class="btn lg" style="margin-top:6px" href="/design/">Order this set &middot; $19</a>':'');
+      (pass?'<a class="btn lg" style="margin-top:6px" href="/design/">Order this set &middot; $28</a>':'');
     out.classList.add('on');
   }
   btn.addEventListener('click',go);

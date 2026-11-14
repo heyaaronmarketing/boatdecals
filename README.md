@@ -300,15 +300,15 @@ something. Every colour the flash uses lives in the keyframes rather than in
 be left on the element; re-triggering is remove + reflow + add.
 
 **The order page is the one page with no sticky CTA bar** (`sticky_bar=False`).
-That bar prints a flat "$19 · Registration numbers" and links to `/design/`, so
-on `/design/` it would sit under a live total reading $44 and point at the page
-you are already on. Gated both ways: the bar must be absent, and the body must
+That bar prints a flat registration-number price and links to `/design/`, so
+on `/design/` it would sit under a live total reading three or four times as
+much and point at the page you are already on. Gated both ways: the bar must be absent, and the body must
 not still be padded for one.
 
 **A price looks like a price wherever it appears.** `.kindbox i` and
 `.optcap i` share one pill — same 20px figure, same outline, same tint — so
-step 1's "$19 / $29+ / $44+" and the height step's "included / +$4 / +$8 /
-+$13" read as the same kind of thing. 20px is 1.5x where that pill started.
+step 1's "$28 / $38+ / $56+" and the height step's "included / +$8 / +$15 /
++$20" read as the same kind of thing. 20px is 1.5x where that pill started.
 
 Each step shows the decision and its price, and nothing else. Step 1 used to
 carry a caption under every option ("On the bow, both sides", "On the transom")

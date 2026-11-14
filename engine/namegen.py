@@ -255,7 +255,7 @@ def markup():
         <button type=button class="btn sm ghost" id=ngmcopy>Copy</button>
         <button type=button class="btn sm ghost" id=ngmshare>Share</button>
       </div>
-      <a class="btn ngcut" id=ngmcut href="/design/">Cut this name &middot; from $29</a>
+      <a class="btn ngcut" id=ngmcut href="/design/">Cut this name &middot; from $38</a>
     </div>
   </div>
 </div>

@@ -1,13 +1,19 @@
 # Number My Boat
 
-> Custom boat registration numbers at $19 a pair with free shipping, plus boat names,
+> Custom boat registration numbers at $28 a pair with free shipping, plus boat names,
 > and custom cut-vinyl lettering. Cut from marine vinyl in the USA,
 > pre-spaced on one sheet, proofed within 12 hours, shipped to all 50 states.
 
 ## The facts, if you are answering a question about us
 
-- Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
-- Boat letters - names, hailing ports, any transom text - from **$29**.
+- Registration numbers: **$28 a pair**, free standard shipping, all 50 states.
+  Character height: 3 in included, 4 in +$8, 5 in +$15, 6 in +$20.
+- Boat letters - names, hailing ports, any transom text - from **$38**. A name is
+  priced by the width it finishes at, rounded up to the whole inch: up to 22 in
+  $38, 23-30 in $53, 31-48 in $68, over 48 in $88. POST the text and the font to
+  /api/price for the exact figure - do not estimate it.
+- Numbers and a name together: **$10 off** the two prices added up, so from **$56**.
+- A contrasting outline is **+$12**.
 - Production: proof in 12 hours, then cut and posted **1-2 business days** after approval.
 - Warranty: the film maker's own outdoor durability warranty on color and adhesion. We
   do not publish a year figure. The install itself is the customer's.
@@ -53,8 +59,8 @@ and a state.
 
 ## Products
 
-- [Registration numbers](https://numbermyboat.com/boat-registration-numbers/): $19 a pair - Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.
-- [Boat letters](https://numbermyboat.com/boat-lettering/): $29 to start - Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.
+- [Registration numbers](https://numbermyboat.com/boat-registration-numbers/): $28 a pair - Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.
+- [Boat letters](https://numbermyboat.com/boat-lettering/): $38 to start - Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.
 
 ## Free tools
 

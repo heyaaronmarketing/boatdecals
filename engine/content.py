@@ -12,7 +12,7 @@ SITE = {
     "short": "Number My Boat",
     "url": "https://numbermyboat.com",
     "domain": "numbermyboat.com",
-    "tagline": "Boat registration numbers, $19 a pair. Proof in 12 hours.",
+    "tagline": None,   # set from PRICE below - SITE is defined first
     "email": "orders@numbermyboat.com",
     "hours": "Mon-Fri 8-5 CT",
     # NO PHONE, NO STREET ADDRESS, NO COORDINATES - Aaron's call 2026-10-30.
@@ -43,21 +43,93 @@ LOCAL_WATERS = ["the Cedar River", "George Wyth Lake", "Big Woods Lake",
 
 # ---------------------------------------------------------------- the offer
 PRICE = {
-    "numbers": 19,
+    # ---------------------------------------------------------------------
+    # THE ONE PLACE. Every price on the site, in the order form, in the
+    # Stripe intent, in catalog.json, in the JSON-LD offers and in every MCP
+    # quote resolves to a number in this dict.
+    #
+    # It is not a convention, it is enforced three ways:
+    #   * worker/price-data.js is GENERATED from here by mcp/build_price_js.py
+    #     and worker/price.js is the only pricing function - the order form
+    #     gets the same module inlined, so the browser and the server cannot
+    #     disagree;
+    #   * verify.py regenerates price-data.js and fails the build on any diff;
+    #   * verify.py fails the build if any superseded price literal
+    #     survives anywhere in engine/, media/ or public/.
+    #
+    # Set 2026-11-13. The figures it replaced are in git, not in a comment
+    # here - a comment naming the old price is the thing the gate below is
+    # for, and an exception carved out for one is an exception.
+    # ---------------------------------------------------------------------
+    "numbers": 28,
+    # Character height upcharge on a REGISTRATION NUMBER set. A name is not
+    # priced by height - it is priced by the width it finishes at, which
+    # already moves with height. Charging both would charge twice for one
+    # thing.
+    "height_add": {"3": 0, "4": 8, "5": 15, "6": 20},
+    # A name is priced by the width it finishes at, because that is what it
+    # costs us: vinyl area, plotter time and weeding all track width, and a
+    # 9-character name at 3 inches is a different job from a 22-character one
+    # at 6. The site has always SAID "priced by finished size" on /pricing/
+    # while the form charged a flat rate plus a height step; this is the
+    # first version where the two agree.
+    #
+    # Banded on the finished width rounded UP to the whole inch, so the
+    # published table has no gap in it: a name that finishes at 22.0" is
+    # small, 22.1" is medium. Rounding down would have left 22.1-22.9"
+    # priced as "up to 22 inches", which is not what the page says.
+    "name_bands": [
+        {"key": "small",  "max_in": 22,   "price": 38, "label": "up to 22 in"},
+        {"key": "medium", "max_in": 30,   "price": 53, "label": "23-30 in"},
+        {"key": "large",  "max_in": 48,   "price": 68, "label": "31-48 in"},
+        {"key": "xl",     "max_in": None, "price": 88, "label": "over 48 in"},
+    ],
+    # Shorthands for copy. Derived below so prose cannot drift from the bands.
+    "name_from": 38,
+    # The range quoted as "most land $38-68": small through large. XL exists
+    # and is priced, but a transom name that finishes over four feet across
+    # is not what "most" means, and quoting $88 as the top of a typical range
+    # reads as a warning rather than a price.
+    "name_typical_to": 68,
+    # The bundle. A name AND a pair of numbers in one envelope: one proof,
+    # one setup, one package, so $10 of it is work we only do once.
+    "bundle_off": 10,
     # A contrasting outline is a SECOND layer of vinyl: cut separately,
     # weeded separately, and registered against the first by hand. Roughly
     # double the work, which is what the price reflects.
     "outline": 12,
-    "numbers_premium": 27,
-    "name_from": 29,
     "rush": 12,
     "kit": 6,
     "free_ship_over": 0,     # free shipping on everything
+    # What a pair costs elsewhere online, for the comparison on /pricing/ and
+    # in the homepage FAQ. A claim about other people's prices, so it lives
+    # here next to ours and gets changed deliberately, not in passing.
+    "market_low": 15,
+    "market_high": 39,
 }
 
+# Derived, so no second copy of the arithmetic exists anywhere.
+# Entry bundle: 3-inch numbers plus the smallest name band, less the bundle
+# discount. 28 + 38 - 10 = 56.
+PRICE["bundle_from"] = (PRICE["numbers"] + PRICE["name_from"]
+                        - PRICE["bundle_off"])
+assert PRICE["name_from"] == PRICE["name_bands"][0]["price"]
+assert PRICE["name_typical_to"] == PRICE["name_bands"][-2]["price"]
+assert PRICE["height_add"]["3"] == 0, "the published base price is the 3 inch one"
+
+# SITE has to exist before PRICE (the states and the waters are read above it),
+# so the one line of SITE that quotes a price is filled in here instead of
+# carrying a second copy of the figure.
+SITE["tagline"] = ("Boat registration numbers, $%d a pair. Proof in 12 hours."
+                   % PRICE["numbers"])
+
 UPGRADES = [
-    ("Premium 8-year cast vinyl", 8,
-     "Cast film instead of calendared - holds color about three years longer.",
+    # No year figure, in the label or the blurb. See the film-life gate in
+    # verify.py: this site states the film maker's own warranty and does not
+    # publish a durability figure of its own.
+    ("Premium cast vinyl instead of calendared", 8,
+     "Cast film rather than calendared - deeper color that resists chalking "
+     "and shrink-back.",
      "Most popular", "Worth it if the boat lives outside or you picked a dark color."),
     ("Spare set - a second pair at half price", 9,
      "A whole second pair in the envelope for when one gets dock-rashed.",
@@ -82,14 +154,18 @@ PRODUCTS = [
          kw="boat registration numbers", vol=5400, cpc=2.60, price=PRICE["numbers"],
          unit="a pair", icon="numbers",
          blurb="Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.",
-         desc="Custom boat registration numbers, $19 a pair with free shipping. Legal 3-inch block vinyl for all 50 states. Proof emailed within 12 hours."),
+         desc="Custom boat registration numbers, $%d a pair with free shipping. "
+              "Legal 3-inch block vinyl for all 50 states. Proof emailed "
+              "within 12 hours." % PRICE["numbers"]),
     dict(slug="boat-lettering", nav="Boat letters", short="Lettering",
-         h1="Boat Letters &amp; Name Decals - Any Font, From $29",
+         h1="Boat Letters &amp; Name Decals - Any Font, From $%d" % PRICE["name_from"],
          title="Boat Letters &amp; Name Decals, Any Font",
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
          blurb="Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.",
-         desc="Boat name decals and custom vinyl lettering from $29. 10 marine fonts previewed live, white or black, free shipping, next-day production."),
+         desc="Boat name decals and custom vinyl lettering from $%d. 10 marine "
+              "fonts previewed live, white or black, free shipping, next-day "
+              "production." % PRICE["name_from"]),
 ]
 
 # -------------------------------------------------------------- boat types
@@ -425,9 +501,10 @@ ORDER_COLORS = ["White", "Black", "Red", "Navy", "Royal Blue", "Forest",
 # answer engines are already answering for someone else.
 FAQ_HOME = [
     ("How much do boat registration numbers cost?",
-     "Ours are $19 a pair with free shipping, proofed within 12 hours. "
-     "Online prices across the market run about $10 to $25 a pair. Cheap sets are usually "
-     "calendared craft vinyl, cut as loose characters you space yourself."),
+     "Ours are $%d a pair with free shipping, proofed within 12 hours. "
+     "Web prices for a pair run about $%d to $%d across the market. Cheap sets "
+     "are usually calendared craft vinyl, cut as loose characters you space "
+     "yourself." % (PRICE["numbers"], PRICE["market_low"], PRICE["market_high"])),
     ("Do boat registration numbers have to be a certain color?",
      "Not a specific color - but federal rule 33 CFR 173.27 requires the characters to "
      "contrast with the background and be distinctly visible and legible. White numbers on "

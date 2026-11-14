@@ -30,8 +30,11 @@ import preview as PV
 # (inches, price add, label). The old fourth field held a one-word pitch
 # ("legal minimum", "reads better") under each box; the size and the price are
 # the whole decision, so the boxes got bigger and the captions went.
-HEIGHTS = [(3, 0, "3&quot;"), (4, 4, "4&quot;"), (5, 8, "5&quot;"),
-           (6, 13, "6&quot;")]
+# Read from the one price table, so a height upcharge cannot be changed in
+# content.py and left stale on the form. The label is the only thing here that
+# is not a price.
+HEIGHTS = [(int(h), PRICE["height_add"][h], "%d&quot;" % int(h))
+           for h in sorted(PRICE["height_add"], key=int)]
 
 # (value, base, price, flag, key, label)
 #
@@ -44,9 +47,23 @@ HEIGHTS = [(3, 0, "3&quot;"), (4, 4, "4&quot;"), (5, 8, "5&quot;"),
 # The thumbnail already shows where the lettering goes, so it was the icon in
 # words - the name and the price are the whole decision.
 KINDS = [
-    ("Registration numbers", 19, "$19", "", "numbers", "Boat Numbers"),
-    ("Boat name", 29, "$29+", "", "name", "Boat Name"),
-    ("Both", 44, "$44+", "Save $4", "both", "Both"),
+    # (value, price label, badge, key, customer-facing label)
+    #
+    # `value` is what the radio submits and must not drift: worker/price.js
+    # prices on it, the gates script gates fonts on it, and every order
+    # already in D1 carries it.
+    #
+    # There is no base price in this table any more. The card used to carry a
+    # data-base attribute that the form's own total added up, which was a
+    # second copy of the price list living in an HTML attribute - and it was
+    # wrong for the bundle. The cards now show a "from" figure for the
+    # customer to read and nothing the arithmetic depends on.
+    ("Registration numbers", "$%d" % PRICE["numbers"],
+     "", "numbers", "Boat Numbers"),
+    ("Boat name", "$%d+" % PRICE["name_from"],
+     "", "name", "Boat Name"),
+    ("Both", "$%d+" % PRICE["bundle_from"],
+     "Save $%d" % PRICE["bundle_off"], "both", "Both"),
 ]
 
 _KICON = {
@@ -109,12 +126,12 @@ def form():
            "included" if add == 0 else "+$%d" % add)
         for h, add, lbl in HEIGHTS)
     kinds = "".join(
-        '<label class=kind><input type=radio name=kind value="%s" data-base="%d"%s>'
+        '<label class=kind><input type=radio name=kind value="%s"%s>'
         '<span class=kindbox>%s%s<b>%s</b><i>%s</i></span></label>'
-        % (val, base, " checked" if key == "numbers" else "",
+        % (val, " checked" if key == "numbers" else "",
            '<span class=flag>%s</span>' % flag if flag else "",
            _thumb(key), label, price)
-        for val, base, price, flag, key, label in KINDS)
+        for val, price, flag, key, label in KINDS)
     cols = _colors()
 
     markup = ("""
@@ -125,7 +142,7 @@ def form():
       <button type=button class=wizback id=back hidden>&larr; Back</button>
       <span id=stepnum>Step 1 of __STEPS__</span>
       <span class=wiztot>
-        <span class=wiztotrow>Total <b id=total>$19</b></span>
+        <span class=wiztotrow>Total <b id=total>$""" + str(PRICE["numbers"]) + """</b></span>
         <em>Free shipping</em>
       </span>
     </div>
@@ -382,14 +399,40 @@ JS = r"""
   function hasName(){return kind()!=='Registration numbers';}
   function val(n){var el=W.querySelector('[name='+n+']:checked');return el||null;}
 
-  function price(){
-    var k=W.querySelector('[name=kind]:checked');
-    var n=k?parseFloat(k.dataset.base):19;
-    var h=val('height'); if(h) n+=parseFloat(h.dataset.add||0);
-    if(hasOutline()) n+=OUTLINE_ADD;
-    var ups=W.querySelectorAll('[name=upgrade]:checked');
-    for(var i=0;i<ups.length;i++) n+=parseFloat(ups[i].dataset.add||0);
-    return Math.round(n);
+  /** Everything the price depends on, in the shape worker/price.js wants. */
+  function priceInput(){
+    var ups=[], u=W.querySelectorAll('[name=upgrade]:checked'), i;
+    for(i=0;i<u.length;i++) ups.push(u[i].value);
+    var h=val('height');
+    return {kind:kind(), height:h?h.value:'3',
+            // The lettering, which is what a name is priced by. Empty until
+            // step 3, and worker/price.js answers the smallest band for an
+            // empty one - which is what the card's "from $38" already says.
+            boatname:(($('f_name2')||{}).value||'').trim(),
+            font:font(), outline:hasOutline()?1:0,
+            // Pipe-joined, with the spaces the worker and the proof email
+            // already expect: an upgrade label contains a comma, so a
+            // comma-joined list gets split into fragments nothing can price.
+            upgrades:ups.join(' | ')};
+  }
+
+  /**
+   * THE price. This is worker/price.js, inlined by engine/shared_js.py - not
+   * a browser reimplementation of it.
+   *
+   * It used to be nine lines of arithmetic here reading data-base and
+   * data-add attributes off the DOM, which was a second copy of the price
+   * list, and it was wrong: a "Both" order fell through to the registration
+   * number base, so a six-inch bundle with an outline displayed as the
+   * cheapest thing in the shop while the worker charged the real figure.
+   *
+   * Lenient, deliberately. A form that will not show a total because the
+   * customer has not picked a font yet is worse than one that shows the
+   * figure for the default face and moves when he picks a wider one.
+   */
+  function price(){ return window.NMB_PRICE.priceOf(priceInput(), false); }
+  function priceLines(){
+    return window.NMB_PRICE.breakdown(priceInput(), false).lines;
   }
 
   /** What we would actually cut: the corrected spacing, not the raw typing. */
@@ -400,7 +443,7 @@ JS = r"""
     return v.fixed || raw;
   }
 
-  var OUTLINE_ADD=12;
+  var OUTLINE_ADD=window.NMB_PRICE.OUTLINE_ADD;
   function hasOutline(){ var b=$('f_outline'); return !!(b && b.checked); }
 
   /** The outline color is a SECOND decision, so it answers itself first.
@@ -521,14 +564,20 @@ JS = r"""
 
   function summary(){
     // two boxes now: the payment step has its own.
-    var rows=[], k=kind();
-    var kb=W.querySelector('[name=kind]:checked');
-    rows.push([k, '$'+(kb?kb.dataset.base:19)]);
-    var h=val('height');
-    if(h && +h.dataset.add>0) rows.push([h.value+'" characters','+$'+h.dataset.add]);
-    var ups=W.querySelectorAll('[name=upgrade]:checked');
-    for(var i=0;i<ups.length;i++)
-      rows.push([ups[i].value.split(' - ')[0],'+$'+ups[i].dataset.add]);
+    // The line items come from the pricing function itself, so the rows a
+    // customer is shown are the rows he is charged for. They used to be
+    // rebuilt here from DOM attributes, which meant the summary could add up
+    // to something the Pay button did not say.
+    //
+    // It also lets the name row carry its own evidence: "Boat name, 27.6 in
+    // finished (23-30 in)" is checkable against a tape measure. "Boat name
+    // $53" is an assertion.
+    var rows = priceLines().map(function(l){
+      return [l.what.split(' - ')[0],
+              (l.amount < 0 ? '-$' : '+$') + Math.abs(l.amount)];
+    });
+    // The first line is the product, not an addition to it.
+    if(rows.length) rows[0][1] = rows[0][1].replace(/^\+/, '');
     var txt=[];
     if(isNum() && $('f_text').value.trim()) txt.push($('f_text').value.trim());
     if(hasName() && $('f_name2').value.trim()) txt.push($('f_name2').value.trim());
@@ -693,8 +742,9 @@ JS = r"""
     // The whole order, not just the figure. The server deliberately ignores
     // any amount the browser sends and reprices from the fields - so sending
     // only {amount} left it pricing an empty object, which defaults to the
-    // $19 base. A "Both" order at 6" with an outline is $69 and would have
-    // been charged $19.
+    // cheapest product. A "Both" order at 6 inches with an outline and a
+    // large name is well over a hundred dollars and would have been charged
+    // the price of a three-inch pair.
     intentAmount=price();
     fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({order:payload()})})

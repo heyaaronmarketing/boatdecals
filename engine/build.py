@@ -360,7 +360,6 @@ def og_copy(path, title, desc):
 # The height surcharges, named once. The order form renders these into its
 # data-add attributes and the worker has the same table; verify.py gates all
 # three against each other.
-HEIGHT_ADD_CAT = {"3": 0, "4": 4, "5": 8, "6": 13}
 
 GA_ID = "G-P2QBX2TXPX"
 GA_HOST = "numbermyboat.com"
@@ -425,10 +424,15 @@ def head(title, desc, path, schema, noindex=False):
 # the customer is the only person who can check it against their card. It also
 # replaces the speed claim the proof step cost us - the honest trade is a day
 # for a second pair of eyes, and that is the trade to sell.
-FEATURES = ["$19 a Pair", "Proofed Before We Cut", "Marine Vinyl",
+# The price chip. It appears in FEATURES, in FEATURE_SUB's keys and in a
+# dozen per-page `trust=[...]` lists, so it is built once from the one price
+# table. Eight copies of the figure used to live in this file.
+PRICE_CHIP = "$%d a Pair" % PRICE["numbers"]
+
+FEATURES = [PRICE_CHIP, "Proofed Before We Cut", "Marine Vinyl",
             "Meets 33 CFR 173.27"]
 FEATURE_SUB = {
-    "$19 a Pair":
+    PRICE_CHIP:
         "One for each side of the hull, pre-spaced on a single sheet. "
         "Shipping included.",
     "Proofed Before We Cut":
@@ -465,14 +469,15 @@ NAV_HELP = [
 
 def topbar():
     return ('<div class=top><div class=w>'
-            '<span><strong>$19 a pair</strong> &middot; both sides &middot; free shipping '
-            'proof in 12 hours</span>'
+            '<span><strong>$%d a pair</strong> &middot; both sides '
+            '&middot; free shipping proof in 12 hours</span>'
             # The link is hidden on a phone: the header button sits directly
             # under it saying the same thing, and the point of this pass was to
             # stop offering the same action four times on one screen.
             '<span>Cut in %s, %s<span class=topcta> &middot; '
             '<a href="/design/" style="color:#fff">Start your order</a></span></span>'
-            '</div></div>' % (SITE["city"], SITE["region"]))
+            '</div></div>'
+            % (PRICE["numbers"], SITE["city"], SITE["region"]))
 
 def header():
     """Header nav.
@@ -512,7 +517,7 @@ def sticky(label="Registration numbers", price=19):
 # the work rather than a slideshow with adverts bolted on the end.
 APP_CARDS = [
     "AL-01",
-    ("What it costs", "$19 a pair",
+    ("What it costs", "$%d a pair" % PRICE["numbers"],
      "Both sides, pre-spaced on one sheet, shipping included. The price is on "
      "the page - you do not have to build a design to see it."),
     "AL-02",
@@ -750,7 +755,7 @@ def write(path, body, prio="0.7"):
         NOINDEX.add(path)
 
 def shell(title, desc, path, schema, main, trail=None, noindex=False,
-          faqs=None, faq_heading=None, sticky_label=None, sticky_price=19,
+          faqs=None, faq_heading=None, sticky_label=None, sticky_price=PRICE["numbers"],
           sticky_bar=True, app=False, js="",
           band=None):
     parts = [head(title, desc, path, schema, noindex), topbar(), header()]
@@ -776,8 +781,8 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
         parts.append(app_shell())
     parts.append(footer())
     # The order page suppresses it: the wizard already carries a live total in
-    # its header, and a second bar reading a flat "$19 Registration numbers"
-    # under a total saying $29 Boat name contradicts it - on a page whose whole
+    # its header, and a second bar reading a flat registration-number price
+    # under a total for a boat name contradicts it - on a page whose whole
     # job is that total. Its button also links to the page you are already on.
     if sticky_bar:
         parts.append(sticky(sticky_label or "Registration numbers", sticky_price))
@@ -818,8 +823,11 @@ def shell(title, desc, path, schema, main, trail=None, noindex=False,
 
 # The registration checker is worker/decode.js, inlined here, with the old
 # BNS_VALIDATE name kept as a shim so the order form's callers are untouched.
+# price_js() is worker/price.js itself, inlined - so the running total, the
+# "Pay $71" on the button and the amount the Stripe intent is created for are
+# all one implementation. It must come BEFORE O.JS, which calls into it.
 ORDER_JS = (PV.data_js() + PV.JS + SH.decode_js() + SH.SHIM_JS
-            + O.color_js() + O.JS)
+            + SH.price_js() + O.color_js() + O.JS)
 
 # =================================================================== PAGES
 def why_grid(limit=6):
@@ -964,8 +972,9 @@ def build_home():
       + how_it_works(Band(1))
       + share_block('/', U('/'), '/assets/share/line-3-inches.png'))
     write("/", shell("Boat Registration Numbers - Legal 3-Inch Sets, Both Sides",
-          "Custom boat registration numbers $19 a pair with free shipping. Legal 3-inch "
-          "block vinyl for all 50 states, boat names from $29. Proof in 12 hours.",
+          "Custom boat registration numbers $%d a pair with free shipping. Legal "
+          "3-inch block vinyl for all 50 states, boat names from $%d. Proof in "
+          "12 hours." % (PRICE["numbers"], PRICE["name_from"]),
           "/", sch, main, faqs=FAQ_HOME, js=ORDER_JS, app=True), "1.0")
 
 # ---------------------------------------------------------------- /design/
@@ -1310,7 +1319,7 @@ def build_design():
 # on every order - no "up to", no asterisks.
 PRICE_PLANS = [
     dict(slug="boat-registration-numbers", name="Boat numbers",
-         price="$19", unit="a pair", featured=True,
+         price="$%d" % PRICE["numbers"], unit="a pair", featured=True,
          line="The legal set, both sides of the bow.",
          feats=["Two sets &mdash; one for each side",
                 "3&quot; block characters, legal in all 50 states",
@@ -1320,13 +1329,14 @@ PRICE_PLANS = [
                 "Contrasting outline, +$%d" % PRICE["outline"],
                 "Free shipping, proof in 12 hours"]),
     dict(slug="boat-lettering", name="Boat letters", featured=False,
-         price="$29", unit="to start",
+         price="$%d" % PRICE["name_from"], unit="to start",
          line="Names, hailing ports and any transom text.",
          feats=["Ten fonts, previewed in your own lettering",
                 "Script, serif and block",
                 "Pre-spaced with application tape over the top",
                 "Curved transoms laid out from your photo",
-                "Priced by finished size &mdash; most land $29&ndash;79",
+                "Priced by finished size &mdash; most land $%d&ndash;%d"
+                % (PRICE["name_from"], PRICE["name_typical_to"]),
                 "Eight colors, all included",
                 "Contrasting outline, +$%d" % PRICE["outline"],
                 "Free shipping, proof in 12 hours"]),
@@ -1358,7 +1368,8 @@ def build_pricing():
        "Yes, on everything, to anywhere in the 50 states. Standard post, 3-6 days in "
        "transit. If you need it sooner than that, email us before you order and we "
        "will tell you what is possible and what it costs."),
-      ("Why is $19 not the cheapest price on the internet?",
+      ("Why is $%d not the cheapest price on the internet?"
+       % PRICE["numbers"],
        "Because it is not a race we want to win. An $11 set is usually cut as loose "
        "characters, which means you doing the spacing on the water. Ours arrives "
        "pre-spaced on one sheet and checked against your state format before it cuts. "
@@ -1380,8 +1391,9 @@ def build_pricing():
       + '</div></section>'
       + '</div></section>')
     write("/pricing/", shell("Boat Lettering &amp; Registration Number Prices",
-          "Boat registration numbers $19 a pair, boat names from $29, custom lettering "
-          "from $29. Free shipping, next-business-day production.",
+          "Boat registration numbers $%d a pair, boat names from $%d, custom "
+          "lettering from $%d. Free shipping, next-business-day production."
+          % (PRICE["numbers"], PRICE["name_from"], PRICE["name_from"]),
           "/pricing/", sch, main, trail=trail, faqs=faqs,
           faq_heading="Pricing questions"), "0.9")
 
@@ -1447,9 +1459,9 @@ PROD_BODY = {
    "over the top, so it goes on in one pass. Not printed on a clear square &mdash; "
    "there is no visible background or edge, just the letter shapes on your hull.</p>"
    "<h2>Sizes and what they cost</h2>"
-   "<p>Most transom names land between $29 and $79. Price follows the overall size of "
-   "the finished decal, so a short name in big letters costs about the same as a long "
-   "name in small ones.</p>"),
+   "<p>Most transom names land between $38 and $68. Price follows the width the "
+   "finished decal measures, so a short name in big letters costs about the same "
+   "as a long name in small ones.</p>"),
 
 }
 
@@ -1588,8 +1600,9 @@ def build_state(s):
     h1 = ("%s Boat Registration Numbers: %s Prefix, Legal 3-Inch Block"
           % (nm, ab))
     title = "%s Boat Registration Numbers %s" % (nm, ab)
-    desc = ("%s boat registration numbers, $19 a pair with free shipping. Legal 3-inch "
-            "block vinyl starting with %s, proof emailed within 12 hours." % (nm, ab))
+    desc = ("%s boat registration numbers, $%d a pair with free shipping. Legal "
+            "3-inch block vinyl starting with %s, proof emailed within 12 hours."
+            % (nm, PRICE["numbers"], ab))
     example = "%s 1234 AB" % ab
     faqs = [
       ("How tall do %s boat registration numbers have to be?" % nm,
@@ -1698,7 +1711,7 @@ def build_state(s):
             "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
             "pre-spaced on one sheet for each side of the hull. Free shipping, shipped "
             "1-2 business days after you approve your proof." % ab,
-            trust=["$19 a Pair", "%s prefix" % ab, "Proofed Before We Cut",
+            trust=[PRICE_CHIP, "%s prefix" % ab, "Proofed Before We Cut",
                    "Meets 33 CFR 173.27"],
             right=O.form())
       + state_identity(s, band)
@@ -1739,8 +1752,8 @@ def build_states_hub():
     main = (hero("Boat Registration Numbers by State",
             "The 3-inch block rule is federal and the same everywhere. What changes is "
             "your prefix, who issues the number, and where the validation decal goes. "
-            "$19 a pair, every state.",
-            trust=["$19 a Pair", "All 50 states", "Proofed Before We Cut",
+            "$%d a pair, every state." % PRICE["numbers"],
+            trust=[PRICE_CHIP, "All 50 states", "Proofed Before We Cut",
                    "Meets 33 CFR 173.27"],
             right=O.form())
       + '<section><div class=w>' + lead_figure(path) + '<h2>Pick your state</h2>'
@@ -1757,8 +1770,9 @@ def build_states_hub():
       + '<div class=prose>' + CB.FED_RULE + '</div>'
       + '<a class="btn lg" href="/design/">Start your order</a></div></section>')
     write(path, shell("Boat Registration Numbers by State - All 50",
-          "Boat registration numbers for every state, $19 a pair with free shipping. "
-          "State prefixes, issuing agencies and the federal 3-inch block rule explained.",
+          "Boat registration numbers for every state, $%d a pair with free "
+          "shipping. State prefixes, issuing agencies and the federal 3-inch "
+          "block rule explained." % PRICE["numbers"],
           path, sch, main, trail=trail, faqs=faqs), "0.9")
 
 # ------------------------------------------------------------ boat types
@@ -1773,12 +1787,14 @@ def build_boat_type(b):
        "yes. Unpowered hulls usually do not need numbers, but a few states register "
        "them anyway. Check with your state agency, then order."),
       ("What does it cost?",
-       "Registration numbers are $19 a pair including shipping. Names and graphics start "
-       "at $29 and $22. High-tack vinyl, which your hull may need, is free."),
+       "Registration numbers are $%d a pair including shipping. Names start at "
+       "$%d and are priced by the width they finish at. High-tack vinyl, which "
+       "your hull may need, is free."
+       % (PRICE["numbers"], PRICE["name_from"])),
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     main = (hero(b["title"], b["lead"],
-            trust=["$19 a Pair", "High-tack when needed, free",
+            trust=[PRICE_CHIP, "High-tack when needed, free",
                    "Proofed Before We Cut", "Meets 33 CFR 173.27"], right=O.form())
       + '<section><div class=w><div class=prose>'
         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
@@ -1797,8 +1813,9 @@ def build_boat_type(b):
          if ("/for/%s/" % b["slug"]) in PAGE_IMAGE else '')
       + product_grid(heading="Products for this boat"))
     write(path, shell(b["title"].replace("&amp;", "&")[:58],
-          "%s - cut from marine vinyl, $19 a pair for registration numbers, free "
-          "shipping, proof in 12 hours." % b["title"].replace("&amp;", "&"),
+          "%s - cut from marine vinyl, $%d a pair for registration numbers, free "
+          "shipping, proof in 12 hours."
+          % (b["title"].replace("&amp;", "&"), PRICE["numbers"]),
           path, sch, main, trail=trail, faqs=faqs, js=ORDER_JS), "0.7")
 
 # ----------------------------------------------------------------- tools
@@ -1868,8 +1885,9 @@ def build_tool_names():
        "goes on the certificate, and the Coast Guard will not document two vessels with "
        "the same name and hailing port."),
       ("How much does a boat name decal cost?",
-       "From $29 including shipping. Most transom names land between $29 and $79 depending "
-       "on finished size."),
+       "From $%d including shipping. Most transom names land between $%d and $%d "
+       "depending on the width they finish at."
+       % (PRICE["name_from"], PRICE["name_from"], PRICE["name_typical_to"])),
       ("How many characters fit on my transom?",
        "Rough maths: at 4 inches tall, each character takes about 2.5 inches of width "
        "including spacing. A 10-character name runs about 25 inches. Send us a photo with "
@@ -1905,7 +1923,8 @@ def build_tool_funny():
             '<p>Our <a href="/tools/boat-name-generator/">name generator</a> spins classic, '
             'nautical, fishing and retirement names as well as funny ones, and will keep '
             'going as long as you keep clicking.</p></div>'
-            '<a class="btn lg" href="/design/">Put one on the transom &middot; from $29</a>')
+            '<a class="btn lg" href="/design/">Put one on the transom '
+            '&middot; from $%d</a>' % PRICE["name_from"])
     faqs = [
       ("What is the most common funny boat name?",
        "Variations on 'Knot' - Knot Working, Knot Guilty, Knot Paid For - and 'Seas the "
@@ -1917,8 +1936,9 @@ def build_tool_funny():
        "vessel with an obscene name. We will cut it; we would just point out you have to "
        "say it on the radio."),
       ("How much is a boat name decal?",
-       "From $29 with free shipping, pre-spaced and ready to apply. Most land between $29 "
-       "and $79 depending on finished size."),
+       "From $%d with free shipping, pre-spaced and ready to apply. Most land "
+       "between $%d and $%d depending on the width they finish at."
+       % (PRICE["name_from"], PRICE["name_from"], PRICE["name_typical_to"])),
     ]
     tool_shell(t, body, "", faqs)
 
@@ -1963,7 +1983,7 @@ def build_tool_hin():
             'if you move or re-register, and is the one you must display in 3-inch block '
             'characters on both sides of the bow.</li></ul>'
             '<p>If you came here because you need the second one made, that is what we do '
-            '&mdash; <a href="/design/">$19 a pair</a>.</p>'
+            '&mdash; <a href="/design/">$28 a pair</a>.</p>'
             '<h2>If the HIN is missing or unreadable</h2>'
             '<p>Pre-1972 hulls may genuinely never have had one. From 1972 onward it should '
             'be there, and a hull with a ground-off or illegible HIN is a serious red flag '
@@ -2296,7 +2316,7 @@ GUIDE_BODY = {
    "should read and how tall you need it.</p>",
 
  "boat-registration-number-cost":
-   "<p>Registration number decals run roughly <strong>$10 to $25 a pair</strong> online "
+   "<p>Registration number decals run roughly <strong>$15 to $39 a pair</strong> online "
    "in 2026. That is a wide band for what looks like the same product, so here is what "
    "actually drives it.</p>"
    "<div class=tw><table><thead><tr><th>Where</th><th>Typical price, a pair</th>"
@@ -2309,7 +2329,7 @@ GUIDE_BODY = {
    "<tr><td>Boat lettering specialists</td><td>$15&ndash;25</td><td>Pre-spaced, marine "
    "film and a warranty. Most hide the price behind a design "
    "tool</td></tr>"
-   "<tr><td><strong>Us</strong></td><td><strong>$19</strong></td><td>Pre-spaced, "
+   "<tr><td><strong>Us</strong></td><td><strong>$28</strong></td><td>Pre-spaced, "
    "marine film, free shipping, your number checked against its state format before it "
    "cuts</td></tr>"
    "</tbody></table></div>"
@@ -2393,7 +2413,7 @@ def build_gallery():
     """Every shot we have, grouped by what a customer is actually checking.
 
     Browsing the gallery is a buying behaviour: people want to see their own
-    hull material and their own color before they trust the $19. So the
+    hull material and their own color before they trust the price. So the
     grouping is by hull and by problem, not by when the photo was taken.
     """
     path = "/gallery/"
@@ -2519,15 +2539,16 @@ def build_local():
        "one sheet, with a squeegee and instructions in the envelope. If you would "
        "rather we did it, email and ask; it depends on the week."),
       ("How much is it?",
-       "$19 a pair for registration numbers, the same price locally as online. Names "
-       "from $29, including shipping. What the preview shows is what gets cut."),
+       "$%d a pair for registration numbers, the same price locally as online. "
+       "Names from $%d, including shipping. What the preview shows is what gets "
+       "cut." % (PRICE["numbers"], PRICE["name_from"])),
     ]
     sch = graph(org_node(), crumb_node(trail, path), faq_node(faqs, path))
     main = (hero("Boat Lettering in Waterloo, Cedar Falls &amp; the Cedar Valley",
             "We cut every order right here in %s. Order online and we ship it free, "
             "or pick it up at the shop - usually the same day on registration numbers."
             % SITE["city"],
-            trust=["$19 a Pair", "Local pickup by arrangement",
+            trust=[PRICE_CHIP, "Local pickup by arrangement",
                    "Iowa IA numbers", "Free shipping"],
             right=O.form())
       + '<section><div class=w><div class=prose>'
@@ -2563,7 +2584,7 @@ def build_local():
         'pontoon on %s as for a sportfish in Florida, and the post office does the '
         'rest. Being small is why your email is answered by the person who cut it, '
         'and why a mistake gets re-cut instead of argued about.</p>'
-        '</div><a class="btn lg" href="/design/">Start your order &middot; $19 a pair</a>'
+        '</div><a class="btn lg" href="/design/">Start your order &middot; $28 a pair</a>'
         '</div></section>'
         % (e(B), SITE["city"], SITE["region_name"], SITE["county"],
            SITE["email"], SITE["email"], SITE["hours"],
@@ -2576,8 +2597,9 @@ def build_local():
             % (x["slug"], icon(x["icon"]), x["nav"], x["blurb"], x["price"], x["unit"])
             for x in PRODUCTS) + '</div></div></section>')
     write(path, shell("Boat Lettering Waterloo &amp; Cedar Falls, Iowa",
-          "Boat registration numbers and custom lettering cut in Evansdale, Iowa. "
-          "$19 a pair, free shipping nationwide, local pickup by arrangement.",
+          "Boat registration numbers and custom lettering cut in Evansdale, "
+          "Iowa. $%d a pair, free shipping nationwide, local pickup by "
+          "arrangement." % PRICE["numbers"],
           path, sch, main, trail=trail, faqs=faqs, js=ORDER_JS), "0.8")
 
 
@@ -2838,7 +2860,7 @@ def build_404():
             '<p class=lede>Nothing at this address. The things people usually want:</p>'
             '<div class=grid>'
             '<a class=card href="/design/"><h3>Start an order</h3>'
-            '<p>Registration numbers, $19 a pair, free shipping.</p>'
+            '<p>Registration numbers, $28 a pair, free shipping.</p>'
             '<div class=go>Go &rarr;</div></a>'
             '<a class=card href="/pricing/"><h3>All prices</h3>'
             '<p>Every product and upgrade on one page.</p><div class=go>Go &rarr;</div></a>'
@@ -3148,7 +3170,8 @@ def build_catalog():
 
     The spec's hardest rule is "no second pricing logic, no second renderer,
     no second payment system". The risk is not malice, it is arithmetic: the
-    moment a chat assistant quotes $19 while the wizard charges $23, the shop
+    moment a chat assistant quotes one figure while the wizard charges another,
+    the shop
     is arguing with a customer who has a screenshot.
 
     So the split is deliberate:
@@ -3185,16 +3208,26 @@ def build_catalog():
              "rule": "3 inch plain block characters per 33 CFR 173.27"},
             {"id": "boat-name", "name": "Boat name",
              "from": PRICE["name_from"], "unit": "set, pre-spaced",
-             "block_faces_only": False},
+             "block_faces_only": False,
+             "bands": [{"up_to_in": b["max_in"], "price": b["price"]}
+                       for b in PRICE["name_bands"]],
+             "rule": "Priced by the width the lettering finishes at, rounded "
+                     "up to the whole inch. POST the text and font to "
+                     "/api/price for the exact figure."},
             {"id": "both", "name": "Both",
-             "from": PRICE["numbers"] + PRICE["name_from"] - 4,
+             "from": PRICE["bundle_from"],
              "unit": "name + numbers",
              "block_faces_only": False,
-             "rule": "Bundle: numbers plus a name, $4 off the pair"},
+             "rule": "Bundle: numbers plus a name, $%d off the pair"
+                     % PRICE["bundle_off"]},
         ],
         "options": {
-            "heights_in": [{"in": h, "add": a} for h, a in
-                           sorted(HEIGHT_ADD_CAT.items(), key=lambda x: int(x[0]))],
+            "heights_in": [{"in": int(h), "add": a} for h, a in
+                           sorted(PRICE["height_add"].items(),
+                                  key=lambda x: int(x[0]))],
+            "height_note": "Applies to a registration number set. A name is "
+                           "priced by finished width, which already moves "
+                           "with height.",
             "outline": {"add": PRICE["outline"],
                         "note": "Contrasting second layer, same 8 colors"},
             "colors": [{"name": n, "hex": dict((c[0], c[1]) for c in COLORS)[n],
@@ -3258,14 +3291,20 @@ def build_static():
                    for t in TOOLS)
     (OUT / "llms.txt").write_text("""# %s
 
-> Custom boat registration numbers at $19 a pair with free shipping, plus boat names,
+> Custom boat registration numbers at $%d a pair with free shipping, plus boat names,
 > and custom cut-vinyl lettering. Cut from marine vinyl in the USA,
 > pre-spaced on one sheet, proofed within 12 hours, shipped to all 50 states.
 
 ## The facts, if you are answering a question about us
 
-- Registration numbers: **$19 a pair**, free standard shipping, all 50 states.
-- Boat letters - names, hailing ports, any transom text - from **$29**.
+- Registration numbers: **$%d a pair**, free standard shipping, all 50 states.
+  Character height: 3 in included, 4 in +$%d, 5 in +$%d, 6 in +$%d.
+- Boat letters - names, hailing ports, any transom text - from **$%d**. A name is
+  priced by the width it finishes at, rounded up to the whole inch: up to 22 in
+  $%d, 23-30 in $%d, 31-48 in $%d, over 48 in $%d. POST the text and the font to
+  /api/price for the exact figure - do not estimate it.
+- Numbers and a name together: **$%d off** the two prices added up, so from **$%d**.
+- A contrasting outline is **+$%d**.
 - Production: proof in 12 hours, then cut and posted **1-2 business days** after approval.
 - Warranty: the film maker\'s own outdoor durability warranty on color and adhesion. We
   do not publish a year figure. The install itself is the customer's.
@@ -3324,7 +3363,13 @@ and a state.
 ## Registration numbers by state
 
 %s
-""" % (B, B, SITE["email"], pr, tl, gd, st), encoding="utf-8")
+""" % (B, PRICE["numbers"], PRICE["numbers"],
+       PRICE["height_add"]["4"], PRICE["height_add"]["5"],
+       PRICE["height_add"]["6"], PRICE["name_from"],
+       PRICE["name_bands"][0]["price"], PRICE["name_bands"][1]["price"],
+       PRICE["name_bands"][2]["price"], PRICE["name_bands"][3]["price"],
+       PRICE["bundle_off"], PRICE["bundle_from"], PRICE["outline"],
+       B, SITE["email"], pr, tl, gd, st), encoding="utf-8")
 
     # Workers Builds: serve /public with no build step needed.
     (OUT / "_headers").write_text(

@@ -111,9 +111,12 @@ for need in ("data-step=\"1\"", "data-step=\"4\"", "id=payelement", "BNS_COL=",
 import sys as _s; _s.path.insert(0, str(ROOT / "engine"))
 from content import PRICE, UPGRADES
 wjs = (ROOT / "worker" / "index.js").read_text()
+_pdj0 = (ROOT / "worker" / "price-data.js").read_text(encoding="utf-8")
 for lbl, amt, _b, _f, _n in UPGRADES:
-    if '"%s": %d' % (lbl, amt) not in wjs:
-        fails.append("worker UPGRADE_ADD missing/mismatched: %s = %d" % (lbl, amt))
+    # In the GENERATED price table now, not hand-kept in the worker.
+    if '"%s": %d' % (lbl, amt) not in _pdj0:
+        fails.append("worker price table UPGRADE_ADD missing/mismatched: "
+                     "%s = %d" % (lbl, amt))
     # The client joins upgrades with " | "; a label containing the delimiter
     # would be split into fragments the worker cannot price, undercharging us.
     if "|" in lbl:
@@ -133,42 +136,204 @@ else:
         fails.append("PREFIX_STATE drifted between content.py and the worker: %s"
                      % sorted(_d)[:6])
 
-# ALL THREE PRODUCTS, not just the cheapest one. This gate checked only
-# "Registration numbers": 19 - so raising the name price in content.py would
-# have left the site advertising the new figure, the catalog deriving a new
-# bundle price from it, and the worker still charging the old one on the card.
-# The catalog derives every price from this one dict, including the bundle
-# (numbers + name - 4); worker/index.js hardcodes the three labels, so the
-# three have to be checked against the source that computes them.
-_WANT_BASE = {
-    "Registration numbers": PRICE["numbers"],
-    "Boat name": PRICE["name_from"],
-    "Both": PRICE["numbers"] + PRICE["name_from"] - 4,
-    # The retired label older cached pages may still post.
-    "Numbers + name": PRICE["numbers"] + PRICE["name_from"] - 4,
-}
-_mb = re.search(r"const BASE = \{(.*?)\n\};", wjs, re.S)
-if not _mb:
-    fails.append("worker BASE is gone - nothing holds the price")
+# ===================================================================== PRICE
+# ONE TABLE, AND THE PROOF THAT IT IS ONE.
+#
+# What used to be here compared worker/index.js's own price list against
+# engine/content.py's and failed on a difference. It worked. It also meant two
+# copies of the price existed, which is why the bundle could be - and was -
+# quoted at the registration-number base by a third copy in a third
+# vocabulary.
+#
+# Now engine/content.py PRICE is the only table, worker/price-data.js is
+# GENERATED from it, worker/price.js is the only pricing function, and the
+# order form gets that same function inlined. These gates check that the
+# generated file is current and that nothing has grown a second copy.
+import subprocess as _sp          # noqa: E402
+
+_pd = ROOT / "worker" / "price-data.js"
+if not _pd.exists():
+    fails.append("worker/price-data.js is gone - the worker has no price table")
 else:
-    _have = {k: int(v) for k, v in
-             re.findall(r'"([^"]+)":\s*(\d+)', _mb.group(1))}
-    for _lbl, _want in _WANT_BASE.items():
-        if _have.get(_lbl) != _want:
-            fails.append("worker BASE[%r] is %r and content.PRICE says %d - "
-                         "the site would advertise one price and the card "
-                         "would charge another"
-                         % (_lbl, _have.get(_lbl), _want))
+    _was = _pd.read_text(encoding="utf-8")
+    try:
+        _sp.run([sys.executable, str(ROOT / "mcp" / "build_price_js.py")],
+                check=True, capture_output=True, cwd=str(ROOT))
+        _now = _pd.read_text(encoding="utf-8")
+        if _now != _was:
+            _pd.write_text(_was, encoding="utf-8")
+            fails.append("worker/price-data.js is STALE: regenerating it from "
+                         "engine/content.py changes it. The site would "
+                         "advertise one price and the card would charge "
+                         "another. Run: python3 mcp/build_price_js.py")
+    except Exception as _e:
+        fails.append("could not regenerate worker/price-data.js: %s" % _e)
+
+_pjs = (ROOT / "worker" / "price.js").read_text(encoding="utf-8")
+
+# No price literal in the pricing function. Every figure must come through P.
+_pjs_code = "\n".join(l for l in _pjs.splitlines()
+                      if not l.strip().startswith(("//", "*", "/*")))
+if re.search(r"\$\d\d", _pjs_code):
+    fails.append("worker/price.js has a price literal in its code - every "
+                 "figure must come from P, which is generated from "
+                 "engine/content.py")
+
+# The worker must not have grown its own table back.
+for _dead in ("const BASE = {", "const HEIGHT_ADD = {", "const OUTLINE_ADD =",
+              "const UPGRADE_ADD = {", "const KIND_ALIAS = {"):
+    if _dead in wjs:
+        fails.append("worker/index.js has %r again - the price table lives in "
+                     "engine/content.py and reaches the worker through "
+                     "worker/price-data.js" % _dead)
+if 'from "./price.js"' not in wjs:
+    fails.append("worker/index.js is not importing the pricing function")
+
+# The order form must not do its own arithmetic. It used to read data-base and
+# data-add off the DOM, which is a price list living in HTML attributes.
+_ojs0 = (ROOT / "engine" / "order.py").read_text(encoding="utf-8")
+if "dataset.base" in _ojs0:
+    fails.append("the order form is reading a price off a DOM attribute "
+                 "again - call window.NMB_PRICE.priceOf()")
+if "window.NMB_PRICE.priceOf(" not in _ojs0:
+    fails.append("the order form is no longer pricing through the shared "
+                 "function - its total can drift from the card charge")
+
+# The browser's copy IS the worker's file, not a copy of it.
+from shared_js import price_js as _pjs_browser        # noqa: E402
+_browser = _pjs_browser()
+for _fn in ("function priceBreakdown(", "function nameBand(",
+            "function widthIn("):
+    if _fn not in _browser:
+        fails.append("the inlined browser pricing module is missing %s - the "
+                     "form would price differently from the card" % _fn)
+for _lbl, _amt in (("numbers", PRICE["numbers"]),
+                   ("name", PRICE["name_from"]),
+                   ("bundle", PRICE["bundle_from"])):
+    if '"%s": %d' % (_lbl, _amt) not in _browser:
+        fails.append("the inlined browser price table does not carry the "
+                     "published %s price (%d)" % (_lbl, _amt))
+
+# The arithmetic the pages publish. The entry bundle is quoted as a flat
+# figure in four places; if it stops being the sum of its parts the page is
+# lying about the discount.
+if PRICE["bundle_from"] != (PRICE["numbers"] + PRICE["name_from"]
+                            - PRICE["bundle_off"]):
+    fails.append("PRICE['bundle_from'] is not numbers + name_from - "
+                 "bundle_off, so the advertised bundle saving is wrong")
+if PRICE["name_bands"][0]["price"] != PRICE["name_from"]:
+    fails.append("PRICE['name_from'] is not the smallest band's price, so "
+                 '"from $%d" on the letters page is not a price anyone can '
+                 "actually pay" % PRICE["name_from"])
+_bmax = [b["max_in"] for b in PRICE["name_bands"]]
+if _bmax[-1] is not None:
+    fails.append("the last name band must be open-ended or a wide name has "
+                 "no price at all")
+if _bmax[:-1] != sorted(x for x in _bmax if x is not None):
+    fails.append("the name bands are not in ascending width order - a name "
+                 "would fall in the wrong one")
+
+# The form's badge states the saving. It is read off the price table, so this
+# catches the badge being hand-written back.
+# ---- the claims gate's blind spot -----------------------------------------
+# It scans public/**/*.html. catalog.json and llms.txt are read by assistants
+# and quoted back to customers as fact, and neither was checked. Found the
+# long way round: inlining the price table nearly published a film-life year
+# figure, and the only reason the gate caught it was that the table landed
+# inside an HTML page.
+for _nonhtml in ("catalog.json", "llms.txt"):
+    _f = OUT / _nonhtml
+    if _f.exists():
+        _t = _f.read_text(encoding="utf-8")
+        for _pat, _person_ok in _FILM_LIFE_PATTERNS:
+            for _m in re.finditer(r"(?i)\b" + _pat, _t):
+                fails.append("film-life claim %r in %s - we do not publish a "
+                             "year figure, and an assistant quotes this file "
+                             "as fact" % (_m.group(0), _nonhtml))
+
+# Generated from PRICE, so the figure is not in the source - check what the
+# customer is actually shown.
+if "Save $%d" % PRICE["bundle_off"] not in design:
+    fails.append("the order form's bundle badge does not state the real "
+                 "saving of $%d" % PRICE["bundle_off"])
+for _lbl, _amt in (("Boat Numbers", "$%d" % PRICE["numbers"]),
+                   ("Boat Name", "$%d+" % PRICE["name_from"]),
+                   ("Both", "$%d+" % PRICE["bundle_from"])):
+    if "<b>%s</b><i>%s</i>" % (_lbl, _amt) not in design:
+        fails.append("the order form's %s card does not show %s"
+                     % (_lbl, _amt))
+# The browser's copy of the price table must be the whole table. It was once
+# shipped with the upgrade prices emptied out, which left the running total
+# and the card charge disagreeing for any order carrying an upgrade.
+if '"UPGRADE_ADD": {}' in design:
+    fails.append("the order form's price table has the upgrade prices "
+                 "emptied out - the running total would leave them out while "
+                 "the card charged for them")
+
+# NO SUPERSEDED PRICE LITERAL, ANYWHERE.
+#
+# This is the gate that makes the next price change safe, and it is the reason
+# the November change took an afternoon instead of a week: ninety-odd figures
+# were spread through page copy, meta descriptions, OG card text, FAQ answers
+# and share scripts, and nothing would have told anyone if one had been
+# missed. A customer reading last month's figure on a state page and being
+# charged this month's at the till is the single worst bug this shop can ship.
+#
+# Prose does not have to interpolate from PRICE - plenty of it cannot, sitting
+# mid-way through fifty concatenated literals with their own percent signs -
+# but no file may carry a figure we no longer charge.
+_RETIRED = (19, 29, 44, 23, 27, 22, 79)
+_SCAN = [("engine", "*.py"), ("media", "*.py"), ("media", "*.json"),
+         ("worker", "*.js"), ("public", "*.html"), ("public", "*.txt"),
+         ("public", "*.json")]
+_live = {PRICE["numbers"], PRICE["name_from"], PRICE["bundle_from"],
+         PRICE["outline"], PRICE["rush"], PRICE["kit"],
+         PRICE["market_low"], PRICE["market_high"],
+         PRICE["bundle_off"], PRICE["name_typical_to"]}
+_live |= {b["price"] for b in PRICE["name_bands"]}
+_live |= {PRICE["numbers"] + a for a in PRICE["height_add"].values()}
+_live |= set(PRICE["height_add"].values())
+_live |= {u[1] for u in UPGRADES}
+_stale = [v for v in _RETIRED if v not in _live]
+_hits = []
+for _dirname, _glob in _SCAN:
+    for _f in sorted((ROOT / _dirname).rglob(_glob)):
+        if not _f.is_file():
+            continue
+        _t = _f.read_text(encoding="utf-8", errors="replace")
+        for _v in _stale:
+            for _mm in re.finditer(r"\$%d\b" % _v, _t):
+                _hits.append((_f.relative_to(ROOT), _v,
+                              _t[max(0, _mm.start() - 50):_mm.end() + 25]
+                              .replace("\n", " ")))
+if _hits:
+    for _h in _hits[:8]:
+        fails.append("superseded price $%d in %s: ...%s..."
+                     % (_h[1], _h[0], _h[2].strip()))
+    if len(_hits) > 8:
+        fails.append("...and %d more superseded price literals" % (len(_hits) - 8))
+
+# An unpaid order taken at the old price must be charged the old price. The
+# pay link reprices from the row, which was harmless until the price moved.
+if "Number(o.total) > 0" not in wjs:
+    fails.append("/api/paylink is repricing an existing order at today's "
+                 "price - an order taken before a price change would be sent "
+                 "a pay link for a figure the customer never agreed to")
 
 # The radio VALUE is a contract between the form, the worker and every row in
 # D1; the LABEL beside it is free text. Catch a rename of the value that does
 # not reach worker/index.js.
 sys.path.insert(0, str(ROOT / "engine"))
 from order import KINDS as _KINDS
-for _val, _base, _p, _f, _k, _label in _KINDS:
-    if '"%s": %d' % (_val, _base) not in wjs:
-        fails.append("order kind %r (base %d) missing from worker BASE - the radio "
-                     "value is a contract, rename the label instead" % (_val, _base))
+# The card no longer carries a base price, so what has to hold is that the
+# radio's value is a vocabulary the pricing function speaks. If it is not,
+# every order of that kind is priced as the cheapest product.
+for _val, _p, _f, _k, _label in _KINDS:
+    if '"%s": "' % _val not in _pjs:
+        fails.append("order kind %r is not a key in worker/price.js "
+                     "KIND_ALIAS - it would be priced as the cheapest thing "
+                     "we sell. The radio value is a contract; rename the "
+                     "label instead" % _val)
 
 # Published statistics must trace to the cited source. These pages shipped
 # invented fleet figures for months (NY at 1.3M against an actual 428,445), so
@@ -281,17 +446,20 @@ for _name in sorted(set(_decls)):
         fails.append("order.py declares function %s() %d times - the later one "
                      "silently replaces the earlier" % (_name, _decls.count(_name)))
 
-# The outline is the only paid add-on in the form, so the browser and the
-# worker must agree on what it costs. Three places have to say 12.
+# The outline upcharge reaches the form, the card and the proof email from one
+# place now, so there is nothing left to compare - but the proof email states
+# the figure in words, and the pricing function has to keep reading BOTH the
+# raw payload's `outline` and the sanitised order's `finish`.
 from content import PRICE as _P
-if "const OUTLINE_ADD = %d;" % _P["outline"] not in wjs:
-    fails.append("worker OUTLINE_ADD disagrees with content.PRICE['outline'] (%d)"
-                 % _P["outline"])
-if 'd.finish === "outline" || d.outline' not in wjs:
-    fails.append("worker priceOf() must read BOTH d.finish and d.outline - it\n                  is called with the raw payload AND with the sanitised order")
+_pj = (ROOT / "worker" / "price.js").read_text(encoding="utf-8")
+if 'd.finish === "outline" || d.outline' not in _pj:
+    fails.append("worker/price.js must read BOTH d.finish and d.outline - it\n"
+                 "                  is called with the raw payload AND with "
+                 "the sanitised order")
 _ojs = (ROOT / "engine" / "order.py").read_text()
-if "var OUTLINE_ADD=%d;" % _P["outline"] not in _ojs:
-    fails.append("order form OUTLINE_ADD disagrees with content.PRICE['outline']")
+if "window.NMB_PRICE.OUTLINE_ADD" not in _ojs:
+    fails.append("the order form has its own outline price again instead of "
+                 "reading it from the shared table")
 
 # Share cards. og_image() derives the URL from the page path before the PNG
 # has been rendered - the build wipes public/ first, so the cards are written
@@ -770,9 +938,10 @@ if "body.sheeton .sticky" not in design:
 # The server reprices every order from its fields and ignores whatever amount
 # the browser sends. That is correct - and it is why the browser has to send
 # the ORDER. Posting only {amount} left the server pricing an empty object,
-# which falls through to the $19 base: a "Both" order at 6" with an outline is
-# $69 and would have been charged $19. Undercharging is silent, so it is
-# gated rather than remembered.
+# which falls through to the cheapest product: a "Both" order at 6 inches with
+# a large name and an outline is well over a hundred dollars and would have
+# been charged the price of a three-inch pair. Undercharging is silent, so it
+# is gated rather than remembered.
 if "body:JSON.stringify({order:payload()})" not in design.replace(" ", ""):
     fails.append("the checkout call no longer sends the order, so the server "
                  "prices an empty object and every order above the base rate "
@@ -788,7 +957,8 @@ if "Idempotency-Key" not in _wj:
                  "customer's card")
 if "metadata[ref]" not in _wj:
     fails.append("payments no longer carry the order reference into Stripe, "
-                 "so a refund or dispute starts from a row saying only $19.00")
+                 "so a refund or dispute starts from a row saying only an "
+                 "amount")
 # priceOf is the only authority. A posted total must never reach it.
 if "priceOf(d.quoted" in _wj or "amount: d.amount" in _wj:
     fails.append("a browser-supplied amount is reaching the Stripe call")
@@ -860,13 +1030,13 @@ if _supp and "country:'US'" not in design:
                  "rejects")
 
 # Card only. automatic_payment_methods puts every method enabled on the
-# account - Klarna, Cash App, Amazon Pay, Bank - in a tab row above a $19
-# decal.
+# account - Klarna, Cash App, Amazon Pay, Bank - in a tab row above a decal
+# that costs less than lunch for two.
 _wj3 = (ROOT / "worker" / "index.js").read_text()
 if '"automatic_payment_methods[allow_redirects]": "never"' not in _wj3:
     fails.append("the PaymentIntent allows redirect payment methods again, so "
                  "the checkout grows a tab row of Klarna / Cash App / Amazon "
-                 "Pay above a $19 decal")
+                 "Pay above a decal")
 # Stripe removed this parameter outright: sending it 400s the intent and
 # degrades every checkout on the site. It cost one live deploy to learn.
 if '"payment_method_types' in _wj3:   # the quoted KEY, not a mention in prose
@@ -914,29 +1084,42 @@ if not _cat_f.exists():
                  "have no catalog to read")
 else:
     _cat = json.loads(_cat_f.read_text())
-    _wj5 = (ROOT / "worker" / "index.js").read_text()
-
-    def _worker_num(name):
-        m = re.search(r'"%s":\s*(\d+)' % re.escape(name), _wj5)
-        return int(m.group(1)) if m else None
+    # Checked against the table the WORKER will actually charge from -
+    # worker/price-data.js, as committed - not against content.py, which both
+    # are generated from. Comparing a generated file to its own source proves
+    # only that the generator ran; comparing the published catalog to the
+    # committed runtime table catches the case that actually bites, which is a
+    # catalog rebuilt from a new price while the worker still ships the old
+    # table.
+    _pdj = (ROOT / "worker" / "price-data.js").read_text(encoding="utf-8")
+    _pdata = json.loads(_pdj[_pdj.index("{"):_pdj.rindex(";")])
 
     for _p in _cat["products"]:
-        _want = {"registration-numbers": "Registration numbers",
-                 "boat-name": "Boat name", "both": "Both"}[_p["id"]]
-        _got = _worker_num(_want)
-        if _got != _p["from"]:
-            fails.append("catalog says %s is $%s but the worker charges $%s"
-                         % (_p["id"], _p["from"], _got))
+        _want = _pdata["FROM"][{"registration-numbers": "numbers",
+                                "boat-name": "name", "both": "bundle"}[_p["id"]]]
+        if _want != _p["from"]:
+            fails.append("catalog says %s starts at $%s but the worker's price "
+                         "table says $%s" % (_p["id"], _p["from"], _want))
 
     for _h in _cat["options"]["heights_in"]:
-        _got = _worker_num(_h["in"])
+        _got = _pdata["HEIGHT_ADD"].get(str(_h["in"]))
         if _got != _h["add"]:
-            fails.append('catalog says %s" adds $%s, worker adds $%s'
+            fails.append('catalog says %s" adds $%s, the worker adds $%s'
                          % (_h["in"], _h["add"], _got))
 
-    _m = re.search(r"const OUTLINE_ADD = (\d+)", _wj5)
-    if not _m or int(_m.group(1)) != _cat["options"]["outline"]["add"]:
+    if _pdata["OUTLINE_ADD"] != _cat["options"]["outline"]["add"]:
         fails.append("catalog outline price disagrees with the worker")
+
+    # The bands the catalog publishes are what a model will quote from, so
+    # they have to be the bands the card charges.
+    _cat_bands = [(b["up_to_in"], b["price"])
+                  for b in next(x for x in _cat["products"]
+                                if x["id"] == "boat-name")["bands"]]
+    _run_bands = [(b["max_in"], b["price"]) for b in _pdata["NAME_BANDS"]]
+    if _cat_bands != _run_bands:
+        fails.append("catalog publishes the name bands %r and the worker "
+                     "charges %r - an assistant would quote a price the card "
+                     "does not take" % (_cat_bands, _run_bands))
 
     # The catalog must describe the SAME options the order form offers, or an
     # assistant offers a color or a font the customer cannot actually buy.
@@ -1121,60 +1304,102 @@ if _bank_f.exists():
             fails.append("MCP tools are missing destructiveHint - OpenAI and "
                          "Anthropic both read the annotations")
         # It must price through the one function, never its own arithmetic.
-        if "ctx.priceOf(" not in _mcp:
-            fails.append("the MCP server is no longer pricing through "
-                         "priceOf() - it has grown its own copy of the price")
-        # AND IT MUST SPEAK THE SAME VOCABULARY. This gate used to check only
-        # that priceOf was CALLED, which it always was - while the slugs the
-        # tool passed it ("numbers", "name", "both") matched nothing in BASE,
-        # fell through priceOf's `?? 19` default, and quoted $19 for a $29
-        # name and a $44 bundle, silently, for every quote at three inches.
-        # Calling the one pricing function with a vocabulary it does not speak
-        # is exactly as wrong as keeping a second copy of the price, and it
-        # fails more quietly. So: every value in the tool's own enum must
-        # resolve to a real row in the price table.
+        if "ctx.priceBreakdown(" not in _mcp:
+            fails.append("the MCP server is no longer pricing through the "
+                         "shared function - it has grown its own copy of the "
+                         "price")
+        # AND IT MUST SPEAK THE SAME VOCABULARY. This gate used to check
+        # only that the pricing function was CALLED, which it always was -
+        # while the slugs the tool passed it ("numbers", "name", "both")
+        # matched nothing in the table, fell through a default, and quoted the
+        # registration-number base for a name and for the bundle, silently,
+        # on every quote at three inches. Calling the one pricing function
+        # with a vocabulary it does not speak is exactly as wrong as keeping a
+        # second copy of the price, and it fails more quietly. So: every value
+        # in the tool's own enum must resolve through KIND_ALIAS.
         _m_enum = re.search(
             r'kind: \{ type: "string",\s*\n?\s*enum: \[([^\]]*)\]', _mcp)
-        _base = re.search(r"const BASE = \{(.*?)\n\};", _wi0, re.S)
-        _alias = re.search(r"const KIND_ALIAS = \{(.*?)\n\};", _wi0, re.S)
+        _pricejs = (ROOT / "worker" / "price.js").read_text(encoding="utf-8")
+        _alias = re.search(r"export const KIND_ALIAS = \{(.*?)\n\};",
+                           _pricejs, re.S)
         if not _m_enum:
             fails.append("price_order's kind enum could not be read - this "
                          "gate is the only thing checking that the MCP "
                          "server and the price table agree on product names")
-        elif not _base or not _alias:
-            fails.append("BASE or KIND_ALIAS is gone from worker/index.js - "
-                         "the price table and its vocabulary live together "
-                         "on purpose")
+        elif not _alias:
+            fails.append("KIND_ALIAS is gone from worker/price.js - the "
+                         "vocabulary and the price live together on purpose")
         else:
-            _labels = set(re.findall(r'"([^"]+)":', _base.group(1)))
             _al = dict(re.findall(r'"([^"]+)":\s*"([^"]+)"', _alias.group(1)))
+            _canon = {"numbers", "name", "both"}
             for _k in re.findall(r'"([^"]+)"', _m_enum.group(1)):
-                _res = _al.get(_k, _k)
-                if _res not in _labels:
-                    fails.append("price_order offers kind=%r, which resolves "
-                                 "to %r and is not in the price table - it "
+                if _al.get(_k) not in _canon:
+                    fails.append("price_order offers kind=%r, which KIND_ALIAS "
+                                 "does not resolve to a real product - it "
                                  "would be quoted as the cheapest thing we "
-                                 "sell" % (_k, _res))
+                                 "sell" % _k)
             for _k, _v in _al.items():
-                if _v not in _labels:
-                    fails.append("KIND_ALIAS maps %r to %r, which is not a "
-                                 "row in BASE" % (_k, _v))
+                if _v not in _canon:
+                    fails.append("KIND_ALIAS maps %r to %r, which is not one "
+                                 "of numbers/name/both" % (_k, _v))
             # catalog.json advertises a third set of names. A model reads them
             # from get_products and then prices what it read.
             try:
                 _cat = json.loads((OUT / "catalog.json").read_text())
                 for _pr in _cat.get("products", []):
                     _pid = _pr.get("id")
-                    if _pid and (_al.get(_pid, _pid) not in _labels):
+                    if _pid and _al.get(_pid) not in _canon:
                         fails.append("get_products advertises the product id "
                                      "%r and price_order cannot price it - a "
                                      "model reading the catalog and pricing "
                                      "what it read gets the wrong number"
                                      % _pid)
+                # The height upcharges the catalog publishes must be the ones
+                # the tool will charge.
+                _ch = {str(h["in"]): h["add"]
+                       for h in _cat.get("options", {}).get("heights_in", [])}
+                if _ch != {k: v for k, v in PRICE["height_add"].items()}:
+                    fails.append("catalog.json publishes height upcharges %r "
+                                 "and the price table says %r"
+                                 % (_ch, PRICE["height_add"]))
             except Exception:
                 pass
+            # A boat name is priced by the width it finishes at, so the tool
+            # cannot answer without the lettering and the face. If the SCHEMA
+            # stops asking for them, every name quote becomes the smallest
+            # band - the undercharge bug with a new coat of paint.
+            #
+            # Scoped to price_order's inputSchema, and that scoping is the
+            # whole gate. The first version searched the file for "boatname:"
+            # and passed with the schema field deleted, because the handler
+            # and the echoed `priced` block both still mention it. A gate that
+            # cannot fail is worse than no gate: it reads as coverage.
+            _po = re.search(r'name: "price_order".*?async run\(', _mcp, re.S)
+            if not _po:
+                fails.append("price_order's tool definition could not be read")
+            else:
+                _schema = re.search(r"inputSchema: \{(.*)$", _po.group(0), re.S)
+                _schema = _schema.group(1) if _schema else ""
+                for _need in ("boatname:", "font:"):
+                    if _need not in _schema:
+                        fails.append(
+                            "price_order's inputSchema no longer accepts %s - "
+                            "a boat name is priced by the width it finishes "
+                            "at, so without it every name is quoted in the "
+                            "cheapest band" % _need.rstrip(":"))
+                # And it must actually PASS them through, or asking for them
+                # is theatre.
+                _run = _mcp[_mcp.index('name: "price_order"'):]
+                _run = _run[_run.index("async run("):]
+                _run = _run[:_run.index("\n  },")]
+                for _need in ("boatname: args.boatname", "font: args.font"):
+                    if _need not in _run:
+                        fails.append("price_order reads %s from the caller and "
+                                     "does not pass it to the pricing "
+                                     "function" % _need.split(":")[0])
+
         # The strict path exists because the lenient one hid the bug above.
-        if "ctx.priceOf(" in _mcp and ", true)" not in _mcp:
+        if "ctx.priceBreakdown(" in _mcp and ", true)" not in _mcp:
             fails.append("the MCP server is pricing leniently again - an "
                          "unknown product would be quoted as the cheapest "
                          "thing we sell instead of erroring")
@@ -1329,6 +1554,43 @@ if _bank_f.exists():
             if not any(f.startswith("engine:") for f in fails):
                 fails.append("the engine tests would not run: %s"
                              % (_p.stderr or "")[-300:])
+
+    # ---- the Pay button and the card ------------------------------------
+    # The order form's running total is worker/price.js itself, inlined into
+    # the page by engine/shared_js.price_js(). In principle the two cannot
+    # disagree. In practice the INLINER is four text transforms applied to
+    # code that takes money - regex-stripping imports and `export`, slicing
+    # the font metrics out of a generated file, lifting widthIn() out by brace
+    # matching, and emptying one key. Any of those could silently drop a
+    # clause, and the result would be a form quoting a price the card does not
+    # charge.
+    #
+    # So both are run over every combination of product, height, name, face,
+    # outline and upgrade set and compared. 5,600-odd cases, about a second.
+    _tpb = ROOT / "mcp" / "test_price_browser.mjs"
+    if not _tpb.exists():
+        fails.append("mcp/test_price_browser.mjs is missing - nothing proves "
+                     "the form's total matches the card charge")
+    else:
+        import tempfile as _tf
+        with _tf.NamedTemporaryFile("w", suffix=".js", delete=False,
+                                    encoding="utf-8") as _bf:
+            _bf.write(_pjs_browser())
+            _bundle = _bf.name
+        try:
+            _p2 = subprocess.run(["node", str(_tpb), _bundle],
+                                 capture_output=True, text=True, cwd=str(ROOT))
+            if _p2.returncode:
+                _lines = [l for l in (_p2.stdout or "").splitlines()
+                          if l.strip()]
+                if _lines:
+                    for _l in _lines[:6]:
+                        fails.append("price: %s" % _l)
+                else:
+                    fails.append("the form/card price comparison would not "
+                                 "run: %s" % (_p2.stderr or "")[-300:])
+        finally:
+            pathlib.Path(_bundle).unlink(missing_ok=True)
 
     # ---- one implementation of the decoders ------------------------------
     # worker/decode.js is run by the MCP server AND inlined into the order
@@ -1770,12 +2032,13 @@ if ".offsetLeft" in _app_src:
                  "track - the progress bar would never move")
 
 # The order page must not carry the site-wide sticky CTA. It prints a flat
-# "$19 Registration numbers" and links to /design/ - so on /design/ it sits
-# under a live total that may read $44 and points at the page you are on.
+# registration-number price and links to /design/ - so on /design/ it sits
+# under a live total that may read three times as much and points at the page
+# you are already on.
 if "class=sticky" in design:
-    fails.append("the sticky CTA bar is back on the order page - its flat $19 "
-                 "contradicts the wizard's live total, on the one page whose "
-                 "job is that total")
+    fails.append("the sticky CTA bar is back on the order page - its flat "
+                 "price contradicts the wizard's live total, on the one page "
+                 "whose job is that total")
 elif 'classList.add("has-sticky")' in design:
     # Only reachable with the bar itself gone, so this is the narrower case:
     # no bar, but the body still padded for one.

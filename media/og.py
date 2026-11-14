@@ -73,7 +73,7 @@ def _b64(name):
     return "data:image/jpeg;base64," + base64.b64encode(f.read_bytes()).decode()
 
 
-def photo_card(photo, head, sub, badge_top="$19", badge_bot="A PAIR",
+def photo_card(photo, head, sub, badge_top="$28", badge_bot="A PAIR",
                side="left"):
     """Concept 1: the lettering on a hull, with the offer over it.
 

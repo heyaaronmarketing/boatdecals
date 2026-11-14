@@ -11,24 +11,29 @@ trimmed by verify.py's length gate.
 """
 import html as _html
 
+from content import PRICE
+
+_N = PRICE["numbers"]
+_L = PRICE["name_from"]
+
 # path -> (og:title <=60, og:description <=110)
 META = {
- "/": ("Legal Boat Registration Numbers - $19 a Pair",
+ "/": ("Legal Boat Registration Numbers - $%d a Pair" % _N,
        "3\" block vinyl, pre-spaced to the federal rule. Free shipping, cut and "
        "proofed within 12 hours."),
- "/design/": ("Design Your Boat Numbers - $19, Posted Next Day",
+ "/design/": ("Design Your Boat Numbers - $%d, Posted Next Day" % _N,
        "Type your number, see it on screen, and we cut it from marine vinyl. "
        "No designer to click through first."),
- "/boat-registration-numbers/": ("3-Inch Block Boat Numbers, Pre-Spaced - $19",
+ "/boat-registration-numbers/": ("3-Inch Block Boat Numbers, Pre-Spaced - $%d" % _N,
        "Both sides of the bow on one sheet, wet-apply in minutes. Free "
        "shipping, cut in Iowa."),
- "/boat-lettering/": ("Boat Names & Custom Lettering - From $29",
+ "/boat-lettering/": ("Boat Names & Custom Lettering - From $%d" % _L,
        "Ten marine fonts previewed in your own lettering. Pre-spaced with "
        "application tape over the top."),
- "/pricing/": ("Boat Numbers $19 a Pair - Every Price on One Page",
-       "Numbers $19, letters from $29. Shipping included, and the price is on "
-       "the page before you build anything."),
- "/gallery/": ("What $19 Boat Lettering Looks Like on a Hull",
+ "/pricing/": ("Boat Numbers $%d a Pair - Every Price on One Page" % _N,
+       "Numbers $%d, letters from $%d. Shipping included, and the price is on "
+       "the page before you build anything." % (_N, _L)),
+ "/gallery/": ("What $%d Boat Lettering Looks Like on a Hull" % _N,
        "Gelcoat, bare aluminum, kayaks, PWC and pontoon rails - the same vinyl "
        "on every surface we cut for."),
  "/registration-numbers/": ("Boat Registration Numbers by State - All 50",
@@ -96,10 +101,10 @@ META = {
        "pickup by arrangement."),
 }
 
-# "{State} Boat Registration Numbers - {PFX} Rules + $19" keeps the state and
+# "{State} Boat Registration Numbers - {PFX} Rules + price" keeps the state and
 # the prefix inside the ~60 characters a phone shows.
 def state_meta(name, ab):
-    title = "%s Boat Numbers - %s Prefix, $19 a Pair" % (name, ab)
+    title = "%s Boat Numbers - %s Prefix, $%d a Pair" % (name, ab, _N)
     desc = ("Federal 3-inch block rule, %s decal placement, and a pre-spaced "
             "pair, proof in 12 hours." % name)
     return title[:60], desc[:110]
@@ -109,7 +114,7 @@ def boat_type_meta(nav):
     # Boat-type nav labels carry entities ("Jet Skis &amp; PWC"); head()
     # escapes again, so unescape here or the card reads "&amp;amp;".
     nav = _html.unescape(nav)
-    title = "%s Registration Numbers - $19 a Pair" % nav
+    title = "%s Registration Numbers - $%d a Pair" % (nav, _N)
     desc = ("3-inch block vinyl sized for %s, pre-spaced on one sheet. Free "
             "shipping, proof in 12 hours." % nav.lower())
     return title[:60], desc[:110]

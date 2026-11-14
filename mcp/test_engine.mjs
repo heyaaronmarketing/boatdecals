@@ -18,6 +18,7 @@ import * as G from "../worker/gates.js";
 import * as E from "../worker/engine.js";
 // The MCP server, for the two pure helpers that read the session row.
 import { killCounts, retiredMechs, validate } from "../worker/mcp.js";
+import * as PR from "../worker/price.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 G._setLexicon(zlib.gunzipSync(
@@ -940,6 +941,121 @@ const BANKN = BANK.map((n) => n.name);
     "one kill is a name he did not like; two is the joke not landing");
   check(!retiredMechs({ dp: 2 }, { dp: 1 }).length,
     "a mechanism he also kept once must not be retired on kills alone");
+}
+
+// ===========================================================================
+// THE PRICE.
+//
+// Separate from the naming engine on purpose: a wrong joke is embarrassing and
+// a wrong price is a chargeback. Every figure below is one the site publishes
+// in plain words on /pricing/, so a test failing here means a page is lying.
+// ---------------------------------------------------------------------------
+{
+  const P = (d) => PR.priceOf(d, false);
+
+  // The published height ladder, exactly as /pricing/ prints it.
+  for (const [h, want] of [["3", 28], ["4", 36], ["5", 43], ["6", 48]]) {
+    check(P({ kind: "numbers", height: h }) === want,
+      `a ${h}" pair must be $${want}, got $${P({ kind: "numbers", height: h })}`);
+  }
+
+  // The four name bands, at the width each one is published for. Measured in
+  // Arial Bold at 3 inches; the names are chosen for their width, not their
+  // wit.
+  const band = (txt) => PR.nameBand(txt, "Arial Bold", 3);
+  for (const [txt, key] of [["Ox", "small"], ["Second Wind", "medium"]]) {
+    check(band(txt).key === key,
+      `"${txt}" finishes ${band(txt).width_in}" and should be the ${key} band, `
+      + `got ${band(txt).key}`);
+  }
+
+  // THE BOUNDARY, which is the only part of banding anyone gets wrong.
+  // Published as "up to 22 in" and "23-30 in", so 22.0 is small and anything
+  // over it is medium. Rounding the width DOWN would have priced 22.1-22.9 as
+  // "up to 22 inches", which is not what the page says.
+  const fake = (w) => {
+    for (const b of [{ max: 22, k: "small" }, { max: 30, k: "medium" },
+                     { max: 48, k: "large" }, { max: null, k: "xl" }]) {
+      if (b.max === null || Math.ceil(w - 1e-6) <= b.max) return b.k;
+    }
+  };
+  check(fake(22) === "small", "a name finishing at exactly 22\" is small");
+  check(fake(22.1) === "medium", "22.1\" is over the small band's published 22\"");
+  check(fake(30) === "medium" && fake(30.1) === "large",
+    "the medium band's published top is 30 inches");
+  check(fake(48) === "large" && fake(49) === "xl",
+    "over 48 inches is XL, and 48 itself is not");
+
+  // The bundle. The site advertises a flat saving, so it must BE the saving.
+  const n3 = P({ kind: "numbers", height: "3" });
+  const nm = P({ kind: "name", height: "3", boatname: "Ox", font: "Arial Bold" });
+  const both = P({ kind: "both", height: "3", boatname: "Ox", font: "Arial Bold" });
+  check(both === n3 + nm - 10,
+    `the bundle must be $10 off the two prices added up: $${n3} + $${nm} `
+    + `- $10 = $${n3 + nm - 10}, got $${both}`);
+  check(both === 56, `the published entry bundle is $56, got $${both}`);
+
+  // The outline is a flat second layer, on either payload shape. It is called
+  // with the raw browser post AND with the sanitised order row.
+  check(P({ kind: "numbers", height: "3", outline: 1 }) === n3 + 12
+        && P({ kind: "numbers", height: "3", finish: "outline" }) === n3 + 12,
+    "the outline must add $12 whether it arrives as `outline` or `finish`");
+
+  // EVERY VOCABULARY. This is the bug that shipped: the MCP server's slugs
+  // matched nothing in the table and every quote fell through to the cheapest
+  // product.
+  check(P({ kind: "both", height: "3", boatname: "Ox", font: "Arial Bold" })
+        === P({ kind: "Both", height: "3", boatname: "Ox", font: "Arial Bold" }),
+    'the MCP slug "both" and the form label "Both" must price the same');
+  check(P({ kind: "boat-name", height: "3", boatname: "Ox", font: "Arial Bold" })
+        === nm,
+    'the catalog id "boat-name" must price as a boat name');
+  check(P({ kind: "Numbers + name", height: "3", boatname: "Ox",
+            font: "Arial Bold" }) === both,
+    "a cached page posting the retired bundle label must still price as the "
+    + "bundle, not as the cheapest product");
+
+  // STRICT REFUSES rather than guessing. A wrong number told to a customer by
+  // an assistant is worse than no number.
+  const throws = (d) => {
+    try { PR.priceOf(d, true); return false; } catch { return true; }
+  };
+  check(throws({ kind: "a dinghy sticker" }),
+    "a strict quote for a product we do not sell must throw, not fall "
+    + "through to the cheapest thing in the shop");
+  check(throws({ kind: "name", height: "3", font: "Arial Bold" }),
+    "a strict quote for a name with no lettering must throw - the price "
+    + "depends on the width it finishes at");
+  check(throws({ kind: "name", height: "3", boatname: "Ox", font: "Papyrus" }),
+    "a strict quote in a font we have no metrics for must throw rather than "
+    + "measure it in some other face");
+  check(throws({ kind: "numbers", height: "9" }),
+    "a strict quote at a height we do not cut must throw");
+
+  // LENIENT never throws and never undercharges below the floor. The order
+  // path is lenient on purpose: losing a real order to a stale cached page is
+  // worse than quietly correcting it, and the row carries a mismatch flag.
+  for (const d of [{}, { kind: "" }, { kind: "numbers", height: "9" },
+                   { kind: "name", boatname: "Ox", font: "Papyrus" },
+                   { kind: "name" }]) {
+    let v;
+    try { v = PR.priceOf(d, false); } catch (e) { v = "threw: " + e.message; }
+    check(typeof v === "number" && v >= 28,
+      "the lenient path must always return at least the cheapest real price "
+      + "for " + JSON.stringify(d) + ", got " + v);
+  }
+
+  // The itemisation is what the customer is SHOWN, so it has to add up to
+  // what he is charged. A summary that disagrees with the Pay button is the
+  // bug the form used to have.
+  const b = PR.priceBreakdown({ kind: "both", height: "4", outline: 1,
+    boatname: "Second Wind", font: "Impact",
+    upgrades: "Rush - cut and shipped today" }, true);
+  check(b.lines.reduce((t, l) => t + l.amount, 0) === b.amount,
+    "the line items must sum to the total the card is charged");
+  check(b.band && b.band.width_in > 0,
+    "a priced name must report the width it was measured at, so the figure "
+    + "can be checked against a tape measure rather than believed");
 }
 
 for (const f of fails) console.log("FAIL: " + f);

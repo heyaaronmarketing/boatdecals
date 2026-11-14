@@ -297,9 +297,23 @@ the file so much as references `db.prepare` or Stripe in code.
 | `get_policies` | proof window, shipping, returns, warranty, the 3-inch rule |
 
 It lives on this worker rather than a service of its own precisely so the price
-an assistant quotes comes from the same function as the charge. **Verified:**
-four configurations priced identically through `/mcp`, through `/api/price`,
-and against production — $19, $39, $44, $23.
+an assistant quotes comes from the same function as the charge — and since
+2026-11-13 that is literally one function, `worker/price.js`, reading one
+generated table. The order form gets the same file inlined, so the running
+total, the Pay button, the Stripe intent and every MCP quote are the same code.
+
+**Verified:** `mcp/live_check.py` prices the same order through `/mcp` and
+through `/api/price` in all five product vocabularies and asserts the two
+agree, rather than asserting a figure. A constant in a smoke test is another
+copy of the price list, and it fails for the wrong reason on the day the price
+changes. `verify.py` additionally runs both the worker's function and the
+browser's inlined copy over 17,080 combinations of product, height, name,
+face, outline and upgrades and fails on any disagreement.
+
+A boat name is priced by the width it finishes at, so `price_order` needs
+`boatname` and `font` for a name or a bundle and **refuses** without them.
+That refusal is the point: the alternative is quoting the smallest band, which
+is the undercharge bug this server already shipped once.
 
 The `initialize` response carries the honesty limits as instructions, so they
 reach the model and not just the code: price through `price_order`,

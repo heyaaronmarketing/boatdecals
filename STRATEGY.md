@@ -277,7 +277,7 @@ common PAA, and ends with the product in the viewer's hand.
 
 ---
 
-## 7. Offer, and why $19
+## 7. Offer, and the price
 
 Verified market (2026-10-22):
 
@@ -290,10 +290,24 @@ Verified market (2026-10-22):
 | lettering.com | from $14.38 | free ground | **same-day by 1:30 ET** | **7 yr** |
 | boatdecalslettering | **$24.95** | — | same-day | 5–7 yr |
 | **boatletteringtoyou** (BoatUS partner) | **hidden** | free | 3–5 days | 5 yr |
-| **Us** | **$19** | free | next business day | 7 yr |
+| **Us** | **$28** | free | next business day | 7 yr |
 
-Undercuts the branded anchor by 24%, clears the $10–14 marketplace floor enough to
-stay credible and profitable, reads as "under twenty."
+**The table above is a market snapshot from 2026-10-22 and the price no longer
+follows from it.** The launch price was set against this data; Aaron reset it
+to $28 on 2026-11-13, which is above `boatdecalslettering`'s $24.95 and well
+above the marketplace floor, so the original rationale — undercut the branded
+anchor, read as "under twenty" — does not describe what we now sell.
+
+That is not an argument against the price. It is a note that the *positioning*
+has not been rewritten to match it, and the honest version of this section
+needs Aaron's reasoning rather than a justification reverse-engineered from
+the number. Until then: we are no longer the cheap option, and the pages lean
+on pre-spacing, the state-format check, the 12-hour proof and free shipping,
+which is what they already led with.
+
+Names moved too, from a flat rate to four bands by the width the lettering
+finishes at ($38 / $53 / $68 / $88), which is what /pricing/ had always said
+it did.
 
 **Margin, honestly:** vinyl ~$1.25 + tape ~$0.30 + mailer ~$1.25 + postage ~$4.50
 + processing ~$0.85 ≈ **$8–10 all-in → ~50% gross.** Thin on one pair, which is
@@ -309,8 +323,10 @@ actual material and postage costs before launch.**
 - [ ] **Decide the GBP address posture** — street address public, or hidden with a
       service area? The address looks residential. Decide before claiming
 - [ ] Register **numbermyboat.com**, add to Cloudflare, route the `boatdecals` Worker
-- [ ] **Confirm pricing and COGS with your brother** — $19 and the whole ladder are my
-      recommendation from market data, not his numbers
+- [ ] **Confirm pricing and COGS with your brother** — the ladder was my
+      recommendation from market data; the 2026-11-13 figures ($28 base, name
+      bands, $10 bundle) are Aaron's. Still unconfirmed against Ryan's actual
+      material and time cost
 - [x] **Film-life figures pulled from the whole site** (2026-10-23, Aaron's call).
       No year number is published for our film or for the cheap sets; `verify.py`
       gates it. Restore only with a spec sheet for the film actually in the shop.

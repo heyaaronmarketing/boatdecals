@@ -8,62 +8,13 @@
  */
 
 import { handleOutline } from "./outline.js";
+import { priceOf, priceBreakdown, OUTLINE_ADD,
+         KIND_NAMES, FROM } from "./price.js";
 import { handleMcp, mcpInfo } from "./mcp.js";
 import { monthlyReview } from "./engine.js";
 import { handleStripeWebhook } from "./stripehook.js";
 import { runProofCycle, handleApprove, handleProofData,
          sendOrderConfirmation } from "./proof.js";
-
-const BASE = {
-  "Registration numbers": 19,
-  "Boat name": 29,
-  "Both": 44,
-  // kept so older cached pages still price correctly
-  "Numbers + name": 44,
-  "Something else": 22,
-};
-/**
- * The other two vocabularies for the same three products, resolved here.
- *
- * A REAL BUG, and the spec's hardest rule broken from the inside. BASE is
- * keyed by the labels the website's own form posts. The MCP server's
- * price_order takes "numbers" / "name" / "both" and passed them straight into
- * priceOf, which matched nothing and fell through to `?? 19` - so an
- * assistant quoted $19 for a boat name ($29) and $19 for the bundle ($44),
- * silently, for every quote at three inches. get_products advertises a THIRD
- * set of names, the catalog ids, so a model reading the catalog and then
- * pricing what it read was guaranteed to miss.
- *
- * The lesson is not "add a map". It is that calling the one pricing function
- * with a vocabulary it does not speak is exactly as wrong as keeping a second
- * copy of the price, and it fails more quietly. One table, every name any
- * surface uses, next to the prices themselves - and verify.py now checks the
- * tool's own enum against it.
- */
-const KIND_ALIAS = {
-  // MCP price_order
-  "numbers": "Registration numbers",
-  "name": "Boat name",
-  "both": "Both",
-  // catalog.json / get_products ids
-  "registration-numbers": "Registration numbers",
-  "boat-name": "Boat name",
-};
-
-const HEIGHT_ADD = { "3": 0, "4": 4, "5": 8, "6": 13 };
-const UPGRADE_ADD = {
-  "Premium 8-year cast vinyl": 8,
-  "Spare set - a second pair at half price": 9,
-  "Install kit - squeegee + solution + tape": 6,
-  "Rush - cut and shipped today": 12,
-  "Hailing port line": 15,
-  "Reflective finish": 10,
-};
-// A contrasting outline is a second layer of vinyl. Must match
-// content.PRICE["outline"] - verify.py fails the build if it drifts, because
-// a browser and a server that disagree on price is the one bug customers see.
-const OUTLINE_ADD = 12;
-const BASE_MIN = 19, BASE_MAX = 200;
 
 // 33 CFR 173.27 requires plain vertical block characters on a registration
 // number. The form only offers these five, but a stale cached page or a
@@ -77,35 +28,6 @@ const BASE_MIN = 19, BASE_MAX = 200;
 // face left off this list gets the wrong font cut.
 const BLOCK_FONTS = ["Arial Bold", "Arial Black", "Impact",
   "OCR A Extended", "MS Gothic"];
-
-/**
- * The price. One function, one table, every surface.
- *
- * `strict` throws on a product name this table does not know, instead of
- * quietly pricing it as the cheapest thing we sell. The order path stays
- * lenient on purpose - this repo's standing judgement is that losing a real
- * order over a stale cached page is worse than quietly correcting it, and the
- * order row carries a `mismatch` flag for exactly that. A quote is different:
- * nothing is lost by erroring, and a wrong number told to a customer by an
- * assistant is worse than no number. So the MCP server asks for strict.
- */
-function priceOf(d, strict = false) {
-  const kind = KIND_ALIAS[d.kind] || d.kind;
-  if (strict && !(kind in BASE)) {
-    throw new Error(`no price for ${JSON.stringify(d.kind)} - the products `
-      + `are ${Object.keys(KIND_ALIAS).join(", ")}`);
-  }
-  let n = BASE[kind] ?? 19;
-  n += HEIGHT_ADD[String(d.height || "3")] ?? 0;
-  // Pipe-delimited: an upgrade label may legitimately contain a comma, and
-  // splitting on "," silently dropped those line items (and undercharged).
-  const raw = String(d.upgrades || "");
-  const ups = (raw.includes("|") ? raw.split("|") : raw.split(","))
-    .map(s => s.trim()).filter(Boolean);
-  for (const u of ups) n += UPGRADE_ADD[u] ?? 0;
-  if (d.finish === "outline" || d.outline) n += OUTLINE_ADD;
-  return Math.min(BASE_MAX, Math.max(BASE_MIN, Math.round(n)));
-}
 
 const str = (v, max) => String(v == null ? "" : v).slice(0, max).trim();
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
@@ -513,7 +435,7 @@ async function handleCheckout(request, env) {
   const body = new URLSearchParams({
     amount: String(amount * 100),
     currency: "usd",
-    // Trimming the payment menu. A $19 decal does not need a tab row of
+    // Trimming the payment menu. A decal this cheap does not need a tab row of
     // Klarna, Cash App, Amazon Pay and Bank above it - that is a pile of
     // decisions in front of a trivial purchase.
     //
@@ -536,7 +458,7 @@ async function handleCheckout(request, env) {
   });
   // Metadata so a Stripe refund or dispute can be traced back to an order
   // without a database lookup - the dashboard is where that conversation
-  // starts, and a row that says only "$19.00" is no use in it.
+  // starts, and a row that says only the amount is no use in it.
   if (ref) body.set("metadata[ref]", ref);
   if (lettering) body.set("metadata[lettering]", lettering);
   if (o.kind) body.set("metadata[product]", str(o.kind, 40));
@@ -807,7 +729,14 @@ export default {
       if (!o) return json({ error: "no such order" }, 404);
       if (o.paid) return json({ error: "already paid", ref }, 409);
 
-      const amount = priceOf(o);
+      // The price THIS ORDER was placed at, not today's price. Repricing
+      // here was harmless while the price never moved; on 2026-11-13 it
+      // moved, and an unpaid order taken at the old price would have been
+      // sent a pay link for the new one. The row carries the figure the
+      // customer agreed to, so use it, and only reprice a row from before
+      // the column existed.
+      const amount = Number(o.total) > 0 ? Math.round(Number(o.total))
+                                         : priceOf(o);
       const label = [o.kind, [o.text, o.boatname].filter(Boolean).join(" / ")]
         .filter(Boolean).join(" - ");
       const body = new URLSearchParams({
@@ -875,7 +804,9 @@ export default {
       return json(mcpInfo());
     }
     if (url.pathname === "/mcp" || url.pathname === "/mcp/") {
-      return handleMcp(request, env, { priceOf, bankNames, bankRows,
+      return handleMcp(request, env, { priceOf, priceBreakdown,
+                                       KIND_NAMES, FROM,
+                                       bankNames, bankRows,
                                       ledgerRows, ledgerBump });
     }
 
@@ -904,8 +835,9 @@ export default {
     // The pricing authority. /catalog.json says what can be ordered; this
     // says what it costs, through the SAME priceOf() the order form and the
     // Stripe intent already use. The MCP server quotes from here rather than
-    // re-deriving, because a chat assistant quoting $19 while the wizard
-    // charges $23 is an argument with a customer holding a screenshot.
+    // re-deriving, because a chat assistant quoting one figure while the
+    // wizard charges another is an argument with a customer holding a
+    // screenshot.
     //
     // Read-only and public: it takes no money and stores nothing. Same shape
     // of body as /api/checkout so the two cannot drift apart in use.
@@ -917,18 +849,31 @@ export default {
         d = Object.fromEntries(url.searchParams);
       }
       const o = d.order || d;
-      const amount = priceOf(o);
+      // STRICT. This endpoint takes no money, so nothing is lost by refusing
+      // to answer - and a confident wrong number is worse than an error. A
+      // boat name is priced by the width it finishes at, so a quote for one
+      // without the lettering is a question this endpoint cannot answer.
+      let b;
+      try { b = priceBreakdown(o, true); }
+      catch (e) { return json({ error: String(e.message || e) }, 422); }
       return json({
         ok: true,
-        amount,
+        amount: b.amount,
         currency: "usd",
         shipping: 0,
+        // Itemised, not just totalled. A customer told "$53" for a name can
+        // see it is $53 because the name finishes at 27.6 inches, which is
+        // checkable against a tape measure; a bare total is not.
+        lines: b.lines,
+        name_band: b.band,
         // Echoed back so a caller can see what was actually priced rather
         // than what it thought it sent - the undercharge bug that shipped in
         // November was exactly this, an empty object pricing as the base.
         priced: {
           kind: o.kind || "Registration numbers",
           height: String(o.height || "3"),
+          boatname: String(o.boatname || ""),
+          font: String(o.font || ""),
           outline: !!(o.outline || o.finish === "outline"),
           upgrades: String(o.upgrades || ""),
         },

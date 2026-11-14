@@ -259,7 +259,10 @@ const TOOLS = [
       "The real price for a specific set - product, lettering height, outline "
       + "or not, any extras. Runs the same pricing function the website's own "
       + "order form and the card charge use, so the number is what the "
-      + "customer will pay. Use this rather than adding prices up yourself.",
+      + "customer will pay. Use this rather than adding prices up yourself. "
+      + "A BOAT NAME is priced by the width it finishes at, not by a flat "
+      + "rate, so a quote for one needs the lettering and the font: pass "
+      + "`boatname` and `font` or this will refuse rather than guess.",
     annotations: { title: "Price a set exactly", readOnlyHint: true,
                    destructiveHint: false, idempotentHint: true,
                    openWorldHint: false },
@@ -273,7 +276,18 @@ const TOOLS = [
                   + "name, both = the bundle. The ids get_products returns "
                   + "are accepted too." },
         height: { type: "string", enum: ["3", "4", "5", "6"],
-                  description: "Lettering height in inches" },
+                  description: "Lettering height in inches. Priced as an "
+                    + "upcharge on a registration number set; a name is "
+                    + "priced by finished width, which moves with height "
+                    + "anyway." },
+        boatname: { type: "string", maxLength: 40,
+                    description: "The lettering, exactly as it will be cut. "
+                      + "Required for kind name or both - the price depends "
+                      + "on how wide it finishes." },
+        font: { type: "string",
+                description: "One of the ten faces. Required for kind name "
+                  + "or both; call get_products for the list. Width varies a "
+                  + "lot between faces, so the font changes the price." },
         outline: { type: "boolean",
                    description: "Contrasting second layer behind the letters" },
       },
@@ -281,20 +295,29 @@ const TOOLS = [
     },
     async run(args, env, ctx) {
       // STRICT. A quote that silently prices an unrecognised product as the
-      // cheapest thing we sell is how this tool came to answer $19 for a $44
-      // bundle. Nothing is lost by erroring on a quote.
-      let amount;
+      // cheapest thing we sell is how this tool came to answer the
+      // registration-number base price for a bundle. Nothing is lost by
+      // erroring on a quote.
+      let b;
       try {
-        amount = ctx.priceOf({
+        b = ctx.priceBreakdown({
           kind: args.kind, height: args.height || "3",
+          boatname: args.boatname || "", font: args.font || "",
           outline: args.outline ? "yes" : "",
         }, true);
       } catch (e) {
         return err(e.message);
       }
       return txt({
-        amount_usd: amount, shipping_usd: 0,
+        amount_usd: b.amount, shipping_usd: 0,
+        // Itemised, so the figure can be explained rather than asserted. A
+        // customer told "$53" for a name will ask why; "the name finishes
+        // 27.6 inches across, which is the 23-30 inch band" is an answer he
+        // can check with a tape measure.
+        lines: b.lines,
+        name_band: b.band,
         priced: { kind: args.kind, height: args.height || "3",
+                  boatname: args.boatname || "", font: args.font || "",
                   outline: !!args.outline },
         note: "Free shipping to all 50 states. Nothing is charged until the "
           + "customer checks out on the website.",
@@ -941,9 +964,15 @@ const TOOLS = [
           ask: "Which one? Reply with 1, 2 or 3.",
           footer: "Cut in Evansdale, Iowa. Free shipping, all 50 states.",
         },
-        price_note: "A boat name set starts at $23 and a name plus "
-          + "registration numbers is $44. Call price_order for the exact "
-          + "figure once he picks a height.",
+        // From the price table, not from memory. This line said a name
+        // started at a figure it had never started at, and named the bundle
+        // at one that had moved - a wrong price in the one message the
+        // customer forwards to his wife.
+        price_note: "A boat name set starts at $" + ctx.FROM.name
+          + " and a name plus registration numbers starts at $"
+          + ctx.FROM.bundle + ". A name is priced by the width it finishes "
+          + "at, so call price_order with the name and the font for the real "
+          + "figure - do not estimate it.",
         honesty: "Every reason above is built from what he told us in the "
           + "interview. Where we had nothing to go on, it says how the joke "
           + "works instead of inventing a reason.",
@@ -1054,7 +1083,9 @@ async function dispatch(msg, env, ctx) {
           + "tools write, and only to their own naming session - "
           + "start_naming_session, vote_on_names and submit_riff_candidates - "
           + "which is kept for 30 days and joined to nothing. Price through "
-          + "price_order rather than adding figures up. Registration numbers are legally "
+          + "price_order rather than adding figures up, and pass the name and the "
+          + "font when pricing a boat name because it is priced by the width "
+          + "it finishes at. Registration numbers are legally "
           + "required to be plain block characters at least 3 inches tall. "
           + "On how common a name is we have market data, not a registry - "
           + "never tell a customer a name is taken at their marina.",

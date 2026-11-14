@@ -216,7 +216,7 @@ def cover(w, h, tagline=True):
     gap_below = h * 0.085
     stack = side * scale
     if tagline:
-        t = wordmark("$19 a pair - free shipping", 0)
+        t = wordmark("$28 a pair - free shipping", 0)
         ts = min((w * 0.42) / t["advance"], side * scale * 0.30 / t["cap"])
         stack += gap_below + t["cap"] * ts
     y = (h - stack) / 2
