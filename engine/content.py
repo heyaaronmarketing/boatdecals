@@ -106,7 +106,32 @@ PRICE = {
     # here next to ours and gets changed deliberately, not in passing.
     "market_low": 15,
     "market_high": 39,
+    # When the current prices took effect. Structured data publishes this as
+    # the offer's validFrom, so it has to be a real date and not today's - an
+    # offer that claims to have started this morning every time the site is
+    # rebuilt is a lie that Google can see. Change it when the prices change.
+    "set_on": "2026-11-13",
 }
+
+# ------------------------------------------------------------------ IndexNow
+# Tells Bing (and Yandex) that a page changed, instead of waiting to be
+# crawled. Worth having here specifically because Bing's index is what ChatGPT
+# search reads, and this site is built to be quoted by answer engines - so the
+# question that matters is not where we rank on Bing, it is how long after a
+# change Bing knows. The November price change is the case in point: 55 pages
+# changed price at once and nothing told anybody.
+#
+# NOT A SECRET, by design. The verification mechanism is that this same string
+# is served from https://numbermyboat.com/<key>.txt - a public URL - so
+# whoever can publish that file is taken to control the site. A Worker secret
+# would hide it from the repo while still publishing it on the web, which is
+# the worst of both.
+#
+# engine/build.py writes the key file as part of the normal build, so a
+# rebuild cannot forget it and a rotated key leaves no stale file behind (the
+# build wipes public/ first). verify.py fails the build if the file is missing
+# or stops matching. Submit with: python3 mcp/indexnow.py
+INDEXNOW_KEY = "26928a3ecc7144db8956fa776b142f7e"
 
 # Derived, so no second copy of the arithmetic exists anywhere.
 # Entry bundle: 3-inch numbers plus the smallest name band, less the bundle
@@ -153,6 +178,13 @@ PRODUCTS = [
          title="Boat Registration Numbers for All 50 States",
          kw="boat registration numbers", vol=5400, cpc=2.60, price=PRICE["numbers"],
          unit="a pair", icon="numbers",
+         # THE PRODUCT, photographed. Not the OG share card, which carries
+         # marketing text across it - a price badge and a headline burned into
+         # the image is the one thing a merchant listing image must not be.
+         # Largest first: Google takes the first it can fetch.
+         # AL-01 is "IA 3717 ZW, 3 inch black on a white hull" - the thing
+         # being sold, on a hull, which is what the buyer is deciding about.
+         image=["AL-01-1400", "AL-01-800"],
          blurb="Legal 3-inch block numbers for both sides of the hull. Pre-spaced on one sheet so you apply them in a single pass.",
          desc="Custom boat registration numbers, $%d a pair with free shipping. "
               "Legal 3-inch block vinyl for all 50 states. Proof emailed "
@@ -162,6 +194,8 @@ PRODUCTS = [
          title="Boat Letters &amp; Name Decals, Any Font",
          kw="boat lettering", vol=2400, cpc=4.59, price=PRICE["name_from"],
          unit="to start", icon="letter",
+         # AL-03, "transom name, 6 inch black script".
+         image=["AL-03-1400", "AL-03-800"],
          blurb="Boat names, hailing ports and any other transom text. You pick the font and the color, we cut it, pre-space it and tape it.",
          desc="Boat name decals and custom vinyl lettering from $%d. 10 marine "
               "fonts previewed live, white or black, free shipping, next-day "

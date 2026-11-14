@@ -4,6 +4,7 @@
 import json, os, pathlib, re, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
+                     INDEXNOW_KEY,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
                      LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href, STRIPE_PK,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL,
@@ -801,20 +802,88 @@ def faq_node(items, path):
                                                   .replace("</strong>", ""))}}
         for q, a in items]}
 
+# The standard-post transit window, in business days. The table on
+# /shipping-and-returns/ prints it and the Product schema publishes it; this is
+# the one definition, and verify.py checks the rendered page still agrees.
+SHIP_TRANSIT = (3, 6)
+
+
 def product_node(p, path):
+    """The Product node, and every field in it is a promise we keep.
+
+    Search Console reported this node as "1 invalid item" on the homepage: a
+    missing `image`, which makes the whole thing ineligible for rich results,
+    plus three optional fields it would like. The optional three are worth
+    filling in because they are the ones a buyer actually wants answered
+    before clicking - can I send it back, how long until it arrives, and is
+    that price still good - and Google shows them in the listing.
+
+    Everything here is read off the published pages rather than chosen to look
+    good. /shipping-and-returns/ is the source for the return policy and the
+    transit window; verify.py fails the build if this node and that page ever
+    disagree, because structured data is a claim made to a search engine on
+    the shop's behalf and a false one is worse than an absent one.
+    """
     return {"@type": "Product", "@id": U(path) + "#product",
             "name": html.unescape(p["nav"]) + " - " + B,
             "description": p["desc"], "brand": {"@type": "Brand", "name": B},
             "category": "Marine vinyl decals",
+            # Was missing entirely, which is what made the item invalid.
+            "image": [U("/assets/img/%s.jpg" % i) for i in p["image"]],
             "offers": {"@type": "Offer", "price": str(p["price"]), "priceCurrency": "USD",
                        "availability": "https://schema.org/InStock",
                        "url": U("/design/"),
-                       "priceValidUntil": str(datetime.date.today().year) + "-12-31",
+                       # The date these prices actually took effect, from the
+                       # price table. NOT today's date: an offer that claims
+                       # to have begun this morning on every rebuild is a lie
+                       # with a timestamp on it.
+                       "validFrom": PRICE["set_on"],
+                       # A YEAR OUT, rolling, rather than the 31st of December
+                       # of whatever year it is now. The old version was
+                       # correct in January and nearly expired by Christmas,
+                       # and Google warns on a priceValidUntil in the past.
+                       "priceValidUntil": str(datetime.date.today()
+                                              + datetime.timedelta(days=365)),
+                       # NOT RETURNABLE, and that is the honest category.
+                       # /shipping-and-returns/ says it plainly: custom-cut
+                       # vinyl with your own registration number on it cannot
+                       # be resold. What we DO is remake our own errors and
+                       # anything that arrives damaged, free - but that is a
+                       # remake, not a customer-initiated return, and dressing
+                       # it up as a returns window would be a promise the shop
+                       # has not made.
+                       "hasMerchantReturnPolicy": {
+                           "@type": "MerchantReturnPolicy",
+                           "applicableCountry": "US",
+                           "returnPolicyCategory":
+                               "https://schema.org/MerchantReturnNotPermitted"},
                        "shippingDetails": {"@type": "OfferShippingDetails",
                            "shippingRate": {"@type": "MonetaryAmount", "value": "0",
                                             "currency": "USD"},
                            "shippingDestination": {"@type": "DefinedRegion",
-                                                   "addressCountry": "US"}}}}
+                                                   "addressCountry": "US"},
+                           # Handling is 1-3 business days, and the range is
+                           # wide on purpose. The shop's own promise is a
+                           # proof within 12 hours and then cut and posted
+                           # within 1-2 business days OF APPROVAL - and the
+                           # approval is the customer's, not ours. Quoting the
+                           # 1-2 we control as though it were the whole wait
+                           # would be a delivery estimate that starts from a
+                           # moment the buyer has not reached yet.
+                           #
+                           # Transit is the standard-post row of the table on
+                           # /shipping-and-returns/: 3-6 business days.
+                           "deliveryTime": {
+                               "@type": "ShippingDeliveryTime",
+                               "handlingTime": {
+                                   "@type": "QuantitativeValue",
+                                   "minValue": 1, "maxValue": 3,
+                                   "unitCode": "DAY"},
+                               "transitTime": {
+                                   "@type": "QuantitativeValue",
+                                   "minValue": SHIP_TRANSIT[0],
+                                   "maxValue": SHIP_TRANSIT[1],
+                                   "unitCode": "DAY"}}}}}
 
 def graph(*nodes):
     return {"@context": "https://schema.org", "@graph": [n for n in nodes if n]}
@@ -1443,9 +1512,10 @@ def build_pricing():
     trail = [("Pricing", None)]
     faqs = [
       ("Is shipping really free?",
-       "Yes, on everything, to anywhere in the 50 states. Standard post, 3-6 days in "
-       "transit. If you need it sooner than that, email us before you order and we "
-       "will tell you what is possible and what it costs."),
+       "Yes, on everything, to anywhere in the 50 states. Standard post, %d-%d "
+       "days in transit. If you need it sooner than that, email us before you "
+       "order and we will tell you what is possible and what it costs."
+       % SHIP_TRANSIT),
       ("Why is $%d not the cheapest price on the internet?"
        % PRICE["numbers"],
        "Because it is not a race we want to win. An $11 set is usually cut as loose "
@@ -1547,9 +1617,8 @@ def build_product(p):
     trail = [(p["nav"], None)]
     faqs = [
       ("How fast will I get it?",
-       "Posted 1-2 business days after you approve the proof, free. Standard post "
-     "is then 3-6 days in "
-       "transit after that."),
+       "Posted 1-2 business days after you approve the proof, free. Standard "
+       "post is then %d-%d days in transit after that." % SHIP_TRANSIT),
       ("Can I see it before it is made?",
        "Yes - the preview in the order form shows your exact lettering, at your chosen "
        "height, in your chosen color. That is what gets cut, so read it twice before "
@@ -2807,8 +2876,8 @@ def build_warranty():
 def build_shipping():
     faqs = [
       ("Is shipping free?",
-       "Yes, on everything, to all 50 states and DC. Standard post, typically 3-6 days in "
-       "transit after production."),
+       "Yes, on everything, to all 50 states and DC. Standard post, typically "
+       "%d-%d days in transit after production." % SHIP_TRANSIT),
       ("How fast is production?",
        "We email a proof within 12 hours; once you approve it we cut, pack and "
      "post within 1-2 business days. If you need it sooner, email us before "
@@ -2830,8 +2899,8 @@ def build_shipping():
       "<h2>Shipping</h2>"
       "<div class=tw><table><thead><tr><th>Method</th><th>Cost</th><th>Transit</th>"
       "</tr></thead><tbody>"
-      "<tr><td>Standard post</td><td><strong>Free</strong></td><td>3&ndash;6 business days"
-      "</td></tr>"
+      "<tr><td>Standard post</td><td><strong>Free</strong></td>"
+      "<td>%d&ndash;%d business days</td></tr>" % SHIP_TRANSIT +
       "<tr><td>Expedited</td><td>At cost, quoted</td><td>2&ndash;3 business days</td></tr>"
       "<tr><td>Overnight</td><td>At cost, quoted</td><td>Next business day</td></tr>"
       "</tbody></table></div>"
@@ -3335,6 +3404,14 @@ def build_static():
     (OUT / "favicon.svg").write_text(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
       + LOGO_MARK + '</svg>', encoding="utf-8")
+
+    # The IndexNow key file. Its entire contents are the key: that is how
+    # Bing checks that whoever submits URLs controls this site. Written here
+    # rather than committed by hand so a rebuild cannot drop it, and so
+    # rotating the key is a one-line change in content.py.
+    if INDEXNOW_KEY:
+        (OUT / ("%s.txt" % INDEXNOW_KEY)).write_text(
+            INDEXNOW_KEY, encoding="utf-8")
 
     (OUT / "robots.txt").write_text(
       "User-agent: *\nAllow: /\n\n"

@@ -114,6 +114,8 @@ for need in ("data-step=\"1\"", "data-step=\"4\"", "id=payelement", "BNS_COL=",
 # must not drift, because the worker's number is what gets charged.
 import sys as _s; _s.path.insert(0, str(ROOT / "engine"))
 from content import PRICE, UPGRADES
+import importlib as _il0
+_SHIP_TRANSIT = tuple(_il0.import_module("build").SHIP_TRANSIT)
 wjs = (ROOT / "worker" / "index.js").read_text()
 _pdj0 = (ROOT / "worker" / "price-data.js").read_text(encoding="utf-8")
 for lbl, amt, _b, _f, _n in UPGRADES:
@@ -1707,6 +1709,216 @@ if _bank_f.exists():
     if "sincere (not a joke)" in _tx.HUMOR_MECHANISMS.values():
         fails.append("sincere leaked into HUMOR_MECHANISMS - it must never be "
                      "offered to the riff brief as a mechanism")
+
+# ---- IndexNow ------------------------------------------------------------
+# Two halves, and a submission is rejected unless both are true: the key, and
+# a file at /<key>.txt whose entire contents are that key. The file is what
+# proves to Bing that whoever is submitting URLs controls this site, so if it
+# goes missing every submission silently 403s - and nothing else on the site
+# looks any different, which is why this is gated rather than noticed.
+from content import INDEXNOW_KEY as _INK                      # noqa: E402
+if _INK:
+    if not re.fullmatch(r"[0-9a-f]{8,128}", _INK):
+        fails.append("INDEXNOW_KEY is %r - Bing wants 8 to 128 hex characters"
+                     % _INK[:16])
+    _kf = OUT / ("%s.txt" % _INK)
+    if not _kf.is_file():
+        fails.append("the IndexNow key file %s.txt was not built - every "
+                     "submission would be rejected and nothing on the site "
+                     "would look wrong" % _INK)
+    elif _kf.read_text().strip() != _INK:
+        fails.append("the IndexNow key file does not contain the key")
+    # A rotated key must not leave the old file behind: two valid key files is
+    # a second credential nobody is tracking.
+    _strays = [f.name for f in OUT.glob("*.txt")
+               if re.fullmatch(r"[0-9a-f]{8,128}\.txt", f.name)
+               and f.name != "%s.txt" % _INK]
+    if _strays:
+        fails.append("stale IndexNow key file(s) still published: %s"
+                     % ", ".join(_strays))
+    if not (ROOT / "mcp" / "indexnow.py").is_file():
+        fails.append("the IndexNow key is configured but mcp/indexnow.py is "
+                     "gone - nothing submits anything")
+
+# ---- the Product node, as Search Console reads it ------------------------
+# Structured data is a claim made to a search engine on the shop's behalf.
+# Google reported this node as "1 invalid item" for a missing image, which
+# costs the whole rich result; these gates are the ones that would have caught
+# it, plus the ones that keep the rest of the node true.
+#
+# The expensive failure is not an absent field - Search Console emails about
+# those. It is a field that is PRESENT and WRONG: a delivery window the shop
+# does not meet, or a returns policy it has not offered. Nobody emails about
+# those, and the first person to find out is a customer quoting it back.
+import datetime as _dt                                        # noqa: E402
+
+_prod_nodes = []
+for _f in OUT.rglob("index.html"):
+    _t = _f.read_text()
+    for _blk in re.findall(
+            r'<script type="application/ld\+json">(.*?)</script>', _t, re.S):
+        try:
+            _g = json.loads(_blk)
+        except Exception:
+            continue
+        # A block may be a graph, a bare node, a list of nodes, or - on the
+        # pages that embed a placeholder - literally null. The first version
+        # of this assumed a dict and died on the first page that was not one.
+        _cands = _g if isinstance(_g, list) else [_g]
+        for _c in _cands:
+            if not isinstance(_c, dict):
+                continue
+            for _node in (_c.get("@graph") or [_c]):
+                if isinstance(_node, dict) and _node.get("@type") == "Product":
+                    _prod_nodes.append((_f.relative_to(OUT), _node))
+
+if not _prod_nodes:
+    fails.append("no Product schema anywhere - the shop has stopped "
+                 "describing what it sells to search engines")
+
+_seen_img = set()
+for _page, _n in _prod_nodes:
+    _o = _n.get("offers") or {}
+
+    # THE CRITICAL ONE. Missing image = the whole item is invalid and the page
+    # is ineligible for rich results.
+    _imgs = _n.get("image") or []
+    if isinstance(_imgs, str):
+        _imgs = [_imgs]
+    if not _imgs:
+        fails.append("the Product node on %s has no image - Search Console "
+                     "reports the whole item as invalid and the page gets no "
+                     "rich result" % _page)
+    for _u in _imgs:
+        if not _u.startswith("https://"):
+            fails.append("Product image %r on %s is not an absolute https URL"
+                         % (_u, _page))
+            continue
+        # A merchant listing image must be the PRODUCT. The OG cards have a
+        # headline and a price badge burned across them, which is exactly what
+        # that image may not be - and they are the easiest wrong thing to
+        # reach for, since og_image() is right there.
+        if "/assets/og/" in _u:
+            fails.append("the Product node on %s uses a share card as its "
+                         "image - those have marketing text burned into them"
+                         % _page)
+        _rel = _u.split("numbermyboat.com/", 1)[-1]
+        _disk = OUT / _rel
+        if not _disk.is_file():
+            fails.append("Product image %s on %s does not exist on disk - "
+                         "Google cannot fetch it and the item stays invalid"
+                         % (_rel, _page))
+        elif _rel not in _seen_img:
+            _seen_img.add(_rel)
+            # Google wants at least 696px on the long edge.
+            try:
+                _dim = subprocess.run(
+                    ["sips", "-g", "pixelWidth", str(_disk)],
+                    capture_output=True, text=True)
+                _w = int(re.search(r"pixelWidth:\s*(\d+)", _dim.stdout).group(1))
+                if _w < 696:
+                    fails.append("Product image %s is %dpx wide; Google wants "
+                                 "at least 696" % (_rel, _w))
+            except Exception:
+                pass          # sips is a convenience, not a dependency
+
+    # The price in the schema is the price on the card.
+    if _o.get("price") != str(PRICE["numbers"]) and \
+            _o.get("price") != str(PRICE["name_from"]):
+        fails.append("the Product node on %s offers $%s, which is neither of "
+                     "the published starting prices ($%d, $%d)"
+                     % (_page, _o.get("price"), PRICE["numbers"],
+                        PRICE["name_from"]))
+
+    # validFrom must be real and in the past. Emitting today's date on every
+    # rebuild would be an offer that claims to have begun this morning.
+    _vf = _o.get("validFrom")
+    if _vf != PRICE["set_on"]:
+        fails.append("the Product node on %s says the price has been valid "
+                     "from %r and the price table says %r"
+                     % (_page, _vf, PRICE["set_on"]))
+    else:
+        try:
+            if _dt.date.fromisoformat(_vf) > _dt.date.today():
+                fails.append("validFrom %s is in the future - the offer "
+                             "claims not to have started yet" % _vf)
+        except ValueError:
+            fails.append("validFrom %r is not a date" % _vf)
+
+    # priceValidUntil in the past makes Google drop the offer.
+    _pvu = _o.get("priceValidUntil")
+    try:
+        _days = (_dt.date.fromisoformat(_pvu) - _dt.date.today()).days
+        if _days < 90:
+            fails.append("priceValidUntil on %s is %d days away - Google "
+                         "treats a near or past date as a stale price and "
+                         "drops the offer. It should roll forward on build."
+                         % (_page, _days))
+    except (ValueError, TypeError):
+        fails.append("priceValidUntil %r on %s is not a date" % (_pvu, _page))
+
+    # The return policy has to be the one the site publishes.
+    _rp = (_o.get("hasMerchantReturnPolicy") or {}).get("returnPolicyCategory")
+    if not _rp:
+        fails.append("the Product node on %s has no return policy - Search "
+                     "Console asks for one and buyers ask for it first"
+                     % _page)
+    elif _rp != "https://schema.org/MerchantReturnNotPermitted":
+        fails.append("the Product node on %s claims the return policy %r. "
+                     "/shipping-and-returns/ says custom-cut vinyl is not "
+                     "returnable; promising a window the shop does not offer "
+                     "is worse than promising nothing" % (_page, _rp))
+
+    # Delivery time, against the page that prints it.
+    _dtm = (_o.get("shippingDetails") or {}).get("deliveryTime") or {}
+    _tt = _dtm.get("transitTime") or {}
+    _ht = _dtm.get("handlingTime") or {}
+    if not _tt or not _ht:
+        fails.append("the Product node on %s has no delivery time - the "
+                     "listing cannot say when it arrives" % _page)
+    else:
+        if (_tt.get("minValue"), _tt.get("maxValue")) != _SHIP_TRANSIT:
+            fails.append("the Product node on %s publishes a transit window "
+                         "of %s-%s days and build.SHIP_TRANSIT says %s-%s"
+                         % (_page, _tt.get("minValue"), _tt.get("maxValue"),
+                            _SHIP_TRANSIT[0], _SHIP_TRANSIT[1]))
+        # Handling must cover the proof AND the customer's approval, not just
+        # the 1-2 days of production we control.
+        if (_ht.get("maxValue") or 0) < 2:
+            fails.append("the Product node on %s promises handling in under "
+                         "two days. The shop's own promise is a proof within "
+                         "12 hours and then 1-2 business days FROM APPROVAL, "
+                         "and the approval is the customer's" % _page)
+
+# The schema's transit window against the page a customer actually reads.
+_ship = (OUT / "shipping-and-returns" / "index.html").read_text()
+# ANCHORED TO THE STANDARD-POST ROW, and that anchoring is the whole gate.
+#
+# The first version searched the whole page for "N-M business days". A break
+# test moved the window to 1-2 and the gate stayed silent, because the page
+# also says production takes "1-2 business days" - a different promise about a
+# different stage - and the substring matched that instead. A gate that can
+# match the wrong sentence is not checking anything.
+#
+# Compared against what a READER sees, too: the table writes the range with
+# &ndash;, so matching the raw markup for a dash finds nothing.
+_ship_txt = html.unescape(_ship).replace("\u2013", "-").replace("\u2014", "-")
+_row = re.search(r"Standard post.{0,120}?business days", _ship_txt, re.S)
+if not _row:
+    fails.append("the shipping table has no Standard post row - that row is "
+                 "where the transit window the Product schema publishes is "
+                 "shown to the customer")
+elif "%d-%d business days" % _SHIP_TRANSIT not in _row.group(0):
+    fails.append("the shipping table's Standard post row says %r and the "
+                 "Product schema publishes %d-%d business days - the listing "
+                 "would promise a delivery window the page does not"
+                 % (_row.group(0)[-28:].strip(), _SHIP_TRANSIT[0],
+                    _SHIP_TRANSIT[1]))
+# And the returns claim the schema makes.
+if "not returnable" not in _ship_txt:
+    fails.append("the shipping page no longer says custom work is not "
+                 "returnable, but the Product schema tells Google returns are "
+                 "not permitted - one of the two is now wrong")
 
 # ---- analytics ----------------------------------------------------------
 # GA4 on every public page and on no internal one. A tag that silently stops
