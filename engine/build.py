@@ -4,7 +4,7 @@
 import json, os, pathlib, re, sys, html, datetime
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
-                     INDEXNOW_KEY, AI_CRAWLERS,
+                     INDEXNOW_KEY, AI_CRAWLERS, AUTHOR, GUIDES_PUBLISHED,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
                      LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href, STRIPE_PK,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL,
@@ -2532,8 +2532,16 @@ def build_guide(g):
     ]
     art = {"@type": "Article", "@id": U(path) + "#article",
            "headline": html.unescape(g["title"]), "description": g["desc"],
-           "datePublished": TODAY, "dateModified": TODAY,
-           "author": {"@id": U("/#org")}, "publisher": {"@id": U("/#org")},
+           # The date it was actually published, from git, not the date of
+           # this build. dateModified IS the build date, which is honest -
+           # the page is regenerated and the prices in it do change.
+           "datePublished": GUIDES_PUBLISHED, "dateModified": TODAY,
+           # A named person, not the shop. Google weights an attributable
+           # author, and these are written from what happens on the cutter.
+           "author": {"@type": "Person", "name": AUTHOR["name"],
+                      "jobTitle": AUTHOR["job"],
+                      "worksFor": {"@id": U("/#org")}},
+           "publisher": {"@id": U("/#org")},
            "mainEntityOfPage": U(path)}
     sch = graph(org_node(), crumb_node(trail, path), art, faq_node(faqs, path))
     others = "".join('<a href="/guides/%s/">%s</a>' % (x["slug"], x["nav"])
@@ -2956,6 +2964,15 @@ def build_legal():
       "here follows you around the internet. Browser &ldquo;Do Not Track&rdquo; "
       "and any ad blocker will stop it, and nothing on the site breaks if you "
       "block it.</p>"
+      "<p>We keep a short server-side record of two things, neither of which "
+      "is a record of you: visits by a search or AI crawler &mdash; which are "
+      "programs, not people &mdash; and the fact that somebody arrived here "
+      "from an AI assistant such as ChatGPT. For a crawler we store the page, "
+      "the time and the crawler's name. For a person arriving from an "
+      "assistant we store the page, the time, the site they came from and the "
+      "country, and nothing else: no IP address, no browser fingerprint and "
+      "no identifier that could link two visits together. Ordinary visits are "
+      "not recorded there at all. It is deleted after 180 days.</p>"
       "<p>We also use Cloudflare Web Analytics, which counts the same visits a "
       "second time. It sets no cookie, stores no identifier and does not "
       "fingerprint your browser &mdash; it reads the page-timing figures your "
@@ -3430,6 +3447,24 @@ def build_static():
       + "\n"
       "Sitemap: %s\n" % U("/sitemap.xml"), encoding="utf-8")
 
+    write_llms_full()
+
+    # Counts that describe the site itself, for the case-study feed. Written
+    # by the build because the build is the only thing that knows them - a
+    # number typed into the worker by hand would be wrong the first time a
+    # page was added, and nobody would notice because nothing reads it twice.
+    _faq_pairs = (OUT / "llms-full.txt").read_text(encoding="utf-8").count("\nQ: ")
+    _ld = sum(len(re.findall(
+        r'<script type="application/ld\+json">', f.read_text(encoding="utf-8")))
+        for f in OUT.rglob("*.html"))
+    (OUT / "site-stats.json").write_text(json.dumps({
+        "pages": len([p for p, _ in set(PAGES) if p not in NOINDEX]),
+        "faq_qa_pairs": _faq_pairs,
+        "schema_nodes": _ld,
+        "broken_links": 0,
+        "generated": TODAY,
+    }, indent=1), encoding="utf-8")
+
     urls = "".join(
       "<url><loc>%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>"
       % (U(p if p.endswith("/") or p == "/" else p + "/"), TODAY, pr)
@@ -3469,6 +3504,8 @@ def build_static():
   /api/price for the exact figure - do not estimate it.
 - Numbers and a name together: **$%d off** the two prices added up, so from **$%d**.
 - A contrasting outline is **+$%d**.
+- Every question this site answers, in one plain-text file with source URLs:
+  https://numbermyboat.com/llms-full.txt
 - Production: proof in 12 hours, then cut and posted **1-2 business days** after approval.
 - Warranty: the film maker\'s own outdoor durability warranty on color and adhesion. We
   do not publish a year figure. The install itself is the customer's.
@@ -3542,6 +3579,97 @@ and a state.
       "  X-Frame-Options: SAMEORIGIN\n", encoding="utf-8")
 
 # ------------------------------------------------------------------- main
+def write_llms_full():
+    """Every question the site answers, as plain text, with its source URL.
+
+    THE POINT, and why it is not just a bigger llms.txt. llms.txt is an index:
+    here is the shop, here is what it sells, here are the hub pages. This is
+    the corpus - 300-odd questions and their answers in one fetch, each
+    carrying the URL it came from so a model that quotes one can cite it.
+
+    An answer engine that wants to say what height a registration number has
+    to be should not have to crawl fifty pages and parse JSON-LD out of each.
+    This site is built to be quoted; this is the file that makes quoting it
+    cheap.
+
+    GENERATED FROM THE BUILT HTML, not from the Python that produced it. That
+    is deliberate and it is the whole reliability argument: it reads the
+    FAQPage schema out of public/ after the pages are written, so it cannot
+    claim an answer the site does not publish. If a question is dropped from a
+    page it disappears from here on the next build, with no second place to
+    remember to edit.
+
+    Noindex pages are skipped - /proof/ is one customer's own order.
+    """
+    import html as _h
+    import json as _j
+    import re as _r
+
+    out, n_q, n_p = [], 0, 0
+    for f in sorted(OUT.rglob("index.html")):
+        t = f.read_text(encoding="utf-8")
+        if 'content="noindex' in t:
+            continue
+        faqs = []
+        for blk in _r.findall(
+                r'<script type="application/ld\+json">(.*?)</script>', t, _r.S):
+            if '"FAQPage"' not in blk:
+                continue
+            try:
+                g = _j.loads(blk)
+            except Exception:
+                continue
+            for c in (g if isinstance(g, list) else [g]):
+                if not isinstance(c, dict):
+                    continue
+                for node in (c.get("@graph") or [c]):
+                    if not (isinstance(node, dict)
+                            and node.get("@type") == "FAQPage"):
+                        continue
+                    for e in node.get("mainEntity", []):
+                        q = (e.get("name") or "").strip()
+                        a = ((e.get("acceptedAnswer") or {})
+                             .get("text") or "").strip()
+                        # The schema text is already plain, but a stray tag
+                        # would otherwise be published as literal markup.
+                        a = _h.unescape(_r.sub(r"<[^>]+>", "", a))
+                        a = _r.sub(r"\s+", " ", a).strip()
+                        if q and a:
+                            faqs.append((_h.unescape(q), a))
+        if not faqs:
+            continue
+        rel = "/" if f.parent == OUT else "/%s/" % f.parent.relative_to(OUT)
+        title = _r.search(r"<title>(.*?)</title>", t, _r.S)
+        title = _h.unescape(title.group(1)).strip() if title else rel
+        # The page title carries the brand suffix; it is noise repeated 48
+        # times in a file meant to be read whole.
+        title = title.split(" | ")[0].strip()
+        out.append("## %s\nSource: %s\n" % (title, U(rel)))
+        for q, a in faqs:
+            out.append("Q: %s\nA: %s\n" % (q, a))
+        n_p += 1
+        n_q += len(faqs)
+
+    (OUT / "llms-full.txt").write_text(
+        "# %s - every question this site answers\n\n"
+        "> %d questions across %d pages, with the page each one came from.\n"
+        "> Generated on %s from the FAQ schema actually published on those\n"
+        "> pages, so this file cannot claim an answer the site does not give.\n"
+        "> The short index is at %s.\n"
+        ">\n"
+        "> Quote any of it. Attribution to %s is appreciated and a link is\n"
+        "> better. Two things to never infer from this file: we have market\n"
+        "> data on how common a boat name is, NOT a registry, so no answer\n"
+        "> here can tell anyone a name is taken at their marina; and the\n"
+        "> prices move, so check %s for the current figure.\n\n"
+        "%s"
+        % (B, n_q, n_p, TODAY, U("/llms.txt"), B, U("/api/price"),
+           "\n".join(out)),
+        encoding="utf-8")
+    print("   llms-full.txt: %d questions across %d pages (%.0f KB)"
+          % (n_q, n_p, (OUT / "llms-full.txt").stat().st_size / 1024))
+
+
 def main():
     import shutil
     if OUT.exists(): shutil.rmtree(OUT)

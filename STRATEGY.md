@@ -342,3 +342,40 @@ actual material and postage costs before launch.**
 - [ ] Real product photography (no stock, no AI-generated "customers")
 - [ ] Turnstile on `/api/order`
 - [ ] Tier 3 states — **only after Tier 1 ranks**
+
+---
+
+## Re-pull log
+
+This file reasons from volumes pulled on a date. Each re-pull is appended here
+rather than overwriting the numbers above, because the original figures are
+what the pages were built on and that decision record matters. Raw responses
+live in `research/raw/`, every paid call is costed in `research/api-log.md`,
+and the client is `mcp/dfs.py` (run by hand, never on a cron).
+
+### 2026-11-14 — money terms, `keywords_data/google_ads/search_volume/live`
+
+| Term | 2026-10-22 | 2026-11-14 | CPC |
+|---|---|---|---|
+| boat registration numbers | 5,400 | **4,400** | $3.00 |
+| boat decals | 3,600 | 3,600 | $3.54 |
+| boat lettering | 2,400 | **1,900** | $5.27 |
+| boat name decals | 1,600 | 1,600 | $3.46 |
+| boat numbers | — | 1,300 | $3.14 |
+| boat hull numbers | — | 880 | $2.56 |
+| boat registration number stickers | — | 320 | $3.25 |
+| custom boat lettering | — | 260 | $4.03 |
+| boat name lettering | — | 260 | $3.50 |
+
+Two terms fell about 20% and two did not move at all. **This is a season, not a
+trend.** Google Ads reports a trailing twelve-month average, so a November pull
+is weighted toward the end of the northern boating season; the terms that held
+are the ones people search when a boat is already out of the water and the
+paperwork is due. Nothing here changes what to build. Re-pull in March before
+reading anything into the direction.
+
+**One trap worth recording, because this niche is full of it.** "registration
+numbers for boat" returns **4,400 — identical to "boat registration numbers."**
+That is not a second market. Google reports close variants at the same volume,
+and adding them would have invented 4,400 searches a month that do not exist.
+Nothing in this file is a sum of a keyword list, and it must not become one.

@@ -133,6 +133,39 @@ PRICE = {
 # or stops matching. Submit with: python3 mcp/indexnow.py
 INDEXNOW_KEY = "26928a3ecc7144db8956fa776b142f7e"
 
+# ------------------------------------------------------------------ author
+# Who wrote the guides, for the Article schema.
+#
+# This is the first time Ryan's name appears anywhere on the public site -
+# until now he existed only in code comments. Aaron's call, 2026-11-14.
+#
+# An author is an E-E-A-T signal and Google weights a real, attributable
+# person over an organisation. The guides are worth attributing: they are
+# written from what actually happens on the cutter, which is the thing a
+# content farm cannot copy.
+#
+# NO STREET ADDRESS, NO PHONE, NO EMAIL on this node - a name and a job are
+# business facts, the rest is personal information and the same 2026-10-30
+# rule applies to it here as everywhere else on this site.
+#
+# Schema only: there is no visible byline on the guides. Worth knowing that
+# Google has said it cross-checks schema authorship against what a reader can
+# see, so this is a weaker signal than a byline would be. Aaron's call.
+AUTHOR = {
+    "name": "Ryan Phillips",
+    "job": "Owner and cutter",
+}
+
+# When the guides were published. Read off git history (every guide page's
+# first commit is 2026-10-22), NOT set to the build date.
+#
+# A REAL BUG this replaces: datePublished was TODAY, so every guide claimed to
+# have been published on the morning of whatever day the site was last built.
+# Rebuilt daily, that is eight pages insisting they are brand new for ever -
+# which is a lie Google can check against its own crawl history, and it throws
+# away the age the pages have actually earned.
+GUIDES_PUBLISHED = "2026-10-22"
+
 # ------------------------------------------------------------- AI crawlers
 # Every answer engine that publishes a user-agent, named explicitly in
 # robots.txt. The list is long on purpose; see the comment where it is
@@ -284,7 +317,7 @@ GUIDES = [
     dict(slug="where-to-put-boat-registration-numbers", nav="Where they go",
          title="Where Do Boat Registration Numbers Go?",
          kw="where to place boat registration numbers", vol=430,
-         desc="Boat registration numbers go on the forward half of both sides, reading left to right. Here is exactly how high, how far forward, and where the validation decal sits."),
+         desc="Boat registration numbers go on the forward half of both sides, reading left to right. Exactly how high, how far forward, and where the validation decal sits."),
     dict(slug="how-to-apply-boat-lettering", nav="How to apply",
          title="How to Apply Boat Lettering (Wet and Dry Method)",
          kw="how to apply boat lettering", vol=60,
@@ -300,7 +333,7 @@ GUIDES = [
     dict(slug="best-vinyl-for-boat-lettering", nav="Vinyl types",
          title="Best Vinyl for Boat Lettering: Cast vs Calendared",
          kw="best vinyl for boat lettering", vol=10,
-         desc="Cast vs calendared vinyl for boats, when high-tack is mandatory, and what a film warranty actually covers."),
+         desc="Cast vs calendared vinyl for boats, when high-tack film is mandatory on bare aluminium and rotomoulded plastic, and what a film warranty actually covers."),
     dict(slug="documented-vessel-name-and-hailing-port", nav="Documented vessels",
          title="Documented Vessel Name &amp; Hailing Port Requirements",
          kw="documented vessel lettering", vol=10,

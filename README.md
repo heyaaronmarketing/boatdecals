@@ -51,13 +51,23 @@ The hailing-port **add-on** went with the product line. If the shop still wants 
 sell a hailing-port line under a name, restore it in `content.py: UPGRADES` and in
 the worker's `UPGRADE_ADD` together — `verify.py` fails if they disagree.
 
-## Pricing is in two places and must stay in sync
+## Pricing is in exactly one place
 
-`engine/content.py: PRICE/UPGRADES` (display + client JS) and
-`worker/index.js: BASE/HEIGHT_ADD/UPGRADE_ADD` (the authority). The worker
-recomputes every order and flags `mismatch=1` in D1 if the browser disagreed —
-that's the tamper guard, so never make the worker trust `quoted_total`.
-`verify.py` fails the build if the two tables disagree.
+`engine/content.py: PRICE` is the table. `mcp/build_price_js.py` derives
+`worker/price-data.js` from it, and `worker/price.js` is the one function that
+turns an order into an amount — imported by the worker, imported by the MCP
+server, and inlined into the browser by `engine/shared_js.py: price_js()` as
+`window.NMB_PRICE`. The figure on the button is produced by the code that
+charges the card.
+
+It used to be two tables kept in sync by a drift gate. That is not the same
+thing: a gate over two copies tells you they disagree, it does not stop them
+disagreeing. `verify.py` now regenerates `price-data.js` and diffs it, and bans
+superseded price literals anywhere in the tree; `mcp/test_price_browser.mjs`
+checks that 17,080 orders price identically in the worker and in the browser.
+
+The worker still recomputes every order and flags `mismatch=1` in D1 if the
+browser disagreed — never make the worker trust `quoted_total`.
 
 ⚠️ **Upgrades are joined with `" | "`, not a comma.** Two labels contain commas
 ("a second pair at half price"), and comma-splitting silently dropped them
@@ -742,6 +752,42 @@ against an emailed payment link.
 - `RESEND_API_KEY`, `ORDER_TO` → set ✅
 - `ORDER_FROM` → currently `onboarding@resend.dev`. **Verify numbermyboat.com
   in Resend and switch this to `orders@numbermyboat.com` before launch.**
+
+### The measurement pipeline
+
+All optional, all independent: a missing key costs you that one source and
+nothing else, and the case-study feed publishes *why* in `last_error` rather
+than leaving last week's number sitting there looking current.
+
+- `GSC_SERVICE_ACCOUNT_JSON` — Google service-account JSON. The account must be
+  an **Owner** on the Search Console property; Full is not enough for the API
+  and the failure is a 403 that reads like a bad key.
+- `GSC_SITE_URL` — defaults to `sc-domain:numbermyboat.com`. A URL-prefix
+  property needs the URL with its trailing slash instead.
+- `GA4_PROPERTY_ID` — numeric. The service account needs Viewer on it.
+- `BING_API_KEY` — Bing Webmaster API, for clicks and AI citations.
+- `DATAFORSEO_LOGIN` / `DATAFORSEO_PASSWORD` — the weekly ranked-keyword and
+  backlink sample. **Prepaid.** When the balance runs out the API returns a
+  well-formed response with no keywords in it, so `worker/dataforseo.js`
+  refuses any task whose `status_code` is not 20000 rather than publishing
+  "this site ranks for nothing" on a portfolio page.
+
+Install them with `bash mcp/install_secrets.sh` — it pipes each value from a
+file, so nothing is typed at a prompt or left in shell history.
+
+Zone settings: `python3 mcp/cf_zone.py` reads them all, `--apply` writes the
+wrong ones. It needs its own token with Zone Settings:Edit; wrangler's is
+zone-read only.
+
+### What is on a cron and what is not
+
+The weekly cron samples **rankings and backlinks**, because a SERP cannot be
+backfilled — if nobody measured this Monday, this Monday is gone. It
+deliberately does not pull search volumes. `STRATEGY.md` reasons from volumes
+pulled on a date, and a job that rewrote them every Monday would change that
+document's premises with nobody deciding to. Research is
+`python3 mcp/dfs.py <endpoint> '<payload>' <label>`, run on purpose, cached in
+`research/raw/`, and costed in `research/api-log.md`.
 
 ## Before launch
 

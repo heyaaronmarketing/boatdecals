@@ -151,7 +151,11 @@ def main():
         200: "accepted",
         202: "accepted, key validation pending",
         400: "bad request - the JSON or the URL list is malformed",
-        403: "key not valid - the key file did not match",
+        403: "refused. Two different causes and the message does not say "
+             "which: either the key file did not match, or the host is not "
+             "claimed in Bing Webmaster Tools. The second is an ownership "
+             "check, not a code bug - and it also fires when the host here "
+             "does not match the host in the submitted URLs (apex vs www).",
         422: "a URL does not belong to this host, or the key does not match",
         429: "too many requests - slow down",
     }.get(code, "unexpected")

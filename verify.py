@@ -411,7 +411,6 @@ _PII = [
     (r'"LocalBusiness"', "a LocalBusiness entity (no public address to back it)"),
     (r"maps\.google|google\.com/maps", "a Google Maps link"),
     (r"\bfire chief\b", "the owner's other job"),
-    (r"Ryan\s+Phillips", "the owner by name"),
 ]
 for _f in OUT.rglob("*"):
     if _f.suffix not in (".html", ".xml", ".txt") or not _f.is_file():
@@ -420,6 +419,65 @@ for _f in OUT.rglob("*"):
     for _pat, _what in _PII:
         if re.search(_pat, _t, re.I):
             fails.append("PII: %s in %s" % (_what, _f.relative_to(OUT)))
+
+# The owner's NAME is a separate case from the rest of the list above, and it
+# changed on 2026-11-14: Aaron decided the guides should carry a real,
+# attributable author, because Google weights a named person over an
+# organisation and these are written from what happens on the cutter.
+#
+# He also chose "schema only" - no visible byline. So the name is allowed in
+# exactly one place, an Article's author node, and is still a failure anywhere
+# a reader could see it. That second half is the part worth gating: it is the
+# decision he actually made, and it is the half that would quietly erode.
+_NAME = re.compile(r"Ryan\s+Phillips", re.I)
+for _f in OUT.rglob("*"):
+    if _f.suffix not in (".html", ".xml", ".txt") or not _f.is_file():
+        continue
+    _t = _f.read_text(errors="ignore")
+    if not _NAME.search(_t):
+        continue
+    # Strip every JSON-LD block, then look again. What is left is what a
+    # person reads.
+    _visible = re.sub(r'<script type="application/ld\+json">.*?</script>',
+                      "", _t, flags=re.S)
+    if _NAME.search(_visible):
+        fails.append("PII: the owner's name is in the VISIBLE text of %s - it "
+                     "is approved for the Article author node only (schema "
+                     "only, Aaron's call 2026-11-14)" % _f.relative_to(OUT))
+        continue
+    # In schema, it must be the author of an Article and nothing else - not an
+    # organisation contact, not a founder node with an address hanging off it.
+    for _b in re.findall(r'<script type="application/ld\+json">(.*?)</script>',
+                         _t, re.S):
+        if not _NAME.search(_b):
+            continue
+        try:
+            _g = json.loads(_b)
+        except Exception:
+            fails.append("PII: the owner's name is in an unparseable JSON-LD "
+                         "block in %s" % _f.relative_to(OUT))
+            continue
+        _found = False
+        for _c in (_g if isinstance(_g, list) else [_g]):
+            for _n in ((_c.get("@graph") or [_c]) if isinstance(_c, dict) else []):
+                if not isinstance(_n, dict) or _n.get("@type") != "Article":
+                    continue
+                _a = _n.get("author") or {}
+                if isinstance(_a, dict) and _NAME.search(str(_a.get("name", ""))):
+                    _found = True
+                    # A Person node is a name and a job. Anything that could
+                    # locate or contact him does not belong on it.
+                    for _k in ("address", "telephone", "email", "homeLocation",
+                               "birthDate", "sameAs"):
+                        if _k in _a:
+                            fails.append("PII: the author node in %s carries "
+                                         "%r - a name and a job title are "
+                                         "business facts, the rest is not"
+                                         % (_f.relative_to(OUT), _k))
+        if not _found:
+            fails.append("PII: the owner's name appears in JSON-LD in %s "
+                         "outside an Article author node"
+                         % _f.relative_to(OUT))
 
 # The domain is numbermyboat.com. boatnumbershop.com was never registered and
 # must not survive in a canonical, a schema @id, a sitemap entry or an email
@@ -2099,6 +2157,337 @@ else:
     if "Cloudflare Web Analytics" not in (OUT / "privacy" / "index.html").read_text():
         fails.append("the site runs Cloudflare Web Analytics but the privacy "
                      "policy does not mention it")
+
+# ---- server-side traffic logging -----------------------------------------
+# The one measurement GA4 cannot make: a crawler does not run JavaScript, so
+# "is ChatGPT actually reading this site" is invisible to it. The risk in
+# writing requests to a database is that it quietly becomes a web log, so the
+# SHAPE of the table is gated, not just its existence.
+_sch = (ROOT / "schema.sql").read_text()
+if "traffic_log" in _wi0:
+    if "CREATE TABLE IF NOT EXISTS traffic_log" not in _sch:
+        fails.append("the worker writes traffic_log but schema.sql does not "
+                     "create it")
+    else:
+        _tbl = _sch[_sch.index("CREATE TABLE IF NOT EXISTS traffic_log"):]
+        _tbl = _tbl[:_tbl.index(");")]
+        for _col in ("ip", "addr", "visitor", "session", "cookie", "mail"):
+            if re.search(r"^\s*\w*%s\w*\s" % _col, _tbl, re.M | re.I):
+                fails.append("traffic_log has a %r-ish column - this table "
+                             "records crawlers and referring hosts and must "
+                             "never become a record of individual people"
+                             % _col)
+    # A person's user-agent is a fingerprinting surface. Bots only.
+    if "bot ? ua.slice" not in _wi0:
+        fails.append("the traffic logger no longer restricts user_agent to "
+                     "bots - a person's user-agent is a fingerprinting "
+                     "surface and does not belong in this table")
+    if "if (!bot && !ref) return;" not in _wi0:
+        fails.append("the traffic logger no longer skips ordinary traffic - "
+                     "it would become a web log of what every visitor read")
+    # IT MUST NOT BE ABLE TO BREAK A PAGE, and this gate exists because it
+    # did. The first version read ctx from a fetch handler whose signature
+    # was (request, env) - no ctx - and `ctx.waitUntil` threw before any
+    # route ran, so every request on the site returned 500. The comment above
+    # the function already promised this could not happen.
+    if "function logTraffic(" in _wi0:
+        _lt = _wi0[_wi0.index("function logTraffic("):]
+        _lt = _lt[:_lt.index("\nconst str =")]
+        if "try {" not in _lt or "catch" not in _lt:
+            fails.append("the traffic logger is not wrapped in a try/catch - "
+                         "a failed analytics write must never cost a customer "
+                         "their order, and once it cost every request a 500")
+        if "ctx.waitUntil" not in _lt or ".catch(" not in _lt:
+            fails.append("the traffic logger is not fire-and-forget")
+        if 'typeof ctx.waitUntil !== "function"' not in _lt:
+            fails.append("the traffic logger does not check that ctx is real "
+                         "before using it - that is exactly how it 500'd the "
+                         "whole site once")
+    if "async fetch(request, env, ctx)" not in _wi0:
+        fails.append("the fetch handler no longer takes ctx, so the traffic "
+                     "logger cannot defer anything")
+    # Retention, enforced rather than promised.
+    if "traffic_log WHERE ts < datetime('now', '-180 days')" not in _wi0:
+        fails.append("nothing purges traffic_log - a retention promise that "
+                     "nothing enforces is not a retention promise")
+    if 'url.pathname === "/api/traffic"' in _wi0:
+        _seg = _wi0[_wi0.index('url.pathname === "/api/traffic"'):][:400]
+        if "env.PROOF_RUN_KEY" not in _seg:
+            fails.append("/api/traffic is not behind the owner key")
+    if "server-side record" not in (OUT / "privacy" / "index.html").read_text():
+        fails.append("the site keeps a server-side traffic record and the "
+                     "privacy policy does not describe it")
+
+# ---- llms-full.txt -------------------------------------------------------
+# The corpus an answer engine can fetch in one request instead of crawling
+# fifty pages and parsing JSON-LD out of each. Generated FROM the built HTML,
+# so the gate worth having is that it still matches what the pages publish.
+_lf = OUT / "llms-full.txt"
+if not _lf.is_file():
+    fails.append("llms-full.txt was not built")
+else:
+    _lft = _lf.read_text()
+    _n_file = _lft.count("\nQ: ")
+    _n_site = 0
+    for _f in OUT.rglob("index.html"):
+        _t = _f.read_text()
+        if 'content="noindex' in _t:
+            # A noindex page must not leak into the corpus - /proof/ is one
+            # customer's own order.
+            _u = "/" if _f.parent == OUT else "/%s/" % _f.parent.relative_to(OUT)
+            if "Source: https://numbermyboat.com%s" % _u in _lft:
+                fails.append("llms-full.txt publishes the noindex page %s" % _u)
+            continue
+        for _b in re.findall(
+                r'<script type="application/ld\+json">(.*?)</script>', _t, re.S):
+            if '"FAQPage"' not in _b:
+                continue
+            try:
+                _g = json.loads(_b)
+            except Exception:
+                continue
+            for _c in (_g if isinstance(_g, list) else [_g]):
+                if not isinstance(_c, dict):
+                    continue
+                for _n2 in (_c.get("@graph") or [_c]):
+                    if isinstance(_n2, dict) and _n2.get("@type") == "FAQPage":
+                        _n_site += len(_n2.get("mainEntity", []))
+    if _n_file != _n_site:
+        fails.append("llms-full.txt carries %d questions and the site "
+                     "publishes %d - the corpus has drifted from the pages"
+                     % (_n_file, _n_site))
+    # The two claims this site must never let a model make on its behalf.
+    if "NOT a registry" not in _lft:
+        fails.append("llms-full.txt does not carry the registry caveat - a "
+                     "model reading 300 answers must not conclude we can say "
+                     "a name is taken at somebody's marina")
+    if "/api/price" not in _lft:
+        fails.append("llms-full.txt does not point at the pricing authority, "
+                     "so a model will quote whatever price it read here")
+    if "llms-full.txt" not in (OUT / "llms.txt").read_text():
+        fails.append("llms.txt does not point at llms-full.txt")
+
+# ---- the guides' authorship ----------------------------------------------
+# An attributable author is an E-E-A-T signal, and it is also a claim about a
+# real person, so both halves are gated: that it is there, and that it does
+# not carry anything it should not.
+from content import AUTHOR as _AU, GUIDES_PUBLISHED as _GP   # noqa: E402
+_arts = 0
+for _f in sorted((OUT / "guides").rglob("index.html")):
+    _t = _f.read_text()
+    _g = _f.parent.name
+    for _b in re.findall(
+            r'<script type="application/ld\+json">(.*?)</script>', _t, re.S):
+        try:
+            _j = json.loads(_b)
+        except Exception:
+            continue
+        for _n3 in (_j.get("@graph") or []):
+            if not (isinstance(_n3, dict) and _n3.get("@type") == "Article"):
+                continue
+            _arts += 1
+            _a = _n3.get("author") or {}
+            if _a.get("@type") != "Person":
+                fails.append("the guide %s is authored by %r, not a named "
+                             "person - Google weights an attributable author"
+                             % (_g, _a.get("@type") or _a.get("@id")))
+            elif _a.get("name") != _AU["name"]:
+                fails.append("the guide %s names the author %r and "
+                             "content.AUTHOR says %r"
+                             % (_g, _a.get("name"), _AU["name"]))
+            # A name and a job are business facts. A phone number, a street
+            # address or a personal email are not, and this site publishes
+            # none of them - Aaron's call, 2026-10-30, and it applies to a
+            # schema node as much as to a footer.
+            _flat = json.dumps(_a).lower()
+            for _bad in ("telephone", "address", "email", "streetaddress"):
+                if _bad in _flat:
+                    fails.append("the author node on %s carries %r - this "
+                                 "site publishes no personal contact details"
+                                 % (_g, _bad))
+            # THE BUG THIS REPLACED: datePublished was the build date, so
+            # every guide claimed to be brand new on whatever morning the
+            # site was last built. Rebuilt daily that is a lie Google can
+            # check against its own crawl history, and it throws away the age
+            # the pages have earned.
+            _dp = _n3.get("datePublished")
+            if _dp != _GP:
+                fails.append("the guide %s says it was published %r and "
+                             "content.GUIDES_PUBLISHED says %r"
+                             % (_g, _dp, _GP))
+            if _dp == _bld.TODAY:
+                fails.append("the guide %s claims it was published today - "
+                             "datePublished must be the real date, not the "
+                             "build date" % _g)
+if _arts < 8:
+    fails.append("only %d guide Article node(s) found, expected 8" % _arts)
+
+# ---- the case-study feed -------------------------------------------------
+# aaron.chat does not write its /work pages, it FEEDS them: a registry fetches
+# /api/case-study.json from each site and bakes whatever is true that week.
+# So this endpoint is published marketing, and the two ways it can lie are
+# what get gated - reporting a zero as though it were a measurement, and
+# leaking something about a customer on the way past.
+_cs = (ROOT / "worker" / "casestudy.js")
+_cst = ""
+if not _cs.is_file():
+    fails.append("worker/casestudy.js is gone - the /work report would bake "
+                 "an empty page")
+else:
+    _cst = _cs.read_text()
+    if 'CASE_STUDY_SCHEMA_VERSION = "1.1"' not in _cst:
+        fails.append("the case-study feed is not schema 1.1 - aaron.chat's "
+                     "baker expects that shape and would bake a blank report")
+    # NOTHING ABOUT A CUSTOMER. The feed counts orders; it must never read a
+    # column that identifies who placed one.
+    _orders_q = re.findall(r"FROM orders[^`\"']*", _cst)
+    for _q in _orders_q:
+        for _col in ("name", "email", "phone", "ship_", "text", "boatname",
+                     "card_"):
+            if re.search(r"\b%s" % _col, _q):
+                fails.append("the case-study feed reads %r from orders - this "
+                             "file is published to the open internet and may "
+                             "only ever count them" % _col)
+    if "COUNT(*)" not in _cst:
+        fails.append("the case-study feed is no longer counting orders - it "
+                     "may only aggregate, never list")
+    # Test orders are ours, not the shop's record.
+    if "COALESCE(test_mode,0)=0" not in _cst:
+        fails.append("the case-study feed counts test orders as real ones")
+    # The connected-versus-really-zero signal. A source that has never been
+    # pulled must report null, not a confident zero, or the report page draws
+    # a flat line through nothing and calls it performance.
+    if "all_time: null" not in _cst:
+        fails.append("the case-study feed reports zeroes for a source that "
+                     "has never connected - the report page cannot tell that "
+                     "apart from a real zero")
+    for _k in ("gsc_last_error", "ai_last_error"):
+        if _k not in _cst:
+            fails.append("the case-study feed does not carry %s - a failed "
+                         "pull would leave last week's number looking current"
+                         % _k)
+    # The endpoints.
+    if 'url.pathname === "/api/case-study.json"' not in _wi0:
+        fails.append("/api/case-study.json is not served")
+    else:
+        _seg = _wi0[_wi0.index('"/api/case-study.json"'):][:700]
+        if "access-control-allow-origin" not in _seg:
+            fails.append("the case-study feed is not CORS-open - aaron.chat "
+                         "fetches it cross-origin and would get nothing")
+    if 'url.pathname === "/api/cron/case-study-refresh"' in _wi0:
+        _seg = _wi0[_wi0.index('"/api/cron/case-study-refresh"'):][:400]
+        if "env.PROOF_RUN_KEY" not in _seg:
+            fails.append("the case-study refresh is not behind the owner key "
+                         "- anyone could burn the Google API quota")
+    for _t in ("cs_gsc_daily", "cs_gsc_query", "cs_ai_monthly", "cs_meta"):
+        if _t not in _sch:
+            fails.append("schema.sql does not create %s" % _t)
+
+# ---- DataForSEO: the two figures nothing else can measure ------------------
+# Search Console only knows the queries we already appear for, and knows
+# nothing about who links to us. The contract's ranked_keywords_top_100 and
+# unique_referring_domains come from here and nowhere else.
+#
+# This is a PAID, PREPAID API, which creates a failure mode none of the other
+# sources have: when the balance runs out the call returns a perfectly
+# well-formed response carrying no keywords. Read as data, that publishes
+# "this site ranks for nothing" on a portfolio page. Every gate below exists
+# because of that one sentence.
+_dfs = ROOT / "worker" / "dataforseo.js"
+if "search_visibility" in _cst and not _dfs.is_file():
+    fails.append("the case-study feed advertises search_visibility but "
+                 "worker/dataforseo.js is gone")
+elif _dfs.is_file():
+    _dfst = _dfs.read_text()
+    if "status_code !== 20000" not in _dfst:
+        fails.append("worker/dataforseo.js no longer checks the task status - "
+                     "a 402 'insufficient funds' returns a valid response "
+                     "with no keywords in it, and would be published as "
+                     "'ranks for nothing'")
+    if "dfs_last_error" not in _cst:
+        fails.append("the case-study feed does not carry dfs_last_error, so a "
+                     "failed paid call would leave last week's ranking count "
+                     "looking current")
+    if "current: null" not in _dfst:
+        fails.append("the visibility block reports a shape for a domain that "
+                     "has never been sampled - a never-measured domain and a "
+                     "domain measured at zero are different findings")
+    # The deliberate line between the cron and the research. STRATEGY.md
+    # reasons from search volumes pulled on a date; a weekly job that rewrote
+    # them would change a document's premises with nobody deciding to.
+    # Checked against the ENDPOINTS actually passed to dfs(), not against the
+    # whole file. The first version of this gate searched the text and failed
+    # on `keyword_info.search_volume` - a FIELD being read off the rankings
+    # response, which is the opposite of a research call. A gate that cannot
+    # tell a call from a word is a gate that gets switched off.
+    _eps = re.findall(r'\bdfs\(env,\s*"([^"]+)"', _dfst)
+    if not _eps:
+        fails.append("worker/dataforseo.js calls no endpoint through dfs() - "
+                     "the gate below can no longer see what it is calling")
+    for _ep in _eps:
+        if _ep.startswith("keywords_data/") or "keyword_suggestions" in _ep \
+                or "keyword_ideas" in _ep:
+            fails.append("the worker is calling %s - keyword research is a "
+                         "re-pull you run on purpose (mcp/dfs.py), not a cron "
+                         "that rewrites what STRATEGY.md argues from" % _ep)
+    for _t in ("cs_rank_snap", "cs_rank_kw"):
+        if _t not in _sch:
+            fails.append("schema.sql does not create %s" % _t)
+    if "pullDataForSeo" not in _cst:
+        fails.append("worker/dataforseo.js exists but nothing pulls it - the "
+                     "visibility block would stay null for ever")
+
+# The research client and its artefacts. These files ARE committed, and this
+# repo is public.
+_dfspy = ROOT / "mcp" / "dfs.py"
+if _dfspy.is_file():
+    _dp = _dfspy.read_text()
+    # A cached failure is worse than no cache: it comes back from disk for
+    # ever and reads as an empty result. This gate was earned - the first
+    # money-term pull 404'd on a missing /live suffix and the retry was
+    # served the 404 from cache.
+    if 'status_code") != 20000' not in _dp:
+        fails.append("mcp/dfs.py caches failed calls - a mistyped endpoint "
+                     "would return 'no search volume' from disk for ever")
+    if "appendix/" not in _dp:
+        fails.append("mcp/dfs.py no longer special-cases appendix/ - the "
+                     "account response echoes the login email back and this "
+                     "repo is public")
+    _raw = ROOT / "research" / "raw"
+    if _raw.is_dir():
+        for _f in sorted(_raw.glob("*.json")):
+            _m = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
+                           _f.read_text())
+            if _m:
+                fails.append("research/raw/%s carries an email address (%s) "
+                             "and these files are committed to a public repo"
+                             % (_f.name, _m.group(0)[:3] + "..."))
+    _gi = ROOT / ".gitignore"
+    if not _gi.is_file() or ".env" not in _gi.read_text().split():
+        fails.append(".env is not gitignored and mcp/dfs.py reads API "
+                     "credentials from one")
+
+# site-stats.json describes the site to the feed, and the build is the only
+# thing that knows the real numbers. A figure typed by hand would be wrong
+# the first time a page was added and nobody would ever check it.
+_ss = OUT / "site-stats.json"
+if not _ss.is_file():
+    fails.append("site-stats.json was not built - the case-study feed would "
+                 "report nothing about the site itself")
+else:
+    _ssj = json.loads(_ss.read_text())
+    # Counted off what was actually WRITTEN, not off build.PAGES - importing
+    # build does not run main(), so that list is empty here and the gate
+    # would have compared a real number against nothing.
+    _real_pages = sum(1 for _f in OUT.rglob("index.html")
+                      if 'content="noindex' not in _f.read_text())
+    if _ssj.get("pages") != _real_pages:
+        fails.append("site-stats.json claims %s indexable pages and the build "
+                     "produced %d" % (_ssj.get("pages"), _real_pages))
+    if _ssj.get("faq_qa_pairs") != _lft.count("\nQ: "):
+        fails.append("site-stats.json claims %s FAQ pairs and llms-full.txt "
+                     "carries %d" % (_ssj.get("faq_qa_pairs"),
+                                     _lft.count("\nQ: ")))
 
 # ---- Bing Webmaster Tools ------------------------------------------------
 # Verification by meta tag, on the root only, because the root is the URL Bing

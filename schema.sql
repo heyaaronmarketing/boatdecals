@@ -160,3 +160,97 @@ CREATE TABLE IF NOT EXISTS ledger_review (
   report   TEXT       -- JSON: the full review output, as the owner saw it
 );
 CREATE INDEX IF NOT EXISTS idx_ledger_review_ts ON ledger_review(ts);
+
+-- ---------------------------------------------------------------- traffic
+-- WHAT GA4 CANNOT SEE. GA4 is JavaScript, and a crawler does not run
+-- JavaScript - so the entire question "is ChatGPT actually reading this
+-- site" is invisible to it. This site is built to be quoted by answer
+-- engines; this table is the only place that shows whether they came.
+--
+-- It also catches the other half: a human arriving FROM an answer engine.
+-- Those do run JavaScript, so GA4 sees them too - but only if the referrer
+-- survives, and several AI clients strip or rewrite it.
+--
+-- DELIBERATELY NOT A WEB LOG. It records a row only when the request is a
+-- recognised crawler or carries a referrer worth knowing about; ordinary
+-- human traffic writes nothing. That keeps it small, and it keeps it from
+-- becoming a record of what individual people read.
+--
+-- `user_agent` IS ONLY EVER SET FOR A BOT. A crawler's user-agent is a
+-- product name and worth keeping so a new one can be spotted and named in
+-- AI_CRAWLERS. A person's user-agent is a fingerprinting surface and is
+-- never written here - on a referral row that column stays NULL. There is
+-- no IP column, by design, and no session or visitor id: two rows from the
+-- same person cannot be joined.
+--
+-- Purged at 180 days by the hourly cron, like the naming sessions. A
+-- retention promise nothing enforces is not a retention promise.
+CREATE TABLE IF NOT EXISTS traffic_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts TEXT NOT NULL,
+  path TEXT NOT NULL,
+  bot TEXT,                 -- the crawler's name, or NULL for a referral
+  referer_host TEXT,        -- the answer engine that sent a person, or NULL
+  country TEXT,
+  user_agent TEXT           -- BOTS ONLY. NULL on every referral row.
+);
+CREATE INDEX IF NOT EXISTS idx_traffic_ts ON traffic_log(ts DESC);
+CREATE INDEX IF NOT EXISTS idx_traffic_bot ON traffic_log(bot);
+CREATE INDEX IF NOT EXISTS idx_traffic_ref ON traffic_log(referer_host);
+
+-- -------------------------------------------------------------- case study
+-- The self-measurement tables behind /api/case-study.json, which aaron.chat
+-- bakes into a live /work report. Created by the worker on first use too
+-- (ensureCaseStudySchema), so this block is for a fresh database and for
+-- anyone reading the schema to find out what exists.
+--
+-- Nothing here is personal. GSC gives aggregate query and day rows, the AI
+-- citation counts are monthly totals, and the crawl side is read from
+-- traffic_log rather than duplicated.
+CREATE TABLE IF NOT EXISTS cs_gsc_daily (
+  date TEXT PRIMARY KEY, clicks INTEGER NOT NULL DEFAULT 0,
+  impressions INTEGER NOT NULL DEFAULT 0, position REAL NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS cs_gsc_query (
+  query TEXT PRIMARY KEY, clicks INTEGER NOT NULL DEFAULT 0,
+  impressions INTEGER NOT NULL DEFAULT 0, position REAL NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS cs_ai_monthly (
+  month TEXT PRIMARY KEY, citations INTEGER NOT NULL DEFAULT 0,
+  crawls INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS cs_meta (
+  k TEXT PRIMARY KEY, v TEXT NOT NULL
+);
+
+-- ---------------------------------------------------------------------------
+-- Weekly third-party visibility sample (DataForSEO).
+--
+-- Search Console cannot answer "how many keywords does this domain rank for"
+-- (a keyword we sit at #74 for produces no impressions worth reporting) and
+-- knows nothing about who links to us. These two tables hold the answers, and
+-- they are the only place the case-study feed's ranked_keywords_top_100 and
+-- unique_referring_domains come from.
+--
+-- cs_rank_snap is keyed by date so the series is append-only and a second run
+-- on the same day corrects that day rather than inventing a data point.
+CREATE TABLE IF NOT EXISTS cs_rank_snap (
+  date              TEXT PRIMARY KEY,
+  ranked_top100     INTEGER NOT NULL DEFAULT 0,
+  ranked_top10      INTEGER NOT NULL DEFAULT 0,
+  ranked_top3       INTEGER NOT NULL DEFAULT 0,
+  referring_domains INTEGER,
+  backlinks         INTEGER,
+  domain_rank       INTEGER
+);
+
+-- The current picture only. History lives in cs_rank_snap; every keyword at
+-- every position for ever would be a different product.
+CREATE TABLE IF NOT EXISTS cs_rank_kw (
+  keyword    TEXT PRIMARY KEY,
+  position   INTEGER NOT NULL,
+  volume     INTEGER,
+  url        TEXT,
+  updated_at TEXT NOT NULL
+);

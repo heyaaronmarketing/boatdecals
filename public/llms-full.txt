@@ -1,0 +1,1089 @@
+# Number My Boat - every question this site answers
+
+> 311 questions across 48 pages, with the page each one came from.
+> Generated on 2026-11-14 from the FAQ schema actually published on those
+> pages, so this file cannot claim an answer the site does not give.
+> The short index is at https://numbermyboat.com/llms.txt.
+>
+> Quote any of it. Attribution to Number My Boat is appreciated and a link is
+> better. Two things to never infer from this file: we have market
+> data on how common a boat name is, NOT a registry, so no answer
+> here can tell anyone a name is taken at their marina; and the
+> prices move, so check https://numbermyboat.com/api/price for the current figure.
+
+## Boat Letters & Name Decals, Any Font
+Source: https://numbermyboat.com/boat-lettering/
+
+Q: How fast will I get it?
+A: Posted 1-2 business days after you approve the proof, free. Standard post is then 3-6 days in transit after that.
+
+Q: Can I see it before it is made?
+A: Yes - the preview in the order form shows your exact lettering, at your chosen height, in your chosen color. That is what gets cut, so read it twice before you pay.
+
+Q: What if I ruin it putting it on?
+A: A replacement set is a new order. The install is the part we cannot do for you, which is why everything ships pre-spaced on one sheet with application tape over the top - it goes on in one pass rather than character by character. Read the install guide before you start and take the twenty minutes.
+
+Q: How long will it last?
+A: Years, not seasons - it is marine-grade film, not craft vinyl, and it is the same stock sign shops put on vehicles. A dark color in southern sun fades soonest. If one of ours fails on a hull you prepared properly, tell us.
+
+## Boat Lettering Waterloo & Cedar Falls, Iowa
+Source: https://numbermyboat.com/boat-lettering-waterloo-cedar-falls/
+
+Q: Can I pick up instead of having it shipped?
+A: Yes, in Evansdale. Email orders@numbermyboat.com before you order and we will set a time and tell you where to come - usually same day on registration numbers. It is a private workshop rather than a storefront, so the address is not published and we cannot take walk-ins.
+
+Q: Do you do Iowa registration numbers?
+A: That is our home state. Iowa numbers run IA, four digits, two letters - IA 3717 ZW. Iowa registers through your county recorder rather than the DNR directly, and Iowa wants the validation decal 4 inches toward the stern of the number and in line with it. Full detail on our Iowa page.
+
+Q: Do you install them for me?
+A: They are designed to go on yourself in about twenty minutes - pre-spaced on one sheet, with a squeegee and instructions in the envelope. If you would rather we did it, email and ask; it depends on the week.
+
+Q: How much is it?
+A: $28 a pair for registration numbers, the same price locally as online. Names from $38, including shipping. What the preview shows is what gets cut.
+
+## Boat Registration Numbers for All 50 States
+Source: https://numbermyboat.com/boat-registration-numbers/
+
+Q: How fast will I get it?
+A: Posted 1-2 business days after you approve the proof, free. Standard post is then 3-6 days in transit after that.
+
+Q: Can I see it before it is made?
+A: Yes - the preview in the order form shows your exact lettering, at your chosen height, in your chosen color. That is what gets cut, so read it twice before you pay.
+
+Q: What if I ruin it putting it on?
+A: A replacement set is a new order. The install is the part we cannot do for you, which is why everything ships pre-spaced on one sheet with application tape over the top - it goes on in one pass rather than character by character. Read the install guide before you start and take the twenty minutes.
+
+Q: How long will it last?
+A: Years, not seasons - it is marine-grade film, not craft vinyl, and it is the same stock sign shops put on vehicles. A dark color in southern sun fades soonest. If one of ours fails on a hull you prepared properly, tell us.
+
+## Contact Us
+Source: https://numbermyboat.com/contact/
+
+Q: How do I place an order?
+A: Through the order form - it takes about a minute, prices itself as you go, and previews your exact lettering before you pay.
+
+Q: How fast do you reply?
+A: Same working day in almost every case. Proofs usually go out within a few hours of the order during the week.
+
+Q: Where are you based?
+A: Evansdale, Iowa, in Black Hawk County - on the Cedar River between Waterloo and Cedar Falls. It is a private workshop rather than a storefront, so the address is not published. We ship to all 50 states and arrange local pickup by email.
+
+Q: Can I change my order after sending it?
+A: Yes. Your proof arrives within twelve hours and nothing is cut until you approve it, so there is a built-in window to change anything. Reply to the proof email, or use the ‘something needs changing’ link on it.
+
+## Bass Boat Decals & Registration Numbers
+Source: https://numbermyboat.com/for/bass-boats/
+
+Q: Will these stick to my bass boat?
+A: Metalflake is glossy and very forgiving - the wet method works perfectly, and vinyl holds on it better than on almost any other hull finish.
+
+Q: Do I need registration numbers on it?
+A: If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order.
+
+Q: What does it cost?
+A: Registration numbers are $28 a pair including shipping. Names start at $38 and are priced by the width they finish at. High-tack vinyl, which your hull may need, is free.
+
+## Jet Ski & PWC Registration Numbers and Graphics
+Source: https://numbermyboat.com/for/jet-skis-and-pwc/
+
+Q: Will these stick to my jet skis & pwc?
+A: Plastic PWC hulls need high-tack vinyl. Standard vinyl will release from polyethylene inside a season - we send high-tack on every PWC order at no charge.
+
+Q: Do I need registration numbers on it?
+A: If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order.
+
+Q: What does it cost?
+A: Registration numbers are $28 a pair including shipping. Names start at $38 and are priced by the width they finish at. High-tack vinyl, which your hull may need, is free.
+
+## Jon Boat Decals & Registration Numbers
+Source: https://numbermyboat.com/for/jon-boats/
+
+Q: Will these stick to my jon boat?
+A: Rivets and ribs break the adhesive line. Keep numbers on a flat panel between ribs, or step down to a smaller character height that still clears the 3-inch minimum.
+
+Q: Do I need registration numbers on it?
+A: If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order.
+
+Q: What does it cost?
+A: Registration numbers are $28 a pair including shipping. Names start at $38 and are priced by the width they finish at. High-tack vinyl, which your hull may need, is free.
+
+## Kayak & Canoe Decals and Registration Numbers
+Source: https://numbermyboat.com/for/kayaks-and-canoes/
+
+Q: Will these stick to my kayaks & canoe?
+A: Rotomoulded polyethylene is the hardest surface in boating to stick to. High-tack vinyl, a clean alcohol wipe and a warm day are all mandatory.
+
+Q: Do I need registration numbers on it?
+A: If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order.
+
+Q: What does it cost?
+A: Registration numbers are $28 a pair including shipping. Names start at $38 and are priced by the width they finish at. High-tack vinyl, which your hull may need, is free.
+
+## Pontoon Boat Decals & Lettering
+Source: https://numbermyboat.com/for/pontoon-boats/
+
+Q: Will these stick to my pontoon boat?
+A: Pontoon fencing is usually brushed or painted aluminum. We ship high-tack vinyl for it by default, because standard adhesive lifts off a textured rail.
+
+Q: Do I need registration numbers on it?
+A: If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order.
+
+Q: What does it cost?
+A: Registration numbers are $28 a pair including shipping. Names start at $38 and are priced by the width they finish at. High-tack vinyl, which your hull may need, is free.
+
+## Sailboat Name Decals & Lettering
+Source: https://numbermyboat.com/for/sailboats/
+
+Q: Will these stick to my sailboat?
+A: A sailboat transom is rarely flat. Send a straight-on photo with a tape measure in frame and we will lay the name out to the actual curve.
+
+Q: Do I need registration numbers on it?
+A: If it has a motor on it - including an electric trolling motor in most states - yes. Unpowered hulls usually do not need numbers, but a few states register them anyway. Check with your state agency, then order.
+
+Q: What does it cost?
+A: Registration numbers are $28 a pair including shipping. Names start at $38 and are priced by the width they finish at. High-tack vinyl, which your hull may need, is free.
+
+## Best Vinyl for Boat Lettering: Cast vs Calendared
+Source: https://numbermyboat.com/guides/best-vinyl-for-boat-lettering/
+
+Q: What kind of vinyl is used for boat lettering?
+A: Marine-grade cut vinyl, not printed film and not craft stock. The letter shapes are cut from a sheet of colored vinyl so there is no clear background or visible edge on the hull - just the characters.
+
+Q: What is the difference between cast and calendared vinyl?
+A: Cast film is poured and cured flat so it carries no internal stress, which makes it thinner, more conformable and longer lived outdoors. Calendared film is rolled into sheet and slowly tries to shrink back, which is what lifts old decals at the corners. For a flat transom on a trailered boat, calendared is genuinely fine.
+
+Q: Why will not vinyl stick to my kayak or jet ski?
+A: Because rotomoulded polyethylene has a low surface energy - almost nothing sticks to it. Standard adhesive holds for a few weeks then releases in one clean piece. It needs high-tack film, which we send free on every kayak, canoe and PWC order.
+
+Q: Does vinyl stick to a textured pontoon rail?
+A: Only high-tack film does. Brushed and painted aluminum with any texture gives standard adhesive too little contact area. We ship high-tack for pontoon rails by default for that reason.
+
+Q: Can I put boat lettering over wax?
+A: No. Wax, polish and polymer sealant are exactly what the adhesive cannot grip. Wash with soap, then wipe the area with isopropyl alcohol immediately before you apply - soap leaves a film of its own.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## Boat Lettering Fonts: What Works on Water
+Source: https://numbermyboat.com/guides/boat-lettering-fonts/
+
+Q: What is the best font for boat lettering?
+A: A heavy, wide face with open counters. The practical test is distance: thin strokes and tight letter shapes disappear at fifty yards and photograph as a smudge. Pick weight over flourish for anything you want read from the next slip.
+
+Q: Can I use a script font for boat registration numbers?
+A: No. Registration numbers must be plain vertical block characters under 33 CFR 173.27, so script, italic and outline faces are not legal. Our order form hides them the moment you pick registration numbers.
+
+Q: Can I use script for a boat name?
+A: Yes. A transom name has no font rule at all, so script, serif and anything else is fair game. Script is the single most popular choice for a boat name and roughly half our name orders use one.
+
+Q: How many fonts do you offer?
+A: Ten, each previewed in your own lettering before you order. Five are plain block faces and are the only ones offered for registration numbers; the other five are for names and lettering.
+
+Q: Does the font change the price?
+A: No. Price follows the finished size of the decal, not which face you pick. A script name and a block name of the same overall dimensions cost the same.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## What Boat Registration Numbers Cost in 2026
+Source: https://numbermyboat.com/guides/boat-registration-number-cost/
+
+Q: How much do boat registration numbers cost?
+A: $28 a pair from us, with free shipping, which covers both sides of the bow. Across the market, web prices for a pair run about $15 to $39; a sign shop will usually quote $9 to $15 but asks you to specify everything yourself.
+
+Q: Why are some boat registration numbers so much cheaper?
+A: Because they are cut as loose individual characters rather than pre-spaced on one sheet, so you do the spacing on the water and the legal spacing is your problem. Cheap sets are also usually craft-grade calendared film.
+
+Q: Is shipping included in the price of boat numbers?
+A: Yes, free to all 50 states and DC. A $12 set with $6 shipping is an $18 set, which is the comparison that actually matters when you are shopping around.
+
+Q: How much does a boat name decal cost?
+A: From $38, including shipping. Most transom names land between $38 and $68, and price follows the width the finished decal measures rather than the number of letters.
+
+Q: How long does it take to get boat registration numbers?
+A: Posted 1-2 business days after you approve the proof, then 3 to 6 days in standard post. If you need it faster than that, email before you order and we will say what is possible.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## Boat Registration Number Rules, Plainly Stated
+Source: https://numbermyboat.com/guides/boat-registration-number-rules/
+
+Q: How big do boat registration numbers have to be?
+A: At least 3 inches tall. Federal rule 33 CFR 173.27 sets 3 inches as the minimum for the block characters on the bow, and every state adopts that floor. Nothing stops you going bigger, and a few owners do for readability.
+
+Q: What font is legal for boat registration numbers?
+A: Plain vertical block characters. Script, italic, outline and heavily stylised faces are not legal for the registration number, because 33 CFR 173.27 requires plain block letters that read clearly at a distance. A boat name on the transom has no such rule, so script is fine there.
+
+Q: Do boat registration numbers have to be a certain color?
+A: No specific color, but they must contrast with the hull. The rule says the characters must be of a color that contrasts with the background so they are distinctly visible - white on a dark hull, black on a light one. White on cream is the common failure.
+
+Q: Do I need spaces or hyphens between the number groups?
+A: Yes - the prefix, the digits and the suffix must be separated by a space or a hyphen equal to the width of a letter. IA 3717 ZW, not IA3717ZW.
+
+Q: Where do the registration numbers go on a boat?
+A: On the forward half of both sides of the hull, reading left to right. The validation decal goes within six inches of the number, which side and which end depends on your state.
+
+Q: Are boat registration number rules the same in every state?
+A: The display rules are federal and identical in all 50 states. The number FORMAT differs: the two-letter vessel prefix is not always the postal code, and a few states allow letter patterns others do not.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## Documented Vessel Name & Hailing Port Requirements
+Source: https://numbermyboat.com/guides/documented-vessel-name-and-hailing-port/
+
+Q: Does a USCG documented vessel display state registration numbers?
+A: No. A documented vessel does not carry state registration numbers on the bow. It is marked with its name and hailing port instead, and the official number is marked separately inside the hull.
+
+Q: How tall must the name on a documented vessel be?
+A: At least 4 inches. The name and hailing port must be in clearly legible characters not less than four inches in height, together on a clearly visible exterior part of the hull - in practice the transom.
+
+Q: Where does the hailing port go on a documented vessel?
+A: With the name, on a clearly visible exterior part of the hull, and it must include a place and a state. City and state, spelled out or with the standard state abbreviation.
+
+Q: How big must the official number inside a documented vessel be?
+A: 3 inches, permanently affixed to an integral part of the hull's interior structure, in a way that alteration or removal would be obvious. It is not the same thing as the hull identification number.
+
+Q: Can two boats have the same name?
+A: On state-registered boats, yes - names are not registered or protected and there are hundreds of boats called Serenity. The Coast Guard will not document two vessels with the same name and the same hailing port.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## How to Apply Boat Lettering (Wet and Dry Method)
+Source: https://numbermyboat.com/guides/how-to-apply-boat-lettering/
+
+Q: How do you apply vinyl boat lettering?
+A: Clean the hull with soap then alcohol, tape the sheet in position dry, wet the hull with soapy water, peel the backing, squeegee from the center out, then pull the application tape back on itself. Leave it 24 hours before launching.
+
+Q: What temperature do you need to apply boat lettering?
+A: Above about 50 degrees F, on a surface that is not in direct hot sun. Cold adhesive will not grab and a hot hull makes the vinyl stretch and tack down before you have it straight.
+
+Q: Should I apply boat lettering wet or dry?
+A: Wet, for anything longer than a few characters. A few drops of dish soap in a spray bottle lets you slide the vinyl into position instead of committing on contact. Short numbers are fine dry if you have hinged them with tape.
+
+Q: How long before I can put the boat in the water?
+A: 24 hours. The adhesive keeps curing after it looks finished, so no pressure washing and no launching for a day.
+
+Q: What happens if I get the lettering crooked?
+A: Use the wet method and you can slide it straight before it grabs: a few drops of dish soap in a spray bottle of water, applied to the hull first, lets the vinyl float until you squeegee it. Hinge the sheet with tape along the top edge and stand back to check it is level before you commit. A replacement set is a new order, so the five minutes of setup is worth it.
+
+Q: Do I need special tools to apply boat lettering?
+A: A felt squeegee, a spray bottle and masking tape. A set ships with a basic squeegee; the fluid and the tape you can assemble from a kitchen and a hardware drawer.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## How to Remove Old Boat Lettering Without Wrecking Gelcoat
+Source: https://numbermyboat.com/guides/how-to-remove-boat-lettering/
+
+Q: How do you remove old boat lettering?
+A: Warm the vinyl with a heat gun on low or a hairdryer, lift an edge with a plastic razor, and peel slowly at a shallow angle keeping the heat just ahead of the peel. Then remove the adhesive separately with a citrus or mineral-spirit remover, and polish.
+
+Q: Will removing boat lettering damage the gelcoat?
+A: Not if you keep the heat moving and never use a steel blade. The damage people do is from overheating one spot until the gelcoat blisters, or from scraping with metal. Use plastic and patience.
+
+Q: What removes the sticky adhesive left behind by decals?
+A: A citrus-based adhesive remover or mineral spirits, left to dwell a minute before you wipe. Scrubbing dry adhesive just smears it. Repeat rather than press harder.
+
+Q: What is the ghost outline left after removing boat lettering?
+A: It is the unfaded gelcoat that the old vinyl was protecting. The hull around it has weathered for years while that patch has not. A machine polish and a season of sun will even it out; a compound cuts it faster.
+
+Q: Do I have to remove the old name before renaming a boat?
+A: Practically, yes - remove every trace first, including logbooks and life rings, then apply the new one. Superstition aside, new vinyl over a ghost outline shows the old name through it in raking light.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## Where Do Boat Registration Numbers Go?
+Source: https://numbermyboat.com/guides/where-to-put-boat-registration-numbers/
+
+Q: Where exactly do boat registration numbers go?
+A: On the forward half of both sides of the hull, as high above the waterline as practical, reading left to right. Both sides get the same number - that is why a set is a pair.
+
+Q: Which side does the validation sticker go on?
+A: Within six inches of the registration number, but the exact position is a state rule rather than a federal one. Most states say aft of the number; some specify forward. Check your state page before you stick it down.
+
+Q: How high above the waterline should the numbers be?
+A: As high as the hull shape practically allows, on a flat run of topsides. The point is that they stay readable when the boat is loaded and under way, so avoid a spot that sits in the spray or gets covered by a rub rail.
+
+Q: Can registration numbers go on the windshield or a board?
+A: Not on the windshield. They must be on the hull itself. Some states allow a bracket-mounted plate for inflatables and boats with no suitable flat surface, which is the exception rather than the rule.
+
+Q: Do both sides of the boat need registration numbers?
+A: Yes, both sides, forward half, same number. That is the entire reason our price is for a pair rather than a single set.
+
+Q: Do you ship boat lettering to my state?
+A: All 50 states and DC, free. We cut for every state's registration number format, email you a proof, and post it once you approve.
+
+## Boat Registration Numbers - Legal 3-Inch Sets, Both Sides
+Source: https://numbermyboat.com/
+
+Q: How much do boat registration numbers cost?
+A: Ours are $28 a pair with free shipping, proofed within 12 hours. Web prices for a pair run about $15 to $39 across the market. Cheap sets are usually calendared craft vinyl, cut as loose characters you space yourself.
+
+Q: Do boat registration numbers have to be a certain color?
+A: Not a specific color - but federal rule 33 CFR 173.27 requires the characters to contrast with the background and be distinctly visible and legible. White numbers on a white hull fail. Dark hull, light numbers; light hull, dark numbers.
+
+Q: How tall do boat registration numbers have to be?
+A: Not less than 3 inches in height, in plain vertical block characters. That is the federal minimum and it applies in every state. Taller is always legal.
+
+Q: Where do the numbers go on the boat?
+A: On each side of the forward half of the vessel, reading left to right, so they are visible from the water. The validation decal placement varies by state - usually within a few inches of the number.
+
+Q: Where can I get boat lettering made?
+A: Here. You pick the characters, font and color, we cut them from marine vinyl, pre-space them on one sheet with application tape, and email you a proof. We cut registration numbers, boat names and custom lettering - not printed graphics or logo artwork.
+
+Q: What kind of vinyl is best for boat lettering?
+A: Cast vinyl for anything that lives outside - it conforms to curves and holds color longer outdoors than calendared. High-tack is mandatory on plastic: kayaks, PWC hulls and pontoon rails. Calendared vinyl is cheaper and shorter-lived.
+
+Q: What is the difference between vinyl stickers and vinyl decals?
+A: A sticker is printed on a vinyl square and you see the background. A decal is cut from colored vinyl, so only the letter shape sticks to the hull and there is no visible edge or square. Everything we make is cut vinyl.
+
+Q: Can I apply these myself?
+A: Yes - they arrive as one pre-spaced sheet under application tape, so the spacing is already right. Clean the hull, tape the sheet in place, wet it, squeegee, peel the tape. The wet method lets you slide it straight before it grabs, so take the twenty minutes and it goes on in one pass.
+
+## Boat Lettering & Registration Number Prices
+Source: https://numbermyboat.com/pricing/
+
+Q: Is shipping really free?
+A: Yes, on everything, to anywhere in the 50 states. Standard post, 3-6 days in transit. If you need it sooner than that, email us before you order and we will tell you what is possible and what it costs.
+
+Q: Why is $28 not the cheapest price on the internet?
+A: Because it is not a race we want to win. An $11 set is usually cut as loose characters, which means you doing the spacing on the water. Ours arrives pre-spaced on one sheet and checked against your state format before it cuts. If price is the only thing that matters to you, the marketplace sets are genuinely cheaper and we would rather say so.
+
+Q: When do I pay?
+A: By card at checkout. The preview on that screen is what gets cut, so read it before you pay, and again as a proof you approve before we cut.
+
+Q: Do you do trade or volume pricing?
+A: Yes - marinas, dealers and fleet operators. Email orders@numbermyboat.com with roughly how many sets a month and we will put numbers together.
+
+## Alabama Boat Registration Numbers AL
+Source: https://numbermyboat.com/registration-numbers/alabama/
+
+Q: How tall do Alabama boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Alabama like everywhere else. Taller is always legal.
+
+Q: What do Alabama boat numbers start with?
+A: AL. Your full number runs prefix, digits, then a letter suffix — for example AL 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Alabama?
+A: You register through the Alabama Law Enforcement Agency, Marine Patrol. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So AL 1234 AB, not AL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Alabama publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Alabama?
+A: Alabama registers all motorized vessels, sailboats, and boats for hire. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Alabama Law Enforcement Agency, Marine Patrol system.
+
+Q: How many registered boats are there in Alabama?
+A: 247,730, which puts Alabama 15th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Alabama?
+A: Lake Guntersville is the one most people name first: 69,000 acres, the largest lake in Alabama, and one of the best-known bass fisheries in the country. Others worth knowing: Lewis Smith Lake, Wheeler and Wilson Lakes, Lay, Logan Martin and Neely Henry, Mobile Bay and the Delta.
+
+Q: When is boating season in Alabama?
+A: Effectively year round, with the hard season March through November.
+
+## California Boat Registration Numbers CF
+Source: https://numbermyboat.com/registration-numbers/california/
+
+Q: How tall do California boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in California like everywhere else. Taller is always legal.
+
+Q: What do California boat numbers start with?
+A: CF. Your full number runs prefix, digits, then a letter suffix — for example CF 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in California?
+A: You register through the California DMV. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So CF 1234 AB, not CF1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — California publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in California?
+A: California registers all motorized vessels. All sailboats over 8 feet in length.. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the California DMV system.
+
+Q: How many registered boats are there in California?
+A: 596,703, which puts California sixth in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in California?
+A: Lake Tahoe is the one most people name first: 1,645 feet deep, straddling the Nevada line, and the most photographed boating water in the West. Others worth knowing: The Sacramento-San Joaquin Delta, Lake Shasta and Lake Oroville, Lake Havasu and the lower Colorado, Clear Lake.
+
+Q: When is boating season in California?
+A: Year round on the coast and in the south. The Sierra reservoirs run roughly April to October and the level depends entirely on snowpack.
+
+## Florida Boat Registration Numbers FL
+Source: https://numbermyboat.com/registration-numbers/florida/
+
+Q: How tall do Florida boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Florida like everywhere else. Taller is always legal.
+
+Q: What do Florida boat numbers start with?
+A: FL. Your full number runs prefix, digits, then a letter suffix — for example FL 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Florida?
+A: You register through the Florida Department of Highway Safety and Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So FL 1234 AB, not FL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Florida publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Florida?
+A: Florida registers all motorboats; all non-motorized vessels over 16 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Florida Department of Highway Safety and Motor Vehicles system.
+
+Q: How many registered boats are there in Florida?
+A: 1,171,432, which puts Florida first in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Florida?
+A: Lake Okeechobee is the one most people name first: about 730 square miles, the largest freshwater lake in Florida and the second largest wholly inside the lower 48. Shallow, famous for bass, and a route across the state via the Okeechobee Waterway. Others worth knowing: The Intracoastal Waterway, The Florida Keys, Tampa Bay and Charlotte Harbor, The St. Johns River.
+
+Q: When is boating season in Florida?
+A: Year round. Florida does not have a boating season, it has a hurricane season - June through November - and that is what dictates when boats get hauled.
+
+## Georgia Boat Registration Numbers GA
+Source: https://numbermyboat.com/registration-numbers/georgia/
+
+Q: How tall do Georgia boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Georgia like everywhere else. Taller is always legal.
+
+Q: What do Georgia boat numbers start with?
+A: GA. Your full number runs prefix, digits, then a letter suffix — for example GA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Georgia?
+A: You register through the Georgia DNR Wildlife Resources Division. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So GA 1234 AB, not GA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Georgia publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Georgia?
+A: Georgia registers all motorized vessels and sailboats >12' in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Georgia DNR Wildlife Resources Division system.
+
+Q: How many registered boats are there in Georgia?
+A: 324,676, which puts Georgia 11th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Georgia?
+A: Lake Lanier is the one most people name first: 38,000 acres north-east of Atlanta, and one of the most visited Corps of Engineers lakes in the country. Summer weekends are genuinely crowded. Others worth knowing: Clarks Hill Lake, Lake Oconee and Lake Sinclair, Lake Allatoona, West Point Lake and Lake Seminole.
+
+Q: When is boating season in Georgia?
+A: Year round in the south of the state. The lake season runs hard from April through October.
+
+## Illinois Boat Registration Numbers IL
+Source: https://numbermyboat.com/registration-numbers/illinois/
+
+Q: How tall do Illinois boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Illinois like everywhere else. Taller is always legal.
+
+Q: What do Illinois boat numbers start with?
+A: IL. Your full number runs prefix, digits, then a letter suffix — for example IL 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Illinois?
+A: You register through the Illinois DNR. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So IL 1234 AB, not IL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Illinois publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Illinois?
+A: Illinois registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Illinois DNR system.
+
+Q: How many registered boats are there in Illinois?
+A: 176,560, which puts Illinois 22nd in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Illinois?
+A: The Chain O'Lakes is the one most people name first: fifteen connected lakes and the Fox River in Lake and McHenry counties - the densest recreational boating traffic in Illinois by a wide margin. Others worth knowing: Carlyle Lake, Lake Shelbyville and Rend Lake, Lake Michigan at Chicago, The Illinois River.
+
+Q: When is boating season in Illinois?
+A: April through October, with ice on the northern lakes most winters.
+
+## Boat Registration Numbers by State - All 50
+Source: https://numbermyboat.com/registration-numbers/
+
+Q: Does every state use the same rule?
+A: The core rule is federal and identical everywhere: 3-inch minimum, plain vertical block characters, contrasting color, spaces or hyphens between groups, reading left to right, on both sides of the forward half. States can add requirements on top but cannot go below it. What genuinely varies is the prefix, the issuing agency, and exactly where the validation decal sits.
+
+Q: Which states do not use their postal abbreviation?
+A: California is the big one - California boat numbers start with CF, not CA, and everyone there calls them CF numbers. Washington uses WN rather than WA. Always copy the prefix off your own registration card rather than assuming.
+
+Q: My state is not listed. Can you still cut my numbers?
+A: Yes. We cut for all 50 states and DC - these are just the pages we have written up so far. Pick 'Other / not listed' on the order form and type your number.
+
+## Indiana Boat Registration Numbers IN
+Source: https://numbermyboat.com/registration-numbers/indiana/
+
+Q: How tall do Indiana boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Indiana like everywhere else. Taller is always legal.
+
+Q: What do Indiana boat numbers start with?
+A: IN. Your full number runs prefix, digits, then a letter suffix — for example IN 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Indiana?
+A: You register through the Indiana Bureau of Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So IN 1234 AB, not IN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Indiana publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Indiana?
+A: Indiana registers all motorized vessels on public waterways. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Indiana Bureau of Motor Vehicles system.
+
+Q: How many registered boats are there in Indiana?
+A: 193,554, which puts Indiana 21st in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Indiana?
+A: Lake Monroe is the one most people name first: 10,750 acres south of Bloomington, the largest lake inside Indiana. Others worth knowing: Lake Wawasee, Patoka Lake, Geist and Morse Reservoirs, Lake Michigan at Michigan City.
+
+Q: When is boating season in Indiana?
+A: Roughly late April through October, with ice on the northern lakes.
+
+## Iowa Boat Registration Numbers IA
+Source: https://numbermyboat.com/registration-numbers/iowa/
+
+Q: How tall do Iowa boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Iowa like everywhere else. Taller is always legal.
+
+Q: What do Iowa boat numbers start with?
+A: IA. Your full number runs prefix, digits, then a letter suffix — for example IA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Iowa?
+A: You register through your county recorder's office (Iowa registers boats through the county, not directly through the DNR). We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So IA 1234 AB, not IA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Iowa is specific about this: the validation decal goes on each side toward the stern of the registration number, 4 inches from it and in line with it. Not above, not below, not touching.
+
+Q: Do I have to register a kayak or canoe in Iowa?
+A: Iowa registers all watercraft - excludes inflatables under 7 feet and canoes, kayaks and SUPs under 13 feet. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Iowa DNR system.
+
+Q: How many registered boats are there in Iowa?
+A: 220,207, which puts Iowa 18th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Iowa?
+A: Lake Okoboji and Spirit Lake is the one most people name first: the Iowa Great Lakes in Dickinson County, and the busiest recreational water in the state. West Okoboji is a true blue-water glacial lake and the summer traffic shows it. Others worth knowing: Clear Lake, Rathbun Lake, Saylorville and Red Rock, Coralville Lake.
+
+Q: When is boating season in Iowa?
+A: Ice-out is usually late March to mid-April and most boats are out of the water by the end of October. The practical season is about six months, which is why spring re-lettering is such a rush here.
+
+## Louisiana Boat Registration Numbers LA
+Source: https://numbermyboat.com/registration-numbers/louisiana/
+
+Q: How tall do Louisiana boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Louisiana like everywhere else. Taller is always legal.
+
+Q: What do Louisiana boat numbers start with?
+A: LA. Your full number runs prefix, digits, then a letter suffix — for example LA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Louisiana?
+A: You register through the Louisiana Department of Wildlife and Fisheries. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So LA 1234 AB, not LA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Louisiana publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Louisiana?
+A: Louisiana registers all motorized vessels; sailboats more than 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Louisiana Department of Wildlife and Fisheries system.
+
+Q: How many registered boats are there in Louisiana?
+A: 286,912, which puts Louisiana 12th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Louisiana?
+A: Lake Pontchartrain is the one most people name first: 630 square miles of brackish estuary at New Orleans' back door, crossed by a 24-mile causeway. Others worth knowing: Toledo Bend, The Atchafalaya Basin, Caddo Lake, Venice and Grand Isle.
+
+Q: When is boating season in Louisiana?
+A: Year round. Hurricane season from June to November is what actually governs when boats come out of the water.
+
+## Michigan Boat Registration Numbers MC
+Source: https://numbermyboat.com/registration-numbers/michigan/
+
+Q: How tall do Michigan boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Michigan like everywhere else. Taller is always legal.
+
+Q: What do Michigan boat numbers start with?
+A: MC. Your full number runs prefix, digits, then a letter suffix — for example MC 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Michigan?
+A: You register through the Michigan Secretary of State. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MC 1234 AB, not MC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Michigan publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Michigan?
+A: Michigan registers all watercraft - excludes manually propelled boats 16 feet or less. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Michigan Secretary of State system.
+
+Q: How many registered boats are there in Michigan?
+A: 795,494, which puts Michigan third in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Michigan?
+A: Lake Michigan is the one most people name first: the west coast, from New Buffalo up through Holland, Muskegon and the Leelanau Peninsula. Big-water boating that demands a real forecast check. Others worth knowing: Lake St. Clair, Houghton Lake, Torch Lake and the Chain of Lakes, Grand Traverse Bay.
+
+Q: When is boating season in Michigan?
+A: Inland lakes run roughly May to October. The Great Lakes season is shorter at the north end and ice can hold into April on Superior.
+
+## Minnesota Boat Registration Numbers MN
+Source: https://numbermyboat.com/registration-numbers/minnesota/
+
+Q: How tall do Minnesota boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Minnesota like everywhere else. Taller is always legal.
+
+Q: What do Minnesota boat numbers start with?
+A: MN. Your full number runs prefix, digits, then a letter suffix — for example MN 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Minnesota?
+A: You register through the Minnesota DNR. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MN 1234 AB, not MN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Minnesota publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Minnesota?
+A: Minnesota registers all watercraft - excludes non-motorised boats 10 feet or less, waterfowl boats in season, rice boats at harvest, and seaplanes. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Minnesota DNR system.
+
+Q: How many registered boats are there in Minnesota?
+A: 865,379, which puts Minnesota second in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Minnesota?
+A: Lake Minnetonka is the one most people name first: 14,000 acres west of Minneapolis, 125 miles of shoreline, and the busiest recreational lake in the state. Others worth knowing: Mille Lacs, Leech Lake and Lake Winnibigoshish, Lake Vermilion, Lake of the Woods.
+
+Q: When is boating season in Minnesota?
+A: Ice-out runs from early April in the south to early May up north, and the Minnesota fishing opener in mid-May is the real start. Most boats are out by the end of October.
+
+## Missouri Boat Registration Numbers MO
+Source: https://numbermyboat.com/registration-numbers/missouri/
+
+Q: How tall do Missouri boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Missouri like everywhere else. Taller is always legal.
+
+Q: What do Missouri boat numbers start with?
+A: MO. Your full number runs prefix, digits, then a letter suffix — for example MO 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Missouri?
+A: You register through the Missouri State Highway Patrol. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MO 1234 AB, not MO1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Missouri publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Missouri?
+A: Missouri registers all motorized vessels; sailboats over 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Missouri State Highway Patrol system.
+
+Q: How many registered boats are there in Missouri?
+A: 282,983, which puts Missouri 13th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Missouri?
+A: Lake of the Ozarks is the one most people name first: roughly 1,150 miles of shoreline - more than the California coast - on about 54,000 acres. The most recognizable recreational lake in the Midwest and a genuine party water. Others worth knowing: Table Rock Lake, Truman Lake, Bull Shoals, Mark Twain Lake.
+
+Q: When is boating season in Missouri?
+A: March through November at the Ozarks, with the hard season April through October.
+
+## New York Boat Registration Numbers NY
+Source: https://numbermyboat.com/registration-numbers/new-york/
+
+Q: How tall do New York boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in New York like everywhere else. Taller is always legal.
+
+Q: What do New York boat numbers start with?
+A: NY. Your full number runs prefix, digits, then a letter suffix — for example NY 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in New York?
+A: You register through the New York State DMV. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NY 1234 AB, not NY1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — New York publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in New York?
+A: New York registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the New York State DMV system.
+
+Q: How many registered boats are there in New York?
+A: 428,445, which puts New York eighth in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in New York?
+A: Lake George is the one most people name first: 32 miles of clear Adirondack water, and the single most recognizable recreational boating address in the state. Others worth knowing: The Finger Lakes, Lake Champlain, The Thousand Islands, Lake Ontario and the Erie Canal.
+
+Q: When is boating season in New York?
+A: May through October for most of the state. The Erie Canal navigation season is set annually and typically runs mid-May to mid-October.
+
+## North Carolina Boat Registration Numbers NC
+Source: https://numbermyboat.com/registration-numbers/north-carolina/
+
+Q: How tall do North Carolina boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in North Carolina like everywhere else. Taller is always legal.
+
+Q: What do North Carolina boat numbers start with?
+A: NC. Your full number runs prefix, digits, then a letter suffix — for example NC 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in North Carolina?
+A: You register through the NC Wildlife Resources Commission. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NC 1234 AB, not NC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — North Carolina publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in North Carolina?
+A: North Carolina registers all motorized vessels; sailboats more than 14 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the NC Wildlife Resources Commission system.
+
+Q: How many registered boats are there in North Carolina?
+A: 345,699, which puts North Carolina tenth in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in North Carolina?
+A: Lake Norman is the one most people name first: over 32,000 acres and 520 miles of shoreline, the largest man-made lake in the state and the one closest to Charlotte. Others worth knowing: Pamlico and Albemarle Sounds, The Outer Banks and Oregon Inlet, Lake Gaston and Kerr Lake, Jordan Lake and Falls Lake.
+
+Q: When is boating season in North Carolina?
+A: Roughly April through October inland, and the coastal fleet runs most of the year with the offshore season peaking in summer.
+
+## Ohio Boat Registration Numbers OH
+Source: https://numbermyboat.com/registration-numbers/ohio/
+
+Q: How tall do Ohio boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Ohio like everywhere else. Taller is always legal.
+
+Q: What do Ohio boat numbers start with?
+A: OH. Your full number runs prefix, digits, then a letter suffix — for example OH 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Ohio?
+A: You register through the Ohio DNR Division of Parks and Watercraft. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So OH 1234 AB, not OH1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Ohio publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Ohio?
+A: Ohio registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Ohio DNR Division of Parks and Watercraft system.
+
+Q: How many registered boats are there in Ohio?
+A: 630,288, which puts Ohio fourth in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Ohio?
+A: Lake Erie is the one most people name first: the shallowest and warmest Great Lake, which makes it both the most productive and the quickest to turn dangerous. The Western Basin around Port Clinton and the Bass Islands is the busiest. Others worth knowing: Grand Lake St. Marys, Mosquito Creek and Pymatuning, Alum Creek and Hoover Reservoir, Indian Lake.
+
+Q: When is boating season in Ohio?
+A: Roughly late April through October. Lake Erie's walleye run pulls boats out early, often before the weather deserves it.
+
+## Pennsylvania Boat Registration Numbers PA
+Source: https://numbermyboat.com/registration-numbers/pennsylvania/
+
+Q: How tall do Pennsylvania boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Pennsylvania like everywhere else. Taller is always legal.
+
+Q: What do Pennsylvania boat numbers start with?
+A: PA. Your full number runs prefix, digits, then a letter suffix — for example PA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Pennsylvania?
+A: You register through the Pennsylvania Fish and Boat Commission. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So PA 1234 AB, not PA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Pennsylvania publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Pennsylvania?
+A: Pennsylvania registers all motorized vessels and certain non-powered craft - also registers non-powered craft using state Fish & Boat Commission lakes and access areas. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Pennsylvania Fish and Boat Commission system.
+
+Q: How many registered boats are there in Pennsylvania?
+A: 280,098, which puts Pennsylvania 14th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Pennsylvania?
+A: Raystown Lake is the one most people name first: 8,300 acres and 118 miles of shoreline, the largest lake entirely inside Pennsylvania and the state's houseboat water. Others worth knowing: Lake Erie and Presque Isle Bay, Lake Wallenpaupack, Pymatuning Reservoir, The Allegheny Reservoir.
+
+Q: When is boating season in Pennsylvania?
+A: April through October for most of the state. The Commission's access areas open earlier than the marinas do.
+
+## South Carolina Boat Registration Numbers SC
+Source: https://numbermyboat.com/registration-numbers/south-carolina/
+
+Q: How tall do South Carolina boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in South Carolina like everywhere else. Taller is always legal.
+
+Q: What do South Carolina boat numbers start with?
+A: SC. Your full number runs prefix, digits, then a letter suffix — for example SC 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in South Carolina?
+A: You register through the South Carolina Department of Natural Resources. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So SC 1234 AB, not SC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — South Carolina publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in South Carolina?
+A: South Carolina registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the South Carolina Department of Natural Resources system.
+
+Q: How many registered boats are there in South Carolina?
+A: 353,906, which puts South Carolina ninth in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in South Carolina?
+A: Lake Murray is the one most people name first: about 50,000 acres outside Columbia, with roughly 650 miles of shoreline. The state's busiest recreational lake. Others worth knowing: Lakes Marion and Moultrie, Lake Hartwell, Lake Keowee, The Intracoastal Waterway.
+
+Q: When is boating season in South Carolina?
+A: Effectively year round. The heavy season is April through October, and the upstate lakes stay usable through a mild winter.
+
+## Tennessee Boat Registration Numbers TN
+Source: https://numbermyboat.com/registration-numbers/tennessee/
+
+Q: How tall do Tennessee boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Tennessee like everywhere else. Taller is always legal.
+
+Q: What do Tennessee boat numbers start with?
+A: TN. Your full number runs prefix, digits, then a letter suffix — for example TN 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Tennessee?
+A: You register through the Tennessee Wildlife Resources Agency. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So TN 1234 AB, not TN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Tennessee publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Tennessee?
+A: Tennessee registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Tennessee Wildlife Resources Agency system.
+
+Q: How many registered boats are there in Tennessee?
+A: 244,031, which puts Tennessee 16th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Tennessee?
+A: Kentucky Lake is the one most people name first: 160,000 acres shared with Kentucky, the largest man-made lake east of the Mississippi, joined to Lake Barkley by a canal. Others worth knowing: Norris Lake, Dale Hollow, Center Hill and Old Hickory, Chickamauga and Watts Bar.
+
+Q: When is boating season in Tennessee?
+A: March through November, with the TVA drawdown lowering lake levels through the winter.
+
+## Texas Boat Registration Numbers TX
+Source: https://numbermyboat.com/registration-numbers/texas/
+
+Q: How tall do Texas boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Texas like everywhere else. Taller is always legal.
+
+Q: What do Texas boat numbers start with?
+A: TX. Your full number runs prefix, digits, then a letter suffix — for example TX 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Texas?
+A: You register through the Texas Parks and Wildlife Department. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So TX 1234 AB, not TX1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Texas publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Texas?
+A: Texas registers all motorized vessels and sailboats 14 feet or more in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Texas Parks and Wildlife Department system.
+
+Q: How many registered boats are there in Texas?
+A: 552,138, which puts Texas seventh in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Texas?
+A: Sam Rayburn Reservoir is the one most people name first: 114,500 acres, the largest lake wholly inside Texas, and a permanent fixture on the tournament calendar. Others worth knowing: Toledo Bend, Lake Texoma, Lake Travis and Lake Austin, Lake Conroe and Lake Livingston.
+
+Q: When is boating season in Texas?
+A: Year round in practice. Summer heat moves traffic to early morning and evening, and lake levels in a drought year decide which ramps are usable.
+
+## Virginia Boat Registration Numbers VA
+Source: https://numbermyboat.com/registration-numbers/virginia/
+
+Q: How tall do Virginia boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Virginia like everywhere else. Taller is always legal.
+
+Q: What do Virginia boat numbers start with?
+A: VA. Your full number runs prefix, digits, then a letter suffix — for example VA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Virginia?
+A: You register through the Virginia Department of Wildlife Resources. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So VA 1234 AB, not VA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Virginia publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Virginia?
+A: Virginia registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Virginia Department of Wildlife Resources system.
+
+Q: How many registered boats are there in Virginia?
+A: 216,494, which puts Virginia 20th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Virginia?
+A: Chesapeake Bay is the one most people name first: the largest estuary in the United States, with more than 11,000 miles of shoreline counting the tributaries. Crab boats, center consoles and cruising sailboats all at once. Others worth knowing: Smith Mountain Lake, Lake Anna, Kerr Reservoir, The Potomac and the James.
+
+Q: When is boating season in Virginia?
+A: April through October inland. The Bay fleet runs most of the year, and the striper season extends it at both ends.
+
+## Washington Boat Registration Numbers WN
+Source: https://numbermyboat.com/registration-numbers/washington/
+
+Q: How tall do Washington boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Washington like everywhere else. Taller is always legal.
+
+Q: What do Washington boat numbers start with?
+A: WN. Your full number runs prefix, digits, then a letter suffix — for example WN 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Washington?
+A: You register through the Washington State Department of Licensing. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So WN 1234 AB, not WN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Washington publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Washington?
+A: Washington registers all motorboats - excludes motorboats under 16 feet with motors of 10 hp or less on exclusive state waters; sailboats >16 ft in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Washington State Department of Licensing system.
+
+Q: How many registered boats are there in Washington?
+A: 228,692, which puts Washington 17th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Washington?
+A: Puget Sound is the one most people name first: the inland sea, from Olympia to Bellingham. Tides run hard through the passes and a chart is not optional. Others worth knowing: The San Juan Islands, Lake Washington and Lake Union, Lake Chelan, Lake Roosevelt.
+
+Q: When is boating season in Washington?
+A: Year round on the Sound for the hardy; the real season is May through September. East-side lakes freeze.
+
+## Wisconsin Boat Registration Numbers WS
+Source: https://numbermyboat.com/registration-numbers/wisconsin/
+
+Q: How tall do Wisconsin boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Wisconsin like everywhere else. Taller is always legal.
+
+Q: What do Wisconsin boat numbers start with?
+A: WS. Your full number runs prefix, digits, then a letter suffix — for example WS 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Wisconsin?
+A: You register through the Wisconsin DNR. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So WS 1234 AB, not WS1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Wisconsin publishes the exact offset, and it is usually within a few inches.
+
+Q: Do I have to register a kayak or canoe in Wisconsin?
+A: Wisconsin registers all motorized vessels & sailboats over 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Wisconsin DNR system.
+
+Q: How many registered boats are there in Wisconsin?
+A: 602,849, which puts Wisconsin fifth in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Wisconsin?
+A: Lake Winnebago is the one most people name first: 137,700 acres, the largest lake entirely inside Wisconsin. Shallow, quick to build a chop, and the home of the sturgeon season. Others worth knowing: The Madison lakes, Lake Geneva, Door County and Green Bay, The Apostle Islands.
+
+Q: When is boating season in Wisconsin?
+A: Roughly May through October inland. Ice-out on the northern lakes can run into late April, and ice fishing takes over the rest.
+
+## Shipping & Returns
+Source: https://numbermyboat.com/shipping-and-returns/
+
+Q: Is shipping free?
+A: Yes, on everything, to all 50 states and DC. Standard post, typically 3-6 days in transit after production.
+
+Q: How fast is production?
+A: We email a proof within 12 hours; once you approve it we cut, pack and post within 1-2 business days. If you need it sooner, email us before you order and we will tell you what is possible.
+
+Q: Do you ship internationally?
+A: Not currently. Everything is cut and shipped in the USA, to US addresses.
+
+## Boat Name Generator - 1,000+ Ideas, Instantly
+Source: https://numbermyboat.com/tools/boat-name-generator/
+
+Q: Is the boat name generator free?
+A: Yes, and there is no email wall. Spin it as long as you like. We make money when you decide to put one on the boat.
+
+Q: Can I use a boat name someone else already has?
+A: On a state-registered boat, yes - boat names are not registered or protected, and there are hundreds of boats called Serenity. On a USCG documented vessel the name goes on the certificate, and the Coast Guard will not document two vessels with the same name and hailing port.
+
+Q: How much does a boat name decal cost?
+A: From $38 including shipping. Most transom names land between $38 and $68 depending on the width they finish at.
+
+Q: How many characters fit on my transom?
+A: Rough maths: at 4 inches tall, each character takes about 2.5 inches of width including spacing. A 10-character name runs about 25 inches. Send us a photo with a tape measure in it and we will lay it out properly.
+
+Q: Are these boat names family friendly?
+A: PG-13. Nothing here will get you a conversation with the marina manager, but a couple will get you a look from your mother-in-law.
+
+## 400 Funny Boat Names That Actually Land
+Source: https://numbermyboat.com/tools/funny-boat-names/
+
+Q: What is the most common funny boat name?
+A: Variations on 'Knot' - Knot Working, Knot Guilty, Knot Paid For - and 'Seas the Day'. They are common because they are genuinely good puns, which is also the argument against using them.
+
+Q: Can I put a rude name on my boat?
+A: Legally, in US waters, there is no decency rule on a state-registered boat name. Marinas can have their own rules, and the Coast Guard will refuse to document a vessel with an obscene name. We will cut it; we would just point out you have to say it on the radio.
+
+Q: How much is a boat name decal?
+A: From $38 with free shipping, pre-spaced and ready to apply. Most land between $38 and $68 depending on the width they finish at.
+
+## Free Boat HIN Decoder - Read Your Hull Number
+Source: https://numbermyboat.com/tools/hull-number-decoder/
+
+Q: How do I find the hull number on my boat?
+A: Starboard side of the transom, within a couple of inches of the top edge. There is also a duplicate hidden somewhere unexposed - inside a locker, under the gunwale, or beneath a deck plate on the starboard side.
+
+Q: Can you tell the year of a boat by the hull number?
+A: Yes. The last two characters are the model year, and characters 9-10 give the month and year it was actually built. The two can differ - a boat built in September 2003 is commonly a 2004 model.
+
+Q: Is the hull number the same as the VIN?
+A: It is the same idea - a permanent, unique builder-assigned identifier - but boats use a 12-character HIN rather than a 17-character VIN, and the formats are different. Boat trailers have their own separate VIN.
+
+Q: What happens if my boat has no Hull Identification Number?
+A: Hulls built before 1972 may never have had one. After that it is required, and a missing or altered HIN is a major warning sign on a used boat. Your state agency can assign a replacement HIN if you can document ownership.
+
+Q: Can I look up who owns a boat from the HIN?
+A: Not publicly, in most states - ownership records are restricted. A HIN will tell you the builder, serial and age, and USCG documented vessels are searchable in the federal vessel database, but state registration owner data generally is not open.
+
+## Boat Registration Number Size & Spacing Checker
+Source: https://numbermyboat.com/tools/registration-number-layout-checker/
+
+Q: How tall do boat registration numbers have to be?
+A: Not less than 3 inches in height, in plain vertical block characters. Federal rule, every state. Taller is always legal.
+
+Q: Do boat registration numbers have to be a certain color?
+A: No specific color is required, but the characters must contrast with the color of the background and be distinctly visible and legible. White numbers on a white hull fail that test.
+
+Q: Do I need a space or a hyphen in my boat number?
+A: Yes - a space or hyphen equal to the width of a letter other than 'I' or a number other than '1', between the letter and number groupings. So TX 1234 AB.
+
+Q: How wide will my registration numbers be?
+A: Roughly 0.6 times the character height per character, plus the spaces. A six-character number at 3 inches finishes about 13-15 inches wide. The tool above calculates it for your exact number.
+
+## Warranty & Returns
+Source: https://numbermyboat.com/warranty/
+
+Q: What if I ruin it during installation?
+A: A replacement is a new order. The install is the one part of this we cannot do for you, which is why every set ships pre-spaced on a single sheet with application tape over the top - it goes on in one pass. Our apply guide walks through the wet method, which is very hard to get wrong.
+
+Q: How long is the warranty?
+A: The film carries its maker's own outdoor durability warranty, covering color fade, cracking and adhesive failure where the decal was correctly applied to a suitable surface. We do not publish a year figure, because it belongs to the film maker and varies by stock and climate.
+
+Q: Can I return a custom decal?
+A: Custom-cut vinyl cannot be resold, so it is not returnable once cut - which is why the order form previews your exact lettering before you pay. If what arrived does not match what you ordered, that is on us and we remake it.

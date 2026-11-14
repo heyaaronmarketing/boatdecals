@@ -13,6 +13,7 @@ import { priceOf, priceBreakdown, OUTLINE_ADD,
 import { handleMcp, mcpInfo } from "./mcp.js";
 import { monthlyReview } from "./engine.js";
 import { handleStripeWebhook } from "./stripehook.js";
+import { buildCaseStudyFeed, refreshCaseStudy } from "./casestudy.js";
 import { runProofCycle, handleApprove, handleProofData,
          sendOrderConfirmation } from "./proof.js";
 
@@ -28,6 +29,106 @@ import { runProofCycle, handleApprove, handleProofData,
 // face left off this list gets the wrong font cut.
 const BLOCK_FONTS = ["Arial Bold", "Arial Black", "Impact",
   "OCR A Extended", "MS Gothic"];
+
+/**
+ * The crawlers worth naming, and the answer engines worth noticing.
+ *
+ * BOT_PATTERNS is matched case-insensitively against the user-agent. It is
+ * deliberately wider than content.AI_CRAWLERS (which is the robots.txt
+ * allow-list): this one also carries the ordinary search crawlers, because
+ * "did Bingbot come back after the price change" is the same question in a
+ * different coat.
+ */
+const BOT_PATTERNS = [
+  // answer engines
+  "GPTBot", "ChatGPT-User", "OAI-SearchBot",
+  "ClaudeBot", "Claude-SearchBot", "Claude-Web", "anthropic-ai",
+  "PerplexityBot", "Perplexity-User",
+  "Google-Extended", "GoogleOther", "Applebot-Extended",
+  "meta-externalagent", "FacebookBot", "Amazonbot", "cohere-ai",
+  "CCBot", "Bytespider", "MistralAI-User", "Diffbot",
+  // ordinary search
+  "Googlebot", "Bingbot", "DuckDuckBot", "YandexBot", "Baiduspider",
+  "Applebot", "Slurp",
+];
+// Hosts that mean "a person arrived here from an answer engine".
+const AI_REFERERS = [
+  "chatgpt.com", "chat.openai.com", "openai.com",
+  "perplexity.ai", "gemini.google.com", "bard.google.com",
+  "copilot.microsoft.com", "bing.com/chat",
+  "claude.ai", "poe.com", "you.com", "andisearch.com", "phind.com",
+  "deepseek.com", "mistral.ai", "huggingface.co", "kagi.com",
+];
+
+function classifyBot(ua) {
+  const s = String(ua || "");
+  for (const p of BOT_PATTERNS) {
+    // Word-ish boundary: "Applebot" must not swallow "Applebot-Extended",
+    // so the longer, more specific names are listed first and the first
+    // match wins.
+    if (s.toLowerCase().includes(p.toLowerCase())) return p;
+  }
+  return null;
+}
+
+function aiRefererHost(ref) {
+  if (!ref) return null;
+  let h;
+  try { h = new URL(ref).hostname.replace(/^www\./, "").toLowerCase(); }
+  catch { return null; }
+  if (h.endsWith("numbermyboat.com")) return null;   // our own pages
+  for (const r of AI_REFERERS) {
+    const host = r.split("/")[0];
+    if (h === host || h.endsWith("." + host)) return h;
+  }
+  return null;
+}
+
+/**
+ * The one measurement GA4 cannot make, written fire-and-forget.
+ *
+ * Nothing here may slow a page down or fail a request: it is wrapped in
+ * waitUntil and its errors are swallowed on purpose. A broken analytics
+ * write must never cost a customer their order.
+ *
+ * Writes a row ONLY for a recognised crawler or a visit referred by an
+ * answer engine. Ordinary human traffic writes nothing at all - this is not
+ * a web log and must not become one.
+ */
+function logTraffic(request, env, ctx, url) {
+  try {
+    logTrafficInner(request, env, ctx, url);
+  } catch (e) {
+    // NOTHING here may break a page. The first version of this took ctx from
+    // a fetch handler whose signature was (request, env) - no ctx - so
+    // `ctx.waitUntil` threw a ReferenceError before any route ran and every
+    // request on the site returned 500. The comment above already claimed
+    // this could not happen. A promise in a comment is not a try/catch.
+    console.log("traffic log skipped:", String((e && e.message) || e));
+  }
+}
+
+function logTrafficInner(request, env, ctx, url) {
+  if (!env.DB || !ctx || typeof ctx.waitUntil !== "function") return;
+  const path = url.pathname;
+  if (path.startsWith("/api/") || path.startsWith("/assets/")
+      || path === "/mcp" || path.includes(".")) return;
+
+  const ua = request.headers.get("user-agent") || "";
+  const bot = classifyBot(ua);
+  const ref = bot ? null : aiRefererHost(request.headers.get("referer"));
+  if (!bot && !ref) return;
+
+  ctx.waitUntil(env.DB.prepare(
+    `INSERT INTO traffic_log (ts, path, bot, referer_host, country, user_agent)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  ).bind(new Date().toISOString(), path.slice(0, 200), bot, ref,
+         request.headers.get("cf-ipcountry") || null,
+         // BOTS ONLY. A person's user-agent is a fingerprinting surface and
+         // this table has no business holding one.
+         bot ? ua.slice(0, 300) : null)
+    .run().catch(() => {}));
+}
 
 const str = (v, max) => String(v == null ? "" : v).slice(0, max).trim();
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
@@ -608,6 +709,22 @@ export default {
     // halved. Guarded on the hour as well as the day because this cron runs
     // hourly and a review that ran twenty-four times would halve the window
     // into nothing in a single day.
+    // Traffic rows are crawler activity and referring hosts, not people -
+    // but a table that grows forever is still a table nobody is deciding to
+    // keep. Six months is long enough to see a seasonal pattern.
+    ctx.waitUntil(env.DB.prepare(
+      "DELETE FROM traffic_log WHERE ts < datetime('now', '-180 days')")
+      .run().then((r) => console.log("traffic purged",
+        (r.meta && r.meta.changes) || 0)).catch(() => {}));
+    // The case-study pull, weekly: Monday 13:00 UTC, matching aaron.chat's
+    // own refresh so the whole portfolio is as of the same morning. Guarded
+    // on the hour as well as the day because this cron fires hourly.
+    const w = new Date();
+    if (w.getUTCDay() === 1 && w.getUTCHours() === 13) {
+      ctx.waitUntil(refreshCaseStudy(env, false).then((r) =>
+        console.log("case-study refresh", JSON.stringify(r))).catch((e) =>
+        console.log("case-study refresh failed", String(e && e.message))));
+    }
     const d = new Date();
     if (d.getUTCDate() === 1 && d.getUTCHours() === 0) {
       ctx.waitUntil(runLedgerReview(env).then((r) =>
@@ -616,7 +733,7 @@ export default {
     }
   },
 
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     const retired = RETIRED[url.pathname] || RETIRED[url.pathname + "/"];
@@ -879,6 +996,77 @@ export default {
         },
       });
     }
+    // THE CASE-STUDY FEED, read by aaron.chat's /work pipeline.
+    //
+    // Public and CORS-open on purpose: a registry on aaron.chat fetches this
+    // at build time and bakes it into a page. It carries no personal data -
+    // aggregate search figures, crawl counts per engine, and how many orders
+    // the shop has taken. Not who placed them.
+    if (url.pathname === "/api/case-study.json") {
+      if (!env.DB) return json({ error: "no database" }, 503);
+      try {
+        const feed = await buildCaseStudyFeed(env, url.origin);
+        return new Response(JSON.stringify(feed, null, 1), {
+          headers: { "content-type": "application/json; charset=utf-8",
+                     "access-control-allow-origin": "*",
+                     // Short: the baker reads it on every deploy and a stale
+                     // edge copy would publish last week's numbers as this
+                     // week's.
+                     "cache-control": "public, max-age=0, s-maxage=600" },
+        });
+      } catch (e) {
+        return json({ error: String(e.message || e) }, 500);
+      }
+    }
+    // Pull the external sources. Behind the owner key, and rate limited to
+    // once an hour unless forced - these call Google and Bing.
+    if (url.pathname === "/api/cron/case-study-refresh") {
+      const k = env.PROOF_RUN_KEY;
+      if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
+      if (!env.DB) return json({ error: "no database" }, 503);
+      const out = await refreshCaseStudy(env, url.searchParams.get("force") === "1");
+      return json({ ok: true, ...out });
+    }
+
+    // What the crawlers and the answer engines did, for Ryan and Aaron.
+    // Behind the owner key: it is not secret, but it is not interesting to
+    // anybody else and an open endpoint is an open endpoint.
+    if (url.pathname === "/api/traffic") {
+      const k = env.PROOF_RUN_KEY;
+      if (!k || url.searchParams.get("k") !== k) return json({ error: "no" }, 404);
+      if (!env.DB) return json({ error: "no database" }, 503);
+      const days = Math.min(365, Math.max(1,
+        parseInt(url.searchParams.get("days") || "30", 10) || 30));
+      const since = `-${days} days`;
+      const [bots, refs, paths, recent] = await Promise.all([
+        env.DB.prepare(
+          `SELECT bot, COUNT(*) n, MAX(ts) last FROM traffic_log
+           WHERE bot IS NOT NULL AND ts > datetime('now', ?)
+           GROUP BY bot ORDER BY n DESC`).bind(since).all(),
+        env.DB.prepare(
+          `SELECT referer_host, COUNT(*) n, MAX(ts) last FROM traffic_log
+           WHERE referer_host IS NOT NULL AND ts > datetime('now', ?)
+           GROUP BY referer_host ORDER BY n DESC`).bind(since).all(),
+        env.DB.prepare(
+          `SELECT path, COUNT(*) n FROM traffic_log
+           WHERE ts > datetime('now', ?) GROUP BY path
+           ORDER BY n DESC LIMIT 25`).bind(since).all(),
+        env.DB.prepare(
+          `SELECT ts, path, bot, referer_host, country FROM traffic_log
+           ORDER BY id DESC LIMIT 40`).all(),
+      ]);
+      return json({
+        ok: true, days,
+        note: "Crawlers and answer-engine referrals only. Ordinary human "
+          + "traffic is not recorded here; GA4 and Cloudflare Web Analytics "
+          + "cover that. No IP address and no visitor id is ever stored, and "
+          + "a user-agent is kept only for a bot.",
+        crawlers: bots.results || [],
+        referrals: refs.results || [],
+        top_paths: paths.results || [],
+        recent: recent.results || [],
+      });
+    }
     if (url.pathname === "/api/health") {
       return json({ ok: true, db: !!env.DB, email: !!env.RESEND_API_KEY,
                     shop_to: !!env.ORDER_TO,
@@ -886,6 +1074,9 @@ export default {
                     webhook: !!env.STRIPE_WEBHOOK_SECRET,
                     pay_mode: env.STRIPE_SECRET_KEY ? "stripe" : "sandbox" });
     }
+
+    // Fire-and-forget, before anything can return early.
+    logTraffic(request, env, ctx, url);
 
     // THE TRAILING-SLASH 307, which this site had on every bare-path URL.
     //
