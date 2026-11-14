@@ -50,21 +50,27 @@ WANT = {
                       "wrong price on the button"),
 }
 
-# Written through its own endpoint shape (a dict value, not a scalar).
-HSTS = {
-    "value": {
-        "strict_transport_security": {
-            "enabled": True,
-            "max_age": 31536000,          # one year
-            "include_subdomains": True,
-            "preload": True,
-            "nosniff": True,
-        }
-    },
-    "why": "a year of HSTS with preload means the first request of a return "
-           "visit is never plaintext. Note it is hard to undo - a browser "
-           "that has seen the header refuses http for a year",
+# Written through its own endpoint shape (a dict value, not a scalar), and in
+# TWO WRITES, which is not optional.
+#
+# Cloudflare rejects the whole payload with a bare "1051 Invalid value for zone
+# setting" if preload:true arrives while HSTS is still disabled. The error names
+# no field, so the only way to find it was to send the fields one at a time
+# against the live zone: everything passed up to and including nosniff, and the
+# full payload then passed too - because by that point HSTS was already on.
+# Enable first, then ask for preload.
+HSTS_ON = {
+    "enabled": True,
+    "max_age": 31536000,          # one year
+    "include_subdomains": True,
+    "nosniff": True,
 }
+HSTS_PRELOAD = dict(HSTS_ON, preload=True)
+HSTS_WHY = ("a year of HSTS with preload means the first request of a return "
+            "visit is never plaintext. Note it is hard to undo - a browser "
+            "that has seen the header refuses http for a year, and switching "
+            "the setting back off does not release the browsers that already "
+            "have it")
 
 
 def token():
@@ -129,23 +135,33 @@ def main():
             print("    FAILED: %s" % json.dumps(r.get("errors"))[:200])
             failed += 1
 
-    cur = api("/zones/%s/settings/security_header" % zid)
+    path = "/zones/%s/settings/security_header" % zid
+    cur = api(path)
     now = (((cur.get("result") or {}).get("value") or {})
            .get("strict_transport_security") or {})
-    ok = bool(now.get("enabled")) and now.get("max_age", 0) >= 31536000
+    ok = (bool(now.get("enabled")) and now.get("max_age", 0) >= 31536000
+          and now.get("include_subdomains") and now.get("preload")
+          and now.get("nosniff"))
     print("\n%-26s now=%s" % ("security_header (HSTS)", json.dumps(now)))
     if ok:
         print("  OK")
     elif not apply_:
-        print("  WRONG\n    why: %s" % HSTS["why"])
+        print("  WRONG\n    why: %s" % HSTS_WHY)
     else:
-        r = api("/zones/%s/settings/security_header" % zid, "PATCH", HSTS["value"])
-        if r.get("success"):
-            print("  set -> %s" % json.dumps((r.get("result") or {}).get("value")))
-            changed += 1
+        last = None
+        for step, label in ((HSTS_ON, "enabled"), (HSTS_PRELOAD, "preload")):
+            last = api(path, "PATCH",
+                       {"value": {"strict_transport_security": step}})
+            if not last.get("success"):
+                print("  FAILED at %s: %s"
+                      % (label, json.dumps(last.get("errors"))[:200]))
+                failed += 1
+                break
         else:
-            print("  FAILED: %s" % json.dumps(r.get("errors"))[:200])
-            failed += 1
+            print("  set -> %s"
+                  % json.dumps(((last.get("result") or {}).get("value") or {})
+                               .get("strict_transport_security")))
+            changed += 1
 
     print("\nAuto Minify is not listed: Cloudflare removed it in August 2024. "
           "\nThe build already ships minified CSS and JS.")
