@@ -377,25 +377,36 @@ export async function buildCaseStudyFeed(env, origin) {
 
   // What the shop actually sold.
   //
-  // "WHERE test_mode=0" was a filter that excluded nothing: the column exists
-  // and no code has ever set it, so every row we submitted while BUILDING the
-  // order form counted as a lead. Live, that published 17 of them to a
-  // portfolio page. A filter that has never excluded anything cannot be
-  // trusted to be excluding tests, so it is treated as untrustworthy until
-  // something has actually used it - and then this reports normally with no
-  // further change. Flagging is the fix; this is the guard until it exists.
+  // Test rows are excluded on BOTH markers, and it has to be both.
+  //
+  // test_mode is set by the sandbox path only, so on the live domain it is
+  // always 0 - filtering on it alone excluded nothing and briefly published
+  // 17 leads that were mostly our own. The marker that actually works here is
+  // status='test-archived', which is what the 11 build-time submissions were
+  // moved to. Belt and braces: either one disqualifies a row.
+  //
+  // The guard below stays, one layer up: if NEITHER marker has ever been used
+  // and there are rows, nothing is published, because a filter that has never
+  // excluded anything cannot be trusted to be excluding tests.
   let orders = null, paid = null, orders30 = null, leadNote = null;
   try {
     const r = await env.DB.prepare(
       `SELECT COUNT(*) n, SUM(CASE WHEN paid=1 THEN 1 ELSE 0 END) p,
-              SUM(CASE WHEN ts >= datetime('now','-30 days') THEN 1 ELSE 0 END) r30,
-              SUM(COALESCE(test_mode,0)) flagged
-       FROM orders WHERE COALESCE(test_mode,0)=0`).first();
-    if (r && r.flagged === 0 && (r.n || 0) > 0) {
-      leadNote = "Not published: the orders table has " + r.n + " rows and "
-        + "none has ever been flagged test_mode, so these cannot be "
+              SUM(CASE WHEN ts >= datetime('now','-30 days') THEN 1 ELSE 0 END) r30
+       FROM orders
+        WHERE COALESCE(test_mode,0)=0
+          AND COALESCE(status,'') NOT IN ('test','test-archived')`).first();
+    const m = await env.DB.prepare(
+      `SELECT SUM(COALESCE(test_mode,0)) flagged,
+              SUM(CASE WHEN COALESCE(status,'') IN ('test','test-archived')
+                       THEN 1 ELSE 0 END) archived,
+              COUNT(*) total FROM orders`).first();
+    const marked = ((m && m.flagged) || 0) + ((m && m.archived) || 0);
+    if (m && marked === 0 && (m.total || 0) > 0) {
+      leadNote = "Not published: the orders table has " + m.total + " rows and "
+        + "not one is marked as a test, by either marker - so these cannot be "
         + "distinguished from our own submissions while the order form was "
-        + "being built. Reports normally once test rows are flagged.";
+        + "being built. Reports normally once test rows are marked.";
     } else if (r) {
       orders = r.n || 0;
       paid = r.p || 0;
