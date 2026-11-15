@@ -119,12 +119,24 @@ machinery behind it is gated.
 
 ### Auto-approval after five business days
 
-Aaron's call, 2026-11-15. **What it does not do is the whole argument for it.**
-It cuts nothing and charges nothing: in this shop the payment link follows
-approval, so auto-approval marks the proof accepted and lets Ryan invoice, and
-the customer still has to pay before any vinyl moves. **Paying is a second,
-explicit consent.** The same rule in a shop that charged the card at checkout
-would be indefensible, and this one is only sound while that stays true.
+Aaron's call, 2026-11-15, asked for twice with the exposure spelled out.
+
+⚠️ **Read this before changing anything here.** I built the first version
+believing the payment link followed approval, because the APPROVED email to
+the shop still says so. **It is stale copy from an earlier flow.** `PAY_MODE`
+is `"stripe"`, a live publishable key is baked into `/design/`, and the
+checkout hint on 32 pages says *"you are charged now"*. **The card is charged
+at checkout.**
+
+So there is no second consent, and this is not softened by one. For a paid
+order it is genuinely cut-on-silence, with the money already taken and
+`MerchantReturnNotPermitted` on the product. That is the decision that was
+made; do not reintroduce "the customer pays afterwards" reasoning into
+`worker/proof.js` or into the customer emails.
+
+What the rule does have going for it is disclosure and narrowness: three
+notices before it can fire, a deadline measured from **delivery**, and
+exclusions that keep it to routine, paid orders only.
 
 Disclosed three times before it can fire: the checkbox at checkout
 (`f_nocut`, **unticked by default**, because the default has to be the
@@ -143,13 +155,23 @@ clause, never in a comment:
 | `number_flag IS NULL` | row predates the column — we cannot tell, so no |
 | `proof_nudges < 3` | fewer than three reminders have gone out |
 | `status` is `test*` | ours, not a customer's |
+| A decorative face on a **registration number** | the one order `riskNote()` warns the customer about by name |
 | Resend cannot confirm **delivery** | silence after an email that went to spam is not approval |
 
-That last one is load-bearing and it fails safe: the deadline runs off
-Resend's `last_event === "delivered"`, pulled at the moment it matters rather
-than webhooked, so **while `ORDER_FROM` is an unverified sending domain this
-will mostly decline to fire.** That is correct behaviour, not a bug to route
-around.
+The font row is subtle and it is the one I nearly shipped wrong. The worker
+**no longer coerces** a decorative face to Block on a registration number — it
+used to, and it cut faces nobody chose — so `riskNote()` is all that stands
+between that order and the plotter. It tells the customer an officer may read
+it as non-compliant and that *"we will cut exactly what you approve"*, and
+auto-approval would then approve it for them. `plainFace()` is the single
+definition, used by `riskNote()`, by `deadlineLine()` and — as a `WHERE`
+fragment generated off the same array — by the sweep. The same face on a
+**boat name** stays eligible: 33 CFR has nothing to say about those.
+
+The delivery row fails safe: the deadline runs off Resend's
+`last_event === "delivered"`, pulled at the moment it matters rather than
+webhooked. If sending is ever misconfigured this quietly stops firing rather
+than approving on unread mail, which is the right direction to fail in.
 
 `PROOF_AUTO_APPROVE=off` stops it without a deploy.
 
@@ -802,8 +824,12 @@ against an emailed payment link.
   database keeps its original name on purpose — it is an existing CF resource
   and renaming it here would point the worker at a database that does not exist.
 - `RESEND_API_KEY`, `ORDER_TO` → set ✅
-- `ORDER_FROM` → currently `onboarding@resend.dev`. **Verify numbermyboat.com
-  in Resend and switch this to `orders@numbermyboat.com` before launch.**
+- `ORDER_FROM` → already on the real domain in `wrangler.jsonc` ✅. This note
+  used to say it was still the Resend onboarding sender; that was stale, and I
+  repeated it from a memory note instead of reading the config — twice, once
+  into this file. **Read `wrangler.jsonc`, not this line.** What is NOT
+  verified from here is whether that domain is confirmed in the Resend
+  dashboard; sends are being accepted, which is a weaker claim than delivered.
 
 ### The measurement pipeline
 

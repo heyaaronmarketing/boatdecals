@@ -290,7 +290,7 @@ __VIEWS__
       <div id=payelement class=payel></div>
       <div class=hint id=payhint>Secured by Stripe. We never see your card
         number. You are charged now; your proof follows within 12 hours and
-        nothing is cut until you approve it.</div>
+        nothing is cut until it is approved.</div>
     </div>
     <div class=err id=e6 role=alert></div>
   </section>

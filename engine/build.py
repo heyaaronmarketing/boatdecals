@@ -610,10 +610,11 @@ APP_CARDS = [
      "High-tack film for the awkward ones, free, no upcharge."),
     "AL-04",
     "AL-07",
-    ("No typos", "You approve it before we cut",
+    ("No typos", "A proof before we cut",
      "Within twelve hours we email your exact lettering. Check it against "
      "your registration card, tap approve, and it is cut, packed and posted "
-     "within 1-2 business days. Nothing is cut before you say so."),
+     "within 1-2 business days. If we hear nothing for five business days we "
+     "treat the proof as approved, so tell us if anything is wrong."),
     "AL-05",
     "AL-06",
     "AL-08",
@@ -1095,7 +1096,7 @@ def build_home():
       hero("Custom Boat Registration Numbers, Proofed Before We Cut",
            "Legal 3-inch block numbers for both sides of your hull, cut from "
            "marine vinyl and pre-spaced on one sheet. We email you a proof "
-           "within 12 hours and cut nothing until you approve it. Boat names "
+           "within 12 hours and cut nothing until it is approved. Boat names "
            "and custom lettering too.",
            badge="Price on the page. Shipping included.",
            right=right)
@@ -2785,9 +2786,12 @@ def build_contact():
        "by email."),
       ("Can I change my order after sending it?",
        "Yes. Your proof arrives within twelve hours and nothing is cut until "
-       "you approve it, so there is a built-in window to change anything. "
+       "it is approved, so there is a built-in window to change anything. "
        "Reply to the proof email, or use the \u2018something needs changing\u2019 "
-       "link on it."),
+       "link on it. One thing to know: if we hear nothing at all for five "
+       "business days after the proof reaches you, we treat it as approved "
+       "so the order does not sit forever \u2014 every reminder says the date, "
+       "and you can ask us to wait indefinitely at checkout."),
     ]
     simple("/contact/", "Contact Us",
       "Email us about an order, a change, artwork or a trade account. Boat "
@@ -2918,9 +2922,10 @@ def build_shipping():
       "<p>Custom-cut vinyl with your registration number on it cannot be resold, so it is "
       "not returnable once cut. That is why the order form previews your exact lettering "
       "before you pay &mdash; read it twice. <strong>If you catch a mistake the same "
-      "day, email us: nothing is cut until you approve the proof, so there is "
-    "almost always time to "
-      "stop it.</strong></p>"
+      "day, email us: nothing is cut until the proof is approved, so there is "
+      "almost always time to stop it.</strong> Note that an un-answered proof "
+      "is treated as approved after five business days, so do not sit on a "
+      "proof you have doubts about &mdash; reply and we will hold it.</p>"
       "<p>Three things we do fix:</p>"
       "<ul><li><strong>It does not match what you ordered.</strong> Our error. We remake "
       "it free, at the front of the queue.</li>"
@@ -3009,12 +3014,14 @@ def build_legal():
       "business days pass after the proof is delivered with no reply, we treat "
       "it as approved</strong> so the order does not sit forever. Two things "
       "about that are worth being plain about: the five days run from the day "
-      "the proof is <em>delivered</em>, not the day we send it, and "
-      "<strong>nothing is cut until the order is paid</strong> &mdash; if "
-      "payment was not taken at checkout we email a payment link first, so "
-      "you get a second look before any vinyl is cut. A reply stops the clock "
-      "at any point, and you can ask us to wait indefinitely by ticking the "
-      "box at checkout.</p>"
+      "the proof is <em>delivered</em>, not the day we send it, and it "
+      "applies only to a paid, routine order &mdash; never one where you "
+      "asked for a change, never one where your registration number or font "
+      "looked irregular to us. <strong>Your card is charged at checkout, so "
+      "treating a proof as approved does mean we go on to cut it.</strong> "
+      "That is why every reminder names the date, and why a single reply "
+      "stops the clock at any point. You can also ask us to wait "
+      "indefinitely by ticking the box at checkout.</p>"
       "<h2>Accuracy of what you type</h2>"
       "<p>We cut exactly what you typed. Check your registration number character by "
       "character against your card &mdash; the preview exists for that reason. If a "

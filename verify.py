@@ -2712,8 +2712,19 @@ if "autoApproveSweep" in _proof:
              "a registration number the validator FLAGGED would go ahead "
              "unseen - and so would every order placed before the flag was "
              "recorded, which is all four now sitting in the queue"),
+            ("AND paid = 1",
+             "an UNPAID row would be swept - that is an abandoned checkout, "
+             "not a job waiting on an approval, and the customer would get "
+             "an email saying the order they never paid for is going ahead"),
             ("COALESCE(proof_nudges,0) >= ?",
              "it could fire before the three reminders had been sent"),
+            ("${PLAIN_FACE_SQL}",
+             "a REGISTRATION NUMBER in a decorative face would be approved "
+             "for the customer - and that is the exact order riskNote() tells "
+             "them an officer may read as non-compliant, promising 'we will "
+             "cut exactly what you approve'. The worker no longer coerces the "
+             "font, so flagging is all that stands between that and the "
+             "plotter"),
             ("approved_at IS NULL",
              "an order could be auto-approved twice, or after the customer "
              "had already approved it"),
@@ -2771,10 +2782,29 @@ if "autoApproveSweep" in _proof:
         fails.append("the terms page does not state the five-business-day "
                      "rule - it is the only page a customer can go back and "
                      "read after the emails are deleted")
-    elif "nothing is cut until the order is paid" not in _tm:
+    elif "charged at checkout" not in _tm:
         fails.append("the terms page states the five-day rule but no longer "
-                     "says nothing is cut until the order is paid - that "
-                     "second sentence is what makes the first one honest")
+                     "says the card is charged at checkout - without that, "
+                     "'we treat it as approved' reads as though no money has "
+                     "moved, which is the mistake this whole feature was "
+                     "first built on")
+
+    # No page may still promise that nothing is cut without the CUSTOMER's
+    # approval. 32 pages did, in the checkout hint alone, and I rewrote four
+    # emails without once looking at the site. A policy the emails describe
+    # and the pages deny is not a disclosed policy.
+    for _q in pages:
+        _qt = re.sub(r"\s+", " ", html.unescape(
+            re.sub(r"<[^>]+>", " ", _q.read_text())))
+        for _claim in ("nothing is cut until you approve",
+                       "cut nothing until you approve",
+                       "nothing is cut before you say so",
+                       "you approve it before we cut"):
+            if re.search(_claim, _qt, re.I):
+                fails.append("%s still promises %r, which the five-business-"
+                             "day rule contradicts - say 'until it is "
+                             "approved', and say who may approve it"
+                             % (_q.relative_to(OUT), _claim))
     # And the emails must no longer promise the opposite.
     for _bad in ("Nothing is cut until you approve it",
                  "The order stays open"):
@@ -2792,7 +2822,7 @@ if "autoApproveSweep" in _proof:
     # bug today has been this shape.
     _dl = _proof[_proof.index("function deadlineLine"):]
     _dl = _dl[:_dl.index("\nfunction proofEmail")]
-    for _cond in ("number_flag", "changes_at", "auto_cut_optout"):
+    for _cond in ("number_flag", "changes_at", "auto_cut_optout", "plainFace"):
         if _cond not in _dl:
             fails.append("deadlineLine does not check %s, so it can promise a "
                          "deadline on an order the sweep would refuse to act "

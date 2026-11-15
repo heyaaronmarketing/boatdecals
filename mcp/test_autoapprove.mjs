@@ -72,7 +72,13 @@ if (!m) {
   console.log("  FAIL  could not find the sweep's query in proof.js");
   process.exit(1);
 }
-const where = m[1].replace(/\?/g, "3");   // MAX_NUDGES
+// The sweep interpolates ${PLAIN_FACE_SQL}; resolve it the same way it does,
+// off the same array, so the test exercises the real clause.
+const plain = src.match(/const PLAIN_BLOCK = \[([\s\S]*?)\];/)[1]
+  .match(/"([^"]+)"/g).map((q) => q.slice(1, -1));
+let where = m[1].replace("${PLAIN_FACE_SQL}",
+  `(kind = 'Boat name' OR font IN (${plain.map((f) => `'${f}'`).join(",")}))`);
+where = where.replace(/\?/g, "3");   // MAX_NUDGES
 console.log("  query found, %d chars", where.length);
 
 const YES = "ELIGIBLE";
@@ -87,20 +93,34 @@ const rows = [
   ["already-approved", 0, null, "''",      3, "'approved'", "'t'", null],
   ["already-swept",    0, null, "''",      3, "'auto-approved'", null, "'t'"],
   ["a-test-row",       0, null, "''",      3, "'test-archived'", null, null],
+  // A decorative face on a REGISTRATION NUMBER - the order riskNote() warns
+  // the customer about by name. A human has to say yes to those.
+  ["decorative-regnum", 0, null, "''",     3, "'proof-sent'", null, null,
+   "Registration numbers", "Great Vibes"],
+  // The same face on a BOAT NAME is fine: 33 CFR has nothing to say about it.
+  ["BOATNAME-OK",      0, null, "''",      3, "'proof-sent'", null, null,
+   "Boat name", "Great Vibes"],
+  // An unpaid row is an abandoned checkout, not a job waiting on approval.
+  ["never-paid",       0, null, "''",      3, "'proof-sent'", null, null,
+   "Registration numbers", "Arial Bold", 0],
 ];
 
 const dir = mkdtempSync(join(tmpdir(), "nmb-aa-"));
 const sql = join(dir, "t.sql");
 writeFileSync(sql, `
 CREATE TABLE orders (
-  id INTEGER PRIMARY KEY, ref TEXT, email TEXT, ts TEXT,
+  id INTEGER PRIMARY KEY, ref TEXT, email TEXT, ts TEXT, kind TEXT, font TEXT,
+  paid INTEGER DEFAULT 1,
   proof_sent_at TEXT, approved_at TEXT, auto_approved_at TEXT,
   changes_at TEXT, test_mode INTEGER DEFAULT 0, status TEXT,
   auto_cut_optout INTEGER DEFAULT 0, number_flag TEXT, proof_nudges INTEGER);
-${rows.map(([ref, out, ch, flag, n, st, ap, au], i) => `
-INSERT INTO orders (id,ref,email,ts,proof_sent_at,approved_at,auto_approved_at,
-  changes_at,test_mode,status,auto_cut_optout,number_flag,proof_nudges)
-VALUES (${i + 1},'${ref}','a@b.c','2026-11-01','2026-11-01',
+${rows.map(([ref, out, ch, flag, n, st, ap, au, kind, font, paid], i) => `
+INSERT INTO orders (id,ref,email,ts,kind,font,paid,proof_sent_at,approved_at,
+  auto_approved_at,changes_at,test_mode,status,auto_cut_optout,number_flag,
+  proof_nudges)
+VALUES (${i + 1},'${ref}','a@b.c','2026-11-01',
+  '${kind || "Registration numbers"}','${font || "Arial Bold"}',
+  ${paid === 0 ? 0 : 1},'2026-11-01',
   ${ap || "NULL"},${au || "NULL"},${ch || "NULL"},0,${st},${out},${flag},${n});`
 ).join("")}
 SELECT ref FROM orders
@@ -117,9 +137,11 @@ try {
 }
 const picked = out.trim().split("\n").filter(Boolean);
 console.log("  selected:", JSON.stringify(picked));
-ok(picked.length === 1 && picked[0] === YES,
-  `exactly one row is eligible, and it is the routine one`);
-for (const [ref] of rows.slice(1)) {
+const WANT = [YES, "BOATNAME-OK"];
+ok(picked.length === WANT.length && WANT.every((r) => picked.includes(r)),
+  `exactly the routine orders are eligible (wanted ${JSON.stringify(WANT)})`);
+for (const [ref] of rows) {
+  if (WANT.includes(ref)) continue;
   ok(!picked.includes(ref), `${ref} is excluded`);
 }
 

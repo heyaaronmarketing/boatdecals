@@ -18,13 +18,24 @@
  *
  * AUTO-APPROVAL AFTER FIVE BUSINESS DAYS (Aaron's call, 2026-11-15).
  *
- * What it does and does not do is the whole thing. It does NOT cut anything
- * and it does NOT take any money, because in this shop the payment link
- * follows approval - it marks the proof accepted so the order can be
- * invoiced, and the customer still has to pay before a single inch of vinyl
- * is cut. Paying is a second, explicit consent. That is what makes a
- * five-day rule defensible here when it would not be in a shop that charged
- * the card up front.
+ * READ THIS BEFORE CHANGING ANYTHING HERE.
+ *
+ * I built the first version of this believing the payment link followed
+ * approval, because the APPROVED email to the shop still says so. It is
+ * stale copy from an earlier flow. PAY_MODE is "stripe", a live publishable
+ * key is baked into /design/, and 32 pages tell the customer "you are
+ * charged now". THE CARD IS CHARGED AT CHECKOUT.
+ *
+ * So there is no second consent. For a paid order this genuinely is
+ * cut-on-silence, with the money already taken and a
+ * MerchantReturnNotPermitted policy on the product. Aaron asked for exactly
+ * that, twice, with the exposure spelled out - it is his call and Ryan's,
+ * and it is not softened by a safety net that does not exist. Do not
+ * reintroduce "the customer pays afterwards" reasoning into this file.
+ *
+ * What the rule still has going for it is disclosure and narrowness: three
+ * notices before it can fire, a deadline measured from DELIVERY, and a set
+ * of exclusions that keeps it to routine orders only.
  *
  * It is disclosed three times before it can fire - a checkbox at checkout,
  * the order confirmation, and every reminder names the date - and it is
@@ -34,6 +45,11 @@
  *   - a change was requested
  *   - the validator flagged the registration number (a human looks at those)
  *   - the row predates number_flag, so we cannot tell whether it was flagged
+ *   - the lettering is a decorative face on a REGISTRATION NUMBER, which is
+ *     the one thing riskNote() warns the customer about by name
+ *   - the order is not paid. An unpaid row is an abandoned checkout, not a
+ *     job waiting on an approval, and auto-approving one would send a
+ *     customer who never paid an email saying their order is going ahead
  *   - fewer than three reminders have gone out
  *   - RESEND CANNOT CONFIRM THE PROOF WAS DELIVERED
  *
@@ -84,9 +100,24 @@ export function businessDeadline(fromIso, days) {
   return d.getTime();
 }
 
-const DATE_FMT = { weekday: "long", month: "long", day: "numeric" };
-const niceDate = (ms) => Number.isFinite(ms)
-  ? new Date(ms).toLocaleDateString("en-US", DATE_FMT) : "";
+// Formatted from UTC parts rather than through toLocaleDateString.
+//
+// That call depends on the runtime carrying full ICU, and on which locale it
+// decides to use. It does not throw without it - it quietly returns
+// "11/20/2026" instead of "Friday, November 20" - and a date in an email
+// about a deadline is the last place to accept "quietly different depending
+// on where this runs". This also keeps the proof email, the reminders and
+// the terms page reading identically.
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+              "Friday", "Saturday"];
+const MONTHS = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November",
+                "December"];
+const niceDate = (ms) => {
+  if (!Number.isFinite(ms)) return "";
+  const d = new Date(ms);
+  return `${DAYS[d.getUTCDay()]}, ${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+};
 
 /**
  * Did Resend actually DELIVER this message?
@@ -133,8 +164,33 @@ function proofUrl(env, o) {
 const PLAIN_BLOCK = ["Arial Bold", "Arial Black", "Impact",
   "OCR A Extended", "MS Gothic"];
 
+/**
+ * Is this an order nobody needs to look at twice?
+ *
+ * ONE definition, used by riskNote() to decide whether to warn the customer,
+ * by deadlineLine() to decide whether to name a deadline, and - as a SQL
+ * fragment built off the same array - by the sweep to decide eligibility.
+ *
+ * The bug this closes: a registration number in a decorative face is exactly
+ * the order riskNote() exists for. It tells the customer an officer may read
+ * it as non-compliant and that "we will cut exactly what you approve" - and
+ * auto-approval would then approve it FOR them. The worker deliberately does
+ * not coerce the font any more (it used to, and cut faces nobody chose), so
+ * flagging is all that stands between a decorative reg number and the
+ * plotter. A human has to be the one to say yes to those.
+ */
+function plainFace(o) {
+  return o.kind === "Boat name" || PLAIN_BLOCK.includes(o.font);
+}
+
+// The same rule as a WHERE fragment, generated from the same array so the two
+// cannot drift. font_risk is not a stored column, so this is the only way the
+// sweep can see it.
+const PLAIN_FACE_SQL =
+  `(kind = 'Boat name' OR font IN (${PLAIN_BLOCK.map(() => "?").join(",")}))`;
+
 function riskNote(o) {
-  if (o.kind === "Boat name" || PLAIN_BLOCK.includes(o.font)) return "";
+  if (plainFace(o)) return "";
   return `<p style="background:#fdf4e6;border:1px solid #f0dcbb;border-radius:9px;` +
     `padding:12px 14px;font-size:14px;color:#7a5417;margin:0 0 18px">` +
     `<b>About this font.</b> ${esc(o.font)} is not a plain block face. ` +
@@ -215,7 +271,7 @@ function deadlineLine(o, when) {
   //
   // Conditions mirrored from autoApproveSweep. NULL or a non-empty flag both
   // mean "a human owns this", so say the honest thing instead.
-  const eligible = o.number_flag === "" && !o.changes_at;
+  const eligible = o.number_flag === "" && !o.changes_at && plainFace(o);
   if (o.auto_cut_optout || !eligible) {
     // Deliberately does NOT say "you asked us to wait" - this branch also
     // covers orders a person is holding for other reasons, and telling
@@ -269,7 +325,7 @@ function nudgeEmail(env, o, n) {
   // date plainly rather than softly.
   const when = niceDate(businessDeadline(o.proof_sent_at, AUTO_APPROVE_DAYS));
   const tail = o.auto_cut_optout || !when
-    || o.number_flag !== "" || o.changes_at
+    || o.number_flag !== "" || o.changes_at || !plainFace(o)
     ? deadlineLine(o, when)
     : (n >= 2
       ? `<p style="font-size:13.5px;color:#5b7383;margin:16px 0 0">This is ` +
@@ -407,9 +463,11 @@ export async function autoApproveSweep(env, nowMs) {
         AND COALESCE(status,'') NOT IN ('test','test-archived')
         AND COALESCE(auto_cut_optout,0) = 0
         AND COALESCE(number_flag,'?') = ''
+        AND paid = 1
         AND COALESCE(proof_nudges,0) >= ?
         AND email IS NOT NULL AND email <> ''
-      ORDER BY id LIMIT 20`).bind(MAX_NUDGES).all();
+        AND ${PLAIN_FACE_SQL}
+      ORDER BY id LIMIT 20`).bind(MAX_NUDGES, ...PLAIN_BLOCK).all();
 
   let approved = 0, waiting = 0, undelivered = 0;
   for (const o of (cand.results || [])) {
@@ -430,26 +488,24 @@ export async function autoApproveSweep(env, nowMs) {
     approved++;
 
     await send(env, o.email, {
-      subject: `Order ${o.ref} is going ahead - payment link enclosed next`,
+      subject: `Order ${o.ref} is going to be cut - last chance to stop it`,
       html: shell(
         `<h2 style="font-size:21px;margin:0 0 6px">We are treating your ` +
         `proof as approved</h2>` +
         `<p style="margin:0 0 18px;color:#44606f">We sent your proof and ` +
-        `three reminders and have not heard back, so as promised we are ` +
-        `moving your order forward. Your payment link follows from us ` +
-        `shortly.</p>` +
+        `three reminders over five business days and have not heard back, ` +
+        `so as we said we would, your order is going ahead.</p>` +
         letteringBlock(o) +
         `<table style="border-collapse:collapse;margin:0 0 20px">` +
         `${specRows(o)}</table>` +
         `<p style="background:#fdf4e6;border:1px solid #f0dcbb;` +
         `border-radius:9px;padding:12px 14px;margin:0 0 16px">` +
-        `<b>Nothing has been cut.</b> This is exactly what we will cut once ` +
-        `the payment link is paid, so you still have a last look. If any ` +
-        `character is wrong, <b>reply to this email now</b> and do not pay ` +
-        `the link &mdash; we will fix it first.</p>` +
-        `<p style="font-size:13.5px;color:#5b7383;margin:0">Changed your ` +
-        `mind entirely? Reply and we will cancel it. You have not been ` +
-        `charged.</p>`),
+        `<b>This is what we are about to cut.</b> Cut vinyl cannot be ` +
+        `re-used, so if a single character is wrong, <b>reply to this email ` +
+        `straight away</b> and we will stop it. We would much rather hold ` +
+        `your order than send you a decal you cannot put on the boat.</p>` +
+        `<p style="font-size:13.5px;color:#5b7383;margin:0">Want to cancel ` +
+        `instead? Reply and say so.</p>`),
     });
 
     if (env.ORDER_TO) {
@@ -458,10 +514,13 @@ export async function autoApproveSweep(env, nowMs) {
         html: shell(
           `<h2>${esc(o.ref)} auto-approved after 5 business days</h2>` +
           `<p style="background:#fff7e6;border-left:4px solid #d08700;` +
-          `padding:10px 13px"><b>The customer never replied.</b> Send the ` +
-          `payment link. <b>Do not cut this until it is paid</b> &mdash; ` +
-          `unlike a normal approval, nobody has confirmed these characters, ` +
-          `so the payment is the only confirmation you will get.</p>` +
+          `padding:10px 13px"><b>Nobody has confirmed these characters.</b> ` +
+          `This order is paid and five business days past its proof with no ` +
+          `reply, so the system approved it. Unlike every other approved ` +
+          `order in your queue, no human has checked the lettering against ` +
+          `a registration card. <b>Read it against the spec below before ` +
+          `the plotter runs</b>, and give the customer the rest of the day ` +
+          `to answer the email we just sent them.</p>` +
           letteringBlock(o) +
           `<table style="border-collapse:collapse">${specRows(o)}</table>` +
           `<p>${esc(o.name || "")} &lt;${esc(o.email)}&gt;</p>` +
@@ -551,10 +610,21 @@ export async function handleApprove(request, env) {
       await send(env, env.ORDER_TO, {
         subject: `APPROVED - cut ${o.ref} - ${lettering(o)}`,
         html: shell(`<h2>${esc(o.ref)} is approved</h2>` +
-          `<p style="background:#fff7e6;border-left:4px solid #d08700;` +
-          `padding:10px 13px"><b>Send the payment link now.</b> Nothing in ` +
-          `the site does this - the customer was told the link follows ` +
-          `approval. Then cut, pack and post within 1-2 business days.</p>` +
+          // PRE-EXISTING BUG, found while auditing the auto-approval work.
+          // This told Ryan to "send the payment link now - the customer was
+          // told the link follows approval" on EVERY approval, including the
+          // ones where the card was charged at checkout minutes earlier. It
+          // is copy from a payment-link flow the site no longer runs, and it
+          // had him chasing money from people who had already paid - and
+          // waiting on that before cutting, which delays every order.
+          (o.paid
+            ? `<p style="background:#e8f5ec;border-left:4px solid #2f6f43;` +
+              `padding:10px 13px"><b>Paid.</b> Cut, pack and post within 1-2 ` +
+              `business days. Nothing to invoice.</p>`
+            : `<p style="background:#fff7e6;border-left:4px solid #d08700;` +
+              `padding:10px 13px"><b>Not paid.</b> This order was approved ` +
+              `but the checkout was never completed, so there is nothing to ` +
+              `cut yet - chase the payment first.</p>`) +
           letteringBlock(o) +
           `<table style="border-collapse:collapse">${specRows(o)}</table>` +
           `<p>${esc(o.name || "")} &lt;${esc(o.email)}&gt;</p>`),
