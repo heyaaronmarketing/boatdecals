@@ -11,6 +11,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      ORDER_COLORS)
 from style import CSS
 import namegen as NG
+from state_fees import FEES as STATE_FEES, VERIFIED as FEES_VERIFIED
 from state_data import (USCG_FLEET, USCG_SOURCE, USCG_URL,
                         USCG_NATIONAL, STATE_ACCENT, state_badge)
 from state_waters import WATERS
@@ -1073,7 +1074,7 @@ def proof_band(band=None):
          "1-2 business days. Nothing is cut before you say yes."),
     ]
     open_ = band.open() if band else '<section class=soft>'
-    return (open_ + '<div class=w><h2>Nothing is cut until you have seen it</h2>'
+    return (open_ + '<div class=w><h2>Nothing is cut until it has been seen</h2>'
             '<p class=lede>A registration number with one wrong character is '
             'worth nothing &mdash; you cannot file the corner off a 3-inch '
             'digit. So we proof every order before the vinyl moves.</p>'
@@ -1740,6 +1741,47 @@ def state_scope(s, band):
       % (s["name"], s["name"], scope[0].lower() + scope[1:], s["agency"]))
 
 
+def state_fees_block(s):
+    """What the state charges, from the state's own page, with the date read.
+
+    The whole competitive point of this section. The state pages that
+    currently rank for the generic term carry no fees at all, and the
+    fifty-state blog post that holds an AI Overview citation has not been
+    repriced since 2017. Figures plus a visible verification date is the
+    thing neither of them has.
+
+    A state with no published figure gets the sentence saying so, not a
+    guess. That is the whole reason `fee: False` exists.
+    """
+    f = STATE_FEES.get(s["slug"])
+    if not f:
+        return ""
+    nm = s["name"]
+    src = ('<p class=srcline>Source: <a href="%s" rel="nofollow noopener" '
+           'target="_blank">%s</a>. State figures last checked '
+           '<time datetime="%s">%s</time>. We are a vinyl shop, not the '
+           'registry &mdash; pay the state, not us.</p>'
+           % (f["src"], html.escape(f["src_name"]), FEES_VERIFIED, FEES_VERIFIED))
+
+    if f.get("rows"):
+        rows = "".join("<tr><td>%s</td><td>%s</td></tr>"
+                       % (html.escape(a), html.escape(b)) for a, b in f["rows"])
+        table = ('<table class=feetab><thead><tr><th>Boat length</th>'
+                 '<th>State fee</th></tr></thead><tbody>%s</tbody></table>'
+                 % rows)
+    else:
+        table = '<p class=note>%s</p>' % f["fee_note"]
+
+    return ('<h2>What %s charges to register the boat</h2>'
+            '<p>Registration runs for <strong>%s</strong>, through <strong>%s</strong>.</p>'
+            '%s%s%s%s'
+            % (nm, f["period"], f["agency"], table,
+               ('<p>%s</p>' % f["extra"]) if f.get("extra") else "",
+               ('<p><strong>Worth knowing.</strong> %s</p>' % f["gotcha"])
+               if f.get("gotcha") else "",
+               src))
+
+
 def build_state(s):
     path = "/registration-numbers/%s/" % s["slug"]
     trail = [("By state", "/registration-numbers/"), (s["name"], None)]
@@ -1752,7 +1794,26 @@ def build_state(s):
             "3-inch block vinyl starting with %s, proof emailed within 12 hours."
             % (nm, PRICE["numbers"], ab))
     example = "%s 1234 AB" % ab
-    faqs = [
+    _f = STATE_FEES.get(s["slug"])
+    faqs = ([
+      ("How much does it cost to register a boat in %s?" % nm,
+       # .get, not [], DELIBERATELY. A state whose written summary is missing
+       # is a data error for the verifier to report in words - not a KeyError
+       # that kills build.py mid-run and leaves public/ WIPED, which is what
+       # the first version did and what the gate-break run actually exposed.
+       ("%s charges %s, for a registration that runs %s, through %s. That is "
+        "the state's fee for the registration itself. Our $%d is the vinyl: "
+        "the pair of numbers for the hull, cut and posted free."
+        % (nm, _f.get("fee_summary")
+           or " / ".join("%s %s" % (b, a) for a, b in _f["rows"][:3]),
+           _f["period"].split(",")[0], _f["agency"], PRICE["numbers"]))
+       if _f.get("rows") else
+       ("%s does not publish its registration fee where a boat owner can read "
+        "it, so we will not print a figure we cannot source from the state - "
+        "the amount shows at checkout on the state's own portal. Our $%d is "
+        "separate: it is the vinyl, not the registration."
+        % (nm, PRICE["numbers"]))),
+    ] if _f else []) + [
       ("How tall do %s boat registration numbers have to be?" % nm,
        "Not less than 3 inches, in plain vertical block characters. That is the federal "
        "minimum under 33 CFR 173.27 and it applies in %s like everywhere else. Taller "
@@ -1845,6 +1906,7 @@ def build_state(s):
          'registry &mdash; we cannot look your number up or issue one, so order once '
          'you have the certificate in hand and copy the line straight off it.</p>'
          % s.get("register_at", "the " + s["agency"]))
+      + state_fees_block(s)
       + CB.CONTRAST_NOTE
       + '<h2>Ordering for a %s boat</h2>'
         '<p>Type the number as it appears on your card, pick a color that contrasts with '

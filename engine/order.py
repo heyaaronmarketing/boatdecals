@@ -799,8 +799,8 @@ JS = r"""
     w.dataset.degraded='1';
     $('payelement').innerHTML='<div class=paysoft><b>Card payment is '+
       'temporarily unavailable.</b><span>Send the order and we will email you '+
-      'to take payment, along with your proof. Nothing is cut until you have '+
-      'approved it.</span></div>';
+      'to take payment, along with your proof. Nothing is cut until the '+
+      'proof is approved.</span></div>';
     $('payhint').textContent='';
     nextBtn.textContent='Send my order';
   }
@@ -838,10 +838,10 @@ JS = r"""
       '<h2>'+(paid?'Paid &mdash; order ':'Order ')+esc(j.ref||'received')+'</h2>'+
       '<p>'+(paid?'Paid in full. ':'')+'A confirmation is on its way to '+
       '<strong>'+esc($('f_email')?$('f_email').value:'your inbox')+'</strong>'+
-      ', and your proof follows within 12 hours. Nothing is cut until you '+
-      'approve it.</p>'+
-      '<p class=hint>We email your proof within 12 hours. Nothing is cut until '+
-      'you approve it. Spotted a '+
+      ', and your proof follows within 12 hours. Nothing is cut until the '+
+      'proof is approved.</p>'+
+      '<p class=hint>We email your proof within 12 hours, and nothing is '+
+      'cut until it is approved. Spotted a '+
       'mistake? Email us today with this reference and we can almost always stop '+
       'it before the plotter runs.</p>'+
       '<a class="btn lg" href="/">Back to the shop</a></div>';

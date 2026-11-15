@@ -374,6 +374,20 @@ font-family:"Arial Black",Impact,sans-serif}
 /* ---------- tables ---------- */
 .tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:15.3px;min-width:420px}
+/* State registration-fee table. min-width:420px on the global table rule
+would force a horizontal scrollbar for two short columns on a phone, so this
+one opts out and stays readable at 360px. Colour is set explicitly: these sit
+in body copy today, but every other element on this site that relied on
+inheriting one eventually ended up white on white. */
+.feetab{min-width:0;max-width:34rem;color:var(--ink);margin:14px 0}
+.feetab th,.feetab td{text-align:left;padding:7px 12px 7px 0;
+border-bottom:1px solid var(--line)}
+.feetab th{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--nav2)}
+.feetab td:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+/* The source line is the whole credibility play: a figure, where it came
+from, and when somebody last looked. It is small, not hidden. */
+.srcline{font-size:13.5px;color:var(--mut);margin:10px 0 0}
 th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
 th{background:var(--soft);font-weight:800;font-size:13.5px;text-transform:uppercase;
 letter-spacing:.04em;color:var(--nav)}

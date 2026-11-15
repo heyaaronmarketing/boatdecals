@@ -34,7 +34,14 @@ _YR_N = (r"(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|"
 # "+" and "or more" are the two shapes that got past a first version:
 # "holds color 7+ years" matched none of the patterns and shipped.
 _YR_SPAN = _YR_N + r"(?:\s*(?:to|-|&ndash;|&mdash;)\s*\d+)?\+?"
-_DUR = r"(?:warrant\w*|durabilit\w*|outdoor life|rated for|lasts?|adhesion|chalks)"
+# `lasts?` used to be in here and matched the ADJECTIVE: Georgia's "expiring
+# on the LAST day of the owner's birth month" and Minnesota's "of the LAST
+# year" both read as film-life claims the moment state registration periods
+# were added. Only the verb senses count - "it lasts seven years", "will last
+# seven years" - and "last day" / "last year" no longer do.
+_DUR = (r"(?:warrant\w*|durabilit\w*|outdoor life|rated for|adhesion|chalks|"
+        r"lasts\b|(?:will|should|can|may)\s+last\b|last(?:s|ed|ing)?\s+"
+        r"(?:for\s+)?(?:up\s+to\s+)?\d)")
 _MATERIAL = r"(?:film|vinyl|stock)"
 # (pattern, may a person-noun excuse it)
 _FILM_LIFE_PATTERNS = [
@@ -301,14 +308,46 @@ _live |= {PRICE["numbers"] + a for a in PRICE["height_add"].values()}
 _live |= set(PRICE["height_add"].values())
 _live |= {u[1] for u in UPGRADES}
 _stale = [v for v in _RETIRED if v not in _live]
+
+# A STATE's registration fee is not our price, and some of them collide: a
+# Californian pays $29 to register a boat sold in an even year, which is also
+# a figure we used to charge. The gate must not be weakened to let that
+# through, so instead the fee data is removed from the text before scanning -
+# and ONLY the exact amounts state_fees.py publishes, so an old price of ours
+# that happens to sit elsewhere on a state page still fails.
+sys.path.insert(0, str(ROOT / "engine"))
+import state_fees as _SF
+_FEE_AMOUNTS = set()
+for _sf in _SF.FEES.values():
+    for _lbl, _amt in (_sf.get("rows") or []):
+        _FEE_AMOUNTS.add(_amt.strip())
+    if _sf.get("fee_summary"):
+        _FEE_AMOUNTS.update(re.findall(r"\$[\d,]+(?:\.\d\d)?", _sf["fee_summary"]))
+# Whole dollars only: "$29" collides, "$28.75" cannot be mistaken for a price
+# of ours, and a bare "$29" inside "$29.50" is not a match anyway.
+_FEE_WHOLE = {int(_a[1:]) for _a in _FEE_AMOUNTS
+              if re.fullmatch(r"\$\d+", _a)}
+
 _hits = []
 for _dirname, _glob in _SCAN:
     for _f in sorted((ROOT / _dirname).rglob(_glob)):
         if not _f.is_file():
             continue
         _t = _f.read_text(encoding="utf-8", errors="replace")
+        # Only state pages and the fee data itself get the exemption, and
+        # only for amounts those pages actually publish as state fees.
+        # llms-full.txt is GENERATED from these pages, so it inherits their
+        # fee text; gating it separately only re-reports the same lines.
+        _is_state = (("registration-numbers/" in str(_f).replace("\\", "/")
+                      and _f.name == "index.html")
+                     or _f.name in ("state_fees.py", "llms-full.txt"))
         for _v in _stale:
-            for _mm in re.finditer(r"\$%d\b" % _v, _t):
+            if _is_state and _v in _FEE_WHOLE:
+                continue
+            # (?!\.\d) so "$22" does not match inside "$22.50": a state fee
+            # with cents cannot be mistaken for a price of ours, and \b alone
+            # treats the decimal point as a word boundary.
+            for _mm in re.finditer(r"\$%d\b(?!\.\d)" % _v, _t):
                 _hits.append((_f.relative_to(ROOT), _v,
                               _t[max(0, _mm.start() - 50):_mm.end() + 25]
                               .replace("\n", " ")))
@@ -2800,9 +2839,18 @@ if "autoApproveSweep" in _proof:
     # false, and left the checkbox saying it on 33 pages. The card is charged
     # at checkout. There is no link.
     for _q in pages:
-        _qt = re.sub(r"\s+", " ", html.unescape(
-            re.sub(r"<[^>]+>", " ", _q.read_text())))
+        _raw = _q.read_text()
+        _qt = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", _raw)))
+        # JavaScript string concatenation hid this from the first version of
+        # the gate: 'Nothing is cut until '+ 'you approve it.' survives a tag
+        # strip as "...until '+ 'you approve..." and matches nothing. It was
+        # live on all 21 state pages, in the order wizard's own confirmation
+        # copy, and a duplicate-paragraph sweep found it rather than this
+        # gate. Joining across the concatenation operators is what makes the
+        # gate see what the CUSTOMER sees.
+        _qt += " " + re.sub(r"\s+", " ", re.sub(r"['\"]\s*\+\s*['\"]", "", _raw))
         for _claim in ("nothing is cut until you approve",
+                       "nothing is cut until you have approved",
                        "cut nothing until you approve",
                        "nothing is cut before you say so",
                        "you approve it before we cut",
@@ -3034,6 +3082,65 @@ elif not _shape:
                      "(block set + one tab specimen per other category). Loading "
                      "all %d is ~670KB for a step most orders pick one face from"
                      % (_got, _want, len(_C.FONTS)))
+
+# ---- state registration fees ---------------------------------------------
+# The competitive premise of these pages is that the figures are right, so
+# the gate is about provenance, not formatting. A fee without a source is
+# worse than no fee: it looks researched.
+if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", _SF.VERIFIED):
+    fails.append("state_fees.VERIFIED is not an ISO date")
+_OFFICIAL = (".gov", ".us", "georgiawildlife.com", "gadnr.org")
+for _slug, _d in sorted(_SF.FEES.items()):
+    _where = "state_fees.py[%s]" % _slug
+    if not any(s for s in (_d.get("slug"),)) and _slug not in {
+            _x["slug"] for _x in _C.STATES}:
+        fails.append("%s has fee data but no state page" % _where)
+    for _k in ("period", "agency", "agency_url", "src", "src_name"):
+        if not _d.get(_k):
+            fails.append("%s is missing %s" % (_where, _k))
+    for _k in ("agency_url", "src"):
+        _u = _d.get(_k) or ""
+        if _u and not any(_o in _u.split("/")[2] for _o in _OFFICIAL):
+            fails.append("%s %s points at %r, which is not an official state "
+                         "source - these figures may only come from the state"
+                         % (_where, _k, _u.split("/")[2]))
+    if _d.get("rows"):
+        if not _d.get("fee_summary"):
+            fails.append("%s publishes a fee table but no written summary, "
+                         "which is what the FAQ answer reads from" % _where)
+        for _lbl, _amt in _d["rows"]:
+            if not re.fullmatch(r"\$[\d,]+(?:\.\d\d)?", _amt.strip()):
+                fails.append("%s fee %r is not a plain dollar figure - no "
+                             "ranges, no 'about', no 'from'" % (_where, _amt))
+    else:
+        # The honest-omission path. It only exists so that a state which does
+        # not publish a figure gets a sentence instead of a guess.
+        if _d.get("fee") is not False:
+            fails.append("%s has no fee rows and has not been marked "
+                         "fee: False - a state is either sourced or declared "
+                         "unpublished" % _where)
+        if not _d.get("fee_note"):
+            fails.append("%s omits the fee without saying why" % _where)
+
+# And the page must actually carry what the data says, with the date showing.
+for _slug, _d in sorted(_SF.FEES.items()):
+    _pg = OUT / "registration-numbers" / _slug / "index.html"
+    if not _pg.is_file():
+        fails.append("no built page for state fee data %r" % _slug)
+        continue
+    _pt = _pg.read_text()
+    _flat = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", _pt)))
+    if _SF.VERIFIED not in _pt:
+        fails.append("%s does not show when its state figures were last "
+                     "checked - the date ageing in public is the point" % _slug)
+    if _d["src"].split("?")[0] not in _pt:
+        fails.append("%s does not link the source its figures came from" % _slug)
+    for _lbl, _amt in (_d.get("rows") or []):
+        if _amt not in _flat:
+            fails.append("%s publishes fee %s in state_fees.py but the page "
+                         "does not carry it" % (_slug, _amt))
+    if not _d.get("rows") and "does not publish" not in _flat:
+        fails.append("%s omits a fee but the page does not say so" % _slug)
 
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))

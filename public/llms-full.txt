@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 311 questions across 48 pages, with the page each one came from.
+> 332 questions across 48 pages, with the page each one came from.
 > Generated on 2026-11-15 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -362,6 +362,9 @@ A: Yes - marinas, dealers and fleet operators. Email orders@numbermyboat.com wit
 ## Alabama Boat Registration Numbers AL
 Source: https://numbermyboat.com/registration-numbers/alabama/
 
+Q: How much does it cost to register a boat in Alabama?
+A: Alabama does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
 Q: How tall do Alabama boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Alabama like everywhere else. Taller is always legal.
 
@@ -391,6 +394,9 @@ A: Effectively year round, with the hard season March through November.
 
 ## California Boat Registration Numbers CF
 Source: https://numbermyboat.com/registration-numbers/california/
+
+Q: How much does it cost to register a boat in California?
+A: California charges a flat $20 to renew, or $29 to $49 to register for the first time depending on the year the boat was sold, for a registration that runs two years, through California DMV. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do California boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in California like everywhere else. Taller is always legal.
@@ -422,6 +428,9 @@ A: Year round on the coast and in the south. The Sierra reservoirs run roughly A
 ## Florida Boat Registration Numbers FL
 Source: https://numbermyboat.com/registration-numbers/florida/
 
+Q: How much does it cost to register a boat in Florida?
+A: Florida charges $28.75 for the common 16-to-26-foot band, from $5.50 for a dinghy to $189.75 for a 110-footer, for a registration that runs one year or two years, through the Florida Department of Highway Safety and Motor Vehicles, through your county tax collector. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do Florida boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Florida like everywhere else. Taller is always legal.
 
@@ -452,6 +461,9 @@ A: Year round. Florida does not have a boating season, it has a hurricane season
 ## Georgia Boat Registration Numbers GA
 Source: https://numbermyboat.com/registration-numbers/georgia/
 
+Q: How much does it cost to register a boat in Georgia?
+A: Georgia charges $35 under 16 feet, $70 from 16 to 26 feet, and up to $210 at 40 feet and over, for a registration that runs three years, through Georgia DNR. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do Georgia boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Georgia like everywhere else. Taller is always legal.
 
@@ -481,6 +493,9 @@ A: Year round in the south of the state. The lake season runs hard from April th
 
 ## Illinois Boat Registration Numbers IL
 Source: https://numbermyboat.com/registration-numbers/illinois/
+
+Q: How much does it cost to register a boat in Illinois?
+A: Illinois charges $28 under 16 feet and $60 from 16 to 26 feet to register, with renewals lower, for a registration that runs three years, through Illinois DNR. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Illinois boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Illinois like everywhere else. Taller is always legal.
@@ -524,6 +539,9 @@ A: Yes. We cut for all 50 states and DC - these are just the pages we have writt
 ## Indiana Boat Registration Numbers IN
 Source: https://numbermyboat.com/registration-numbers/indiana/
 
+Q: How much does it cost to register a boat in Indiana?
+A: Indiana does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
 Q: How tall do Indiana boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Indiana like everywhere else. Taller is always legal.
 
@@ -553,6 +571,9 @@ A: Roughly late April through October, with ice on the northern lakes.
 
 ## Iowa Boat Registration Numbers IA
 Source: https://numbermyboat.com/registration-numbers/iowa/
+
+Q: How much does it cost to register a boat in Iowa?
+A: Iowa charges $28.15 to renew a 16-foot boat and $41.65 for 16 to 26 feet, through your county recorder, for a registration that runs three years, through your county recorder, on behalf of the Iowa DNR. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Iowa boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Iowa like everywhere else. Taller is always legal.
@@ -584,6 +605,9 @@ A: Ice-out is usually late March to mid-April and most boats are out of the wate
 ## Louisiana Boat Registration Numbers LA
 Source: https://numbermyboat.com/registration-numbers/louisiana/
 
+Q: How much does it cost to register a boat in Louisiana?
+A: Louisiana charges $36 up to 15 ft 11 in, $57 from 16 to 25 ft 11 in, and up to $99 at 40 feet and over, for a registration that runs three years from the date it is issued, through Louisiana Department of Wildlife and Fisheries. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do Louisiana boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Louisiana like everywhere else. Taller is always legal.
 
@@ -613,6 +637,9 @@ A: Year round. Hurricane season from June to November is what actually governs w
 
 ## Michigan Boat Registration Numbers MC
 Source: https://numbermyboat.com/registration-numbers/michigan/
+
+Q: How much does it cost to register a boat in Michigan?
+A: Michigan charges $42 for a 16-to-21-foot boat, rising to $448 at 50 feet - but a flat $23 for any pontoon, for a registration that runs three years, through Michigan Secretary of State. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Michigan boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Michigan like everywhere else. Taller is always legal.
@@ -644,6 +671,9 @@ A: Inland lakes run roughly May to October. The Great Lakes season is shorter at
 ## Minnesota Boat Registration Numbers MN
 Source: https://numbermyboat.com/registration-numbers/minnesota/
 
+Q: How much does it cost to register a boat in Minnesota?
+A: Minnesota charges $36 under 17 feet and $113 from 19 to 26 feet, before the invasive species surcharge, for a registration that runs three years, through Minnesota DNR. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do Minnesota boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Minnesota like everywhere else. Taller is always legal.
 
@@ -673,6 +703,9 @@ A: Ice-out runs from early April in the south to early May up north, and the Min
 
 ## Missouri Boat Registration Numbers MO
 Source: https://numbermyboat.com/registration-numbers/missouri/
+
+Q: How much does it cost to register a boat in Missouri?
+A: Missouri charges $25 under 16 feet, $55 from 16 to 26 feet, and up to $150 at 40 feet and over, plus a $9 processing fee, for a registration that runs three years, through Missouri Department of Revenue. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Missouri boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Missouri like everywhere else. Taller is always legal.
@@ -704,6 +737,9 @@ A: March through November at the Ozarks, with the hard season April through Octo
 ## New York Boat Registration Numbers NY
 Source: https://numbermyboat.com/registration-numbers/new-york/
 
+Q: How much does it cost to register a boat in New York?
+A: New York charges $22.50 under 16 feet, $45 from 16 to 26 feet, and $75 at 26 feet and over, for a registration that runs three years, through New York DMV. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do New York boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in New York like everywhere else. Taller is always legal.
 
@@ -733,6 +769,9 @@ A: May through October for most of the state. The Erie Canal navigation season i
 
 ## North Carolina Boat Registration Numbers NC
 Source: https://numbermyboat.com/registration-numbers/north-carolina/
+
+Q: How much does it cost to register a boat in North Carolina?
+A: North Carolina does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
 
 Q: How tall do North Carolina boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in North Carolina like everywhere else. Taller is always legal.
@@ -764,6 +803,9 @@ A: Roughly April through October inland, and the coastal fleet runs most of the 
 ## Ohio Boat Registration Numbers OH
 Source: https://numbermyboat.com/registration-numbers/ohio/
 
+Q: How much does it cost to register a boat in Ohio?
+A: Ohio charges $33 under 16 feet, $48 from 16 to 26 feet, and up to $93 at 65 feet and over, for a registration that runs three years, through Ohio DNR, Division of Parks & Watercraft. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do Ohio boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Ohio like everywhere else. Taller is always legal.
 
@@ -793,6 +835,9 @@ A: Roughly late April through October. Lake Erie's walleye run pulls boats out e
 
 ## Pennsylvania Boat Registration Numbers PA
 Source: https://numbermyboat.com/registration-numbers/pennsylvania/
+
+Q: How much does it cost to register a boat in Pennsylvania?
+A: Pennsylvania charges $26 for a motorboat under 16 feet, $39 from 16 to 20 feet, and $52 at 20 feet and over, for a registration that runs two years, through Pennsylvania Fish and Boat Commission. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Pennsylvania boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Pennsylvania like everywhere else. Taller is always legal.
@@ -824,6 +869,9 @@ A: April through October for most of the state. The Commission's access areas op
 ## South Carolina Boat Registration Numbers SC
 Source: https://numbermyboat.com/registration-numbers/south-carolina/
 
+Q: How much does it cost to register a boat in South Carolina?
+A: South Carolina charges $10 a year, collected on your county property tax bill, for a registration that runs one year, through South Carolina DNR. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do South Carolina boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in South Carolina like everywhere else. Taller is always legal.
 
@@ -853,6 +901,9 @@ A: Effectively year round. The heavy season is April through October, and the up
 
 ## Tennessee Boat Registration Numbers TN
 Source: https://numbermyboat.com/registration-numbers/tennessee/
+
+Q: How much does it cost to register a boat in Tennessee?
+A: Tennessee charges $18 a year for 16 feet and under and $35 from 16 to 26 feet, with two- and three-year options, for a registration that runs one, through Tennessee Wildlife Resources Agency. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Tennessee boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Tennessee like everywhere else. Taller is always legal.
@@ -884,6 +935,9 @@ A: March through November, with the TVA drawdown lowering lake levels through th
 ## Texas Boat Registration Numbers TX
 Source: https://numbermyboat.com/registration-numbers/texas/
 
+Q: How much does it cost to register a boat in Texas?
+A: Texas charges $32 under 16 feet, $53 from 16 to 26 feet, and up to $150 for 40 feet and over, for a registration that runs two years, through Texas Parks & Wildlife Department. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
 Q: How tall do Texas boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Texas like everywhere else. Taller is always legal.
 
@@ -913,6 +967,9 @@ A: Year round in practice. Summer heat moves traffic to early morning and evenin
 
 ## Virginia Boat Registration Numbers VA
 Source: https://numbermyboat.com/registration-numbers/virginia/
+
+Q: How much does it cost to register a boat in Virginia?
+A: Virginia charges $37 under 16 feet, $41 from 16 to 20 feet, $47 from 20 to 40 feet and $55 at 40 feet and over, for a registration that runs three years, through Virginia Department of Wildlife Resources. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Virginia boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Virginia like everywhere else. Taller is always legal.
@@ -944,6 +1001,9 @@ A: April through October inland. The Bay fleet runs most of the year, and the st
 ## Washington Boat Registration Numbers WN
 Source: https://numbermyboat.com/registration-numbers/washington/
 
+Q: How much does it cost to register a boat in Washington?
+A: Washington does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
 Q: How tall do Washington boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Washington like everywhere else. Taller is always legal.
 
@@ -973,6 +1033,9 @@ A: Year round on the Sound for the hardy; the real season is May through Septemb
 
 ## Wisconsin Boat Registration Numbers WS
 Source: https://numbermyboat.com/registration-numbers/wisconsin/
+
+Q: How much does it cost to register a boat in Wisconsin?
+A: Wisconsin charges $22 under 16 feet, $32 from 16 to 26 feet, and up to $100 at 40 feet and over, for a registration that runs three years, through Wisconsin DNR. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
 
 Q: How tall do Wisconsin boat registration numbers have to be?
 A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Wisconsin like everywhere else. Taller is always legal.
