@@ -2793,13 +2793,21 @@ if "autoApproveSweep" in _proof:
     # approval. 32 pages did, in the checkout hint alone, and I rewrote four
     # emails without once looking at the site. A policy the emails describe
     # and the pages deny is not a disclosed policy.
+    #
+    # "payment link" is in this list for the same reason and is my own: I
+    # wrote the checkout checkbox under the belief that payment followed
+    # approval, corrected the emails and the terms when that turned out to be
+    # false, and left the checkbox saying it on 33 pages. The card is charged
+    # at checkout. There is no link.
     for _q in pages:
         _qt = re.sub(r"\s+", " ", html.unescape(
             re.sub(r"<[^>]+>", " ", _q.read_text())))
         for _claim in ("nothing is cut until you approve",
                        "cut nothing until you approve",
                        "nothing is cut before you say so",
-                       "you approve it before we cut"):
+                       "you approve it before we cut",
+                       "send your payment link",
+                       "until that link is paid"):
             if re.search(_claim, _qt, re.I):
                 fails.append("%s still promises %r, which the five-business-"
                              "day rule contradicts - say 'until it is "

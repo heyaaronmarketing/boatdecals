@@ -244,8 +244,8 @@ __VIEWS__
       <input type=checkbox id=f_nocut name=nocut>
       <span><b>Wait for my word, however long I take.</b>
       Otherwise, if we have not heard from you five business days after your
-      proof is delivered, we treat it as approved and send your payment link.
-      Nothing is ever cut until that link is paid.</span>
+      proof is delivered, we treat it as approved and cut it. Every reminder
+      we send names the date.</span>
     </label>
 
     <!-- Our own fields, not Stripe's Address Element. An address is what makes
