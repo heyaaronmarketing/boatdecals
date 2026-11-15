@@ -234,6 +234,20 @@ __VIEWS__
       </div>
     </div>
 
+    <!-- The five-business-day rule, disclosed where the decision is made
+         rather than buried in the terms page. UNTICKED IS THE DEFAULT, and
+         the default is the rule applying - the box is the way OUT of it, so
+         a customer who reads nothing gets the behaviour the emails describe,
+         and a customer who wants to be asked can say so in one tap. Worded
+         as the thing you get, not as a consent you grant. -->
+    <label class=autocut>
+      <input type=checkbox id=f_nocut name=nocut>
+      <span><b>Wait for my word, however long I take.</b>
+      Otherwise, if we have not heard from you five business days after your
+      proof is delivered, we treat it as approved and send your payment link.
+      Nothing is ever cut until that link is paid.</span>
+    </label>
+
     <!-- Our own fields, not Stripe's Address Element. An address is what makes
          the order shippable at all, so capturing it must not depend on a third
          party being reachable - and the autocomplete attributes hand the whole
@@ -719,6 +733,7 @@ JS = r"""
             outline_color:hasOutline()
               ? (val('outline_color')||{value:'White'}).value : '',
             name:$('f_name').value.trim(), email:$('f_email').value.trim(),
+            autoCutOptout:($('f_nocut')&&$('f_nocut').checked)?1:0,
             quoted_total:price(), page:location.pathname};
   }
 

@@ -1010,6 +1010,18 @@ border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
 
 # ---- shipping address ---------------------------------------------------
 CSS += """
+/* The five-business-day opt-out at checkout. `color:var(--ink)` is
+LOAD-BEARING: the wizard renders inside .hero{color:#fff}, so anything that
+does not set its own colour inherits white and the whole disclosure becomes
+invisible against a pale card - which is exactly how <legend> disappeared for
+several deploys. A disclosure nobody can read is worse than none, because the
+emails now refer to it. */
+.autocut{display:flex;gap:10px;align-items:flex-start;margin-top:15px;
+border:1.5px solid var(--line);border-radius:11px;padding:12px 13px;
+background:#fbfdfe;color:var(--ink);font-size:13.5px;line-height:1.5;
+cursor:pointer}
+.autocut input{margin:2px 0 0;width:17px;height:17px;flex:0 0 auto}
+.autocut b{display:block;font-size:14px;margin-bottom:2px}
 .shipbox{margin-top:15px;border:1.5px solid var(--line);border-radius:11px;
 padding:14px 14px 12px;background:#fbfdfe}
 .shiphead{font-size:12px;font-weight:800;letter-spacing:.07em;

@@ -1147,6 +1147,18 @@ background:#fdf4e6;border-radius:99px;padding:3px 9px;white-space:nowrap}
 border-radius:9px;padding:12px 14px;font-size:14px;color:#7a5417}
 .fcwarn[hidden]{display:none}
 
+/* The five-business-day opt-out at checkout. `color:var(--ink)` is
+LOAD-BEARING: the wizard renders inside .hero{color:#fff}, so anything that
+does not set its own colour inherits white and the whole disclosure becomes
+invisible against a pale card - which is exactly how <legend> disappeared for
+several deploys. A disclosure nobody can read is worse than none, because the
+emails now refer to it. */
+.autocut{display:flex;gap:10px;align-items:flex-start;margin-top:15px;
+border:1.5px solid var(--line);border-radius:11px;padding:12px 13px;
+background:#fbfdfe;color:var(--ink);font-size:13.5px;line-height:1.5;
+cursor:pointer}
+.autocut input{margin:2px 0 0;width:17px;height:17px;flex:0 0 auto}
+.autocut b{display:block;font-size:14px;margin-bottom:2px}
 .shipbox{margin-top:15px;border:1.5px solid var(--line);border-radius:11px;
 padding:14px 14px 12px;background:#fbfdfe}
 .shiphead{font-size:12px;font-weight:800;letter-spacing:.07em;
@@ -1283,6 +1295,20 @@ border:1.5px solid var(--line);border-radius:9px;background:#fff;color:var(--ink
         <input type=text id=f_name name=name autocomplete=name placeholder="Jane Rivera">
       </div>
     </div>
+
+    <!-- The five-business-day rule, disclosed where the decision is made
+         rather than buried in the terms page. UNTICKED IS THE DEFAULT, and
+         the default is the rule applying - the box is the way OUT of it, so
+         a customer who reads nothing gets the behaviour the emails describe,
+         and a customer who wants to be asked can say so in one tap. Worded
+         as the thing you get, not as a consent you grant. -->
+    <label class=autocut>
+      <input type=checkbox id=f_nocut name=nocut>
+      <span><b>Wait for my word, however long I take.</b>
+      Otherwise, if we have not heard from you five business days after your
+      proof is delivered, we treat it as approved and send your payment link.
+      Nothing is ever cut until that link is paid.</span>
+    </label>
 
     <!-- Our own fields, not Stripe's Address Element. An address is what makes
          the order shippable at all, so capturing it must not depend on a third

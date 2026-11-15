@@ -254,3 +254,19 @@ CREATE TABLE IF NOT EXISTS cs_rank_kw (
   url        TEXT,
   updated_at TEXT NOT NULL
 );
+
+-- Auto-approval after five business days (2026-11-15).
+--
+-- number_flag is the validator's verdict AT ORDER TIME. '' means checked and
+-- clean, NULL means never checked - and the sweep refuses NULL, which is what
+-- keeps it away from every row placed before this existed.
+ALTER TABLE orders ADD COLUMN number_flag TEXT;
+-- The checkbox at checkout. 0 (the default) means the five-day rule applies.
+ALTER TABLE orders ADD COLUMN auto_cut_optout INTEGER DEFAULT 0;
+-- Set alongside approved_at, so an auto-approval is always distinguishable
+-- from a customer who actually clicked the button. Ryan needs to know which
+-- he is holding before he cuts.
+ALTER TABLE orders ADD COLUMN auto_approved_at TEXT;
+-- Resend's message id for the proof. The deadline runs off whether THIS
+-- message was delivered, which cannot be asked later without its id.
+ALTER TABLE orders ADD COLUMN proof_msg_id TEXT;

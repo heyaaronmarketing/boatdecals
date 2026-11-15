@@ -2661,9 +2661,130 @@ _proof = (ROOT / "worker" / "proof.js").read_text()
 if "PROOF_AFTER = 11 * HOURS" not in _proof:
     fails.append("the proof send window is no longer inside the twelve hours "
                  "the site promises")
-if _proof.count("NUDGES = [") != 1 or "24 * HOURS, 72 * HOURS, 144 * HOURS" not in _proof:
-    fails.append("the proof reminder schedule changed - the site says we "
-                 "chase it, and three reminders is what that means")
+# Three reminders, and ALL THREE inside the auto-approval deadline.
+#
+# This used to pin the literal timings, which meant any change failed even
+# when it was an improvement - and, worse, it would happily have passed the
+# schedule it was pinning: once auto-approval existed, the old
+# [24, 72, 144] sent its last warning on day 10, four days AFTER the order had
+# already gone ahead. The invariant is the arithmetic, so check the arithmetic.
+_nd = re.search(r"NUDGES = \[([^\]]+)\]", _proof)
+if _proof.count("NUDGES = [") != 1 or not _nd:
+    fails.append("the proof reminder schedule is no longer a single NUDGES "
+                 "list - the site says we chase it, and three reminders is "
+                 "what that means")
+else:
+    _hrs = [int(_h) for _h in re.findall(r"(\d+)\s*\*\s*HOURS", _nd.group(1))]
+    if len(_hrs) != 3:
+        fails.append("there are %d proof reminders, not three - the site says "
+                     "we chase it" % len(_hrs))
+    # Five BUSINESS days is five CALENDAR days at its shortest: a proof
+    # delivered on a SUNDAY waits Mon-Fri and goes ahead that Friday. I first
+    # wrote six here, reasoning from the Saturday case, and
+    # mcp/test_autoapprove.mjs - which walks all seven starting weekdays -
+    # caught it. Every reminder has to be sent before the earliest possible
+    # deadline, or the final warning arrives after the thing it warns about.
+    _floor = 5 * 24
+    if sum(_hrs) >= _floor:
+        fails.append("the three proof reminders take %dh but auto-approval "
+                     "can come as early as %dh (five business days from a "
+                     "Saturday) - the last reminder would land after the "
+                     "deadline it warns about" % (sum(_hrs), _floor))
+    if "AUTO_APPROVE_DAYS = 5" not in _proof:
+        fails.append("the auto-approval window is no longer the five business "
+                     "days the checkout box and all four emails promise")
+
+# ---- auto-approval: the exclusions, and the promises that go with it -------
+# Treating silence as approval is only defensible because of what it does NOT
+# do and when it refuses to run. Each clause below is one of those, and each
+# is in the SQL rather than in a comment, because a promise in a comment is
+# not a WHERE clause.
+if "autoApproveSweep" in _proof:
+    _sw = _proof[_proof.index("export async function autoApproveSweep"):]
+    _sw = _sw[:_sw.index("\n  return { approved, waiting, undelivered };")]
+    for _clause, _why in (
+            ("COALESCE(auto_cut_optout,0) = 0",
+             "a customer who ticked the box at checkout would be swept anyway"),
+            ("changes_at IS NULL",
+             "an order with a change in flight would be auto-approved out "
+             "from under the person handling it"),
+            ("COALESCE(number_flag,'?') = ''",
+             "a registration number the validator FLAGGED would go ahead "
+             "unseen - and so would every order placed before the flag was "
+             "recorded, which is all four now sitting in the queue"),
+            ("COALESCE(proof_nudges,0) >= ?",
+             "it could fire before the three reminders had been sent"),
+            ("approved_at IS NULL",
+             "an order could be auto-approved twice, or after the customer "
+             "had already approved it"),
+            ("NOT IN ('test','test-archived')",
+             "our own test rows would be auto-approved")):
+        if _clause not in _sw:
+            fails.append("the auto-approval sweep no longer excludes on %r: %s"
+                         % (_clause, _why))
+    # Silence is not consent if the email never arrived.
+    if "wasDelivered" not in _sw:
+        fails.append("auto-approval no longer requires the proof to have been "
+                     "DELIVERED - silence after an email that went to spam is "
+                     "not approval, and ORDER_FROM is still an unverified "
+                     "sending domain")
+    if "last_event" not in _proof:
+        fails.append("nothing reads Resend's delivery status, so 'delivered' "
+                     "means only 'accepted for delivery'")
+    # It must never cut or charge. The whole argument for a five-day rule in
+    # this shop is that approval is not payment and payment is not silence.
+    if "auto-approved" not in _sw or "paid=1" in _sw:
+        fails.append("the auto-approval sweep is touching payment state - it "
+                     "may only mark the proof accepted so the order can be "
+                     "invoiced; the customer pays before anything is cut")
+    # A kill switch Ryan can use without a deploy.
+    if "PROOF_AUTO_APPROVE" not in _proof:
+        fails.append("there is no way to switch auto-approval off without a "
+                     "deploy")
+    # The disclosure, in all three places it was promised.
+    _co = (OUT / "design" / "index.html").read_text()
+    if "f_nocut" not in _co:
+        fails.append("the checkout opt-out box is gone, so the five-day rule "
+                     "is no longer disclosed where the decision is made")
+    if "autoCutOptout" not in _co:
+        fails.append("the checkout box is rendered but never posted - every "
+                     "customer who ticks it would be auto-approved anyway")
+    # And the worker must read it off the REQUEST. `o` in handleOrder is an
+    # explicit allow-list built field by field, so anything read from `o` that
+    # was not named there is undefined - which recorded 0 for every customer
+    # who ticked the box, failing silently in the one direction that matters.
+    # Found by posting to a real worker and reading the row back.
+    if not re.search(r"o\.auto_cut_optout\s*=\s*\(?d\.autoCutOptout", _wi0):
+        fails.append("the worker is not reading autoCutOptout off the request "
+                     "- `o` is an allow-list, so a field copied from `o` is "
+                     "undefined and every opt-out silently becomes 0")
+    if "checked" in re.sub(r"\s+", " ", _co[max(0, _co.find("f_nocut") - 200):
+                                            _co.find("f_nocut") + 120]):
+        fails.append("the opt-out box ships pre-ticked - the default has to be "
+                     "the behaviour the emails and terms describe")
+    # Both halves, because either one alone is misleading. "We may treat it as
+    # approved" without "nothing is cut until it is paid" reads as though we
+    # cut on silence; the second sentence is the one that makes the first
+    # defensible, and it is the one that would get trimmed for brevity.
+    _tm = html.unescape((OUT / "terms" / "index.html").read_text()).lower()
+    if "five business days" not in _tm:
+        fails.append("the terms page does not state the five-business-day "
+                     "rule - it is the only page a customer can go back and "
+                     "read after the emails are deleted")
+    elif "nothing is cut until the order is paid" not in _tm:
+        fails.append("the terms page states the five-day rule but no longer "
+                     "says nothing is cut until the order is paid - that "
+                     "second sentence is what makes the first one honest")
+    # And the emails must no longer promise the opposite.
+    for _bad in ("Nothing is cut until you approve it",
+                 "The order stays open"):
+        if _bad in _proof:
+            fails.append("a proof email still promises %r, which is now the "
+                         "opposite of what happens" % _bad)
+    if _proof.count("function deadlineLine") != 1:
+        fails.append("the deadline is no longer described in one place - "
+                     "three copies of a rule is how it comes to mean three "
+                     "things")
 if "approved_at IS NULL" not in _proof:
     fails.append("the proof cycle no longer excludes approved orders - it "
                  "would email people who already approved")

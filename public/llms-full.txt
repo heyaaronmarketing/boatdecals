@@ -1,7 +1,7 @@
 # Number My Boat - every question this site answers
 
 > 311 questions across 48 pages, with the page each one came from.
-> Generated on 2026-11-14 from the FAQ schema actually published on those
+> Generated on 2026-11-15 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
 >

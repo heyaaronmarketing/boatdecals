@@ -111,10 +111,62 @@ machinery behind it is gated.
 | | |
 |---|---|
 | Proof sent | 11 hours after the order |
-| Reminders | +24h, +72h, +144h, then stop |
+| Reminders | +24h, +48h, +24h (days 1, 3, 4), then stop |
+| Auto-approval | 5 **business** days after the proof is **delivered** |
 | Approval | `/api/approve?r=REF&t=TOKEN` |
 | Proof page | `/proof/?r=REF&t=TOKEN` (noindex, not in the sitemap) |
 | Schedule | Worker cron, hourly at `:17` |
+
+### Auto-approval after five business days
+
+Aaron's call, 2026-11-15. **What it does not do is the whole argument for it.**
+It cuts nothing and charges nothing: in this shop the payment link follows
+approval, so auto-approval marks the proof accepted and lets Ryan invoice, and
+the customer still has to pay before any vinyl moves. **Paying is a second,
+explicit consent.** The same rule in a shop that charged the card at checkout
+would be indefensible, and this one is only sound while that stays true.
+
+Disclosed three times before it can fire: the checkbox at checkout
+(`f_nocut`, **unticked by default**, because the default has to be the
+behaviour everything else describes), the order confirmation, and every
+reminder, which names the date. `/terms/` carries it for anyone who deleted
+the emails.
+
+It refuses to run on anything but a routine order — all of it in the `WHERE`
+clause, never in a comment:
+
+| Excluded | Why |
+|---|---|
+| `auto_cut_optout = 1` | the customer asked us to wait |
+| `changes_at IS NOT NULL` | a human owns that order |
+| `number_flag <> ''` | the validator flagged the registration number |
+| `number_flag IS NULL` | row predates the column — we cannot tell, so no |
+| `proof_nudges < 3` | fewer than three reminders have gone out |
+| `status` is `test*` | ours, not a customer's |
+| Resend cannot confirm **delivery** | silence after an email that went to spam is not approval |
+
+That last one is load-bearing and it fails safe: the deadline runs off
+Resend's `last_event === "delivered"`, pulled at the moment it matters rather
+than webhooked, so **while `ORDER_FROM` is an unverified sending domain this
+will mostly decline to fire.** That is correct behaviour, not a bug to route
+around.
+
+`PROOF_AUTO_APPROVE=off` stops it without a deploy.
+
+⚠️ **The reminders must all finish before the earliest possible deadline.**
+Five business days is **five calendar days at its shortest** — a proof
+delivered on a *Sunday* falls due that Friday. I first wrote six, reasoning
+from the Saturday case; `mcp/test_autoapprove.mjs` walks all seven starting
+weekdays and caught it. The verifier checks `sum(NUDGES) < 120h` against
+`AUTO_APPROVE_DAYS`, and the old `[24, 72, 144]` schedule would have sent its
+final warning on day 10 — four days after the order had already gone ahead.
+
+⚠️ **The migration goes before the deploy.** `number_flag` and
+`auto_cut_optout` are in the order INSERT, so deploying the worker against a
+database without them fails *every* order. Applied to production
+2026-11-15; all 17 pre-existing rows carry `number_flag IS NULL` and can
+therefore never be swept, which is right — they were placed under the old
+promise.
 
 **Eleven hours, not twelve.** A cron firing on the hour would otherwise land
 the "within 12 hours" email at 12h59m, and the promise would be false for most

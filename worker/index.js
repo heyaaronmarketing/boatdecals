@@ -231,8 +231,24 @@ async function handleOrder(request, env) {
   else if (o.kind !== "Boat name" && !BLOCK_FONTS.includes(o.font)) {
     o.font_risk = o.font;
   }
-  // Advisory only - annotates the order, never refuses it.
+  // Advisory only - annotates the order, never refuses it. STORED as of
+  // 2026-11-15, because the auto-approval sweep has to know whether the
+  // validator was happy and cannot ask a question nobody wrote down. Empty
+  // string means "checked, nothing to say"; NULL means "never checked", and
+  // the sweep refuses NULL.
   o.number_flag = o.kind === "Boat name" ? "" : checkNumber(o.text);
+  // The checkbox at checkout. Default 0 = the five-business-day rule applies,
+  // which is what the box says when it is left as it ships.
+  //
+  // Read off `d`, THE REQUEST - not off `o`. `o` is an explicit allow-list
+  // built field by field above, so anything not named there is simply absent
+  // from it, and my first version read o.autoCutOptout and silently recorded
+  // 0 for every customer who ticked the box. It failed quietly in exactly the
+  // direction that matters: the people asking us to wait would have been
+  // auto-approved anyway. Caught by posting two orders at a real worker and
+  // reading the row back, which no amount of re-reading the diff would have
+  // done.
+  o.auto_cut_optout = (d.autoCutOptout || d.auto_cut_optout) ? 1 : 0;
   // The client derives this too, but an API post or a JS failure should not
   // cost us the data: the prefix names the issuing state on its own.
   if (!o.state && o.text) {
@@ -254,8 +270,9 @@ async function handleOrder(request, env) {
           `INSERT INTO orders (ref,kind,text,boatname,state,height,font,color,upgrades,ship_line1,ship_line2,ship_city,ship_state,ship_zip,
              name,email,phone,boat,notes,page,total,quoted,mismatch,paid,payment,
              ua,country,ts
-           ,test_mode,card_brand,card_last4,status,finish,outline_color)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+           ,test_mode,card_brand,card_last4,status,finish,outline_color
+           ,number_flag,auto_cut_optout)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         ).bind(o.ref, o.kind, o.text, o.boatname, o.state, o.height, o.font, o.color,
                o.upgrades,
                o.ship_line1, o.ship_line2, o.ship_city, o.ship_state, o.ship_zip,
@@ -266,7 +283,9 @@ async function handleOrder(request, env) {
                // correct with no test-exclusion needed. Sandbox orders are never
                // paid=1; `status` is what makes them visible in the queue.
                o.test_mode ? "test" : (o.paid ? "paid" : "new"),
-               o.finish, o.outline_color).run();
+               o.finish, o.outline_color,
+               o.number_flag == null ? "" : String(o.number_flag),
+               o.auto_cut_optout).run();
       }
     } catch (err) {
       console.error("d1 insert failed", err && err.message);
