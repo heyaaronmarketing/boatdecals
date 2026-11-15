@@ -2785,6 +2785,18 @@ if "autoApproveSweep" in _proof:
         fails.append("the deadline is no longer described in one place - "
                      "three copies of a rule is how it comes to mean three "
                      "things")
+    # The email's promise and the sweep's WHERE clause have to agree about
+    # who the deadline applies to. They did not: the first live run after
+    # deploy sent a reminder to an order with number_flag NULL - one that can
+    # never be auto-approved - and the reminder named a date anyway. Every
+    # bug today has been this shape.
+    _dl = _proof[_proof.index("function deadlineLine"):]
+    _dl = _dl[:_dl.index("\nfunction proofEmail")]
+    for _cond in ("number_flag", "changes_at", "auto_cut_optout"):
+        if _cond not in _dl:
+            fails.append("deadlineLine does not check %s, so it can promise a "
+                         "deadline on an order the sweep would refuse to act "
+                         "on" % _cond)
 if "approved_at IS NULL" not in _proof:
     fails.append("the proof cycle no longer excludes approved orders - it "
                  "would email people who already approved")

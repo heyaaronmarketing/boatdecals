@@ -203,10 +203,27 @@ function shell(inner) {
  * true for the customer reading them.
  */
 function deadlineLine(o, when) {
-  if (o.auto_cut_optout) {
-    return `<p style="font-size:13.5px;color:#5b7383;margin:16px 0 0">You ` +
-      `asked us to wait for your word, so nothing happens until you ` +
-      `approve &mdash; however long that takes.</p>`;
+  // The email must not promise a deadline the SWEEP would refuse to act on.
+  //
+  // Caught live: the first run after deploy sent a reminder to one of the
+  // four orders already in the queue, and those have number_flag NULL - they
+  // predate the column, so they can never be auto-approved. The reminder
+  // would have told that customer their proof goes ahead on a date when in
+  // fact it never will. In their favour, but still a false statement, and the
+  // same bug as every other one today: the email and the WHERE clause
+  // disagreeing about the policy.
+  //
+  // Conditions mirrored from autoApproveSweep. NULL or a non-empty flag both
+  // mean "a human owns this", so say the honest thing instead.
+  const eligible = o.number_flag === "" && !o.changes_at;
+  if (o.auto_cut_optout || !eligible) {
+    // Deliberately does NOT say "you asked us to wait" - this branch also
+    // covers orders a person is holding for other reasons, and telling
+    // somebody they asked for something they did not ask for is its own
+    // small lie.
+    return `<p style="font-size:13.5px;color:#5b7383;margin:16px 0 0">` +
+      `Nothing happens until you approve this &mdash; however long that ` +
+      `takes.</p>`;
   }
   if (!when) return "";
   return `<p style="font-size:13.5px;color:#5b7383;margin:16px 0 0">` +
@@ -252,6 +269,7 @@ function nudgeEmail(env, o, n) {
   // date plainly rather than softly.
   const when = niceDate(businessDeadline(o.proof_sent_at, AUTO_APPROVE_DAYS));
   const tail = o.auto_cut_optout || !when
+    || o.number_flag !== "" || o.changes_at
     ? deadlineLine(o, when)
     : (n >= 2
       ? `<p style="font-size:13.5px;color:#5b7383;margin:16px 0 0">This is ` +
