@@ -376,6 +376,21 @@ GUIDES = [
 # ------------------------------------------------------------------ states
 # fleet = registered vessels. vol = "{state} boat registration numbers".
 # vern = local vernacular that outranks the generic phrasing.
+# Every `fmt`, `decal` and `note` below was read off the page in `rules_src` on
+# the date in RULES_VERIFIED - the state's own site, never a competitor and
+# never a boater-education site that is not the state's own publication.
+# Same hard rule as engine/state_fees.py: if a state does not put it in words,
+# we say that instead of inferring the number. Florida, New York and Indiana
+# therefore have no `fmt` - their own pages do not publish a letter pattern,
+# and build.py simply omits that line rather than guessing one.
+#
+# `fmt`   the format line, as the state writes it
+# `decal` where the validation decal goes - the single most-asked question on
+#         these pages, and the one the ranking competitor answers nowhere
+# rules_src / rules_src_name  the page it came from, rendered as a link under
+#         the decal section. verify.py fails the build on a decal without one.
+RULES_VERIFIED = "2026-11-16"
+
 STATES = [
     dict(slug="iowa", name="Iowa", ab="IA", vol=20,
          agency="Iowa DNR", tier=1, home=True,
@@ -385,54 +400,292 @@ STATES = [
          decal="Iowa is specific about this: the validation decal goes on each side "
                "<strong>toward the stern of the registration number, 4 inches from it "
                "and in line with it</strong>. Not above, not below, not touching.",
+         rules_src="https://www.iowadnr.gov/things-do/boating/boating-registration",
+         rules_src_name="Iowa DNR, Boat Registration and Titling",
          note="This is our home state &mdash; the shop is in Evansdale, in Black Hawk "
               "County. Iowa also says plainly that <strong>no other numbers may be "
               "displayed on either side of the bow</strong>, so strip any old set off "
               "before the new one goes on."),
     dict(slug="florida", name="Florida", ab="FL", vol=140,
-         agency="Florida Department of Highway Safety and Motor Vehicles", tier=1),
+         agency="Florida Department of Highway Safety and Motor Vehicles", tier=1,
+         decal="Florida is the odd one out, and it catches people: the registration "
+               "decal goes on the <strong>port (left) side only</strong>, immediately "
+               "before or after the number &mdash; not one on each side. FLHSMV also "
+               "requires that decals from expired registrations be removed.",
+         rules_src="https://www.flhsmv.gov/motor-vehicles-tags-titles/vessels/numbering-and-decals/",
+         rules_src_name="FLHSMV, Numbering and Decals",
+         note="FLHSMV's numbering page gives the display rule &mdash; painted or "
+              "permanently attached to both sides of the bow, block letters at least "
+              "three inches high, reading left to right, contrasting, maintained in "
+              "readable condition &mdash; but it does not publish a letter-and-digit "
+              "pattern, so we do not print one. Copy the line off your card."),
     dict(slug="michigan", name="Michigan", ab="MC", vol=140,
-         agency="Michigan Secretary of State", tier=1),
+         agency="Michigan Secretary of State", tier=1,
+         fmt="MC 0000 AA &mdash; the MC prefix, four numerals, then two capital "
+             "letters. Michigan's rule bars <strong>I, O and Q</strong> from the "
+             "suffix because they read as numerals, and asks for spaces or hyphens "
+             "<strong>as wide as the letter M</strong> between the groups",
+         decal="Michigan writes this one to the inch. The validation decal is "
+               "<strong>about 3 inches square</strong> and goes <strong>3 inches "
+               "beyond the last letter of the number, on the same strake or level as "
+               "the number</strong>, on each side of the forward half, as high above "
+               "the water line as practical.",
+         rules_src="https://ars.apps.lara.state.mi.us/AdminCode/DownloadAdminCodeFile?FileName=1190_2013-027NR_AdminCode.pdf",
+         rules_src_name="Michigan DNR rule R 281.1203&ndash;1208, Numbering of Vessels and Motorboats"),
     dict(slug="new-york", name="New York", ab="NY", vol=20,
-         agency="New York State DMV", tier=1),
+         agency="New York State DMV", tier=1,
+         decal="New York measures from the bow rather than from the number. The DMV "
+               "says to put the registration stickers <strong>18 inches from the bow "
+               "on both sides of the boat</strong> &mdash; which it describes as about "
+               "where they land when a boat also carries numbers on the hull. On a "
+               "Coast Guard documented boat, which gets stickers and no number, they "
+               "go where the numbers would normally be.",
+         rules_src="https://dmv.ny.gov/registration/register-a-boat",
+         rules_src_name="New York DMV, Register a Boat"),
     dict(slug="california", name="California", ab="CF", vol=630,
          agency="California DMV", tier=1, vern="CF numbers",
+         fmt="CF 1234 AB or CF-1234-AB &mdash; the CF prefix, four digits, two "
+             "letters, with the space or hyphen the same size as a letter other than "
+             "I or a number other than 1. The DMV asks for plain vertical block "
+             "characters <strong>more than</strong> three inches high",
+         decal="The sticker goes on <strong>both sides, three inches from the "
+               "number</strong>. The DMV describes it as the immediate left of the CF "
+               "number on the starboard side and the immediate right on the port side "
+               "&mdash; which is the stern side on each. Nothing else may sit near it "
+               "except the CF number and, on fresh water, the Mussel Fee sticker.",
+         rules_src="https://www.dmv.ca.gov/portal/vehicle-registration/new-registration/register-your-boat-vessel/",
+         rules_src_name="California DMV, Register your boat/vessel",
          note="California is the one state that does not use its postal abbreviation. "
               "California boat numbers start with <strong>CF</strong>, and locals call them "
               "CF numbers - which is what people actually search for."),
     dict(slug="south-carolina", name="South Carolina", ab="SC", vol=30,
-         agency="South Carolina Department of Natural Resources", tier=1),
+         agency="South Carolina Department of Natural Resources", tier=1,
+         fmt="Block design not less than three inches high, in a color that clearly "
+             "contrasts with the hull, with the letter groups separated from the "
+             "numerals by hyphens or equivalent spaces, read left to right "
+             "<strong>as it appears on the certificate of number</strong>",
+         decal="South Carolina fixes both the side and the order: the year decals are "
+               "attached to each side of the bow <strong>immediately following the "
+               "number, within six inches</strong>.",
+         rules_src="https://www.dnr.sc.gov/boating/Titling_and_Registration/docs/WatercraftOutboardMotorApplication.pdf",
+         rules_src_name="SCDNR Watercraft/Outboard Motor Application, Display of Number and Decals"),
     dict(slug="wisconsin", name="Wisconsin", ab="WS", vol=70,
-         agency="Wisconsin DNR", tier=1),
+         agency="Wisconsin DNR", tier=1,
+         fmt="At least 3-inch block letters, contrasting with the boat, read left to "
+             "right, with the letters separated from the numbers by a space "
+             "<strong>at least two inches wide</strong>",
+         decal="Wisconsin requires the number and the expiration decals to be "
+               "displayed on the side of the boat, and shows the decal beside the "
+               "number in a diagram &mdash; but it does not state an offset in words, "
+               "so we will not put inches in its mouth. What it does say in words is "
+               "unusual and worth repeating: <strong>two-toned and camouflage numbers "
+               "are not legal and should not be used</strong>. A number that "
+               "disappears into a camo wrap fails even at the right height.",
+         rules_src="https://dnr.wisconsin.gov/permits/registrations/boat/BeforeYouOperate.html",
+         rules_src_name="Wisconsin DNR, What you should know before you operate your boat"),
     dict(slug="minnesota", name="Minnesota", ab="MN", vol=30,
-         agency="Minnesota DNR", tier=1),
+         agency="Minnesota DNR", tier=1,
+         fmt="At least 3 inches high, block character, with a <strong>3-inch "
+             "space</strong> between the MN and the numbers and another between the "
+             "numbers and the letters &mdash; the widest spacing rule of any state "
+             "here",
+         decal="Minnesota's clearance rule is the strictest we have found. The current "
+               "decal is <strong>always placed closer to the stern, within 4 inches of "
+               "the license number</strong>, and <strong>no other number, letter or "
+               "design may appear within 24 inches</strong> of the number or the "
+               "decal. A canoe, kayak, paddleboard, rowing shell, paddle boat, "
+               "sailboard or sailboat with no motor needs <strong>only the "
+               "decal</strong> &mdash; no 3-inch numbers at all.",
+         rules_src="https://files.dnr.state.mn.us/rlp/regulations/boatwater/boatingguide.pdf",
+         rules_src_name="Minnesota DNR 2026 Boating Guide"),
     dict(slug="texas", name="Texas", ab="TX", vol=110,
-         agency="Texas Parks and Wildlife Department", tier=1),
+         agency="Texas Parks and Wildlife Department", tier=1,
+         fmt="TX 0001 GG or TX-0001-GG &mdash; the numerals separated from the prefix "
+             "and the suffix by hyphens or equivalent spaces, in block characters of "
+             "good proportion not less than three inches in height",
+         decal="Texas measures off the number and runs aft: the validation decal is "
+               "affixed <strong>in line with, and three inches towards the rear of the "
+               "boat from, the TX number</strong>. A Coast Guard documented vessel may "
+               "display only the decal, on both sides of the bow.",
+         rules_src="https://tpwd.texas.gov/regulations/outdoor-annual/boating/title-registration-id-requirements/placement-of-tx-number-and-decal-on-vessels",
+         rules_src_name="TPWD Outdoor Annual, Placement of TX Number and Decal on Vessels"),
     dict(slug="pennsylvania", name="Pennsylvania", ab="PA", vol=10,
-         agency="Pennsylvania Fish and Boat Commission", tier=1),
+         agency="Pennsylvania Fish and Boat Commission", tier=1,
+         fmt="Bold block letters and numbers at least 3 inches high, contrasting with "
+             "the background, read left to right, separated by a dash or space "
+             "<strong>equal to the width of any letter or number except I or 1</strong>",
+         decal="Pennsylvania lets you choose the side of the number but pins the "
+               "height: the validation decal goes <strong>within 6 inches of the "
+               "number, before or following it, on the same level</strong>.",
+         rules_src="https://www.pa.gov/agencies/fishandboat/boating/register-title-a-boat",
+         rules_src_name="Pennsylvania Fish and Boat Commission, Register/Title a Boat",
+         note="The Commission says it plainly: <strong>it does not supply the actual "
+              "letters and numbers</strong>, and the owner is responsible for buying "
+              "and displaying them. That is the job this shop exists to do."),
     dict(slug="north-carolina", name="North Carolina", ab="NC", vol=90,
-         agency="NC Wildlife Resources Commission", tier=1),
+         agency="NC Wildlife Resources Commission", tier=1,
+         fmt="At least three-inch block lettering, <strong>any solid color</strong> "
+             "so long as it contrasts with the bow, letters separated from the "
+             "numerals by hyphens or equivalent spaces, read left to right as it "
+             "appears on the registration card",
+         decal="The decals go on the <strong>starboard and port side bow, within 6 "
+               "inches of the number</strong>. NCWRC also publishes the application "
+               "conditions most states leave out: remove the old validation decals "
+               "first, and apply <strong>at a temperature above 40&nbsp;&deg;F</strong> "
+               "to a surface that is clean, dry and free of dust, grease or wax.",
+         rules_src="https://www.ncwildlife.gov/affix-vessel-numbers-decalpdf/download",
+         rules_src_name="NCWRC, How to Affix Vessel Registration Numbers and the Decals (rev. 8/2023)"),
     dict(slug="georgia", name="Georgia", ab="GA", vol=110,
-         agency="Georgia DNR Wildlife Resources Division", tier=1),
+         agency="Georgia DNR Wildlife Resources Division", tier=1,
+         fmt="GA 3717 ZW or GA-3717-ZW &mdash; a space or hyphen between the letters "
+             "and the numbers, at least three-inch-high block letters in a color that "
+             "contrasts with the background, read left to right on both sides of the bow",
+         decal="Georgia runs the opposite way from Texas. The decals are displayed on "
+               "each side of the bow <strong>before the prefix letters of the "
+               "registration number</strong> &mdash; forward of it, not aft. And no "
+               "other numbers may be displayed on either side of the bow.",
+         rules_src="https://gadnrle.org/register-boat-pwc",
+         rules_src_name="Georgia DNR Law Enforcement, Registering Your Boat or Personal Water Craft"),
     dict(slug="virginia", name="Virginia", ab="VA", vol=20,
-         agency="Virginia Department of Wildlife Resources", tier=1),
+         agency="Virginia Department of Wildlife Resources", tier=1,
+         fmt="Displayed exactly as it appears on the registration, in block letters at "
+             "least 3 inches high, contrasting in color with the hull, read left to "
+             "right, with a space or hyphen separating <strong>both</strong> the VA and "
+             "the letter suffix from the numerals",
+         decal="The decal goes <strong>within 6 inches of the registration "
+               "number</strong> on each side of the watercraft, and Virginia is firm "
+               "about the rest: <strong>only the current decal may be visible, and "
+               "expired decals must be removed</strong>.",
+         rules_src="https://dwr.virginia.gov/boating/boaters-guide/watercraft-registration-and-titling-requirements/",
+         rules_src_name="Virginia DWR, Watercraft Registration, Titling and Sales Tax Requirements",
+         note="Virginia also says the number itself <strong>should never be "
+              "removed</strong> from the boat unless DWR assigns a new one &mdash; the "
+              "number stays with the hull even though the registration expires every "
+              "three years. Renew the decal; leave the lettering alone."),
     dict(slug="ohio", name="Ohio", ab="OH", vol=50,
-         agency="Ohio DNR Division of Parks and Watercraft", tier=1),
+         agency="Ohio DNR Division of Parks and Watercraft", tier=1,
+         fmt="OH, then four numbers, then two letters, with the four numbers in the "
+             "middle separated from the letters at either end by a hyphen or "
+             "equivalent space; block characters of good proportion, minimum 3 inches, "
+             "in <strong>one</strong> color that contrasts with the boat",
+         decal="Ohio's offset is six inches, not three: the decals go <strong>six "
+               "inches from the numbers, toward the back of the boat</strong>, one on "
+               "each side, and the two are identical. The colors rotate through four, "
+               "so an expired decal reads from a distance.",
+         rules_src="https://ohiodnr.gov/rules-and-regulations/rules-and-regulations-by-division/state-parks-and-watercraft/boating-rules/02-registration-decals-ohio-boat",
+         rules_src_name="ODNR, Displaying Your Numbers &amp; Decals &mdash; Ohio Boats",
+         note="Two Ohio quirks worth knowing before you order. The <strong>OH number "
+              "stays with the boat for its lifetime in Ohio</strong> regardless of how "
+              "many times it changes hands &mdash; so a used boat usually keeps the "
+              "number already on the card. And the <strong>Alternative Registration "
+              "for hand-powered vessels displays a single decal and no OH number at "
+              "all</strong>, which means a kayak may need nothing cut."),
     dict(slug="illinois", name="Illinois", ab="IL", vol=30,
-         agency="Illinois DNR", tier=1),
+         agency="Illinois DNR", tier=1,
+         fmt="IL 1234 AB &mdash; two capital letters, a space, four digits, a space, "
+             "two capital letters, all on one line, in at least three-inch-high block "
+             "letters whose color contrasts sharply with its background",
+         decal="Illinois puts it in one line: the decals are placed on both sides of "
+               "the bow <strong>after a space at the end of the number</strong>.",
+         rules_src="https://dnr.illinois.gov/content/dam/soi/en/web/dnr/boating/documents/boatdigest.pdf",
+         rules_src_name="Handbook of Illinois Boating Laws and Responsibilities (IDNR)"),
     dict(slug="missouri", name="Missouri", ab="MO", vol=70,
-         agency="Missouri State Highway Patrol", tier=1),
+         agency="Missouri Department of Revenue", tier=1,
+         fmt="MO 1234 AB &mdash; two alpha characters, four numerals, then two more, "
+             "with the prefix and suffix <strong>separated from the numbers by 2-inch "
+             "spaces</strong> (a hyphen may be used within that 2-inch space). Block "
+             "characters of good proportion, not less than 3 inches, dark on a light "
+             "hull and light on a dark one",
+         decal="Missouri is the one state on this list that does not put the decal "
+               "beside the number: the vessel decals are <strong>placed below each MO "
+               "number</strong>. An outboard motor decal goes on a solid part of the "
+               "metal housing instead, and stays valid until the motor changes hands.",
+         rules_src="https://dor.mo.gov/motor-vehicle/watercraft/additional-information.html",
+         rules_src_name="Missouri DOR, Boat/Vessel Titling and Registration",
+         note="Registration is through the <strong>Department of Revenue</strong>, not "
+              "the Highway Patrol &mdash; the Patrol is the water-patrol side. Pay DOR, "
+              "then order the lettering."),
     dict(slug="washington", name="Washington", ab="WN", vol=40,
          agency="Washington State Department of Licensing", tier=2,
+         fmt="BLOCK style, at least 3 inches high, contrasting with the background, "
+             "always read left to right, with the segments separated by a hyphen or "
+             "equivalent space. Washington's own example for a tender carries a fourth "
+             "group: WN 1234 ZZ 1 or WN-1234-ZZ-1",
+         decal="The decals are placed on both sides of the bow, <strong>aft of and "
+               "directly in line with the registration number, within 6 inches</strong> "
+               "of it.",
+         rules_src="https://dol.wa.gov/vehicles-and-boats/boats/register-boat/boat-registration-and-hull-identification-numbers",
+         rules_src_name="Washington DOL, Boat registration and hull identification numbers",
          note="Washington registration numbers begin with <strong>WN</strong>, not WA."),
     dict(slug="louisiana", name="Louisiana", ab="LA", vol=70,
-         agency="Louisiana Department of Wildlife and Fisheries", tier=2),
+         agency="Louisiana Department of Wildlife and Fisheries", tier=2,
+         fmt="LA-4002-CS or LA 4002 GS &mdash; a hyphen or space equal to the width of "
+             "a number (except 1) or a letter (except I) between the prefix, numerals "
+             "and suffix. Plain block design, at least 3 inches high, clearly visible "
+             "and legible, and <strong>placed vertically</strong>",
+         decal="The decals received from LDWF are attached to each side of the "
+               "vessel's bow <strong>within 6 inches of the number, before or after "
+               "it</strong>.",
+         rules_src="https://www.wlf.louisiana.gov/page/boat-title-and-registration-faqs",
+         rules_src_name="LDWF, Boat Title and Registration FAQs",
+         note="Louisiana is the only state here that says what to do about outlines, "
+              "and it matters if you order a two-color set: <strong>&ldquo;Disregard "
+              "border, outline, and shadowing when determining height and color "
+              "contrast.&rdquo;</strong> The 3-inch minimum is measured on the letter "
+              "itself, not on the outline around it &mdash; so order 3-inch "
+              "<em>letters</em>, not a 3-inch outlined block."),
     dict(slug="alabama", name="Alabama", ab="AL", vol=70,
-         agency="Alabama Law Enforcement Agency, Marine Patrol", tier=2),
+         agency="Alabama Law Enforcement Agency, Marine Patrol", tier=2,
+         fmt="Block characters of good proportion, not less than <strong>76 "
+             "millimeters (about 2.99 inches)</strong> in height &mdash; Alabama is "
+             "the state that writes the minimum in millimeters &mdash; properly spaced "
+             "so as to be easily readable, read left to right, in paint or decals that "
+             "contrast with the background",
+         decal="A current-year registration decal goes on each side of the vessel "
+               "<strong>within six inches (152.4 mm) of the number, either at the "
+               "beginning or the end</strong> of it. Alabama adds a condition most "
+               "states only imply: the decal is not properly placed unless it is the "
+               "<strong>only</strong> Alabama registration decal on the boat, so every "
+               "previous year's has to come off.",
+         rules_src="https://www.alea.gov/sites/default/files/Vessel%20Registration%20and%20Operation%20Requirements%202026.pdf",
+         rules_src_name="ALEA, Vessel Registration and Operation Requirements, rule 760-X-6-.03",
+         note="A caveat we would rather print than bury. These Alabama figures come "
+              "from ALEA's own 2026 rulemaking for chapter 760-X-6, which it describes "
+              "as importing and comprehensively updating the existing DCNR chapter "
+              "220-6. The document we read is the <strong>notice of intended "
+              "action</strong>, certified 20 July 2026, with comment closing 4 "
+              "September 2026 &mdash; and we could not confirm from ALEA's site that "
+              "the chapter has since been formally adopted. The millimetre figures are "
+              "ALEA's stated rule; if you are measuring to the edge of six inches, ring "
+              "Marine Patrol."),
     dict(slug="tennessee", name="Tennessee", ab="TN", vol=20,
-         agency="Tennessee Wildlife Resources Agency", tier=2),
+         agency="Tennessee Wildlife Resources Agency", tier=2,
+         fmt="TN 3717 ZW or TN-3717-ZW &mdash; letters separated from the numbers by a "
+             "space or hyphen, in at least three-inch-high plain vertical BLOCK "
+             "letters whose color contrasts with the background, read left to right "
+             "on both sides of the bow",
+         decal="Tennessee is the relaxed one: the decals <strong>may be placed to the "
+               "left or right of the registration number</strong> on both sides of the "
+               "bow. A Coast Guard documented vessel is handled completely differently "
+               "&mdash; its validation decals go on <strong>both sides of the vessel "
+               "on the windows closest to the main operator station</strong>, or, on a "
+               "sailboat, both sides of the bottom of the main mast.",
+         rules_src="https://www.tn.gov/content/dam/tn/twra/documents/boating/TWRA-TN-Boating-Handbook.pdf",
+         rules_src_name="2025 Tennessee Boating Laws and Responsibilities (TWRA)"),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
-         agency="Indiana Bureau of Motor Vehicles", tier=2),
+         agency="Indiana Bureau of Motor Vehicles", tier=2,
+         decal="Indiana gives a direction as well as a distance: the decals go on the "
+               "bow of each side of the watercraft, <strong>within three inches to the "
+               "right of the registration number</strong>. If a registration number is "
+               "not required to be displayed, they go on each side of the forward half "
+               "of the bow <strong>above the water line</strong>.",
+         rules_src="https://www.in.gov/bmv/registration-plates/boat-registration",
+         rules_src_name="Indiana BMV, Watercraft Registration",
+         note="The BMV page states where the number goes &mdash; painted on or "
+              "attached to each side of the bow, legible and clearly visible &mdash; "
+              "but does not publish a lettering pattern of its own, so we do not print "
+              "one. The federal rule quoted above is what governs the height and "
+              "spacing."),
 ]
 
 # Ten fonts, previewed in the customer's own lettering before they pick.

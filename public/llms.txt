@@ -101,7 +101,7 @@ and a state.
 - [Virginia (VA)](https://numbermyboat.com/registration-numbers/virginia/): prefix VA, issued by Virginia Department of Wildlife Resources
 - [Ohio (OH)](https://numbermyboat.com/registration-numbers/ohio/): prefix OH, issued by Ohio DNR Division of Parks and Watercraft
 - [Illinois (IL)](https://numbermyboat.com/registration-numbers/illinois/): prefix IL, issued by Illinois DNR
-- [Missouri (MO)](https://numbermyboat.com/registration-numbers/missouri/): prefix MO, issued by Missouri State Highway Patrol
+- [Missouri (MO)](https://numbermyboat.com/registration-numbers/missouri/): prefix MO, issued by Missouri Department of Revenue
 - [Washington (WN)](https://numbermyboat.com/registration-numbers/washington/): prefix WN, issued by Washington State Department of Licensing
 - [Louisiana (LA)](https://numbermyboat.com/registration-numbers/louisiana/): prefix LA, issued by Louisiana Department of Wildlife and Fisheries
 - [Alabama (AL)](https://numbermyboat.com/registration-numbers/alabama/): prefix AL, issued by Alabama Law Enforcement Agency, Marine Patrol

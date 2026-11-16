@@ -142,7 +142,7 @@ transactional path, not a traffic play.
 
 | Tier | States | Why |
 |---|---|---|
-| **0 — home** | **IA 340k** | Home state. Researched to the bottom: `IA 3717 ZW` format, registers via **county recorder** not the DNR, validation decal **4 inches toward the stern, in line with the number**, and no other numbers permitted on the bow. This is the depth template every other state page should eventually reach. |
+| **0 — home** | **IA 340k** | Home state. Researched to the bottom: `IA 3717 ZW` format, registers via **county recorder** not the DNR, validation decal **4 inches toward the stern, in line with the number**, and no other numbers permitted on the bow. This was the depth template every other state page had to reach — **all 21 reached it on 2026-11-16**. |
 | **1 — built** | FL 1.7M, MI 1.7M, NY 1.3M, CA 1.3M, SC 1.1M, WI 1.1M, MN 1.0M, TX 922k, PA 842k, NC 799k, GA 783k, VA 595k, OH 573k, IL 566k, MO 561k | Largest fleets, all measurable volume |
 | **2 — built** | WA 560k, TN 476k, LA 446k, AL 419k, IN 523k | Good fleet, thinner volume |
 | **3 — hold** | Remaining 30 + DC | Build only once Tier 1 indexes and ranks |
@@ -150,6 +150,57 @@ transactional path, not a traffic play.
 ⚠️ **Do not bulk-generate the remaining 30.** That is the mistake the aaron.chat
 town grid made. Each page must carry real distinct facts — prefix, agency, fleet,
 vernacular — or it is a doorway page.
+
+### Depth before width — what 2026-11-16 added, and why it was not 29 new states
+
+The roadmap's next step read "the remaining 29 states." This document's own
+Tier 3 line says the opposite — **hold until Tier 1 indexes and ranks** — and
+Tier 1 was published days ago. So the work went into depth instead, and found
+that **20 of the 21 pages had no `fmt` and no `decal` at all.** Only Iowa, the
+template, carried them. Twenty pages were asserting authority on a question
+they did not answer.
+
+All 21 now state, from the state's own page:
+
+- the **number format** as that state writes it (18 of 21 — Florida, New York
+  and Indiana publish no letter pattern, so those pages say nothing rather than
+  invent one), and
+- **exactly where the validation decal goes**, with the source linked and the
+  date a human read it, rendered on the page so it ages in public.
+
+That second one is the whole point. It is the most-asked question on a state
+page, the competitor answers it nowhere, and **it is genuinely different in
+every state** — which is the proof these are not templated doorway pages:
+
+| State | Where the decal goes |
+|---|---|
+| Florida | **port (left) side only**, immediately before or after the number |
+| Georgia | **before the prefix letters** — forward of the number |
+| Texas | in line with, **3 inches toward the stern** |
+| Missouri | **below** each MO number |
+| New York | **18 inches from the bow**, measured off the bow, not the number |
+| Minnesota | toward the stern within 4in, and **nothing else within 24 inches** |
+| Michigan | 3in beyond the last letter, **on the same strake** |
+| Indiana | **3 inches to the right** of the number |
+| Ohio | **6 inches** toward the stern |
+| Tennessee | left **or** right — and on a documented boat, **on the windows by the helm** |
+
+Three findings worth keeping:
+
+1. **Search summaries drift from the state's page.** A summary said Florida's
+   decal sits "within 6 inches" of the number; FLHSMV's own page says *port
+   side, immediately before or after*, with no inches at all. Everything here
+   was read off the primary page for that reason.
+2. **Alabama's figures come from a proposed rule.** ALEA's chapter 760-X-6 was
+   certified as a *notice of intended action* on 20 July 2026, comment closing
+   4 September; adoption is unconfirmed. The page says so in its own words.
+3. **Two defects surfaced while writing it**, both shipped and both now gated:
+   the Iowa hull (`AL-01`, captioned "validation decal aft") padded **all 21**
+   state pages — harmless until each page stated its own rule, at which point
+   it contradicted Georgia, Florida, Missouri and New York; and Missouri's
+   prose sent readers to the **Highway Patrol** while the fee block named the
+   **Department of Revenue**, which is the agency that actually registers the
+   boat.
 
 ### Local geography — new, because your brother has a shop
 

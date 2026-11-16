@@ -417,7 +417,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So AL 1234 AB, not AL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Alabama publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. A current-year registration decal goes on each side of the vessel within six inches (152.4 mm) of the number, either at the beginning or the end of it. Alabama adds a condition most states only imply: the decal is not properly placed unless it is the only Alabama registration decal on the boat, so every previous year's has to come off.
 
 Q: Do I have to register a kayak or canoe in Alabama?
 A: Alabama registers all motorized vessels, sailboats, and boats for hire. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Alabama Law Enforcement Agency, Marine Patrol system.
@@ -450,7 +450,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So CF 1234 AB, not CF1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — California publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The sticker goes on both sides, three inches from the number. The DMV describes it as the immediate left of the CF number on the starboard side and the immediate right on the port side — which is the stern side on each. Nothing else may sit near it except the CF number and, on fresh water, the Mussel Fee sticker.
 
 Q: Do I have to register a kayak or canoe in California?
 A: California registers all motorized vessels. All sailboats over 8 feet in length.. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the California DMV system.
@@ -483,7 +483,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So FL 1234 AB, not FL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Florida publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Florida is the odd one out, and it catches people: the registration decal goes on the port (left) side only, immediately before or after the number — not one on each side. FLHSMV also requires that decals from expired registrations be removed.
 
 Q: Do I have to register a kayak or canoe in Florida?
 A: Florida registers all motorboats; all non-motorized vessels over 16 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Florida Department of Highway Safety and Motor Vehicles system.
@@ -516,7 +516,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So GA 1234 AB, not GA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Georgia publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Georgia runs the opposite way from Texas. The decals are displayed on each side of the bow before the prefix letters of the registration number — forward of it, not aft. And no other numbers may be displayed on either side of the bow.
 
 Q: Do I have to register a kayak or canoe in Georgia?
 A: Georgia registers all motorized vessels and sailboats >12' in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Georgia DNR Wildlife Resources Division system.
@@ -549,7 +549,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So IL 1234 AB, not IL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Illinois publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Illinois puts it in one line: the decals are placed on both sides of the bow after a space at the end of the number.
 
 Q: Do I have to register a kayak or canoe in Illinois?
 A: Illinois registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Illinois DNR system.
@@ -594,7 +594,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So IN 1234 AB, not IN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Indiana publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Indiana gives a direction as well as a distance: the decals go on the bow of each side of the watercraft, within three inches to the right of the registration number. If a registration number is not required to be displayed, they go on each side of the forward half of the bow above the water line.
 
 Q: Do I have to register a kayak or canoe in Indiana?
 A: Indiana registers all motorized vessels on public waterways. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Indiana Bureau of Motor Vehicles system.
@@ -660,7 +660,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So LA 1234 AB, not LA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Louisiana publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The decals received from LDWF are attached to each side of the vessel's bow within 6 inches of the number, before or after it.
 
 Q: Do I have to register a kayak or canoe in Louisiana?
 A: Louisiana registers all motorized vessels; sailboats more than 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Louisiana Department of Wildlife and Fisheries system.
@@ -693,7 +693,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MC 1234 AB, not MC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Michigan publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Michigan writes this one to the inch. The validation decal is about 3 inches square and goes 3 inches beyond the last letter of the number, on the same strake or level as the number, on each side of the forward half, as high above the water line as practical.
 
 Q: Do I have to register a kayak or canoe in Michigan?
 A: Michigan registers all watercraft - excludes manually propelled boats 16 feet or less. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Michigan Secretary of State system.
@@ -726,7 +726,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MN 1234 AB, not MN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Minnesota publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Minnesota's clearance rule is the strictest we have found. The current decal is always placed closer to the stern, within 4 inches of the license number, and no other number, letter or design may appear within 24 inches of the number or the decal. A canoe, kayak, paddleboard, rowing shell, paddle boat, sailboard or sailboat with no motor needs only the decal — no 3-inch numbers at all.
 
 Q: Do I have to register a kayak or canoe in Minnesota?
 A: Minnesota registers all watercraft - excludes non-motorised boats 10 feet or less, waterfowl boats in season, rice boats at harvest, and seaplanes. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Minnesota DNR system.
@@ -753,16 +753,16 @@ Q: What do Missouri boat numbers start with?
 A: MO. Your full number runs prefix, digits, then a letter suffix — for example MO 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
 
 Q: Who issues boat registration in Missouri?
-A: You register through the Missouri State Highway Patrol. We only make the decals — you get the number from them first, then we cut it.
+A: You register through the Missouri Department of Revenue. We only make the decals — you get the number from them first, then we cut it.
 
 Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MO 1234 AB, not MO1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Missouri publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Missouri is the one state on this list that does not put the decal beside the number: the vessel decals are placed below each MO number. An outboard motor decal goes on a solid part of the metal housing instead, and stays valid until the motor changes hands.
 
 Q: Do I have to register a kayak or canoe in Missouri?
-A: Missouri registers all motorized vessels; sailboats over 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Missouri State Highway Patrol system.
+A: Missouri registers all motorized vessels; sailboats over 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Missouri Department of Revenue system.
 
 Q: How many registered boats are there in Missouri?
 A: 282,983, which puts Missouri 13th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
@@ -792,7 +792,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NY 1234 AB, not NY1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — New York publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. New York measures from the bow rather than from the number. The DMV says to put the registration stickers 18 inches from the bow on both sides of the boat — which it describes as about where they land when a boat also carries numbers on the hull. On a Coast Guard documented boat, which gets stickers and no number, they go where the numbers would normally be.
 
 Q: Do I have to register a kayak or canoe in New York?
 A: New York registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the New York State DMV system.
@@ -825,7 +825,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NC 1234 AB, not NC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — North Carolina publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The decals go on the starboard and port side bow, within 6 inches of the number. NCWRC also publishes the application conditions most states leave out: remove the old validation decals first, and apply at a temperature above 40 °F to a surface that is clean, dry and free of dust, grease or wax.
 
 Q: Do I have to register a kayak or canoe in North Carolina?
 A: North Carolina registers all motorized vessels; sailboats more than 14 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the NC Wildlife Resources Commission system.
@@ -858,7 +858,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So OH 1234 AB, not OH1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Ohio publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Ohio's offset is six inches, not three: the decals go six inches from the numbers, toward the back of the boat, one on each side, and the two are identical. The colors rotate through four, so an expired decal reads from a distance.
 
 Q: Do I have to register a kayak or canoe in Ohio?
 A: Ohio registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Ohio DNR Division of Parks and Watercraft system.
@@ -891,7 +891,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So PA 1234 AB, not PA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Pennsylvania publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Pennsylvania lets you choose the side of the number but pins the height: the validation decal goes within 6 inches of the number, before or following it, on the same level.
 
 Q: Do I have to register a kayak or canoe in Pennsylvania?
 A: Pennsylvania registers all motorized vessels and certain non-powered craft - also registers non-powered craft using state Fish & Boat Commission lakes and access areas. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Pennsylvania Fish and Boat Commission system.
@@ -924,7 +924,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So SC 1234 AB, not SC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — South Carolina publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. South Carolina fixes both the side and the order: the year decals are attached to each side of the bow immediately following the number, within six inches.
 
 Q: Do I have to register a kayak or canoe in South Carolina?
 A: South Carolina registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the South Carolina Department of Natural Resources system.
@@ -957,7 +957,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So TN 1234 AB, not TN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Tennessee publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Tennessee is the relaxed one: the decals may be placed to the left or right of the registration number on both sides of the bow. A Coast Guard documented vessel is handled completely differently — its validation decals go on both sides of the vessel on the windows closest to the main operator station, or, on a sailboat, both sides of the bottom of the main mast.
 
 Q: Do I have to register a kayak or canoe in Tennessee?
 A: Tennessee registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Tennessee Wildlife Resources Agency system.
@@ -990,7 +990,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So TX 1234 AB, not TX1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Texas publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Texas measures off the number and runs aft: the validation decal is affixed in line with, and three inches towards the rear of the boat from, the TX number. A Coast Guard documented vessel may display only the decal, on both sides of the bow.
 
 Q: Do I have to register a kayak or canoe in Texas?
 A: Texas registers all motorized vessels and sailboats 14 feet or more in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Texas Parks and Wildlife Department system.
@@ -1023,7 +1023,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So VA 1234 AB, not VA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Virginia publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The decal goes within 6 inches of the registration number on each side of the watercraft, and Virginia is firm about the rest: only the current decal may be visible, and expired decals must be removed.
 
 Q: Do I have to register a kayak or canoe in Virginia?
 A: Virginia registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Virginia Department of Wildlife Resources system.
@@ -1056,7 +1056,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So WN 1234 AB, not WN1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Washington publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The decals are placed on both sides of the bow, aft of and directly in line with the registration number, within 6 inches of it.
 
 Q: Do I have to register a kayak or canoe in Washington?
 A: Washington registers all motorboats - excludes motorboats under 16 feet with motors of 10 hp or less on exclusive state waters; sailboats >16 ft in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Washington State Department of Licensing system.
@@ -1089,7 +1089,7 @@ Q: Do the numbers need a space or a hyphen?
 A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So WS 1234 AB, not WS1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
 
 Q: Where do they go on the boat?
-A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal goes near the number — Wisconsin publishes the exact offset, and it is usually within a few inches.
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Wisconsin requires the number and the expiration decals to be displayed on the side of the boat, and shows the decal beside the number in a diagram — but it does not state an offset in words, so we will not put inches in its mouth. What it does say in words is unusual and worth repeating: two-toned and camouflage numbers are not legal and should not be used. A number that disappears into a camo wrap fails even at the right height.
 
 Q: Do I have to register a kayak or canoe in Wisconsin?
 A: Wisconsin registers all motorized vessels & sailboats over 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Wisconsin DNR system.

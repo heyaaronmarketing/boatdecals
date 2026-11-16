@@ -409,6 +409,167 @@ for _s in _ST:
         if _name.split(" and ")[0].split(",")[0] not in _h:
             fails.append("%s: water %r never reaches the page" % (_s["slug"], _name))
 
+# ---- the display rules ---------------------------------------------------
+# Where the validation decal goes is the most-asked question on a state page
+# and the easiest thing on it for a reader to check in one click, so it gets
+# the same posture as the fees: the state's own page or nothing. The failure
+# this gate exists to stop is a plausible offset copied from a boater-education
+# site. Those sites are not wrong often, but they are not the state, and when
+# a state moves its rule they do not move with it.
+from content import RULES_VERIFIED as _RV
+# Official state sources are overwhelmingly .gov, with state .us domains for
+# administrative-code servers. gadnrle.org is the one named exception: it is
+# Georgia DNR's own Law Enforcement Division site, which Georgia runs on .org.
+# Add to this list only after checking WHO operates the domain - the point of
+# the list is that a plausible-looking .com can never slip in silently.
+_SRC_OK_HOSTS = {"gadnrle.org"}
+
+
+def _gov_host(url):
+    _h = re.sub(r"^https://", "", url).split("/")[0].lower()
+    return (_h in _SRC_OK_HOSTS or _h.endswith(".gov")
+            or re.search(r"\.state\.[a-z]{2}\.us$", _h) is not None
+            or _h.endswith(".us"))
+
+
+for _s in _ST:
+    _page = OUT / "registration-numbers" / _s["slug"] / "index.html"
+    if not _page.exists():
+        continue
+    _h = _page.read_text()
+    _claims = [_k for _k in ("fmt", "decal") if _s.get(_k)]
+    if not _claims:
+        fails.append("%s publishes no format or decal-placement rule - the "
+                     "page is then the competitor's page with our logo on it"
+                     % _s["slug"])
+        continue
+    if not (_s.get("rules_src") or "").startswith("https://"):
+        fails.append("%s states %s with no https rules_src - an unsourced "
+                     "measurement is a guess" % (_s["slug"], "/".join(_claims)))
+    elif not _gov_host(_s["rules_src"]):
+        fails.append("%s cites %s for its display rules, which is not a state "
+                     "government host. The rule is the state's own page, never "
+                     "a boater-education or competitor site"
+                     % (_s["slug"], _s["rules_src"]))
+    if not (_s.get("rules_src_name") or "").strip():
+        fails.append("%s has a rules_src with no rules_src_name to label it"
+                     % _s["slug"])
+    # The source must be on the page as a link, not merely in the data.
+    if _s.get("rules_src") and _s["rules_src"] not in _h:
+        fails.append("%s does not link its display-rules source %s"
+                     % (_s["slug"], _s["rules_src"]))
+    if _s.get("decal"):
+        if "Where the validation decal goes in %s" % _s["name"] not in _h:
+            fails.append("%s has decal-placement research that never renders "
+                         "a section on the page" % _s["slug"])
+        if "last checked <time datetime=\"%s\">%s</time>" % (_RV, _RV) not in _h:
+            fails.append("%s does not show the date its display rules were "
+                         "last checked in readable text - a rule with no "
+                         "visible date never ages in public" % _s["slug"])
+    # Distinctive phrases have to survive into the HTML. A state page whose
+    # whole value is a specific offset must actually print the offset. Both
+    # sides are flattened first: the field is written with <strong> inside it,
+    # so a probe taken from the stripped field spans a tag boundary in the
+    # page and a raw substring test would always fail.
+    _flatpage = re.sub(r"\s+", " ", html.unescape(re.sub(
+        r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", _h, flags=re.S))))
+    for _k in _claims:
+        _plain = re.sub(r"\s+", " ", html.unescape(
+            re.sub(r"<[^>]+>", " ", _s[_k])))
+        _probe = max(re.findall(r"[A-Za-z][A-Za-z ,']{24,}", _plain) or [""],
+                     key=len).strip()
+        if _probe and _probe not in _flatpage:
+            fails.append("%s: %s text never reaches the page (%r)"
+                         % (_s["slug"], _k, _probe[:40]))
+
+# A state page must not show another state's hull. AL-01 - the Iowa shot, with
+# "IA 3717 ZW" on the bow and a caption saying the decal sits aft - padded all
+# 21 state pages for months. That was merely odd until each page started
+# stating its own rule; on Georgia's page the caption now contradicts Georgia,
+# which puts the decal forward of the prefix letters.
+for _s in _ST:
+    _page = OUT / "registration-numbers" / _s["slug"] / "index.html"
+    if not _page.exists():
+        continue
+# Scoped to the captions on purpose. Two other numbers on a state page are
+# legitimately generic and stay: the order widget's placeholder lettering, and
+# the TX example inside the quoted 33 CFR 173.27 spacing rule, which is a
+# federal illustration rather than a claim about this state. A caption under a
+# photograph of a hull is neither - it reads as "this is what yours looks
+# like", so it has to be this state's.
+    for _c in re.findall(r"<figcaption[^>]*>(.*?)</figcaption>",
+                         _page.read_text(), re.S):
+        _cf = html.unescape(re.sub(r"<[^>]+>", " ", _c))
+        for _other in sorted({_x[:2] for _x in
+                              re.findall(r"\b[A-Z]{2} \d{4}\b", _cf)}):
+            if _other != _s["ab"]:
+                fails.append("%s: a caption shows a %s-prefixed number. A "
+                             "photo caption on a state page reads as \"this is "
+                             "yours\", so it cannot be another state's hull"
+                             % (_s["slug"], _other))
+
+# "What a Ohio number looks like" shipped on four state pages. The article is
+# decided by the state name, and only five of ours begin with a vowel sound,
+# so the check is a list rather than a guess about letters (" a UV wrap" is
+# correct English and a letter-based rule would flag it).
+# Kept in step with build.art() deliberately - the same closed list, so adding
+# Alaska or Oregon as a state page is covered before the page is written.
+_VOWEL_STATES = ("Alabama", "Alaska", "Arizona", "Arkansas", "Idaho",
+                 "Illinois", "Indiana", "Iowa", "Ohio", "Oklahoma", "Oregon")
+for _f in sorted(list(OUT.rglob("index.html")) + list(OUT.rglob("llms*.txt"))):
+    _t = _f.read_text()
+    for _v in _VOWEL_STATES:
+        if " a %s " % _v in _t:
+            fails.append("%s reads \"a %s\" - that needs \"an\""
+                         % (_f.relative_to(OUT), _v))
+
+# Who issues the registration is stated twice - content.STATES for the prose
+# and state_fees.py for the fee block - and they drifted: Missouri's pages sent
+# readers to the Highway Patrol while the fee block named the Department of
+# Revenue, which is the agency that actually registers the boat. Abbreviations
+# are expanded explicitly rather than guessed, so the check is auditable.
+_AGENCY_ABBR = {
+    "dnr": "department of natural resources",
+    "dmv": "department of motor vehicles",
+    "bmv": "bureau of motor vehicles",
+    "dor": "department of revenue",
+    "dol": "department of licensing",
+    "dwr": "department of wildlife resources",
+    "alea": "alabama law enforcement agency",
+    "twra": "tennessee wildlife resources agency",
+    "ncwrc": "north carolina wildlife resources commission",
+    "flhsmv": "florida department of highway safety and motor vehicles",
+    "ldwf": "louisiana department of wildlife and fisheries",
+    "odnr": "ohio department of natural resources",
+    "scdnr": "south carolina department of natural resources",
+    "tpwd": "texas parks and wildlife department",
+    "pfbc": "pennsylvania fish and boat commission",
+}
+# "commission" is deliberately NOT a stopword: "Fish and Boat Commission" and
+# "Wildlife Resources Commission" are the distinctive part of those names.
+_AGENCY_STOP = {"the", "and", "state", "department", "division", "bureau",
+                "agency", "office", "your", "county", "through", "behalf"}
+
+
+def _agency_words(text, state_name):
+    _t = text.lower()
+    for _ab, _full in _AGENCY_ABBR.items():
+        _t = re.sub(r"\b%s\b" % _ab, _full, _t)
+    _drop = _AGENCY_STOP | set(state_name.lower().split())
+    return {_w for _w in re.findall(r"[a-z]{4,}", _t) if _w not in _drop}
+
+
+for _s in _ST:
+    _f = _SF.FEES.get(_s["slug"])
+    if not _f:
+        continue
+    _a = _agency_words(_s["agency"], _s["name"])
+    _b = _agency_words(_f["agency"], _s["name"])
+    if _a and _b and not (_a & _b):
+        fails.append("%s names two different agencies: content.STATES says %r, "
+                     "state_fees.py says %r. One of them is sending readers to "
+                     "the wrong office" % (_s["slug"], _s["agency"], _f["agency"]))
+
 # Every state accent must carry white text. The prefix letters sit on `deep`
 # with a `deep` halo, so a palette edit that lightens one turns the badge into
 # nothing. 4.5:1 is the WCAG AA threshold for large text with room to spare.

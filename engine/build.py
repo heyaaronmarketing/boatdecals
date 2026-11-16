@@ -8,7 +8,7 @@ from content import (SITE, PRICE, UPGRADES, PRODUCTS, BOAT_TYPES, TOOLS, GUIDES,
                      STATES, FONTS, FONT_NAMES, COLORS, FAQ_HOME,
                      LOCAL_TOWNS, LOCAL_WATERS, head_fonts_href, STRIPE_PK,
                      VESSEL_PREFIX, POSTAL_MISTAKE, POSTAL_TO_VESSEL,
-                     ORDER_COLORS)
+                     ORDER_COLORS, RULES_VERIFIED)
 from style import CSS
 import namegen as NG
 from state_fees import FEES as STATE_FEES, VERIFIED as FEES_VERIFIED
@@ -1802,6 +1802,21 @@ def state_fees_block(s):
                src))
 
 
+def art(name):
+    """"a" or "an" for a state name, decided by a list rather than a letter.
+
+    "What a Ohio number looks like" shipped on four state pages. A rule keyed
+    on the first letter is not safe in general - "a UV-stable vinyl" is
+    correct - but across fifty state names the vowel-sound set is small,
+    closed and checkable, so it is written out. verify.py fails the build on
+    the five wrong pairings.
+    """
+    return "an" if name.split()[0] in ("Alabama", "Alaska", "Arizona",
+                                       "Arkansas", "Idaho", "Illinois",
+                                       "Indiana", "Iowa", "Ohio",
+                                       "Oklahoma", "Oregon") else "a"
+
+
 def fee_term(period):
     """The registration term, short enough for a table cell.
 
@@ -2008,13 +2023,23 @@ def build_state(s):
     # decorative: the state's own hull next to its format, the registration
     # card next to "getting the number", what arrives next to "ordering".
     body = (note
-      + ('<h2>What a %s number looks like</h2>'
-         '<p>A %s registration number is built from three parts: the state prefix '
+      + ('<h2>What %s %s number looks like</h2>'
+         '<p>%s %s registration number is built from three parts: the state prefix '
          '<strong>%s</strong>, a block of digits, and a letter suffix. Written out with '
          'the spacing the law requires, it looks like <strong>%s</strong>.</p>'
-         % (nm, nm, ab, example))
+         % (art(nm), nm, art(nm).capitalize(), nm, ab, example))
       + ('<p><strong>%s format:</strong> %s.</p>' % (nm, s["fmt"]) if s.get("fmt") else "")
-      + ('<h2>Where the validation decal goes in %s</h2><p>%s</p>' % (nm, s["decal"])
+      # The decal offset is the single most-asked question on these pages and
+      # the one the ranking competitor answers nowhere. It is also the easiest
+      # thing on the page for a reader to check in one click, so it carries its
+      # source and the date a human read it - same posture as the fee block.
+      + (('<h2>Where the validation decal goes in %s</h2><p>%s</p>'
+          '<p class=srcline>Display rules read off <a href="%s" rel="nofollow '
+          'noopener" target="_blank">%s</a>, last checked '
+          '<time datetime="%s">%s</time>. If %s has changed them since, the '
+          'state&rsquo;s page wins and we want to hear about it.</p>')
+         % (nm, s["decal"], s["rules_src"], s["rules_src_name"],
+            RULES_VERIFIED, RULES_VERIFIED, nm)
          if s.get("decal") else "")
       + vb
       + CB.FED_RULE
@@ -2026,14 +2051,21 @@ def build_state(s):
          % s.get("register_at", "the " + s["agency"]))
       + state_fees_block(s)
       + CB.CONTRAST_NOTE
-      + '<h2>Ordering for a %s boat</h2>'
+      + '<h2>Ordering for %s %s boat</h2>'
         '<p>Type the number as it appears on your card, pick a color that contrasts with '
         'your hull, and leave the height at 3 inches unless you want it bolder. You will '
         'see your exact lettering in the preview before you pay &mdash; that is what '
-        'gets cut.</p>' % nm)
+        'gets cut.</p>' % (art(nm), nm))
 
     own = PAGE_IMAGE.get(path)
-    imgs = ([own] if own else []) + ["AL-01", "HB-4", "PR-1", "PR-6"]
+    # AL-01 used to pad every state page. It is the IOWA shot: it carries
+    # "IA 3717 ZW" and a caption saying the decal sits aft - which is Iowa's
+    # rule and is wrong on four of these pages now that each one states its
+    # own. Georgia puts the decal FORWARD of the prefix letters, Florida on
+    # the port side only, Missouri BELOW the number, New York 18 inches from
+    # the bow. A state page never borrows another state's hull; the fillers
+    # below are product shots carrying no state number at all.
+    imgs = ([own] if own else []) + ["HB-4", "PR-1", "PR-6"]
     band = Band()
     main = (hero(h1,
             "Legal 3-inch block numbers starting with %s, cut from marine vinyl, "
