@@ -2280,13 +2280,27 @@ def build_tool_names():
 
 def build_tool_funny():
     t = TOOLS[1]
+    # Rendered from the bank via tools.funny_sections(), and the count in the
+    # lede is derived from the same call - so the number a reader can check by
+    # scrolling is the number the page prints. The title said 400 against 109
+    # for months because that number was typed in four places and counted in
+    # none.
+    sections = T.funny_sections()
     groups = "".join(
         '<h2>%s</h2><div class=names>%s</div>'
-        % (g, "".join("<div>%s</div>" % e(n) for n in names))
-        for g, names in T.FUNNY_GROUPS)
-    body = ('<p class=lede>Sorted by how the joke actually lands, not alphabetically. '
-            'The ones in the first group get a laugh; the ones in the last group get you '
-            'a conversation at the fuel dock whether you wanted one or not.</p>'
+        % (g, "".join('<div%s>%s%s</div>'
+                      % (' class=dock title="Fine on the boat. Think twice before '
+                         'you have to say it on channel 16."' if dock else "",
+                         e(n), '<small>%s</small>' % e(note) if note else "")
+                      for n, dock, note in rows))
+        for g, rows in sections)
+    body = ('<p class=lede>%s names, sorted by how the joke actually lands rather '
+            'than alphabetically. The first groups get a laugh; the later ones get you '
+            'a conversation at the fuel dock whether you wanted one or not. The %d '
+            '<span class=dock>marked like this</span> are fine on the boat and awkward '
+            'read out over the radio.</p>'
+            % ("{:,}".format(T.funny_count()),
+               sum(1 for _, rows in sections for _, d, _n in rows if d))
             + groups
             + '<div class=prose><h2>The ones we would talk you out of</h2>'
             '<p>We will cut anything legal, but two categories come back as regrets:</p>'

@@ -42,7 +42,7 @@ META = {
  "/tools/boat-name-generator/": ("Free Boat Name Generator - 1,000+ Real Ideas",
        "Twenty-two categories, a radio-call test and a transom preview in real "
        "marine fonts. No email wall."),
- "/tools/funny-boat-names/": ("400 Funny Boat Names That Actually Land",
+ "/tools/funny-boat-names/": ("900+ Funny Boat Names That Actually Land",
        "Sorted by how hard the joke lands, with the ones that fail the radio "
        "test marked. Free, no email."),
  "/tools/registration-number-layout-checker/":

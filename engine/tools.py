@@ -51,7 +51,7 @@ FUNNY_GROUPS = [
   "Reel Lucky","Hooked Up","Multiple Scoregasms","Baitin Around","Knot Guilty",
   "Pour Decisions","Gone Coastal","Ships Happen","Just Add Water","Seaduction"]),
  ("The money jokes", [
-  "Liquid Asset","Second Mortgage","Tax Write Off","Boat Payment","Debt Sentence",
+  "B.O.A.T.","Liquid Asset","Second Mortgage","Tax Write Off","Boat Payment","Debt Sentence",
   "Knot Paid For","Marina Del Broke","Sunk Cost","Depreciating Asset","Interest Only",
   "Margin Call","Overdraft","Spent It","Pretax","Net Worth","Loose Change",
   "The Deductible","Escrow","Dry Powder","Severance"]),
@@ -243,3 +243,115 @@ LAYOUT_JS = r"""
   go();
 })();
 """
+
+
+# ---------------------------------------------------------- the funny page
+#
+# WHY THIS EXISTS. The page's title, meta description and share card all said
+# "400 Funny Boat Names" while FUNNY_GROUPS above held 110 - one of which was
+# listed twice, so 109 distinct. A listicle whose headline number is wrong in
+# the <title> is the easiest thing on the site for a reader to disprove: they
+# only have to scroll.
+#
+# The fix is not to lower the number. mcp/data/name_bank.json already holds
+# nearly a thousand names that are tagged, levelled and sorted into lanes, and
+# none of them were reaching this page. So the page now renders FROM the bank,
+# and every printed count is DERIVED from what actually renders - there is no
+# number typed anywhere for a build to drift away from.
+#
+# The six hand-curated groups above stay, and stay first. They are the
+# editorial claim the page makes ("sorted by how the joke actually lands"),
+# and a thousand names dumped alphabetically would be a worse page, not a
+# bigger one.
+import json as _json
+import os as _os
+
+# Lanes from the bank, in the order they appear on the page, with the heading
+# a reader sees. `classy` is deliberately absent: those names are good, but
+# they are not funny, and padding a funny list with them is the same lie in a
+# different direction.
+BANK_LANES = [
+    ("double",      "Double meanings (read it twice)"),
+    ("ironic",      "Ironic, if you know the boat"),
+    ("deadpan",     "Deadpan, said with a straight face"),
+    ("scratch",     "The ones that make people look twice"),
+    ("wtf",         "Genuinely strange"),
+    ("payments",    "What it cost you"),
+    ("corporate",   "For the one who never really left the office"),
+    ("retirement",  "Retired, and not quiet about it"),
+    ("divorce",     "After the divorce"),
+    ("couples",     "Bought together, named together"),
+    ("fishing",     "Fishing, specifically"),
+    ("pontoon",     "Pontoon energy"),
+    ("food",        "Food and drink"),
+    ("nerd",        "For the nerds"),
+    ("genz",        "If your crew is under thirty"),
+    ("midwest",     "Midwest, ope"),
+    ("existential", "Existential, at 6am on flat water"),
+    ("anagram",     "Anagrams and wordplay"),
+    ("misspelled",  "Deliberately misspelled"),
+]
+
+_BANK = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                      "mcp", "data", "name_bank.json")
+
+
+def funny_sections():
+    """Every group on the funny page: (heading, [(name, dock_talk)]).
+
+    Deduplicated across the WHOLE page, not per group - "Pour Decisions" was
+    in two of the curated groups and so was counted twice by anything that
+    trusted the group lengths.
+
+    `dock_talk` is the bank's level_code 'd': fine on the boat, awkward read
+    out over channel 16. The page marks those rather than dropping them,
+    which is what the share card has always promised.
+    """
+    try:
+        with open(_BANK, encoding="utf-8") as fh:
+            bank = _json.load(fh)["names"]
+    except (OSError, ValueError, KeyError):
+        bank = []                       # the curated page still builds
+    meta = {r["name"]: r for r in bank}
+
+    def row(n):
+        """(name, dock_talk, expansion).
+
+        Metadata comes from the bank even for a curated name, because the bank
+        is built FROM this file and the tagging pass is where the level and the
+        note were recorded.
+
+        The note is printed ONLY for a backronym. 254 names carry one, but most
+        are glosses of the pun - "not working" under Knot Working - and this
+        page's own copy says that a joke needing a setup is not a boat name.
+        A backronym is the exception that proves it: B.O.A.T. is unreadable
+        without "Break Out Another Thousand", because the expansion IS the
+        name.
+        """
+        r = meta.get(n) or {}
+        note = (r.get("tag_note") or r.get("note")
+                if r.get("mechanism_code") == "ba" else None)
+        return (n, r.get("level_code") == "d", note)
+
+    out, seen = [], set()
+    for g, names in FUNNY_GROUPS:
+        rows = [row(n) for n in names if not (n in seen or seen.add(n))]
+        if rows:
+            out.append((g, rows))
+    for lane, heading in BANK_LANES:
+        rows = []
+        for r in bank:
+            n = r["name"]
+            if (lane in (r.get("categories") or [])
+                    and r.get("mechanism_code") != "sincere"
+                    and n not in seen):
+                seen.add(n)
+                rows.append(row(n))
+        if rows:
+            out.append((heading, rows))
+    return out
+
+
+def funny_count():
+    """How many names the page actually renders. Never typed, only counted."""
+    return sum(len(rows) for _, rows in funny_sections())

@@ -4,7 +4,7 @@
   "engine/namegen.py",
   "engine/tools.py:FUNNY_GROUPS"
  ],
- "name_count": 1089,
+ "name_count": 1090,
  "categories": [
   "anagram",
   "classy",
@@ -72,6 +72,7 @@
   "work"
  ],
  "mechanisms": [
+  "backronym",
   "deadpan understatement",
   "double meaning",
   "homophone pun",
@@ -1118,6 +1119,30 @@
    "overuse_tier": 0,
    "mechanism_code": "dp",
    "level_code": "c"
+  },
+  {
+   "name": "B.O.A.T.",
+   "categories": [
+    "funny:The money jokes"
+   ],
+   "note": null,
+   "char_count": 8,
+   "word_count": 1,
+   "source": "bank",
+   "humor_mechanism": "backronym",
+   "humor_level": "clean",
+   "boat_types": [],
+   "style_lanes": [
+    "ironic",
+    "dock"
+   ],
+   "themes": [
+    "money"
+   ],
+   "overuse_tier": 0,
+   "mechanism_code": "ba",
+   "level_code": "c",
+   "tag_note": "Break Out Another Thousand"
   },
   {
    "name": "Bad Mussel",

@@ -77,7 +77,7 @@ LINES = {
  "/tools/boat-name-generator/": dict(main="Wet Couch", script=True,
      kicker="free boat name generator", hull="teal"),
  "/tools/funny-boat-names/": dict(main="Ship Faced", script=True,
-     kicker="400 funny boat names", hull="red"),
+     kicker="988 funny boat names", hull="red"),
  "/tools/hull-number-decoder/": dict(main="YOUR HIN KNOWS|WHEN SHE|WAS BUILT",
      kicker="free hull number decoder", hull="black"),
  "/tools/registration-number-layout-checker/": dict(

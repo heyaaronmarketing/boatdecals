@@ -3438,6 +3438,63 @@ elif not _shape:
                      "all %d is ~670KB for a step most orders pick one face from"
                      % (_got, _want, len(_C.FONTS)))
 
+# ---- the funny list says how many it has ---------------------------------
+# This page's <title>, its meta description and its share card all said "400
+# Funny Boat Names" while the page rendered 110 - 109 distinct, because one
+# name was in two groups. A listicle whose headline number is wrong in the
+# title is the easiest claim on the site to disprove: a reader only has to
+# scroll. So the counts are derived now, and this proves the rendered page
+# agrees with every number printed on it.
+_fun = (OUT / "tools" / "funny-boat-names" / "index.html")
+if not _fun.exists():
+    fails.append("the funny-names page did not build")
+else:
+    _ft = _fun.read_text()
+    _names, _dock = [], 0
+    # Count every tile inside every .names grid, including the dock-marked ones.
+    for _m in re.finditer(r'<div class=names>(.*?)(?=<h2|<div class=prose)', _ft, re.S):
+        # A tile may carry a <small> expansion (backronyms do), so the name is
+        # everything up to the first child tag rather than up to the closing
+        # </div>. Getting this wrong under-counts silently, which is the exact
+        # failure this gate exists to stop - it caught itself doing it.
+        for _t2 in re.finditer(
+                r'<div(\s+class=dock[^>]*)?>([^<]+)(?:<small>[^<]*</small>)?</div>',
+                _m.group(1)):
+            _names.append(html.unescape(_t2.group(2)))
+            if _t2.group(1):
+                _dock += 1
+    import tools as _T
+    _want = _T.funny_count()
+    if len(_names) != _want:
+        fails.append("the funny page renders %d names but tools.funny_count() "
+                     "says %d - the two have to be the same number or the "
+                     "printed count is a guess again" % (len(_names), _want))
+    _dupes = sorted({_n for _n in _names if _names.count(_n) > 1})
+    if _dupes:
+        fails.append("the funny page lists %d name(s) twice (%s) - a duplicate "
+                     "inflates the count a reader is invited to check"
+                     % (len(_dupes), ", ".join(_dupes[:3])))
+    # The lede prints the total and the dock-marked total; both must be real.
+    _lede = re.search(r'<p class=lede>([\d,]+) names.*?The (\d+)\s*<span class=dock>',
+                      _ft, re.S)
+    if not _lede:
+        fails.append("the funny page's lede no longer prints its own counts")
+    else:
+        if int(_lede.group(1).replace(",", "")) != len(_names):
+            fails.append("the funny page's lede claims %s names against %d "
+                         "rendered" % (_lede.group(1), len(_names)))
+        if int(_lede.group(2)) != _dock:
+            fails.append("the funny page's lede claims %s radio-awkward names "
+                         "against %d marked" % (_lede.group(2), _dock))
+    # The title may round DOWN to a friendly number and must never round up.
+    _ttl = re.search(r"<title>([\d,]+)\+", _ft)
+    if not _ttl:
+        fails.append("the funny page's title no longer carries a count")
+    elif int(_ttl.group(1).replace(",", "")) > len(_names):
+        fails.append("the funny page's title claims %s+ names against %d "
+                     "rendered - the headline number may round down, never up"
+                     % (_ttl.group(1), len(_names)))
+
 # ---- state registration fees ---------------------------------------------
 # The competitive premise of these pages is that the figures are right, so
 # the gate is about provenance, not formatting. A fee without a source is
