@@ -2158,10 +2158,39 @@ if 0 < _i_as < _i_rd:
 
 # ---- one hostname, one spelling -----------------------------------------
 # Search Console, 15 Nov 2026: 69 "Alternate page with proper canonical tag"
-# against a 59-page site. www served a complete 200 mirror, every page of it
-# canonicalising back to the apex - and the trailing-slash redirect above
-# rebuilt its target from url.origin, so www redirected to www and the
-# mirror stayed self-consistent and crawlable.
+# against a 59-page site. www served a complete 200 mirror, and the
+# trailing-slash redirect above rebuilt its target from url.origin, so www
+# redirected to www and the mirror stayed self-consistent and crawlable.
+#
+# CORRECTION, from the 16 Nov drilldown export, which carried the URLs the
+# first export did not: the 69 were NOT all www. 46 were www and 23 were
+# APEX pages - meaning Google had consolidated those 23 on the www twin and
+# called the apex the alternate, the opposite way round from the other 46.
+# That is what a crawlable mirror does: it does not lose consistently, it
+# makes Google choose page by page, and it chose both ways. Every crawl date
+# in the export is 3-14 Nov, before the redirect shipped on the 16th.
+#
+# So the canonical a page emits is not a detail - it is the signal that
+# decides which of two hostnames wins. It is gated below.
+for _f in sorted(OUT.rglob("index.html")):
+    _h = _f.read_text()
+    _m = re.search(r'<link rel="?canonical"?[^>]*href="([^"]+)"', _h)
+    _rel = "/" + str(_f.relative_to(OUT)).replace("\\", "/")
+    _rel = _rel[:-len("index.html")] if _rel.endswith("index.html") else _rel
+    if not _m:
+        fails.append("%s has no canonical - Google picks the hostname itself "
+                     "when we do not tell it, and it picked www for 23 pages"
+                     % _rel)
+        continue
+    _c = _m.group(1)
+    if "//www." in _c:
+        fails.append("%s canonicalises to a www URL (%s) - that is the "
+                     "hostname we redirect AWAY from" % (_rel, _c))
+    elif _c != _SITE["url"] + _rel:
+        fails.append("%s canonicalises to %s, not to itself (%s) - a "
+                     "cross-page canonical is how a live page becomes an "
+                     "'alternate' in Search Console"
+                     % (_rel, _c, _SITE["url"] + _rel))
 _wd = re.search(r'if \(url\.hostname\.toLowerCase\(\)\.startsWith\("www\."\)'
                 r'.{0,700}?\n    \}', wjs, re.S)
 if not _wd:
