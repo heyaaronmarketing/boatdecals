@@ -324,8 +324,13 @@ TOOLS = [
 
 # ------------------------------------------------------------------ guides
 GUIDES = [
-    dict(slug="boat-registration-number-rules", nav="The rules",
-         title="Boat Registration Number Rules, Plainly Stated",
+    # The title said "Rules" while this entry's own `kw` said "requirements".
+    # Measured 2026-11-15: "boat registration number requirements" is 140/mo
+    # at $1.74, and "boat registration number rules" returns NO measurable
+    # volume at all. The slug stays as it is - a keyword in a URL is worth
+    # very little, and a redirect costs more than it would buy.
+    dict(slug="boat-registration-number-rules", nav="The requirements",
+         title="Boat Registration Number Requirements, Plainly Stated",
          kw="boat registration number requirements", vol=140,
          desc="The federal rule for boat registration numbers - 3-inch block characters, contrasting color, correct spacing, forward half of each side - in plain English."),
     dict(slug="where-to-put-boat-registration-numbers", nav="Where they go",
@@ -356,6 +361,16 @@ GUIDES = [
          title="What Boat Registration Numbers Cost in 2026",
          kw="boat registration numbers cost", vol=30,
          desc="Boat registration number decals run $10-25 a pair online. What drives the price, what the cheap sets leave out, and what we charge."),
+    # The biggest informational term in this cluster, measured 2026-11-15, and
+    # nothing on the site answered it: the guide above is about what the
+    # DECALS cost, while this question is about what the STATE charges. The
+    # answer is `state_fees.py`, which is ours and verified, so this page is
+    # the one piece of national content here that a competitor cannot copy
+    # without doing the same reading.
+    dict(slug="how-much-does-it-cost-to-register-a-boat", nav="State fees",
+         title="How Much Does It Cost to Register a Boat?",
+         kw="how much does it cost to register a boat", vol=320,
+         desc="What each state charges to register a boat, taken from the state's own fee page, with the date we last checked it - plus what else lands on the bill."),
 ]
 
 # ------------------------------------------------------------------ states

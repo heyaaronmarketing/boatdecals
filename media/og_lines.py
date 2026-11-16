@@ -60,6 +60,13 @@ LINES = {
  "/guides/documented-vessel-name-and-hailing-port/": dict(
      main="DOCUMENTED BOATS|DON'T GET|BOW NUMBERS", kicker="4-inch name instead",
      hull="navy"),
+ # No dollar figure on this card on purpose: every state figure on that page
+ # is rendered from state_fees.py, and a number typed into an OG card is a
+ # copy that nothing re-checks - it would also outlive the page in Facebook's
+ # cache long after the state changed it.
+ "/guides/how-much-does-it-cost-to-register-a-boat/": dict(
+     main="THE NUMBER|IS THE STATE'S.|THE VINYL IS OURS.",
+     kicker="what registering a boat costs", hull="green"),
  "/guides/boat-registration-number-cost/": dict(
      main="AN $11 SET|IS AN $18 SET|WITH SHIPPING", kicker="ours includes it",
      hull="black"),

@@ -74,7 +74,7 @@ and a state.
 
 ## Guides
 
-- [Boat Registration Number Rules, Plainly Stated](https://numbermyboat.com/guides/boat-registration-number-rules/): The federal rule for boat registration numbers - 3-inch block characters, contrasting color, correct spacing, forward half of each side - in plain English.
+- [Boat Registration Number Requirements, Plainly Stated](https://numbermyboat.com/guides/boat-registration-number-rules/): The federal rule for boat registration numbers - 3-inch block characters, contrasting color, correct spacing, forward half of each side - in plain English.
 - [Where Do Boat Registration Numbers Go?](https://numbermyboat.com/guides/where-to-put-boat-registration-numbers/): Boat registration numbers go on the forward half of both sides, reading left to right. Exactly how high, how far forward, and where the validation decal sits.
 - [How to Apply Boat Lettering (Wet and Dry Method)](https://numbermyboat.com/guides/how-to-apply-boat-lettering/): Step-by-step: how to apply pre-spaced boat lettering and registration numbers using the wet method, with the mistakes that ruin a set.
 - [How to Remove Old Boat Lettering Without Wrecking Gelcoat](https://numbermyboat.com/guides/how-to-remove-boat-lettering/): Heat, a plastic razor and adhesive remover will lift old boat lettering. What not to use on gelcoat, and how to deal with the shadow left behind.
@@ -82,6 +82,7 @@ and a state.
 - [Best Vinyl for Boat Lettering: Cast vs Calendared](https://numbermyboat.com/guides/best-vinyl-for-boat-lettering/): Cast vs calendared vinyl for boats, when high-tack film is mandatory on bare aluminium and rotomoulded plastic, and what a film warranty actually covers.
 - [Documented Vessel Name & Hailing Port Requirements](https://numbermyboat.com/guides/documented-vessel-name-and-hailing-port/): USCG documented vessels carry the name and hailing port in 4-inch characters, and do not display state registration numbers. Here is the layout.
 - [What Boat Registration Numbers Cost in 2026](https://numbermyboat.com/guides/boat-registration-number-cost/): Boat registration number decals run $10-25 a pair online. What drives the price, what the cheap sets leave out, and what we charge.
+- [How Much Does It Cost to Register a Boat?](https://numbermyboat.com/guides/how-much-does-it-cost-to-register-a-boat/): What each state charges to register a boat, taken from the state's own fee page, with the date we last checked it - plus what else lands on the bill.
 
 ## Registration numbers by state
 

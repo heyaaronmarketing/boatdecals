@@ -149,6 +149,10 @@ PAGE_SECTIONS = {
     "/guides/best-vinyl-for-boat-lettering/":          ["AL-06", "AL-02"],
     "/guides/documented-vessel-name-and-hailing-port/":["AL-08"],
     "/guides/boat-registration-number-cost/":          ["PR-1"],
+    # Two shots on the fee guide, which is otherwise a wall of table: a state
+    # hull and a close-up of cut vinyl, which is the distinction the page is
+    # built on - the state issues the number, we cut it.
+    "/guides/how-much-does-it-cost-to-register-a-boat/": ["ST-SC", "PR-2"],
     "/guides/how-to-apply-boat-lettering/":            ["AL-09"],
 }
 
@@ -1798,6 +1802,104 @@ def state_fees_block(s):
                src))
 
 
+def fee_term(period):
+    """The registration term, short enough for a table cell.
+
+    Non-greedy up to the first "year" or "years" - which has to allow commas
+    on the way, because Tennessee's period is "one, two or three years,
+    owner's choice" and stopping at the first comma turns that into "one".
+    """
+    m = re.match(r".*?years?\b", period)
+    return m.group(0) if m else period
+
+
+def fee_span(f):
+    """The published span of a state's fee table, as the state printed it.
+
+    Derived rather than typed, so it cannot disagree with the figures on the
+    state page. The amounts keep their own strings - no rounding, no
+    re-formatting - because $28.15 is not $28.
+    """
+    rows = f.get("rows") or []
+    if not rows:
+        return ""
+    amts = [b for _, b in rows]
+    lo = min(amts, key=lambda a: float(a.strip("$").replace(",", "")))
+    hi = max(amts, key=lambda a: float(a.strip("$").replace(",", "")))
+    return lo if lo == hi else "%s&ndash;%s" % (lo, hi)
+
+
+def fee_headline():
+    """The one-sentence answer, computed from the data rather than estimated.
+
+    Every number in it is derived: the lowest and highest published figures,
+    which states they belong to, and how many of the verified states register
+    for three years. A sentence like this is exactly what an answer engine
+    lifts, so it cannot be a round-number guess that nothing checks.
+    """
+    priced = [(float(b.strip("$").replace(",", "")), b, slug)
+              for slug, f in STATE_FEES.items() for _, b in (f.get("rows") or [])]
+    lo, hi = min(priced), max(priced)
+    nm = lambda slug: next((x["name"] for x in STATES if x["slug"] == slug), slug)
+    three = sum(1 for f in STATE_FEES.values()
+                if fee_term(f["period"]) == "three years")
+    return ('<p><strong>Short answer: across the %d states we have verified, '
+            'the published figures run from %s to %s &mdash; and %d of them '
+            'register a boat for three years at a time rather than '
+            'annually.</strong> The fee is set by your state, almost always '
+            'by the boat&rsquo;s length, and it is a different thing from '
+            'what the numbers on the bow cost.</p>'
+            % (len(STATE_FEES), lo[1], hi[1], three))
+
+
+def fee_quirks(*slugs):
+    """The per-state quirks, taken verbatim from each state's own entry.
+
+    Written once in state_fees.py and rendered on both the state page and
+    here. Retyping them into this guide is how the national page ends up
+    saying something the state page contradicts.
+    """
+    out = ""
+    for slug in slugs:
+        g = STATE_FEES[slug].get("gotcha")
+        if g:
+            out += "<li>%s</li>" % g
+    return "<ul>%s</ul>" % out
+
+
+def fee_table():
+    """The national comparison table, generated from state_fees.py.
+
+    ONE source of truth with the state pages, which is the only way a table
+    like this stays true: the alternative is a second copy of 21 states'
+    figures that drifts the first time one of them raises a fee.
+
+    A state that publishes no figure gets "Not published" and keeps its row,
+    because the fact that North Carolina does not print one is an answer -
+    and it is an answer nobody else on this SERP gives.
+    """
+    rows = ""
+    for slug in sorted(STATE_FEES):
+        f = STATE_FEES[slug]
+        nm = next((s["name"] for s in STATES if s["slug"] == slug), slug)
+        span = fee_span(f)
+        # The registering office goes INSIDE the state cell rather than in a
+        # fourth column: at 375px a fourth column overflows, and "who do I
+        # actually pay" is the question right behind "how much".
+        rows += ('<tr><td><a href="/registration-numbers/%s/">%s</a>'
+                 '<small>%s</small></td>'
+                 '<td>%s</td><td>%s</td></tr>'
+                 % (slug, e(nm), e(f["agency"]), e(fee_term(f["period"])),
+                    span or '<em>Not published</em>'))
+    return ('<table class="feetab natfee"><thead><tr><th>State</th>'
+            '<th>Registration runs</th><th>Published fee, by length</th>'
+            '</tr></thead><tbody>%s</tbody></table>'
+            '<p class=srcline>Every figure above comes from that state&rsquo;s '
+            'own agency, linked on its page. State figures last checked '
+            '<time datetime="%s">%s</time>.</p>'
+            % (rows, FEES_VERIFIED, FEES_VERIFIED))
+
+
 def build_state(s):
     path = "/registration-numbers/%s/" % s["slug"]
     trail = [("By state", "/registration-numbers/"), (s["name"], None)]
@@ -2321,6 +2423,78 @@ def build_tools_hub():
 
 # ---------------------------------------------------------------- guides
 GUIDE_BODY = {
+ "how-much-does-it-cost-to-register-a-boat":
+   fee_headline() +
+   "<p>Every figure below comes from the state&rsquo;s own agency, and each state "
+   "links the page we read it on. Where two state pages disagreed, we went to the "
+   "primary fee schedule and said so there.</p>"
+   + fee_table() +
+   "<h2>Read the term, not just the number</h2>"
+   "<p>This is where most comparisons go wrong. A $60 registration in one state "
+   "and a $60 registration in the next are not the same price if one runs three "
+   "years and the other runs twelve months. Of the states above, most register a "
+   "boat for <strong>three years</strong>, a few for two, and a handful annually "
+   "&mdash; so the honest comparison is cost per year, and the gap between states "
+   "is usually smaller than the headline suggests.</p>"
+   "<h2>What else lands on the bill</h2>"
+   "<p>The registration fee is rarely the whole invoice. The usual additions:</p>"
+   "<ul>"
+   "<li><strong>A title fee.</strong> Iowa adds $13.50 for a boat 17 feet or "
+   "longer. Illinois requires a title on anything over 21 feet, as a separate "
+   "transaction people miss.</li>"
+   "<li><strong>A processing or agent fee.</strong> Missouri adds $9 to every "
+   "transaction, Illinois $2, and Pennsylvania&rsquo;s issuing agents add their "
+   "own on top.</li>"
+   "<li><strong>Excise or use tax.</strong> A separate charge with its own logic. "
+   "Indiana is the clearest case: its annual boat excise comes from the "
+   "boat&rsquo;s <em>original retail price</em> and its age, not its length, so a "
+   "twenty-year-old boat that was expensive when new still sits in a high "
+   "band.</li>"
+   "<li><strong>A late penalty.</strong> Iowa adds $5, and renewing by post adds "
+   "another $2.</li>"
+   "</ul>"
+   "<h2>The quirks that catch people out</h2>"
+   "<p>These are real, they are in each state&rsquo;s own schedule, and they are "
+   "the reason a quote from a national chart is often wrong:</p>"
+   + fee_quirks("michigan", "georgia", "washington", "wisconsin",
+                "louisiana", "south-carolina", "iowa") +
+   "<h2>Four states that do not publish a figure</h2>"
+   "<p>We would rather say so than print a number we cannot stand behind:</p>"
+   "<ul>"
+   "<li><strong>North Carolina</strong> &mdash; the NCWRC publishes no fee on its "
+   "registration page.</li>"
+   "<li><strong>Washington</strong> &mdash; the DOL publishes a $10.50 base and "
+   "tells boaters to use its own calculator for the real total.</li>"
+   "<li><strong>Indiana</strong> &mdash; there is no length table to print: the "
+   "bill is a length fee plus an excise class set by original price and age.</li>"
+   "<li><strong>Alabama</strong> &mdash; two versions of ALEA&rsquo;s own form "
+   "carry different tables, and neither reads cleanly enough for us to be sure "
+   "which governs.</li>"
+   "</ul>"
+   "<p>Each of those state pages says the same thing in plain words and points "
+   "you at the agency that can tell you.</p>"
+   "<h2>Who you pay, and what we have nothing to do with</h2>"
+   "<p>You pay the state, directly, and in several states that means a county "
+   "office rather than a state one &mdash; Iowa registers through the county "
+   "recorder, Alabama through county licensing offices, Missouri through the "
+   "Department of <em>Revenue</em> rather than the Highway Patrol. Nobody can "
+   "register a boat on your behalf, and anyone offering to is adding a fee to "
+   "something you can do yourself.</p>"
+   "<p>What the state gives you is the <strong>number</strong> &mdash; a line on "
+   "a card. Getting it onto the bow in 3-inch block characters that meet "
+   "<a href=\"/guides/boat-registration-number-rules/\">the federal display "
+   "rule</a> is the part that is yours, and the part we do. If you are costing "
+   "that up rather than the registration, our "
+   "<a href=\"/guides/boat-registration-number-cost/\">guide to what number "
+   "decals cost</a> covers it, and <a href=\"/pricing/\">our pricing</a> is "
+   "published.</p>"
+   "<h2>If your state is not in the table</h2>"
+   "<p>We add a state when we have read its figures on its own site, not before. "
+   "If yours is missing it means we have not verified it yet &mdash; not that it "
+   "is free. Your state&rsquo;s agency is the authority, and every "
+   "<a href=\"/registration-numbers/\">state page we have</a> links straight to "
+   "it.</p>",
+
  "boat-registration-number-rules":
    CB.FED_RULE +
    "<h2>Why it is one rule and not fifty</h2>"

@@ -100,6 +100,77 @@ HOW_IT_WORKS_STEPS = [
 #     12-hour proof
 #   * one shop question per guide at most, and only where it actually follows
 GUIDE_FAQS = {
+ "how-much-does-it-cost-to-register-a-boat": [
+  ("How much does it cost to register a boat?",
+   "In most states, between about $20 and $100 for a boat under 26 feet, and the "
+   "registration usually runs one to three years rather than annually. The figure "
+   "is set by your state and almost always by the boat's LENGTH - so a 14-foot jon "
+   "boat and a 40-foot cruiser pay very different amounts in the same state, and "
+   "most states register for two or three years rather than annually. The table "
+   "on this page carries each state's own published figures, with the date we "
+   "last checked them."),
+  ("Why is registration so much cheaper in my friend's state?",
+   "Because states price it differently and the term differs too. South Carolina "
+   "collects a small annual fee through the county tax bill, while Michigan runs "
+   "from a low double-digit figure for the smallest boats to the high hundreds "
+   "for the largest. Comparing a one-year "
+   "fee in one state against a three-year fee in another makes the gap look bigger "
+   "than it is - check the term as well as the number."),
+  ("Is the fee annual?",
+   "Not usually. Most states registered a boat for THREE years, a few for two, and "
+   "a handful annually. The table on this page gives the term for every state we "
+   "have verified, because a $60 three-year registration and a $60 annual one are "
+   "not the same price."),
+  ("Does the registration fee include the numbers for the hull?",
+   "No. The state issues you the NUMBER - the characters themselves, as a line on "
+   "a card or a certificate. Putting them on the boat is yours to do, and that is "
+   "what we sell: a legal, pre-spaced set for both sides, shipped free. The "
+   "current price is on our pricing page."),
+  ("Why does my state charge by boat length?",
+   "It is a rough proxy for what the boat costs the state: bigger boats use more "
+   "ramp, patrol and waterway resource. A few states break that pattern - Michigan "
+   "prices every pontoon at one flat rate whatever its length, which works out "
+   "cheaper than the smallest runabout band. Our Michigan page carries the "
+   "figure."),
+  ("What else is on the bill besides the registration fee?",
+   "Depending on the state: a title fee (Iowa adds $13.50 for a boat 17 feet or "
+   "longer), a processing or agent fee (Missouri $9, Illinois $2), a late penalty, "
+   "and in some states a separate excise or use tax that has nothing to do with "
+   "length. Indiana sets its annual excise from the boat's ORIGINAL retail price "
+   "and its age, so an old boat that was expensive when new still pays a high "
+   "band."),
+  ("Which states do not publish a registration fee?",
+   "Four of the states we have checked do not put a usable figure on their own "
+   "site: North Carolina publishes none on its registration page; Washington "
+   "publishes a $10.50 base and tells boaters to use its calculator; Indiana "
+   "prices by excise class rather than length; and Alabama's own form circulates "
+   "in two versions with different tables. We say so on those pages rather than "
+   "printing a number we cannot stand behind."),
+  ("When does my registration expire?",
+   "It varies, and not always from the date you registered. Georgia expires at "
+   "the end of the owner's BIRTH MONTH. Washington expires 30 June for everyone, "
+   "so a boat registered in May gets about six weeks before its first renewal. "
+   "Wisconsin's year starts 1 April. Iowa's current three-year cycle ends 30 April "
+   "2028."),
+  ("Do I pay you or the state?",
+   "The state, always, and not through us. We are a vinyl shop - we cut and ship "
+   "the characters. Nobody can register your boat for you except your state's "
+   "agency, and anyone who offers to is adding a fee to something you can do "
+   "directly."),
+  ("Where do these figures come from?",
+   "Each state's own agency - the DNR, the department of revenue, the wildlife "
+   "agency or the licensing department, whichever one issues the number - and "
+   "every state page links the exact page we read it on, with the date we last "
+   "checked it. Where two state pages disagreed we went to the primary fee "
+   "schedule and said so."),
+  ("Is the fee different for a kayak or a canoe?",
+   "In most states an unpowered kayak or canoe does not need registering at all. "
+   "Pennsylvania is the clear exception - it registers unpowered boats too, and a "
+   "kayak needs either a registration or a launch permit, which costs the same. "
+   "Our Pennsylvania page carries the current figure, and each state page says "
+   "what that state actually requires."),
+ ],
+
  "boat-registration-number-rules": [
   ("How big do boat registration numbers have to be?",
    "At least 3 inches tall. Federal rule 33 CFR 173.27 sets 3 inches as the minimum "

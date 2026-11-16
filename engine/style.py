@@ -371,6 +371,12 @@ border-bottom:1px solid var(--line)}
 .feetab th{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
 color:var(--nav2)}
 .feetab td:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+/* The national table runs wider than a state's own: it carries the agency
+under the state name, which is the question right behind "how much". */
+.natfee{max-width:46rem}
+.natfee td small{display:block;font-size:12px;line-height:1.3;color:var(--mut);
+font-weight:400;margin-top:2px}
+.natfee td:first-child{padding-right:18px}
 /* The source line is the whole credibility play: a figure, where it came
 from, and when somebody last looked. It is small, not hidden. */
 .srcline{font-size:13.5px;color:var(--mut);margin:10px 0 0}

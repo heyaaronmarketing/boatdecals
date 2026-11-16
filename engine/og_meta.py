@@ -80,6 +80,10 @@ META = {
       ("Documented Vessel Name and Hailing Port Rules",
        "Documented boats carry no bow numbers. 4-inch name and hailing port "
        "instead, and a 3-inch interior number."),
+ "/guides/how-much-does-it-cost-to-register-a-boat/":
+      ("What Does It Cost to Register a Boat? By State",
+       "Each state's own published fee and term, with the date we last "
+       "checked it. Four states publish none."),
  "/guides/boat-registration-number-cost/": ("What Boat Registration Numbers Cost",
        "An $11 set plus shipping is an $18 set. What separates a cheap pair "
        "from one that goes on straight."),

@@ -338,8 +338,14 @@ for _dirname, _glob in _SCAN:
         # only for amounts those pages actually publish as state fees.
         # llms-full.txt is GENERATED from these pages, so it inherits their
         # fee text; gating it separately only re-reports the same lines.
-        _is_state = (("registration-numbers/" in str(_f).replace("\\", "/")
-                      and _f.name == "index.html")
+        _p = str(_f).replace("\\", "/")
+        # The national fee guide is a state-fee page too: every figure on it
+        # is RENDERED from state_fees.py - the table, the headline sentence
+        # and the per-state quirks are all generated, and nothing in its
+        # source types a state figure by hand. That is what earns it the
+        # exemption; a page that retyped them would not get one.
+        _is_state = (("registration-numbers/" in _p and _f.name == "index.html")
+                     or "how-much-does-it-cost-to-register-a-boat/" in _p
                      or _f.name in ("state_fees.py", "llms-full.txt"))
         for _v in _stale:
             if _is_state and _v in _FEE_WHOLE:
@@ -3310,6 +3316,76 @@ for _slug, _d in sorted(_SF.FEES.items()):
                          "does not carry it" % (_slug, _amt))
     if not _d.get("rows") and "does not publish" not in _flat:
         fails.append("%s omits a fee but the page does not say so" % _slug)
+
+# ---- the national fee guide ----------------------------------------------
+# One page carrying 21 states' money. The gate is about PROVENANCE again,
+# not formatting: the whole claim of this page is that every figure on it was
+# read off a state's own site, so a figure that came from anywhere else - an
+# estimate, a rounded "about $50", a number remembered from a competitor -
+# is the one failure that matters.
+_FEEGUIDE = OUT / "guides" / "how-much-does-it-cost-to-register-a-boat" / "index.html"
+if not _FEEGUIDE.is_file():
+    fails.append("the national fee guide is not built")
+else:
+    _fg = _FEEGUIDE.read_text()
+    # Strip <script> BODIES, not just their tags. A plain tag-strip leaves
+    # JSON-LD behind as text, and the org node's "priceRange" then reads as a
+    # figure printed on the page - which it is not.
+    _fgv = re.sub(r"\s+", " ", html.unescape(re.sub(
+        r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", _fg, flags=re.S))))
+
+    # Every state we have data for gets a row, linking to its own page. A
+    # state quietly dropped from the table is a state whose page nothing
+    # points at from the one page built to point at all of them.
+    for _slug in _SF.FEES:
+        if 'href="/registration-numbers/%s/"' % _slug not in _fg:
+            fails.append("the national fee guide does not link %s - every "
+                         "state in state_fees.py belongs in the table" % _slug)
+    _rows = _fg.count('<tr><td><a href="/registration-numbers/')
+    if _rows != len(_SF.FEES):
+        fails.append("the national fee guide has %d table rows for %d states "
+                     "with fee data" % (_rows, len(_SF.FEES)))
+
+    if not re.search(r"last checked %s" % re.escape(_SF.VERIFIED), _fgv):
+        fails.append("the national fee guide does not show in readable text "
+                     "when the figures were last checked")
+
+    # EVERY dollar figure on this page has exactly two legitimate origins:
+    # state_fees.py, or our own current price table. Anything else was typed
+    # from memory, and this page's entire value is that it was not.
+    _ALLOWED = set()
+    def _walk(v):
+        if isinstance(v, dict):
+            [_walk(x) for x in v.values()]
+        elif isinstance(v, (list, tuple)):
+            [_walk(x) for x in v]
+        elif isinstance(v, (int, float)) and not isinstance(v, bool):
+            _ALLOWED.add("$%g" % v)
+    _walk(_C.PRICE)
+    # A money pattern that does not swallow the comma in "Missouri $9,
+    # Illinois $2" - a thousands separator is only a separator when three
+    # digits follow it.
+    _MONEY = r"\$\d{1,3}(?:,\d{3})*(?:\.\d\d)?"
+    _sfsrc = (ROOT / "engine" / "state_fees.py").read_text()
+    _ALLOWED |= set(re.findall(_MONEY, _sfsrc))
+    for _amt in sorted(set(re.findall(_MONEY, _fgv))):
+        if _amt not in _ALLOWED:
+            fails.append("the national fee guide prints %s, which is in "
+                         "neither state_fees.py nor our own price table - "
+                         "every figure on that page has to come from a "
+                         "state's own site or from us" % _amt)
+
+    _fq = [b for b in re.findall(
+        r'<script type="application/ld\+json">(.*?)</script>', _fg, re.S)
+        if '"FAQPage"' in b]
+    if not _fq:
+        fails.append("the national fee guide has no FAQPage schema - it is "
+                     "the page most likely to be answered FROM")
+    else:
+        _qs = sum(len(re.findall(r'"@type": ?"Question"', b)) for b in _fq)
+        if _qs < 8:
+            fails.append("the national fee guide carries %d FAQ questions; "
+                         "it is built to be quoted and wants at least 8" % _qs)
 
 print("%d pages | %d JSON-LD blocks (%d invalid) | %d broken links"
       % (len(pages), blocks, bad_json, len(broken)))
