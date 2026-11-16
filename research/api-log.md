@@ -11,3 +11,5 @@ An identical endpoint+payload is a cache hit and is never paid for twice.
 | 2026-11-16 02:35 | `keywords_data/google_ads/search_volume/live` | requirements-vs-fees | 20000 Ok. | 0.09 | `keywords-data-google-ads-search-volume-live__requirements-vs-fees__2026-11-16.json` |
 | 2026-11-16 05:05 | `appendix/user_data` |  | 20000 Ok. | 0 | `(not cached: account response)` |
 | 2026-11-16 05:05 | `keywords_data/google_ads/search_volume/live` | states-phase2 | 20000 Ok. | 0.09 | `keywords-data-google-ads-search-volume-live__states-phase2__2026-11-16.json` |
+| 2026-11-16 07:56 | `keywords_data/google_ads/search_volume/live` | brand-honest-intent | 20000 Ok. | 0.09 | `keywords-data-google-ads-search-volume-live__brand-honest-intent__2026-11-16.json` |
+| 2026-11-16 07:57 | `keywords_data/google_ads/search_volume/live` | vessel-expansion | 20000 Ok. | 0.09 | `keywords-data-google-ads-search-volume-live__vessel-expansion__2026-11-16.json` |

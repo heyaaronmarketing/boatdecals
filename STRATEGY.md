@@ -40,8 +40,37 @@ millions. This category is genuinely under-built — which is the whole opportun
 Harvested via `keyword_suggestions` across five seeds. Five clusters were absent
 from the first plan, and four are now built.
 
-### GAP 1 — OEM / motor / brand replacement decals ✅ built
-`/motor-and-brand-decals/`
+### GAP 1 — OEM / motor / brand replacement decals ❌ RETIRED, and staying retired
+`/motor-and-brand-decals/` **301s to `/boat-lettering/`.** Retired 2026-10-23 when
+Aaron cut the site to three products. This section still said "✅ built" three weeks
+later — which is how a stale strategy doc gets something rebuilt that somebody
+deliberately killed.
+
+**Re-checked 2026-11-16 and the answer is still no, for a second reason.** Ryan will
+not cut OEM replacement decals, so the question became whether brand pages could
+promote what we *do* sell. DataForSEO on 35 honest brand queries
+(`research/raw/...brand-honest-intent...`):
+
+| honest query | vol |
+|---|---|
+| ranger boat registration numbers | 10 |
+| lund / mastercraft boat lettering | 10 |
+| tracker / skeeter / nitro / triton / crestliner, every shape | **0** |
+
+**20 of 35 returned zero; the best is 10/mo.** Every bit of volume sits on the
+replacement terms we cannot serve — ranger 480, tracker 480, lund 260, mastercraft
+210, skeeter 210. Fifteen brand pages would be fifteen doorways chasing ~90/mo
+between them, and using a live mark to catch replacement-decal traffic for a product
+that is not that brand's is a sharper trademark problem than selling a restorer a
+genuine part.
+
+**The brand knowledge lives in the vessel pages instead**, nominatively — Ranger and
+Skeeter on bass boats, Lund and Alumacraft on jon boats, Bennington and Harris on
+pontoons — where the searcher already is and where there is real demand. Every
+boat-type page states that we do not make replacement manufacturer decals, and the
+build fails if that line goes missing.
+
+The old section, for the record:
 
 | Keyword | Vol | CPC |
 |---|---|---|
@@ -60,7 +89,7 @@ whole second revenue line.
 restoring their own boat, never for resale, quantity, or a non-matching hull. The
 page states this publicly and that line stays in.
 
-### GAP 2 — Boat carpet decals ✅ built
+### GAP 2 — Boat carpet decals ❌ RETIRED 2026-10-23, 301s to `/boat-lettering/`
 `/boat-carpet-decals/` — carpet decals 590 + bass boat carpet decals 390 ≈
 **1,000/mo at ~$0.60 CPC.** Different product (high-tack film), near-zero
 competition, natural attach to bass-boat buyers.

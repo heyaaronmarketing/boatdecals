@@ -2153,6 +2153,74 @@ def build_states_hub():
           path, sch, main, trail=trail, faqs=faqs), "0.9")
 
 # ------------------------------------------------------------ boat types
+def vessel_scope(b):
+    """Which states register THIS kind of boat, read off the Coast Guard table.
+
+    The single most-asked question about a sailboat or a kayak is not what
+    vinyl to use, it is "do I even need numbers on it?" - and the answer runs
+    from 8 feet (California) to 19.5 feet (Connecticut) depending on where the
+    boat lives. Nobody has assembled that, and we do not have to write it: the
+    scope line is already in USCG_FLEET, already cited on all 51 state pages,
+    and already gated. This renders it rather than restating it.
+
+    `scope` on the boat type picks the lane:
+      sailboat - the states whose own scope line names sailboats
+      paddle   - the states that name canoes, kayaks or non-motorised hulls
+      motor    - everything with an engine, which every state registers
+    """
+    want = b.get("scope")
+    if not want:
+        return ""
+    nm = {s["slug"]: s["name"] for s in STATES}
+    KEYS = {"sailboat": ("sailboat",),
+            "paddle": ("canoe", "kayak", "non-motorized", "non-motorised",
+                       "manually propelled", "paddleboat", "sup")}
+    if want == "motor":
+        # Counted, not claimed. "Every state registers a motorboat" is the kind
+        # of 51-jurisdiction assertion that is almost certainly true and worth
+        # nothing unless something checked it.
+        covered = [k for k, v in USCG_FLEET.items()
+                   if re.search(r"all (motorized|motorboats|watercraft)", v[2], re.I)]
+        return ('<div class=prose><h2>Does it need registration numbers?</h2>'
+                '<p>Yes, everywhere. All %d of them &mdash; %d states and the '
+                'District of Columbia &mdash; register a motorised boat, and '
+                'several count an electric trolling motor as a motor. What '
+                'varies is the fee and exactly where the validation decal sits, '
+                'and that is on each state&rsquo;s own page.</p>'
+                '<p class=srcline>Scope of each registration system from '
+                '<a href="%s" rel="nofollow noopener" target="_blank">%s</a>.'
+                '</p></div>'
+                % (len(covered), len(covered) - 1, USCG_URL, USCG_SOURCE))
+    keys = KEYS.get(want, ())
+    rows = sorted(((nm.get(k, k), v[2]) for k, v in USCG_FLEET.items()
+                   if any(x in v[2].lower() for x in keys)),
+                  key=lambda r: r[0])
+    if not rows:
+        return ""
+    body = "".join(
+        '<tr><td><a href="/registration-numbers/%s/">%s</a></td><td>%s</td></tr>'
+        % (next(s["slug"] for s in STATES if s["name"] == n), html.escape(n),
+           html.escape(sc))
+        for n, sc in rows)
+    label = ("name sailboats specifically" if want == "sailboat"
+             else "name canoes, kayaks or unpowered hulls specifically")
+    return ('<div class=prose><h2>Does it need registration numbers?</h2>'
+            '<p>It depends where the boat lives, and the spread is wider than '
+            'most people expect. <strong>%d of the %d states and DC %s</strong> '
+            'in the scope of their registration system. The rest fall under '
+            'whatever their general rule says &mdash; which on this page&rsquo;s '
+            'kind of boat usually turns on whether there is a motor on it, '
+            'including an electric trolling motor.</p>'
+            '<table class=feetab><thead><tr><th>State</th>'
+            '<th>What that state registers</th></tr></thead><tbody>%s</tbody>'
+            '</table>'
+            '<p class=srcline>Taken from <a href="%s" rel="nofollow noopener" '
+            'target="_blank">%s</a> &mdash; the same table the fleet figure on '
+            'every state page comes from. Each state&rsquo;s own page has its '
+            'fees and its decal placement.</p></div>'
+            % (len(rows), len(USCG_FLEET) - 1, label, body, USCG_URL, USCG_SOURCE))
+
+
 def build_boat_type(b):
     path = "/for/%s/" % b["slug"]
     trail = [("By boat type", None), (b["nav"], None)]
@@ -2173,18 +2241,30 @@ def build_boat_type(b):
     main = (hero(b["title"], b["lead"],
             trust=[PRICE_CHIP, "High-tack when needed, free",
                    "Proofed Before We Cut", "Meets 33 CFR 173.27"], right=O.form())
+      + ('<section><div class=w><div class=prose>'
+         '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
+         '<h2>What the hull is made of, and what that means for the film</h2>'
+         '<p>%s</p>'
+         '<h2>Where the lettering goes on this kind of boat</h2>'
+         '<p>%s</p>'
+         '</div></div></section>'
+         % (b["note"], b.get("surface", ""), b.get("placement", "")))
+      + '<section><div class=w>' + vessel_scope(b) + '</div></section>'
       + '<section><div class=w><div class=prose>'
-        '<div class=note><p><b>The thing that matters on this hull.</b> %s</p></div>'
+        '<h2>The boats people bring us</h2><p>%s</p>'
         '<h2>What we cut for %s</h2>'
         '<p>Registration numbers, boat names and custom lettering. Everything arrives '
         'pre-spaced on one sheet with application tape over the top, so you apply the '
-        'whole set in a single pass rather than placing loose characters.</p>'
+        'whole set in a single pass rather than placing loose characters. We do not '
+        'make replacement manufacturer decals &mdash; if the logo on your cowling or '
+        'your hull side has faded, that is a job for the builder or a restoration '
+        'specialist, not for us.</p>'
         '<h2>Ordering</h2>'
         '<p>Tell us the boat on the order form &mdash; make, model and roughly the year. '
         'That is how we decide whether to send standard or high-tack film, and we would '
         'rather get that right than have you peel a set off in August.</p>'
         '</div><a class="btn lg" href="/design/">Start your order</a></div></section>'
-        % (b["note"], b["nav"].lower())
+        % (b.get("brands", ""), b["nav"].lower())
       + (gallery([PAGE_IMAGE["/for/%s/" % b["slug"]]],
                   heading="On this kind of boat")
          if ("/for/%s/" % b["slug"]) in PAGE_IMAGE else '')
@@ -2976,7 +3056,34 @@ def build_types_hub():
             '<p class=lede>Different hulls need different adhesive. Pick yours and we will '
             'send the right film &mdash; high-tack on plastic and textured aluminum, at '
             'no extra charge.</p>' + lead_figure(path)
-            + '<div class=grid>%s</div></div></section>' % cards)
+            + '<div class=grid>%s</div>' % cards
+            + '<div class=prose style="margin-top:34px">'
+              '<h2>Pick by what the hull is made of, not by what it is called</h2>'
+              '<p>The only thing that changes the job is the surface. Gelcoat &mdash; '
+              'a sailboat, a bass boat, most fibreglass runabouts &mdash; is the '
+              'easiest material in boating to stick to, and standard marine vinyl '
+              'holds on it for years. <strong>Rotomoulded polyethylene</strong> '
+              '(kayaks, canoes, most PWC hulls) is waxy and flexes, and '
+              '<strong>textured or painted aluminium</strong> (pontoon fencing, jon '
+              'boats) breaks the adhesive line on every rivet. Both need high-tack '
+              'film, and we send it free rather than selling it as an upgrade.</p>'
+              '<h2>Whether you need numbers at all depends on the boat and the state</h2>'
+              '<p>Every one of the %d jurisdictions registers a motorised boat, so a '
+              'pontoon, a bass boat, a jon boat with an outboard and a PWC all need '
+              'numbers wherever they live. Sail and paddle are the ones that vary: '
+              '<strong>%d of the 50 states and DC name sailboats specifically</strong> '
+              'in their registration scope, at thresholds from 8 feet in California to '
+              '19.5 feet in Connecticut, and a dozen more name canoes, kayaks or '
+              'unpowered hulls. Each boat-type page lists the states that apply to it, '
+              'read off the Coast Guard&rsquo;s own table.</p>'
+              '<h2>What we do not do</h2>'
+              '<p>We cut registration numbers, boat names and custom lettering. We do '
+              '<strong>not</strong> make replacement manufacturer decals &mdash; the '
+              'logo on your cowling or your hull side is the builder&rsquo;s mark, and '
+              'reproducing it is a job for them or for a restoration specialist.</p>'
+              '</div></div></section>'
+              % (len(USCG_FLEET),
+                 sum(1 for v in USCG_FLEET.values() if "sailboat" in v[2].lower())))
     write(path, shell("Boat Decals by Boat Type",
           "Boat registration numbers and decals for sailboats, pontoons, jet skis, kayaks, "
           "bass boats and jon boats - with the right vinyl for each hull material.",

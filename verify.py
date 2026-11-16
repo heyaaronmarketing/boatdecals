@@ -3438,6 +3438,85 @@ elif not _shape:
                      "all %d is ~670KB for a step most orders pick one face from"
                      % (_got, _want, len(_C.FONTS)))
 
+# ---- the boat-type pages carry facts, not a template ---------------------
+# These six were the same body with the nav label swapped: ~840 words each,
+# six near-identical pages, which is the doorway shape the state pages were
+# just taken out of. They now carry the hull material, where the lettering
+# goes on that hull, the boats people actually bring us, and - derived from
+# the Coast Guard table rather than written - which states register that kind
+# of boat at all. This proves all four reach the page and that two pages never
+# say the same thing.
+from content import BOAT_TYPES as _BT
+_bt_text = {}
+for _b in _BT:
+    _bp = OUT / "for" / _b["slug"] / "index.html"
+    if not _bp.exists():
+        fails.append("missing boat-type page %s" % _b["slug"]); continue
+    _bh = _bp.read_text()
+    _bf = re.sub(r"\s+", " ", html.unescape(re.sub(
+        r"<[^>]+>", " ", re.sub(r"<script.*?</script>|<style.*?</style>", " ",
+                                _bh, flags=re.S))))
+    _bt_text[_b["slug"]] = _bf
+    for _k in ("surface", "placement", "brands"):
+        if not _b.get(_k):
+            fails.append("boat type %s has no %s - without it the page is the "
+                         "template again" % (_b["slug"], _k))
+            continue
+        # Flatten the field exactly the way the page was flattened: tags become
+        # a SPACE on both sides, then whitespace collapses. Stripping them to
+        # nothing here and to a space there makes every field containing
+        # <strong> look missing.
+        _flatfield = re.sub(r"\s+", " ", html.unescape(
+            re.sub(r"<[^>]+>", " ", _b[_k])))
+        _probe = max(re.findall(r"[A-Za-z][A-Za-z ,'-]{24,}", _flatfield)
+                     or [""], key=len).strip()
+        if _probe and _probe not in _bf:
+            fails.append("boat type %s: %s text never reaches the page (%r)"
+                         % (_b["slug"], _k, _probe[:40]))
+    if "Does it need registration numbers?" not in _bf:
+        fails.append("boat type %s does not answer whether it needs numbers - "
+                     "which is the first thing its reader wants to know"
+                     % _b["slug"])
+    if "uscgboating.org" not in _bh:
+        fails.append("boat type %s states a 51-jurisdiction fact with no source"
+                     % _b["slug"])
+    # We do not make replacement manufacturer decals, and every one of these
+    # pages has to say so: the brand names on it are there to describe the
+    # reader's boat, never to catch somebody shopping for a builder's logo.
+    if "replacement manufacturer decals" not in _bf:
+        fails.append("boat type %s names hull brands without saying we do not "
+                     "make replacement manufacturer decals - that line is what "
+                     "keeps the brand names nominative" % _b["slug"])
+# No two boat types may share a distinctive field. This is the check that
+# catches a re-template, and it is exact rather than fuzzy on purpose: these
+# six pages share a nav, a footer, an order form and the whole pricing block,
+# so page-to-page word overlap sits at 0.65-0.80 even when every distinctive
+# sentence differs. A similarity threshold tight enough to catch a partial
+# copy would fire on that shared chrome; comparing the fields cannot.
+for _k in ("surface", "placement", "brands", "note", "lead"):
+    _byval = {}
+    for _b in _BT:
+        _v = (_b.get(_k) or "").strip()
+        if _v:
+            _byval.setdefault(_v, []).append(_b["slug"])
+    for _v, _who in _byval.items():
+        if len(_who) > 1:
+            fails.append("boat types %s share the same %s word for word - that "
+                         "is the template coming back" % (", ".join(_who), _k))
+# A wholesale clone would still be worth catching, so a loose backstop sits
+# above the measured maximum (0.80) rather than on top of it.
+_bt_slugs = sorted(_bt_text)
+for _i, _a in enumerate(_bt_slugs):
+    for _b2 in _bt_slugs[_i + 1:]:
+        _wa = set(re.findall(r"[a-z]{6,}", _bt_text[_a].lower()))
+        _wb = set(re.findall(r"[a-z]{6,}", _bt_text[_b2].lower()))
+        if _wa and _wb:
+            _j = len(_wa & _wb) / float(len(_wa | _wb))
+            if _j > 0.88:
+                fails.append("boat-type pages %s and %s are %.0f%% the same "
+                             "words - that is a template with the noun swapped"
+                             % (_a, _b2, _j * 100))
+
 # ---- the funny list says how many it has ---------------------------------
 # This page's <title>, its meta description and its share card all said "400
 # Funny Boat Names" while the page rendered 110 - 109 distinct, because one
