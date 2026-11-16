@@ -237,6 +237,40 @@ difference between vinyl stickers and vinyl decals?* · *What is a hull number?*
 *Can you tell the year of a boat by the hull number?* · *Is the hull number the
 same as the VIN?* · *What does CF stand for on a boat?*
 
+### The informational cluster, re-pulled 2026-11-15
+
+Live DataForSEO, US, $0.09, raw response kept in `research/raw/`:
+
+| keyword | volume | CPC |
+|---|---|---|
+| how much does it cost to register a boat | **320** | — |
+| boat registration number placement | 170 | $0.60 |
+| **boat registration number requirements** | **140** | **$1.74** |
+| boat registration number size | 70 | $0.71 |
+| how to display boat registration numbers | 30 | — |
+| boat registration number spacing | 10 | $2.47 |
+| boat registration number **rules** | *none* | — |
+| boat registration **fees by state** / cost by state | *none* | — |
+| 33 cfr 173.27 | *none* | — |
+
+Two decisions came out of this.
+
+**The rules guide was targeting the one phrasing nobody searches.** Its own entry
+already declared `kw="boat registration number requirements"`; only the title said
+"Rules". Retitled. The slug stays — a keyword in a URL is worth very little and a
+redirect costs more than it buys.
+
+**"How much does it cost to register a boat" (320) had no page.** It is a question
+about what the *state* charges; `/guides/boat-registration-number-cost/` answers
+what *our decals* cost. Different question. That gap is now
+`/guides/how-much-does-it-cost-to-register-a-boat/`, and it is the one page here a
+competitor cannot copy without doing the same reading — every figure on it is
+rendered from `state_fees.py`, which took a day of reading .gov fee schedules.
+
+⚠️ **Note what is NOT there.** Nobody searches "boat registration fees by state" or
+"33 cfr 173.27", so neither is a page title. The regulation is a credibility
+citation inside pages, not a target.
+
 ### Shipped for AEO
 - `llms.txt` — the full federal rule, the CF/WN exceptions, the HIN-vs-registration
   distinction, and every price, written to be lifted verbatim
