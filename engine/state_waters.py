@@ -982,4 +982,83 @@ WATERS = {
    ],
    season="Ice-out is April. Champlain carries boats into November; the smaller "
           "lakes do not."),
+ "arizona": dict(
+   lede="Arizona boating is reservoir boating in the desert, and the state charges "
+        "a non-resident several times what it charges a resident - which is worth "
+        "knowing before you trailer in from California.",
+   waters=[
+     ("Lake Powell",
+      "shared with Utah, and the water level has moved so far in the last decade "
+      "that ramps have opened and closed with it."),
+     ("Lake Mead and Lake Mohave",
+      "the Colorado below the Grand Canyon, shared with Nevada."),
+     ("Lake Havasu",
+      "the busiest recreational water in the state, and warm enough for a very long "
+      "season."),
+     ("Roosevelt Lake",
+      "the largest lake entirely inside Arizona, on the Salt River."),
+     ("Lake Pleasant",
+      "the Phoenix lake, close enough for a weeknight."),
+     ("Saguaro and Canyon Lakes",
+      "the narrow Salt River canyon lakes north-east of Phoenix."),
+   ],
+   season="All year on the low-desert water. The sun is what ages lettering here."),
+ "nevada": dict(
+   lede="Nevada registers only powered boats, and almost all of its water is on a "
+        "border - which means two states' rules on one lake more often than not.",
+   waters=[
+     ("Lake Tahoe",
+      "shared with California, 1,645 feet deep, and strictly policed for invasive "
+      "species at every ramp."),
+     ("Lake Mead",
+      "shared with Arizona, and the largest reservoir in the United States by "
+      "capacity."),
+     ("Lake Mohave",
+      "the Colorado below Hoover, also shared with Arizona."),
+     ("Pyramid Lake",
+      "a desert terminal lake on the Paiute reservation north of Reno, with its own "
+      "permit system."),
+     ("Lahontan Reservoir",
+      "the Carson River impoundment, and the closest big water to Fallon."),
+     ("Walker Lake",
+      "another terminal lake, shrinking and getting saltier."),
+   ],
+   season="Long in the south, shorter at Tahoe's altitude."),
+ "rhode-island": dict(
+   lede="Rhode Island is mostly bay, and its registration year starts on 1 March - "
+        "a date that catches people who buy in winter.",
+   waters=[
+     ("Narragansett Bay",
+      "the whole middle of the state is water. Everything else here is part of it "
+      "or next to it."),
+     ("Block Island Sound",
+      "the run out to Block Island, and open enough to need respect."),
+     ("The Sakonnet River",
+      "the eastern passage, between Aquidneck Island and Tiverton."),
+     ("Point Judith Pond and the salt ponds",
+      "the south-shore ponds behind the barrier beaches, shallow and busy."),
+     ("Scituate Reservoir",
+      "the big inland water, and closed to boating because it is Providence's "
+      "drinking supply."),
+   ],
+   season="April to November, and the bay fleet is large for a state this size."),
+ "connecticut": dict(
+   lede="Connecticut registers powered boats and only the larger sailboats, which "
+        "is why its fleet count looks modest for a state with this much Sound "
+        "frontage.",
+   waters=[
+     ("Long Island Sound",
+      "96 miles of coastline on it, and the reason most Connecticut boats exist."),
+     ("The Connecticut River",
+      "navigable from the Sound up to Hartford and beyond, and the largest river "
+      "system in New England."),
+     ("Candlewood Lake",
+      "the largest lake in the state, built as a pumped-storage reservoir in the "
+      "1920s."),
+     ("The Thames River",
+      "New London, the submarine base, and a working deepwater port."),
+     ("Lake Lillinonah and Zoar",
+      "the Housatonic impoundments in the western hills."),
+   ],
+   season="April to October on the Sound, with the striper fleet out either side."),
 }

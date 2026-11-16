@@ -1065,6 +1065,82 @@ STATES = [
               "number with a &ldquo;1&rdquo; added after it</strong>, on both sides "
               "of its bow. One registration, two sets of lettering, and the second "
               "set is not quite the same as the first."),
+    dict(slug="arizona", name="Arizona", ab="AZ", vol=10,
+         agency="Arizona Game and Fish Department", tier=3,
+         fmt="AZ 6266 BS or AZ&#8209;6266&#8209;BS &mdash; the Boater&rsquo;s Guide "
+             "of Arizona&rsquo;s own example. At least three-inch-high BLOCK "
+             "letters, read left to right on both sides of the bow, in a colour that "
+             "<strong>contrasts sharply</strong> with the background, with the "
+             "letters separated from the numbers by a space or hyphen",
+         decal="Arizona runs forward, and it is specific about what the decal lines "
+               "up with: the decals are affixed to both sides of the vessel "
+               "<strong>within three inches in front of the AZ</strong> of the "
+               "registration number. No other numbers may be displayed on either "
+               "side of the bow.",
+         rules_src="https://www.azgfd.com/boating/register-and-renew-your-registration/rules-and-regulations/",
+         rules_src_name="The Boater&rsquo;s Guide of Arizona (AZGFD)",
+         note="Arizona prices a non-resident boat several times higher than a "
+              "resident one. The registration is the same, but a non-resident also "
+              "pays the Non-Resident Boating Safety Infrastructure Fee &mdash; $80 "
+              "on a 12-footer, $429 on a 64-footer &mdash; so trailering in for the "
+              "season is a different decision from registering at home."),
+    dict(slug="nevada", name="Nevada", ab="NV", vol=10,
+         agency="Nevada Department of Wildlife", tier=3,
+         fmt="NV 3717 ZW or NV-3717-ZW. Bold block style of good proportion not less "
+             "than 3 inches in height, contrasting with the background of the boat, "
+             "read left to right, <strong>above the waterline</strong>, with a "
+             "hyphen or space between the NV and the numerals and again before the "
+             "suffix &mdash; <strong>equal to the width of any letter except "
+             "&ldquo;I&rdquo; or any number except &ldquo;1&rdquo;</strong>",
+         decal="The decals are affixed on each side <strong>toward the stern of the "
+               "registration number and within six inches of, and in line with, the "
+               "number</strong>. Two rules Nevada states that almost nobody else "
+               "does: <strong>do not layer decals</strong> &mdash; put them on a "
+               "clean dry surface &mdash; and <strong>a validation decal that has "
+               "been cut, trimmed or otherwise altered is not valid</strong>.",
+         rules_src="https://www.ndow.org/wp-content/uploads/2021/11/NEW-Watercraft-Number-Display-Instructions-ADA.pdf",
+         rules_src_name="NDOW, Watercraft Number Display Instructions",
+         note="On a personal watercraft, Nevada says the identification numbers go "
+              "on the hull above the waterline on the forward half &mdash; "
+              "<strong>but not on the removable engine cover</strong>. A set applied "
+              "to the cover comes off with the cover."),
+    dict(slug="rhode-island", name="Rhode Island", ab="RI", vol=10,
+         agency="Rhode Island Department of Environmental Management", tier=3,
+         fmt="RI 1234 X &mdash; the regulation&rsquo;s own example. At least three "
+             "inches high, of a contrasting colour to the background, painted or "
+             "attached to each side of the forward half, positioned to read from "
+             "left to right, with a space between the prefix, the four numerals, the "
+             "suffix <strong>and the decal</strong> &mdash; each gap at least the "
+             "width of a numeral or letter other than 1 or I",
+         decal="Rhode Island is one of the tightest offsets on this site: the decal "
+               "is <strong>affixed within three inches to the right of the "
+               "registration number</strong>. No other numbers, and only current "
+               "decals, may be displayed.",
+         rules_src="https://rules.sos.ri.gov/regulations/part/250-80-00-1",
+         rules_src_name="250-RICR-80-00-1 §1.19, Requirements and Standards for Vessels",
+         note="Rhode Island is unusual in writing the DECAL into its spacing rule "
+              "&mdash; the gap before the decal is specified the same way as the "
+              "gaps inside the number. On a documented vessel the decals may go "
+              "somewhere other than the hull, a window or windshield for example, so "
+              "long as they are distinctly visible."),
+    dict(slug="connecticut", name="Connecticut", ab="CT", vol=10,
+         agency="Connecticut DMV, with rules from DEEP", tier=3,
+         fmt="At least three inches high, <strong>contrasting in colour to the "
+             "background and of block form</strong>, painted on or attached to both "
+             "the port and starboard bow, and positioned so it is <strong>distinctly "
+             "visible and legible from at least 100 feet away</strong>",
+         decal="Connecticut has the closest offset of any state on this site: the "
+               "validation decals go <strong>two inches to the right of, and in line "
+               "with, the assigned boat number</strong>. No other letters, numbers "
+               "or expired decals may be displayed.",
+         rules_src="https://portal.ct.gov/DEEP/Boating/Boat-Registration",
+         rules_src_name="Connecticut DEEP, Boat Registration",
+         note="A boat numbered in another state, or documented with the Coast Guard, "
+              "that is moored, docked or operated in Connecticut for more than 60 "
+              "days in a calendar year must get a Connecticut Certificate of Decal "
+              "and display the decal on both sides of the bow &mdash; "
+              "<strong>but not a Connecticut number</strong>. Decals without "
+              "lettering is an unusual combination, and it is the rule here."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "

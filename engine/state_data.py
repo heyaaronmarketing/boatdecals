@@ -105,6 +105,14 @@ USCG_FLEET = {
    'All motorized vessels; non-motorized is voluntary'),
  'vermont'         : (  27029, 48,
    'All motorized vessels'),
+ 'arizona'         : ( 156978, 25,
+   'All motorized vessels'),
+ 'nevada'          : (  42020, 45,
+   'All motorized vessels; non-motorized is voluntary'),
+ 'rhode-island'    : (  37725, 46,
+   'All motorized vessels and rowboats over 12 feet'),
+ 'connecticut'     : (  88378, 34,
+   'All motorized vessels; sailboats 19.5 feet or more in length'),
 }
 
 OUTLINE = {
@@ -254,6 +262,10 @@ STATE_ACCENT = {
  'new-mexico'      : ('#8a3d1c', '#e8b44a', 'adobe red and high desert sun'),
  'north-dakota'    : ('#3a4a2a', '#d8c65c', 'prairie and wheat'),
  'vermont'         : ('#1f4a2e', '#8fd18f', 'green mountain and maple'),
+ 'arizona'         : ('#8a3a1a', '#f0b24a', 'canyon red and saguaro'),
+ 'nevada'          : ('#5a4a2e', '#e0c070', 'basin and range'),
+ 'rhode-island'    : ('#1b3b5c', '#8fc4e8', 'Narragansett blue and sail'),
+ 'connecticut'     : ('#1f3a52', '#9fc8d8', 'Sound grey and shore'),
 }
 
 

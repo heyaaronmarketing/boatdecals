@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 554 questions across 70 pages, with the page each one came from.
+> 594 questions across 74 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -464,6 +464,39 @@ A: Prince William Sound is the one most people name first: protected water out o
 Q: When is boating season in Alaska?
 A: Short and weather-bound everywhere, and in much of the state the boat is transport rather than recreation.
 
+## Arizona Boat Registration Numbers AZ
+Source: https://numbermyboat.com/registration-numbers/arizona/
+
+Q: How much does it cost to register a boat in Arizona?
+A: Arizona charges seven bands from $20 to $66 a year for a resident - and four to six times that for a non-resident, for a registration that runs one year, through the Arizona Game and Fish Department. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Arizona boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Arizona like everywhere else. Taller is always legal.
+
+Q: What do Arizona boat numbers start with?
+A: AZ. Your full number runs prefix, digits, then a letter suffix — for example AZ 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Arizona?
+A: You register through the Arizona Game and Fish Department. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So AZ 1234 AB, not AZ1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Arizona runs forward, and it is specific about what the decal lines up with: the decals are affixed to both sides of the vessel within three inches in front of the AZ of the registration number. No other numbers may be displayed on either side of the bow.
+
+Q: Do I have to register a kayak or canoe in Arizona?
+A: Arizona registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Arizona Game and Fish Department system.
+
+Q: How many registered boats are there in Arizona?
+A: 156,978, which puts Arizona 25th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Arizona?
+A: Lake Powell is the one most people name first: shared with Utah, and the water level has moved so far in the last decade that ramps have opened and closed with it. Others worth knowing: Lake Mead and Lake Mohave, Lake Havasu, Roosevelt Lake, Lake Pleasant.
+
+Q: When is boating season in Arizona?
+A: All year on the low-desert water. The sun is what ages lettering here.
+
 ## Arkansas Boat Registration Numbers AR
 Source: https://numbermyboat.com/registration-numbers/arkansas/
 
@@ -562,6 +595,39 @@ A: Lake Granby and Grand Lake is the one most people name first: the headwaters 
 
 Q: When is boating season in Colorado?
 A: Short and altitude-dependent. The high reservoirs ice over; Pueblo and the plains lakes run most of the year.
+
+## Connecticut Boat Registration Numbers CT
+Source: https://numbermyboat.com/registration-numbers/connecticut/
+
+Q: How much does it cost to register a boat in Connecticut?
+A: Connecticut does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
+Q: How tall do Connecticut boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Connecticut like everywhere else. Taller is always legal.
+
+Q: What do Connecticut boat numbers start with?
+A: CT. Your full number runs prefix, digits, then a letter suffix — for example CT 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Connecticut?
+A: You register through the Connecticut DMV, with rules from DEEP. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So CT 1234 AB, not CT1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Connecticut has the closest offset of any state on this site: the validation decals go two inches to the right of, and in line with, the assigned boat number. No other letters, numbers or expired decals may be displayed.
+
+Q: Do I have to register a kayak or canoe in Connecticut?
+A: Connecticut registers all motorized vessels; sailboats 19.5 feet or more in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Connecticut DMV, with rules from DEEP system.
+
+Q: How many registered boats are there in Connecticut?
+A: 88,378, which puts Connecticut 34th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Connecticut?
+A: Long Island Sound is the one most people name first: 96 miles of coastline on it, and the reason most Connecticut boats exist. Others worth knowing: The Connecticut River, Candlewood Lake, The Thames River, Lake Lillinonah and Zoar.
+
+Q: When is boating season in Connecticut?
+A: April to October on the Sound, with the striper fleet out either side.
 
 ## Delaware Boat Registration Numbers DL
 Source: https://numbermyboat.com/registration-numbers/delaware/
@@ -1202,6 +1268,39 @@ A: Lake McConaughy is the one most people name first: "Big Mac" on the North Pla
 Q: When is boating season in Nebraska?
 A: Ice in and out. The season is effectively April through October.
 
+## Nevada Boat Registration Numbers NV
+Source: https://numbermyboat.com/registration-numbers/nevada/
+
+Q: How much does it cost to register a boat in Nevada?
+A: Nevada charges six bands from $20 to $100 a year, broken at 13, 18, 22, 26 and 31 feet, for a registration that runs one year, through the Nevada Department of Wildlife. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Nevada boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Nevada like everywhere else. Taller is always legal.
+
+Q: What do Nevada boat numbers start with?
+A: NV. Your full number runs prefix, digits, then a letter suffix — for example NV 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Nevada?
+A: You register through the Nevada Department of Wildlife. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NV 1234 AB, not NV1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The decals are affixed on each side toward the stern of the registration number and within six inches of, and in line with, the number. Two rules Nevada states that almost nobody else does: do not layer decals — put them on a clean dry surface — and a validation decal that has been cut, trimmed or otherwise altered is not valid.
+
+Q: Do I have to register a kayak or canoe in Nevada?
+A: Nevada registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Nevada Department of Wildlife system.
+
+Q: How many registered boats are there in Nevada?
+A: 42,020, which puts Nevada 45th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Nevada?
+A: Lake Tahoe is the one most people name first: shared with California, 1,645 feet deep, and strictly policed for invasive species at every ramp. Others worth knowing: Lake Mead, Lake Mohave, Pyramid Lake, Lahontan Reservoir.
+
+Q: When is boating season in Nevada?
+A: Long in the south, shorter at Tahoe's altitude.
+
 ## New Hampshire Boat Registration Numbers NH
 Source: https://numbermyboat.com/registration-numbers/new-hampshire/
 
@@ -1531,6 +1630,39 @@ A: Raystown Lake is the one most people name first: 8,300 acres and 118 miles of
 
 Q: When is boating season in Pennsylvania?
 A: April through October for most of the state. The Commission's access areas open earlier than the marinas do.
+
+## Rhode Island Boat Registration Numbers RI
+Source: https://numbermyboat.com/registration-numbers/rhode-island/
+
+Q: How much does it cost to register a boat in Rhode Island?
+A: Rhode Island does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
+Q: How tall do Rhode Island boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Rhode Island like everywhere else. Taller is always legal.
+
+Q: What do Rhode Island boat numbers start with?
+A: RI. Your full number runs prefix, digits, then a letter suffix — for example RI 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Rhode Island?
+A: You register through the Rhode Island Department of Environmental Management. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So RI 1234 AB, not RI1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Rhode Island is one of the tightest offsets on this site: the decal is affixed within three inches to the right of the registration number. No other numbers, and only current decals, may be displayed.
+
+Q: Do I have to register a kayak or canoe in Rhode Island?
+A: Rhode Island registers all motorized vessels and rowboats over 12 feet. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Rhode Island Department of Environmental Management system.
+
+Q: How many registered boats are there in Rhode Island?
+A: 37,725, which puts Rhode Island 46th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Rhode Island?
+A: Narragansett Bay is the one most people name first: the whole middle of the state is water. Everything else here is part of it or next to it. Others worth knowing: Block Island Sound, The Sakonnet River, Point Judith Pond and the salt ponds, Scituate Reservoir.
+
+Q: When is boating season in Rhode Island?
+A: April to November, and the bay fleet is large for a state this size.
 
 ## South Carolina Boat Registration Numbers SC
 Source: https://numbermyboat.com/registration-numbers/south-carolina/

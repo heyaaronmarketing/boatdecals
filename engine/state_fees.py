@@ -778,6 +778,85 @@ FEES = {
              "discount rather than a fixed term. Class 1 costs $98 bought as two "
              "single years and $93 bought as one two-year registration.",
  },
+ "arizona": {
+   "fee_summary": 'seven bands from $20 to $66 a year for a resident - and four to six times that for a non-resident',
+   "period": "one year",
+   "rows": [("0 to 12 ft", "$20.00"), ("12 ft 1 in to 16 ft", "$22.00"),
+            ("16 ft 1 in to 20 ft", "$30.00"), ("20 ft 1 in to 26 ft", "$35.00"),
+            ("26 ft 1 in to 39 ft", "$39.00"), ("39 ft 1 in to 64 ft", "$44.00"),
+            ("64 ft 1 in and over", "$66.00")],
+   "agency": "the Arizona Game and Fish Department",
+   "agency_url": "https://www.azgfd.com/boating/register-and-renew-your-registration/rules-and-regulations/",
+   "src": "https://www.azgfd.com/boating/register-and-renew-your-registration/rules-and-regulations/",
+   "src_name": "The Boater's Guide of Arizona (AZGFD)",
+   "extra": "Those are the resident figures. A non-resident also pays the "
+            "Non-Resident Boating Safety Infrastructure Fee, which is far larger "
+            "than the registration itself &mdash; $80 on a 12-footer and $429 on a "
+            "64-footer, taking the totals to $100 and $495. A duplicate certificate "
+            "of number is $8 and the late penalty is $5.",
+   "gotcha": "Arizona uses SEVEN length bands, more than any other state here, and "
+             "they break at odd places &mdash; 12 ft 1 in, 16 ft 1 in, 20 ft 1 in. "
+             "An inch of boat can move you a band.",
+ },
+ "nevada": {
+   "fee_summary": 'six bands from $20 to $100 a year, broken at 13, 18, 22, 26 and 31 feet',
+   "period": "one year",
+   "rows": [("Less than 13 ft", "$20.00"), ("13 ft to less than 18 ft", "$25.00"),
+            ("18 ft to less than 22 ft", "$40.00"),
+            ("22 ft to less than 26 ft", "$55.00"),
+            ("26 ft to less than 31 ft", "$75.00"), ("31 ft and over", "$100.00")],
+   "agency": "the Nevada Department of Wildlife",
+   "agency_url": "https://www.ndow.org/apply-buy/boat-titling-registration-and-more/",
+   "src": "https://www.ndow.org/apply-buy/boat-titling-registration-and-more/",
+   "src_name": "NDOW, Boat Titling, Registration and More",
+   "extra": "An initial certificate of ownership (title) is $20, and NDOW notes "
+            "that the prices do not include a nominal processing fee. Every vessel "
+            "that requires registration must also be titled.",
+   "gotcha": "Nevada starts its bands at 13 feet rather than the usual 16, so a "
+             "14-foot aluminium boat is already out of the cheapest band here.",
+ },
+ "rhode-island": {
+   "fee": False,
+   "period": "two years, running 1 March to the last day of February",
+   "rows": [],
+   "agency": "the Rhode Island Department of Environmental Management",
+   "agency_url": "https://dem.ri.gov/natural-resources-bureau/boating-registration-licenses/boat-registrations",
+   "src": "https://rules.sos.ri.gov/regulations/part/250-80-00-1",
+   "src_name": "250-RICR-80-00-1, Requirements and Standards for Vessels",
+   "fee_note": "DEM runs Rhode Island registration through its own online system "
+               "and does not publish the fee table on a page we can read &mdash; "
+               "its boating pages and its fee documents both refuse our requests. "
+               "Rather than lift a schedule off a third-party site, ask DEM&rsquo;s "
+               "Office of Boat Registration and Licensing. What the regulation does "
+               "fix is the shape of it: the registration is biennial and the "
+               "registration year runs 1 March to the last day of February.",
+   "extra": "Rhode Island also registers outboard motors separately from the boat.",
+   "gotcha": "The registration year starts on 1 MARCH, not 1 January and not on "
+             "the anniversary of your purchase &mdash; so a boat bought in February "
+             "is on a very short first registration.",
+ },
+ "connecticut": {
+   "fee": False,
+   "period": "one year, valid until 30 April of the following year",
+   "rows": [],
+   "agency": "the Connecticut DMV, with boating rules from DEEP",
+   "agency_url": "https://portal.ct.gov/DEEP/Boating/Boat-Registration",
+   "src": "https://portal.ct.gov/DEEP/Boating/Boat-Registration",
+   "src_name": "Connecticut DEEP, Boat Registration",
+   "fee_note": "Connecticut splits the job: DEEP writes the boating rules and the "
+               "DMV takes the money, and DEEP&rsquo;s own registration page "
+               "publishes no fee table &mdash; it directs fee questions to the "
+               "Boating Division instead. We are not going to print a schedule the "
+               "state has not published where a reader can check it.",
+   "extra": "The fees DEEP does publish are the small ones: $25 to title a vessel, "
+            "$20 for a duplicate registration, and $3 to switch between a "
+            "Certificate of Number and a Certificate of Decal.",
+   "gotcha": "Connecticut registrations all run to 30 APRIL of the following year "
+             "rather than from the day you register. And a boat numbered in another "
+             "state, or documented with the Coast Guard, that spends more than 60 "
+             "days a year in Connecticut needs a Connecticut DECAL &mdash; but not "
+             "a Connecticut number.",
+ },
 }
 
 

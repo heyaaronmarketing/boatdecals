@@ -427,6 +427,8 @@ _STATE_RUN_HOSTS = {
     "georgiawildlife.com",  # Georgia DNR, Wildlife Resources Division
     "gadnr.org",            # Georgia Department of Natural Resources
     "mdwfp.com",            # Mississippi Dept of Wildlife, Fisheries and Parks
+    "azgfd.com",            # Arizona Game and Fish Department
+    "ndow.org",             # Nevada Department of Wildlife
 }
 _SRC_OK_HOSTS = _STATE_RUN_HOSTS
 
