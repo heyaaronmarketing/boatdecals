@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 474 questions across 62 pages, with the page each one came from.
+> 514 questions across 66 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -530,6 +530,39 @@ A: Lake Granby and Grand Lake is the one most people name first: the headwaters 
 Q: When is boating season in Colorado?
 A: Short and altitude-dependent. The high reservoirs ice over; Pueblo and the plains lakes run most of the year.
 
+## Delaware Boat Registration Numbers DL
+Source: https://numbermyboat.com/registration-numbers/delaware/
+
+Q: How much does it cost to register a boat in Delaware?
+A: Delaware charges $40 a year for the common 16-to-26-foot class, from $20 under 16 feet to $120 at 65 feet and over, for a registration that runs one year, through DNREC, the Delaware Department of Natural Resources and Environmental Control. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Delaware boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Delaware like everywhere else. Taller is always legal.
+
+Q: What do Delaware boat numbers start with?
+A: DL. Your full number runs prefix, digits, then a letter suffix — for example DL 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Delaware?
+A: You register through the DNREC Division of Fish and Wildlife. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So DL 1234 AB, not DL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Delaware sizes the sticker and then places it: validation stickers are approximately 3 inches square and must be displayed within 6 inches of the number. Expired validation decals shall be removed and only effective decals displayed. The expiry year is coded by colour — blue, international orange, green and red, in rotation.
+
+Q: Do I have to register a kayak or canoe in Delaware?
+A: Delaware registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the DNREC Division of Fish and Wildlife system.
+
+Q: How many registered boats are there in Delaware?
+A: 43,209, which puts Delaware 44th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Delaware?
+A: Delaware Bay is the one most people name first: the whole western shore of it, with Lewes and the Delaware Breakwater at the mouth. Others worth knowing: Indian River Bay and Rehoboth Bay, The Delaware River, The Chesapeake and Delaware Canal, Lums Pond and the millponds.
+
+Q: When is boating season in Delaware?
+A: Long on the Bay; the Inland Bays season is Memorial Day to October.
+
 ## Florida Boat Registration Numbers FL
 Source: https://numbermyboat.com/registration-numbers/florida/
 
@@ -739,6 +772,39 @@ A: Lake Okoboji and Spirit Lake is the one most people name first: the Iowa Grea
 
 Q: When is boating season in Iowa?
 A: Ice-out is usually late March to mid-April and most boats are out of the water by the end of October. The practical season is about six months, which is why spring re-lettering is such a rush here.
+
+## Kansas Boat Registration Numbers KA
+Source: https://numbermyboat.com/registration-numbers/kansas/
+
+Q: How much does it cost to register a boat in Kansas?
+A: Kansas does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
+Q: How tall do Kansas boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Kansas like everywhere else. Taller is always legal.
+
+Q: What do Kansas boat numbers start with?
+A: KA. Your full number runs prefix, digits, then a letter suffix — for example KA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Kansas?
+A: You register through the Kansas Department of Wildlife and Parks. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So KA 1234 AB, not KA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Kansas writes the display rule in two places and we can only read one of them. The statute says the owner shall paint on or attach to each side of the bow the identification number so that it is clearly visible, “in such manner as prescribed by rules and regulations of the secretary” — and that detail lives in K.A.R. 115-30-1, which KDWP publishes on a site that refuses every request we make to it. So take the floor from the federal rule quoted above, which applies in Kansas as everywhere: 3-inch plain vertical block characters, contrasting, spaced, reading left to right, on the forward half.
+
+Q: Do I have to register a kayak or canoe in Kansas?
+A: Kansas registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Kansas Department of Wildlife and Parks system.
+
+Q: How many registered boats are there in Kansas?
+A: 78,666, which puts Kansas 35th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Kansas?
+A: Milford Lake is the one most people name first: the largest lake in Kansas, on the Republican River near Junction City. Others worth knowing: Tuttle Creek Lake, Perry and Clinton Lakes, Cheney Reservoir, El Dorado Lake.
+
+Q: When is boating season in Kansas?
+A: April through October. The reservoirs ice over in a hard winter.
 
 ## Kentucky Boat Registration Numbers KY
 Source: https://numbermyboat.com/registration-numbers/kentucky/
@@ -1103,6 +1169,39 @@ A: Lake McConaughy is the one most people name first: "Big Mac" on the North Pla
 Q: When is boating season in Nebraska?
 A: Ice in and out. The season is effectively April through October.
 
+## New Hampshire Boat Registration Numbers NH
+Source: https://numbermyboat.com/registration-numbers/new-hampshire/
+
+Q: How much does it cost to register a boat in New Hampshire?
+A: New Hampshire charges $24 up to 16 feet, rising in five bands to $92 over 45 feet - plus a separate boat fee decal, for a registration that runs one year, through the New Hampshire Division of Motor Vehicles. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do New Hampshire boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in New Hampshire like everywhere else. Taller is always legal.
+
+Q: What do New Hampshire boat numbers start with?
+A: NH. Your full number runs prefix, digits, then a letter suffix — for example NH 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in New Hampshire?
+A: You register through the New Hampshire Division of Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NH 1234 AB, not NH1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. From 1 January 2025 a registered New Hampshire boat carries two decals on each side of the bow: the square registration decal, and a round reflective boat fee decal bought separately each year. No numbers other than the ones assigned to the vessel may be displayed on either side of the forward half.
+
+Q: Do I have to register a kayak or canoe in New Hampshire?
+A: New Hampshire registers all motorized vessels; sailboats 12 feet or more in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the New Hampshire Division of Motor Vehicles system.
+
+Q: How many registered boats are there in New Hampshire?
+A: 102,728, which puts New Hampshire 32nd in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in New Hampshire?
+A: Lake Winnipesaukee is the one most people name first: the largest lake in the state at 44,586 acres, with 253 islands in it. Most New Hampshire boating happens here. Others worth knowing: Lake Winnisquam and Squam Lake, Newfound Lake, Lake Sunapee, The Piscataqua River and the Isles of Shoals.
+
+Q: When is boating season in New Hampshire?
+A: Short. Ice-out on Winnipesaukee is usually mid-to-late April and the season closes with the fall haul-out.
+
 ## New Jersey Boat Registration Numbers NJ
 Source: https://numbermyboat.com/registration-numbers/new-jersey/
 
@@ -1234,6 +1333,39 @@ A: Lake Erie is the one most people name first: the shallowest and warmest Great
 
 Q: When is boating season in Ohio?
 A: Roughly late April through October. Lake Erie's walleye run pulls boats out early, often before the weather deserves it.
+
+## Oklahoma Boat Registration Numbers OK
+Source: https://numbermyboat.com/registration-numbers/oklahoma/
+
+Q: How much does it cost to register a boat in Oklahoma?
+A: Oklahoma does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
+Q: How tall do Oklahoma boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Oklahoma like everywhere else. Taller is always legal.
+
+Q: What do Oklahoma boat numbers start with?
+A: OK. Your full number runs prefix, digits, then a letter suffix — for example OK 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Oklahoma?
+A: You register through the Service Oklahoma. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So OK 1234 AB, not OK1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Service Oklahoma’s current pages do not publish an offset for the registration decal, and we are not going to take one off an older guide and present it as the rule. What those pages do say: the current registration must be carried in the boat while it is in operation, and the separate carbon monoxide warning decal issued under Andy’s Law must be placed inside the vessel in plain view — inside, not on the bow. For the number and decal placement, the federal rule quoted above is the floor that applies in Oklahoma as everywhere.
+
+Q: Do I have to register a kayak or canoe in Oklahoma?
+A: Oklahoma registers all watercraft - excludes kiteboards; canoes, kayaks and paddleboats optional. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Service Oklahoma system.
+
+Q: How many registered boats are there in Oklahoma?
+A: 165,771, which puts Oklahoma 24th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Oklahoma?
+A: Grand Lake o' the Cherokees is the one most people name first: the north-eastern lake on the Neosho, and the busiest recreational water in the state. Others worth knowing: Lake Texoma, Lake Eufaula, Broken Bow Lake, Keystone and Oologah.
+
+Q: When is boating season in Oklahoma?
+A: Long. The southern lakes run most of the year and the season starts in March.
 
 ## Oregon Boat Registration Numbers OR
 Source: https://numbermyboat.com/registration-numbers/oregon/

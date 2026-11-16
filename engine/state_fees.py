@@ -624,6 +624,92 @@ FEES = {
              "April &mdash; rather than on the anniversary of the day you "
              "registered. Buy in March and you are renewing six weeks later.",
  },
+ "kansas": {
+   "fee": False,
+   "period": "three years",
+   "rows": [],
+   "agency": "Kansas Department of Wildlife and Parks",
+   "agency_url": "https://ksoutdoors.gov/Boating/Registering-Your-Boat",
+   "src": "https://ksrevisor.gov/statutes/chapters/ch32/032_011_0011.html",
+   "src_name": "Kansas Statutes §32-1111",
+   "fee_note": "Kansas sets the amount somewhere we could not read it. The statute "
+               "says only that the fee is the one &ldquo;prescribed pursuant to "
+               "K.S.A. 32-1172&rdquo; and that a certificate of number "
+               "&ldquo;shall continue in full force and effect for a period of "
+               "three years&rdquo;. KDWP publishes the figure on its own fee page, "
+               "which refuses every request we make to it &mdash; so rather than "
+               "copy a number off somebody else&rsquo;s website, ask KDWP.",
+   "extra": "What the statute does publish is the penalty for being late: "
+            "&ldquo;a delinquency penalty fee of $20 shall be imposed for each 30 "
+            "days of delinquency&rdquo;, up to $60.",
+   "gotcha": "Registration is through KDWP, and a seller may add a service charge "
+             "of up to $1 for a temporary permit. You have 15 days to tell the "
+             "department when a boat changes hands or you change address.",
+ },
+ "new-hampshire": {
+   "fee_summary": '$24 up to 16 feet, rising in five bands to $92 over 45 feet - plus a separate boat fee decal',
+   "period": "one year",
+   "rows": [("Up to and including 16 ft", "$24"), ("16.1 ft to 21 ft", "$34"),
+            ("21.1 ft to 30 ft", "$52"), ("30.1 ft to 45 ft", "$72"),
+            ("45.1 ft and over", "$92")],
+   "agency": "the New Hampshire Division of Motor Vehicles",
+   "agency_url": "https://www.dmv.nh.gov/vehicles-boats-and-titles/boat-registrations",
+   "src": "https://gc.nh.gov/rsa/html/XXII/270-E/270-E-mrg.htm",
+   "src_name": "New Hampshire RSA 270-E:5",
+   "extra": "On top of the registration there is a separate boat fee decal, and the "
+            "statute sets it out as a split rather than a total: $12.50 to the lake "
+            "restoration and preservation fund, $5 to public boat access, $3 to "
+            "navigation safety, $1 to search and rescue, and $2 more for tidal or "
+            "coastal waters. An authorised agent may add $5.",
+   "gotcha": "New Hampshire bands its fees at 16, 21, 30 and 45 feet &mdash; and it "
+             "uses decimals, so 16.1 feet is already in the second band. It is also "
+             "the only state here where the second decal is a SEPARATE annual "
+             "purchase rather than part of the registration.",
+ },
+ "delaware": {
+   "fee_summary": '$40 a year for the common 16-to-26-foot class, from $20 under 16 feet to $120 at 65 feet and over',
+   "period": "one year, and a registration may not be valid for more than three years",
+   "rows": [("Class A, less than 16 ft", "$20"),
+            ("Class 1, 16 ft to less than 26 ft", "$40"),
+            ("Class 2, 26 ft to less than 40 ft", "$60"),
+            ("Class 3, 40 ft to less than 65 ft", "$100"),
+            ("Class 4, 65 ft and over", "$120")],
+   "agency": "DNREC, the Delaware Department of Natural Resources and Environmental Control",
+   "agency_url": "https://dnrec.delaware.gov/fish-wildlife/boating/registration/",
+   "src": "https://delcode.delaware.gov/title23/c021/sc02/index.html",
+   "src_name": "Delaware Code Title 23 §2113",
+   "extra": "Those are the per-year figures in the Code. A transfer of the "
+            "registration number to a new boat is $3.45 and a duplicate "
+            "registration $2.30. A licensing agent may add a service charge of up "
+            "to $10. A tidal boat ramp certificate is a separate $35.",
+   "gotcha": "Delaware is a five-class state rather than the usual four, splitting "
+             "at 40 and again at 65 feet &mdash; and the Code caps the whole thing "
+             "with &ldquo;registration of a motorboat shall not be valid for more "
+             "than 3 years&rdquo;.",
+ },
+ "oklahoma": {
+   "fee": False,
+   "period": "one year or three years, at the registrant's option, always expiring at the end of June",
+   "rows": [],
+   "agency": "Service Oklahoma",
+   "agency_url": "https://oklahoma.gov/service/all-services/auto-vehicle/boats-motors.html",
+   "src": "https://oklahoma.gov/service/all-services/auto-vehicle/fees.html",
+   "src_name": "Service Oklahoma, Fees",
+   "fee_note": "Oklahoma does not charge by length, so there is no table to print. "
+               "It charges on the boat&rsquo;s VALUE and then depreciates: "
+               "&ldquo;$1.00 for the first $150.00 of value&rdquo; plus "
+               "&ldquo;$1.00 for each $100.00 of value above $150.00&rdquo; in year "
+               "one, then &ldquo;90% of the previous years calculated Registration "
+               "Fee&rdquo; for years two to ten, and from year eleven the same as "
+               "year ten for the life of the boat. The whole thing is capped: "
+               "&ldquo;maximum Boat/Motor Registration fee is set by Statute at "
+               "$151.00&rdquo;. What you pay depends on what your boat is worth, "
+               "so we cannot put a figure on your boat without inventing one.",
+   "extra": "A boat title is $2.25. Boats and outboard motors register separately.",
+   "gotcha": "Oklahoma registers the BOAT and the MOTOR as two separate things, and "
+             "every registration expires at the end of June regardless of when you "
+             "bought it.",
+ },
 }
 
 

@@ -823,4 +823,83 @@ WATERS = {
    ],
    season="Long. The western lakes run most of the year and the houseboat season "
           "starts early."),
+ "kansas": dict(
+   lede="Kansas has almost no natural lakes, so nearly all of this boating happens "
+        "on Corps of Engineers and state reservoirs built in the middle of the 20th "
+        "century.",
+   waters=[
+     ("Milford Lake",
+      "the largest lake in Kansas, on the Republican River near Junction City."),
+     ("Tuttle Creek Lake",
+      "the long reservoir above Manhattan, and big enough to build real weather."),
+     ("Perry and Clinton Lakes",
+      "the Lawrence and Topeka reservoirs, and the closest water to the "
+      "north-eastern population."),
+     ("Cheney Reservoir",
+      "Wichita's lake, and a serious sailing water because the wind is relentless."),
+     ("El Dorado Lake",
+      "a Walnut River reservoir in the Flint Hills."),
+     ("The Kansas and Missouri Rivers",
+      "the Missouri forms the north-eastern border and is commercially navigable."),
+   ],
+   season="April through October. The reservoirs ice over in a hard winter."),
+ "new-hampshire": dict(
+   lede="New Hampshire has 18 miles of coast and a great many lakes, and from 2025 "
+        "a registered boat carries two decals a side rather than one.",
+   waters=[
+     ("Lake Winnipesaukee",
+      "the largest lake in the state at 44,586 acres, with 253 islands in it. Most "
+      "New Hampshire boating happens here."),
+     ("Lake Winnisquam and Squam Lake",
+      "the two next-largest in the Lakes Region, with Squam quieter by local custom."),
+     ("Newfound Lake",
+      "small, very deep and famously clear."),
+     ("Lake Sunapee",
+      "the western lake, with the state's second-busiest fleet."),
+     ("The Piscataqua River and the Isles of Shoals",
+      "the short, ferocious coast. The Piscataqua runs one of the fastest tidal "
+      "currents on the east coast."),
+   ],
+   season="Short. Ice-out on Winnipesaukee is usually mid-to-late April and the "
+          "season closes with the fall haul-out."),
+ "delaware": dict(
+   lede="Delaware is small, tidal and almost entirely estuary - the Bay on one side, "
+        "the Inland Bays on the other, and not much in between.",
+   waters=[
+     ("Delaware Bay",
+      "the whole western shore of it, with Lewes and the Delaware Breakwater at the "
+      "mouth."),
+     ("Indian River Bay and Rehoboth Bay",
+      "the Inland Bays behind the resort coast, shallow and busy all summer."),
+     ("The Delaware River",
+      "the northern border above the Bay, and commercial water past Wilmington."),
+     ("The Chesapeake and Delaware Canal",
+      "a working ship canal across the top of the state, and a shortcut between two "
+      "of the biggest estuaries in the country."),
+     ("Lums Pond and the millponds",
+      "the small inland freshwater, which is most of what Delaware has of it."),
+   ],
+   season="Long on the Bay; the Inland Bays season is Memorial Day to October."),
+ "oklahoma": dict(
+   lede="Oklahoma has more man-made shoreline than almost anywhere - the Corps "
+        "dammed nearly every river in the state - and it charges for a boat on what "
+        "the boat is worth rather than how long it is.",
+   waters=[
+     ("Grand Lake o' the Cherokees",
+      "the north-eastern lake on the Neosho, and the busiest recreational water in "
+      "the state."),
+     ("Lake Texoma",
+      "shared with Texas on the Red River, and one of the largest reservoirs in the "
+      "country."),
+     ("Lake Eufaula",
+      "the largest lake wholly inside Oklahoma, on the Canadian River."),
+     ("Broken Bow Lake",
+      "clear, deep and in the pines of the south-east corner."),
+     ("Keystone and Oologah",
+      "the Tulsa-area reservoirs."),
+     ("Lake Tenkiller",
+      "clear-water scuba country on the Illinois River."),
+   ],
+   season="Long. The southern lakes run most of the year and the season starts in "
+          "March."),
 }

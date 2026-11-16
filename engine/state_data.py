@@ -89,6 +89,14 @@ USCG_FLEET = {
    'All motorized vessels; vessels that may become motorized'),
  'kentucky'        : ( 141751, 28,
    'All motorized vessels, except electric motors 1 hp or less'),
+ 'kansas'          : (  78666, 35,
+   'All motorized vessels and sailboats'),
+ 'new-hampshire'   : ( 102728, 32,
+   'All motorized vessels; sailboats 12 feet or more in length'),
+ 'delaware'        : (  43209, 44,
+   'All motorized vessels; non-motorized is voluntary'),
+ 'oklahoma'        : ( 165771, 24,
+   'All watercraft - excludes kiteboards; canoes, kayaks and paddleboats optional'),
 }
 
 OUTLINE = {
@@ -230,6 +238,10 @@ STATE_ACCENT = {
  'colorado'        : ('#6b3a1f', '#e5a04a', 'red rock and aspen gold'),
  'maryland'        : ('#13304d', '#d4a537', 'Chesapeake navy and gold'),
  'kentucky'        : ('#2f4b33', '#9ec96a', 'bluegrass and limestone water'),
+ 'kansas'          : ('#5c4a20', '#e8c35c', 'prairie gold and limestone'),
+ 'new-hampshire'   : ('#24404a', '#8fc4d6', 'granite and lake water'),
+ 'delaware'        : ('#1c4a3a', '#7fc49a', 'tidal marsh and bay'),
+ 'oklahoma'        : ('#7a4420', '#e5b057', 'red dirt and sandstone'),
 }
 
 

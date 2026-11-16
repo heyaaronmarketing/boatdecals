@@ -913,6 +913,84 @@ STATES = [
               "April</strong>, not on the anniversary of the day you registered. "
               "Register a boat in March and the renewal notice follows almost "
               "immediately."),
+    dict(slug="kansas", name="Kansas", ab="KA", vol=30,
+         agency="Kansas Department of Wildlife and Parks", tier=3,
+         decal="Kansas writes the display rule in two places and we can only read "
+               "one of them. The statute says the owner shall <strong>paint on or "
+               "attach to each side of the bow the identification number</strong> so "
+               "that it is <strong>clearly visible</strong>, &ldquo;in such manner "
+               "as prescribed by rules and regulations of the secretary&rdquo; "
+               "&mdash; and that detail lives in K.A.R. 115-30-1, which KDWP "
+               "publishes on a site that refuses every request we make to it. So "
+               "take the floor from the federal rule quoted above, which applies in "
+               "Kansas as everywhere: 3-inch plain vertical block characters, "
+               "contrasting, spaced, reading left to right, on the forward half.",
+         rules_src="https://ksrevisor.gov/statutes/chapters/ch32/032_011_0011.html",
+         rules_src_name="Kansas Statutes §32-1111",
+         note="<strong>Kansas boat numbers start with KA, not KS.</strong> The Coast "
+              "Guard set the vessel prefixes in 1958, five years before the Post "
+              "Office picked its own two-letter codes. Kansas registrations run "
+              "<strong>three years</strong>, and the statute sets a sharp penalty "
+              "for letting one lapse: $20 for each 30 days late, up to $60."),
+    dict(slug="new-hampshire", name="New Hampshire", ab="NH", vol=10,
+         agency="New Hampshire Division of Motor Vehicles", tier=3,
+         fmt="The statute is unusually short about it: numbers <strong>not less than "
+             "3 inches in height, in block letters of contrasting color</strong>, "
+             "displayed on each side of the forward half, <strong>clearly readable "
+             "when the vessel is being operated</strong> and maintained in legible "
+             "condition. New Hampshire does not specify the spacing, so the federal "
+             "rule above governs it",
+         decal="From 1 January 2025 a registered New Hampshire boat carries "
+               "<strong>two decals on each side of the bow</strong>: the square "
+               "registration decal, and a round reflective <strong>boat fee "
+               "decal</strong> bought separately each year. No numbers other than "
+               "the ones assigned to the vessel may be displayed on either side of "
+               "the forward half.",
+         rules_src="https://gc.nh.gov/rsa/html/XXII/270-E/270-E-mrg.htm",
+         rules_src_name="New Hampshire RSA 270-E:8",
+         note="An out-of-state motorboat on New Hampshire public water also needs a "
+              "New Hampshire aquatic invasive species decal, and that one goes on "
+              "the <strong>port side, within 3 inches of the valid registration "
+              "decal</strong>."),
+    dict(slug="delaware", name="Delaware", ab="DL", vol=10,
+         agency="DNREC Division of Fish and Wildlife", tier=3,
+         fmt="Plain vertical block characters of not less than 3 inches in height, "
+             "contrasting with the background and distinctly visible and legible, "
+             "read left to right, with spaces or hyphens <strong>equal to the width "
+             "of a letter other than &ldquo;I&rdquo; or a number other than "
+             "&ldquo;1&rdquo;</strong>, painted on or permanently attached to each "
+             "side of the forward half",
+         decal="Delaware sizes the sticker and then places it: validation stickers "
+               "are <strong>approximately 3 inches square</strong> and must be "
+               "<strong>displayed within 6 inches of the number</strong>. "
+               "<strong>Expired validation decals shall be removed</strong> and only "
+               "effective decals displayed. The expiry year is coded by colour "
+               "&mdash; blue, international orange, green and red, in rotation.",
+         rules_src="https://regulations.delaware.gov/register/january2026/final/29%20DE%20Reg%20617%2001-01-26",
+         rules_src_name="Delaware DNREC regulation 3100 Boating, §3.8 and §3.15 (January 2026)",
+         note="<strong>Delaware boat numbers start with DL, not DE</strong> &mdash; "
+              "another 1958 Coast Guard prefix that never got reconciled with the "
+              "postal code. If the hull shape would hide the number, Delaware "
+              "expressly allows it on a <strong>backing plate</strong> attached to "
+              "the forward half instead."),
+    dict(slug="oklahoma", name="Oklahoma", ab="OK", vol=20,
+         agency="Service Oklahoma", tier=3,
+         decal="Service Oklahoma&rsquo;s current pages do not publish an offset for "
+               "the registration decal, and we are not going to take one off an "
+               "older guide and present it as the rule. What those pages do say: the "
+               "current registration must be carried in the boat while it is in "
+               "operation, and the separate <strong>carbon monoxide warning decal "
+               "issued under Andy&rsquo;s Law must be placed inside the vessel in "
+               "plain view</strong> &mdash; inside, not on the bow. For the number "
+               "and decal placement, the federal rule quoted above is the floor "
+               "that applies in Oklahoma as everywhere.",
+         rules_src="https://oklahoma.gov/service/all-services/auto-vehicle/boats-motors.html",
+         rules_src_name="Service Oklahoma, Boats &amp; Motors",
+         note="Oklahoma is the value-priced state. It registers the <strong>boat and "
+              "the motor separately</strong>, prices each on what it is worth rather "
+              "than how long it is, depreciates the fee by 10% a year for nine "
+              "years, and expires everything <strong>at the end of June</strong> "
+              "whatever month you bought in."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "
