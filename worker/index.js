@@ -755,6 +755,43 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // ---- ONE HOSTNAME, ONE SPELLING ------------------------------------
+    //
+    // Search Console, 15 Nov 2026: "Alternate page with proper canonical
+    // tag - 69 pages", against a site that only HAS 59. The site answered
+    // www.numbermyboat.com with a full 200 copy of every page, each one
+    // declaring a canonical back to the apex. Google obeyed the canonical,
+    // so nothing was indexed wrongly - it simply crawled the site twice
+    // and reported every www copy as a duplicate.
+    //
+    // The trailing-slash 301 below redirected www -> www, because it
+    // rebuilt the target from url.origin. So www had its own complete,
+    // self-consistent, crawlable mirror.
+    //
+    // 301 for GET and HEAD. 308 for everything else, because 301 lets a
+    // client turn a POST into a GET and drop the body - and /api/checkout
+    // posted to the wrong host must either arrive intact or not at all.
+    if (url.hostname.toLowerCase().startsWith("www.")) {
+      const to = new URL(url);
+      to.hostname = url.hostname.slice(4);
+      const perm = request.method === "GET" || request.method === "HEAD";
+      return new Response(null, {
+        status: perm ? 301 : 308,
+        headers: { Location: to.toString(), "Cache-Control": "public, max-age=3600" },
+      });
+    }
+
+    // /index.html answered a 307 to / - the same "do not consolidate"
+    // mistake the trailing-slash block below was written to fix, from the
+    // same source (Workers Static Assets). It is excluded from that block
+    // by design, because the rule there is "a dot in the last segment is a
+    // file, serve it". index.html is the one filename where that is wrong.
+    if (url.pathname === "/index.html" || url.pathname.endsWith("/index.html")) {
+      const to = new URL(url);
+      to.pathname = url.pathname.slice(0, -"index.html".length);
+      return Response.redirect(to.toString(), 301);
+    }
+
     const retired = RETIRED[url.pathname] || RETIRED[url.pathname + "/"];
     if (retired) return Response.redirect(new URL(retired, url).toString(), 301);
 

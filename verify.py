@@ -1858,6 +1858,48 @@ if 0 < _i_as < _i_rd:
     fails.append("the trailing-slash redirect runs after ASSETS.fetch, so it "
                  "never runs at all")
 
+# ---- one hostname, one spelling -----------------------------------------
+# Search Console, 15 Nov 2026: 69 "Alternate page with proper canonical tag"
+# against a 59-page site. www served a complete 200 mirror, every page of it
+# canonicalising back to the apex - and the trailing-slash redirect above
+# rebuilt its target from url.origin, so www redirected to www and the
+# mirror stayed self-consistent and crawlable.
+_wd = re.search(r'if \(url\.hostname\.toLowerCase\(\)\.startsWith\("www\."\)'
+                r'.{0,700}?\n    \}', wjs, re.S)
+if not _wd:
+    fails.append("the www -> apex redirect is gone from worker/index.js - "
+                 "www would serve a second crawlable copy of all 59 pages "
+                 "again, which is where the 69 duplicates came from")
+else:
+    _w = _wd.group(0)
+    if "301" not in _w:
+        fails.append("the www redirect is not a 301 - anything temporary "
+                     "tells Google to keep both hostnames")
+    # A 301 permits a client to retry a POST as a GET, which silently drops
+    # the body. /api/checkout is a POST.
+    if "308" not in _w:
+        fails.append("the www redirect has no 308 branch for non-GET "
+                     "methods - a 301 lets a client turn a POST into a GET "
+                     "and drop its body, and /api/checkout is a POST")
+    if "slice(4)" not in _w:
+        fails.append("the www redirect no longer strips the www. prefix")
+if 0 < _i_as < (_wd.start() if _wd else -1):
+    fails.append("the www redirect runs after ASSETS.fetch, so www still "
+                 "serves pages")
+
+# /index.html answered a 307 to / - the same "do not consolidate" bug, from
+# the same source, and deliberately exempt from the trailing-slash rule
+# because that rule treats a dot in the last segment as a file. index.html
+# is the one filename where that is the wrong answer.
+if 'url.pathname.endsWith("/index.html")' not in wjs:
+    fails.append("the /index.html -> / redirect is gone from "
+                 "worker/index.js - Workers Static Assets answers it with a "
+                 "307, and a 307 is what put duplicates in Search Console")
+_ix = wjs.find('url.pathname.endsWith("/index.html")')
+if 0 < _i_as < _ix:
+    fails.append("the /index.html redirect runs after ASSETS.fetch, so it "
+                 "never runs at all")
+
 # ---- the AI crawler allow-list -------------------------------------------
 # This site exists to be quoted by answer engines. Several of these check for
 # their own user-agent before crawling at all, so a name missing here is a
@@ -1880,6 +1922,21 @@ for _b in _BOTS:
                      % (_b, _m.group(1).strip()[:40]))
 if "Sitemap: " not in _rb:
     fails.append("robots.txt lost its Sitemap line")
+
+# The POST-only routes answer a GET with 405 or 422, which Search Console
+# reported on 15 Nov 2026 as "Blocked due to other 4xx issue". Every group
+# needs the Disallow, not just "*" - a robots.txt group is self-contained,
+# so one in the "*" group says nothing to GPTBot.
+_groups = re.findall(r"^User-agent:\s*(\S+)\s*$\n((?:(?!User-agent:).*\n)*)",
+                     _rb, re.M)
+if not _groups:
+    fails.append("robots.txt has no User-agent groups at all")
+for _ua, _body in _groups:
+    for _d in ("Disallow: /api/", "Disallow: /mcp"):
+        if _d not in _body:
+            fails.append("robots.txt group %r is missing %r - a crawler will "
+                         "keep requesting a POST-only route and Search "
+                         "Console keeps reporting the 4xx" % (_ua, _d))
 
 # ---- IndexNow ------------------------------------------------------------
 # Two halves, and a submission is rejected unless both are true: the key, and
@@ -3130,9 +3187,15 @@ for _slug, _d in sorted(_SF.FEES.items()):
         continue
     _pt = _pg.read_text()
     _flat = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", _pt)))
-    if _SF.VERIFIED not in _pt:
-        fails.append("%s does not show when its state figures were last "
-                     "checked - the date ageing in public is the point" % _slug)
+    # The date has to be READABLE, in the sentence, not merely present
+    # somewhere in the file. It is also in this page's JSON-LD dateModified,
+    # so `VERIFIED in _pt` passed even with the visible sentence deleted -
+    # which is exactly the break that got through the first version of this.
+    if not re.search(r"last checked %s" % re.escape(_SF.VERIFIED), _flat):
+        fails.append("%s does not show in READABLE TEXT when its state "
+                     "figures were last checked - the date ageing in public "
+                     "is the point, and JSON-LD does not age in public"
+                     % _slug)
     if _d["src"].split("?")[0] not in _pt:
         fails.append("%s does not link the source its figures came from" % _slug)
     for _lbl, _amt in (_d.get("rows") or []):

@@ -3519,11 +3519,25 @@ def build_static():
     # Allowing a crawler is not endorsing it. The judgement here is that a
     # shop whose guides exist to be cited is better off in every index than
     # out of some of them, and nothing on this site is worth withholding.
+    # The API routes answer a GET with 422 or 405, because they are POST
+    # endpoints. Search Console files that under "Blocked due to other 4xx
+    # issue" and reported 2 such pages on 15 Nov 2026 - the only non-404
+    # 4xx the whole site serves. Nothing is broken; Google simply found
+    # doors that are not pages. Telling it not to knock is the fix.
+    #
+    # robots.txt speaks to crawlers only, so /mcp stays fully usable by MCP
+    # clients - which POST to it anyway.
+    #
+    # Repeated into every group: a robots.txt group is self-contained, so a
+    # Disallow in the "*" group does nothing for a named crawler.
+    _RULES = ("Allow: /\n"
+              "Disallow: /api/\n"
+              "Disallow: /mcp\n")
     (OUT / "robots.txt").write_text(
-      "User-agent: *\nAllow: /\n\n"
+      "User-agent: *\n" + _RULES + "\n"
       "# Answer engines are explicitly welcome - the guides and tools are written to be\n"
       "# quoted, and we would rather be the cited source than invisible.\n"
-      + "".join("User-agent: %s\nAllow: /\n" % b for b in AI_CRAWLERS)
+      + "".join("User-agent: %s\n%s" % (b, _RULES) for b in AI_CRAWLERS)
       + "\n"
       "Sitemap: %s\n" % U("/sitemap.xml"), encoding="utf-8")
 
