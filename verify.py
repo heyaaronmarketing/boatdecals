@@ -3438,6 +3438,43 @@ elif not _shape:
                      "all %d is ~670KB for a step most orders pick one face from"
                      % (_got, _want, len(_C.FONTS)))
 
+# ---- STRATEGY.md may not hold figures the code has already disproved -----
+# Twice in one day a stale line in the strategy doc nearly caused real work on
+# a false premise: GAP 1 said "built" about a product line retired three weeks
+# earlier, and the priority table still carried the pre-correction fleet
+# numbers - all 21 of them wrong by 1.1x to 3.2x, the exact figures
+# state_data.py exists to replace. The doc is prose and cannot be generated,
+# so the figures in it are checked against the data instead.
+_strat = ROOT / "STRATEGY.md"
+if _strat.exists():
+    _st = _strat.read_text()
+    _postal = {re.sub(r"[^a-z]+", "-", _n.lower()).strip("-"): _ab
+               for _ab, _n in _C.SHIP_STATES}
+    _by_postal = {_ab: _slug for _slug, _ab in _postal.items()}
+    # Only things SHAPED like a fleet count: a M/k suffix, or comma grouping.
+    # A bare run of digits after a state code is usually something else on
+    # this site - "IA 3717 ZW" is Iowa's example registration number and
+    # "IA 50707" is the shop's postal code, and both sit next to an "IA".
+    for _m in re.finditer(r"\b([A-Z]{2}) (\d{1,3}(?:,\d{3})+|\d[\d.]*\s*[Mk])\b",
+                          _st):
+        _ab, _raw = _m.groups()
+        _slug = _by_postal.get(_ab)
+        if not _slug or _slug not in USCG_FLEET:
+            continue
+        _unit = _raw.strip()[-1] if _raw.strip()[-1] in "Mk" else ""
+        _num = _raw.rstrip("Mk ").strip()
+        try:
+            _val = float(_num.replace(",", ""))
+        except ValueError:
+            continue
+        _val *= {"M": 1e6, "k": 1e3}.get(_unit or "", 1)
+        _real = USCG_FLEET[_slug][0]
+        if abs(_val - _real) / float(_real) > 0.02:
+            fails.append("STRATEGY.md says %s %s%s but the Coast Guard table "
+                         "says %s - the doc is carrying a figure the data "
+                         "disproves"
+                         % (_ab, _num, _unit or "", "{:,}".format(_real)))
+
 # ---- the boat-type pages carry facts, not a template ---------------------
 # These six were the same body with the nav label swapped: ~840 words each,
 # six near-identical pages, which is the doorway shape the state pages were

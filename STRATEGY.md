@@ -167,13 +167,19 @@ transactional path, not a traffic play.
 
 ### Priority: fleet size × volume × SERP softness
 
-20 states built, ordered by registered vessels:
+All 51 built. Registered vessels below are the Coast Guard's own 2024
+figures (RBS 2024, Table 38) — **this table carried pre-correction
+numbers until 2026-11-16, every one of them wrong by 1.1x to 3.2x**,
+which is the same stale-doc failure as GAP 1 above. A gate now compares
+every figure here against `state_data.USCG_FLEET`.
+
+Ordered by registered vessels:
 
 | Tier | States | Why |
 |---|---|---|
-| **0 — home** | **IA 340k** | Home state. Researched to the bottom: `IA 3717 ZW` format, registers via **county recorder** not the DNR, validation decal **4 inches toward the stern, in line with the number**, and no other numbers permitted on the bow. This was the depth template every other state page had to reach — **all 21 reached it on 2026-11-16**. |
-| **1 — built** | FL 1.7M, MI 1.7M, NY 1.3M, CA 1.3M, SC 1.1M, WI 1.1M, MN 1.0M, TX 922k, PA 842k, NC 799k, GA 783k, VA 595k, OH 573k, IL 566k, MO 561k | Largest fleets, all measurable volume |
-| **2 — built** | WA 560k, TN 476k, LA 446k, AL 419k, IN 523k | Good fleet, thinner volume |
+| **0 — home** | **IA 220,207** | Home state. Researched to the bottom: `IA 3717 ZW` format, registers via **county recorder** not the DNR, validation decal **4 inches toward the stern, in line with the number**, and no other numbers permitted on the bow. This was the depth template every other state page had to reach — **all 21 reached it on 2026-11-16**. |
+| **1 — built** | FL 1,171,432, MN 865,379, MI 795,494, OH 630,288, WI 602,849, CA 596,703, TX 552,138, NY 428,445, SC 353,906, NC 345,699, GA 324,676, MO 282,983, PA 280,098, VA 216,494, IL 176,560 | Largest fleets, all measurable volume |
+| **2 — built** | LA 286,912, AL 247,730, TN 244,031, WA 228,692, IN 193,554 | Good fleet, thinner volume |
 | **3 — BUILT 2026-11-16** | Remaining 30 + DC | Researched individually, not generated. See below |
 
 ⚠️ **Do not bulk-generate the remaining 30.** That is the mistake the aaron.chat
