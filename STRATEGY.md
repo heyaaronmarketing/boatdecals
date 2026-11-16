@@ -145,11 +145,54 @@ transactional path, not a traffic play.
 | **0 — home** | **IA 340k** | Home state. Researched to the bottom: `IA 3717 ZW` format, registers via **county recorder** not the DNR, validation decal **4 inches toward the stern, in line with the number**, and no other numbers permitted on the bow. This was the depth template every other state page had to reach — **all 21 reached it on 2026-11-16**. |
 | **1 — built** | FL 1.7M, MI 1.7M, NY 1.3M, CA 1.3M, SC 1.1M, WI 1.1M, MN 1.0M, TX 922k, PA 842k, NC 799k, GA 783k, VA 595k, OH 573k, IL 566k, MO 561k | Largest fleets, all measurable volume |
 | **2 — built** | WA 560k, TN 476k, LA 446k, AL 419k, IN 523k | Good fleet, thinner volume |
-| **3 — hold** | Remaining 30 + DC | Build only once Tier 1 indexes and ranks |
+| **3 — BUILT 2026-11-16** | Remaining 30 + DC | Researched individually, not generated. See below |
 
 ⚠️ **Do not bulk-generate the remaining 30.** That is the mistake the aaron.chat
 town grid made. Each page must carry real distinct facts — prefix, agency, fleet,
 vernacular — or it is a doorway page.
+
+### All 51 are built — and the research is what kept them from being doorways
+
+Done 2026-11-16, one jurisdiction at a time, from each one's own published page.
+**90 site pages, 51 state pages.** Order of work was measured, not alphabetical:
+a DataForSEO pull on all 29 remaining states ($0.09) found **21 with measurable
+volume (10–70/mo) and 8 with none**, and the volume ones went first.
+
+Every page carries fees, number format and decal placement with the source
+linked and the date rendered. The national guide's headline is computed from
+that data — *"across the 51 states we have verified, the published figures run
+from $5.50 to $448, and 18 of them register for three years."*
+
+**Nine postal-prefix traps** are now documented, up from three. Michigan is
+**MC**, Mississippi is **MI**, Massachusetts is **MS** — a closed loop of
+confusion that the order form already checks. Plus **NB** Nebraska, **CL**
+Colorado, **KA** Kansas, **DL** Delaware, **HA** Hawaii, **CF** California,
+**WN** Washington.
+
+**Four states measure the 3-inch minimum excluding border, outline or shading** —
+Colorado, Louisiana, North Dakota, Wyoming. That is a direct ordering
+consequence for an outlined set, and it is now stated on four pages.
+
+Rules no template would ever have produced:
+
+- **Montana** charges ONCE, registration is permanent, and validation stickers
+  are no longer required at all — one white decal, port side only.
+- **Vermont** deems a sub-10 hp tender registered free, carrying the parent
+  boat's number **with a "1" added**.
+- **Nevada**: a decal "cut, trimmed or otherwise altered is not valid"; do not
+  layer decals; a PWC's numbers must not go on the removable engine cover.
+- **Connecticut**: two inches, legible from 100 feet — and an out-of-state boat
+  over 60 days needs a decal **but not a number**.
+- **Oregon** has no fee table; it charges $8 plus $5.95 per foot.
+- **Oklahoma** prices on the boat's VALUE, depreciating 10% a year.
+- **DC** is registered by the police.
+
+**Five ship with `fee: False`, and that is the finding, not a gap.** Idaho's own
+published statute omits its dollar figures. Oklahoma has no length table to
+print. Kansas delegates to a regulation its agency serves from a host that
+refuses every client we have. Connecticut and Rhode Island publish no fee table
+a reader can check. An honest "they do not publish it" has been the rule here
+since North Carolina, and it still is.
 
 ### Depth before width — what 2026-11-16 added, and why it was not 29 new states
 

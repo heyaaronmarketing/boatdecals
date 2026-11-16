@@ -113,6 +113,16 @@ USCG_FLEET = {
    'All motorized vessels and rowboats over 12 feet'),
  'connecticut'     : (  88378, 34,
    'All motorized vessels; sailboats 19.5 feet or more in length'),
+ 'hawaii'          : (  13881, 50,
+   'All watercraft'),
+ 'south-dakota'    : (  59671, 40,
+   'All motorized vessels; all other boats over 12 feet in length'),
+ 'west-virginia'   : (  47378, 42,
+   'All motorized vessels'),
+ 'wyoming'         : (  24339, 49,
+   'All motorized vessels; non-motorized is voluntary'),
+ 'district-of-columbia' : ( 1742, 51,
+   'All watercraft'),
 }
 
 OUTLINE = {
@@ -266,6 +276,11 @@ STATE_ACCENT = {
  'nevada'          : ('#5a4a2e', '#e0c070', 'basin and range'),
  'rhode-island'    : ('#1b3b5c', '#8fc4e8', 'Narragansett blue and sail'),
  'connecticut'     : ('#1f3a52', '#9fc8d8', 'Sound grey and shore'),
+ 'hawaii'          : ('#1a5248', '#5fd6b4', 'deep ocean and reef'),
+ 'south-dakota'    : ('#4a4530', '#ddc96a', 'prairie and badlands'),
+ 'west-virginia'   : ('#2d4a35', '#9fcf72', 'Appalachian green and river'),
+ 'wyoming'         : ('#5c4328', '#e0bb63', 'sage and sandstone'),
+ 'district-of-columbia' : ('#1f3558', '#9fb6d8', 'river and monument stone'),
 }
 
 

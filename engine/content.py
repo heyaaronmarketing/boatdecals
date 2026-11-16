@@ -1141,6 +1141,104 @@ STATES = [
               "and display the decal on both sides of the bow &mdash; "
               "<strong>but not a Connecticut number</strong>. Decals without "
               "lettering is an unusual combination, and it is the rule here."),
+    dict(slug="hawaii", name="Hawaii", ab="HA", vol=10,
+         agency="Hawaii Division of Boating and Ocean Recreation", tier=3,
+         fmt="At least three inches in height and of <strong>block "
+             "character</strong>, in a colour contrasting with the background, read "
+             "left to right, painted on or permanently attached to each side of the "
+             "forward half, and maintained <strong>clearly visible and legible at a "
+             "distance of at least one hundred feet</strong>",
+         decal="DOBOR&rsquo;s numbering page is precise: the registration decal is "
+               "<strong>placed on each side of the vessel three inches aft of the "
+               "number and directly in line with it</strong>. Hawaii also bans "
+               "clutter outright &mdash; <strong>no other numerals, letters, or "
+               "devices may be placed near the vessel number</strong>.",
+         rules_src="https://dlnr.hawaii.gov/dobor/boating-in-hawaii/numbering-your-vessel/",
+         rules_src_name="Hawaii DOBOR, Numbering Your Vessel",
+         note="<strong>Hawaii boat numbers start with HA, not HI</strong> &mdash; "
+              "the Coast Guard set the vessel prefixes in 1958, before the Post "
+              "Office picked its own codes. One honest caveat on the three-inch "
+              "offset above: DOBOR&rsquo;s own FAQ elsewhere says the decal goes "
+              "within SIX inches astern. The numbering page is the rules page, so "
+              "that is the one we have printed &mdash; but if you are measuring to "
+              "the edge, ring DOBOR."),
+    dict(slug="south-dakota", name="South Dakota", ab="SD", vol=10,
+         agency="county treasurer, for South Dakota Game, Fish and Parks", tier=3,
+         fmt="SD 123 AB or SD 1234 YZ &mdash; Game, Fish and Parks&rsquo; own "
+             "examples. At minimum 3 inches high and in block letters, contrasting "
+             "clearly against the background colour of the boat, read left to right "
+             "on each side, with the letters separated from the numbers by a space, "
+             "and affixed so it is <strong>clearly visible and readable at a "
+             "distance of 100 feet when the vessel is in the water</strong>",
+         decal="South Dakota keeps it simple and tight: the validation stickers are "
+               "affixed <strong>on both sides of the bow, adjacent to and in line "
+               "with the boat number</strong>. No other numbers may be displayed on "
+               "either side of the bow.",
+         rules_src="https://gfp.sd.gov/boat-licensing/",
+         rules_src_name="South Dakota Game, Fish and Parks, Licensing Your Boat",
+         note="You register a South Dakota boat at the county treasurer&rsquo;s "
+              "office <strong>in the county where you live</strong> &mdash; not "
+              "where the boat is kept or used. A non-motorised boat over 18 feet "
+              "still has to display numbering and decals."),
+    dict(slug="west-virginia", name="West Virginia", ab="WV", vol=10,
+         agency="West Virginia Division of Motor Vehicles", tier=3,
+         fmt="The number awarded, <strong>exactly as shown on the certificate of "
+             "number</strong>, painted on or permanently attached to each side of "
+             "the bow. Block characters of good proportion not less than three "
+             "inches in height, read left to right, in a colour contrasting with the "
+             "background &mdash; dark numerals on a light background or light on "
+             "dark &mdash; placed to give clear legibility for identification",
+         decal="West Virginia issues <strong>two decals bearing the year of "
+               "expiration</strong>, and they are displayed on each side of the "
+               "motorboat <strong>within 6 inches, immediately following the "
+               "assigned West Virginia number</strong>.",
+         rules_src="https://wvdnr.gov/wp-content/uploads/2021/07/WV-Boating-Rules-and-Laws-Final.pdf",
+         rules_src_name="A Synopsis of West Virginia Boating Rules and Laws (WVDNR)",
+         note="West Virginia runs a <strong>three-year cycle that everybody shares</strong> "
+              "rather than three years from your own purchase date, and it prorates "
+              "by year of the cycle &mdash; joining in the third year costs about a "
+              "third. Motorboat registrations cannot be transferred, so a boat you "
+              "buy needs its own."),
+    dict(slug="wyoming", name="Wyoming", ab="WY", vol=10,
+         agency="Wyoming Game and Fish Department", tier=3,
+         fmt="WY-1234-A or WY 1234 A &mdash; and Wyoming measures the gap precisely: "
+             "<strong>a hyphen or a space equal in width to the letter &ldquo;W&rdquo; "
+             "in the prefix</strong> separates the three parts. Plain, block, "
+             "vertical, <strong>not slanted</strong>, letters and numerals of the "
+             "same proportion, <strong>a minimum of three inches high excluding "
+             "shading and bordering</strong>, contrasting with the background",
+         decal="Decals indicating the year of registration expiration are displayed "
+               "on each side of the watercraft <strong>behind and directly in line "
+               "with the number</strong>. Only the proper decal may be visible. The "
+               "separate Aquatic Invasive Species decal goes on the <strong>starboard "
+               "bow, six inches left of and directly in line with the registration "
+               "decal</strong>.",
+         rules_src="https://wgfd.wyo.gov/sites/default/files/content/PDF/Regulations/2023-Watercraft-FINAL.pdf",
+         rules_src_name="Wyoming Game and Fish, Watercraft Regulation Chapter 22",
+         note="Wyoming is explicit that the department <strong>only assigns the "
+              "number and the applicant is responsible for purchasing and attaching "
+              "it</strong> &mdash; which is this shop&rsquo;s job. It is also one of "
+              "the states that measures the 3-inch minimum <strong>excluding shading "
+              "and bordering</strong>, so an outlined set needs a full 3-inch letter "
+              "inside the outline."),
+    dict(slug="district-of-columbia", name="District of Columbia", ab="DC", vol=10,
+         agency="MPD Harbor Patrol", tier=3,
+         fmt="Bold block letters of good proportion, not less than three inches "
+             "high, in a colour contrasting with the hull, read left to right, on "
+             "the forward half of each side of the bow, <strong>placed above the "
+             "waterline as high as practically possible</strong>, with the letters "
+             "separated from the numbers by spaces or hyphens",
+         decal="The validation decals must be displayed <strong>within six inches of "
+               "the number</strong>. No number other than the one assigned may be "
+               "displayed on the forward half. On a Coast Guard documented vessel "
+               "the decals go on the forward half in a conspicuous place &mdash; "
+               "usually the side windows.",
+         rules_src="https://mpdc.dc.gov/page/harbor-legal-requirements",
+         rules_src_name="DC Metropolitan Police, Harbor Legal Requirements",
+         note="The District is the one jurisdiction on this site where the "
+              "<strong>police register your boat</strong>. The Metropolitan Police "
+              "Harbor Patrol runs it from 550 Water Street SW, and everything "
+              "expires on 31 December whatever month you registered."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "

@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 594 questions across 74 pages, with the page each one came from.
+> 644 questions across 79 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -662,6 +662,39 @@ A: Delaware Bay is the one most people name first: the whole western shore of it
 Q: When is boating season in Delaware?
 A: Long on the Bay; the Inland Bays season is Memorial Day to October.
 
+## District of Columbia Boat Registration Numbers DC
+Source: https://numbermyboat.com/registration-numbers/district-of-columbia/
+
+Q: How much does it cost to register a boat in District of Columbia?
+A: District of Columbia charges $15 under 16 feet rising to $60 over 40, a year - and $10 if there is no engine, for a registration that runs one year, through the Metropolitan Police Department Harbor Patrol. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do District of Columbia boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in District of Columbia like everywhere else. Taller is always legal.
+
+Q: What do District of Columbia boat numbers start with?
+A: DC. Your full number runs prefix, digits, then a letter suffix — for example DC 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in District of Columbia?
+A: You register through the MPD Harbor Patrol. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So DC 1234 AB, not DC1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decals must be displayed within six inches of the number. No number other than the one assigned may be displayed on the forward half. On a Coast Guard documented vessel the decals go on the forward half in a conspicuous place — usually the side windows.
+
+Q: Do I have to register a kayak or canoe in District of Columbia?
+A: District of Columbia registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the MPD Harbor Patrol system.
+
+Q: How many registered boats are there in District of Columbia?
+A: 1,742, which puts District of Columbia 51st in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in District of Columbia?
+A: The Potomac River is the one most people name first: tidal through the whole District, from Georgetown down past Hains Point. Others worth knowing: The Anacostia River, The Washington Channel, The Tidal Basin.
+
+Q: When is boating season in District of Columbia?
+A: Spring to autumn. The river ices only in a hard winter.
+
 ## Florida Boat Registration Numbers FL
 Source: https://numbermyboat.com/registration-numbers/florida/
 
@@ -727,6 +760,39 @@ A: Lake Lanier is the one most people name first: 38,000 acres north-east of Atl
 
 Q: When is boating season in Georgia?
 A: Year round in the south of the state. The lake season runs hard from April through October.
+
+## Hawaii Boat Registration Numbers HA
+Source: https://numbermyboat.com/registration-numbers/hawaii/
+
+Q: How much does it cost to register a boat in Hawaii?
+A: Hawaii charges $25 or $40 to register at the start, then $20 or $35 a year - the split is at twenty feet, for a registration that runs one year, through the Hawaii Division of Boating and Ocean Recreation. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Hawaii boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Hawaii like everywhere else. Taller is always legal.
+
+Q: What do Hawaii boat numbers start with?
+A: HA. Your full number runs prefix, digits, then a letter suffix — for example HA 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Hawaii?
+A: You register through the Hawaii Division of Boating and Ocean Recreation. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So HA 1234 AB, not HA1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. DOBOR’s numbering page is precise: the registration decal is placed on each side of the vessel three inches aft of the number and directly in line with it. Hawaii also bans clutter outright — no other numerals, letters, or devices may be placed near the vessel number.
+
+Q: Do I have to register a kayak or canoe in Hawaii?
+A: Hawaii registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Hawaii Division of Boating and Ocean Recreation system.
+
+Q: How many registered boats are there in Hawaii?
+A: 13,881, which puts Hawaii 50th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Hawaii?
+A: The Au'au Channel is the one most people name first: between Maui, Lanai and Molokai - protected, shallow and where the winter humpbacks go. Others worth knowing: Kaneohe Bay, The Kona coast, The Kaiwi and Alenuihaha Channels, Pearl Harbor and Honolulu Harbor.
+
+Q: When is boating season in Hawaii?
+A: All year. Salt, sun and UV are what age lettering here, not frost.
 
 ## Idaho Boat Registration Numbers ID
 Source: https://numbermyboat.com/registration-numbers/idaho/
@@ -1697,6 +1763,39 @@ A: Lake Murray is the one most people name first: about 50,000 acres outside Col
 Q: When is boating season in South Carolina?
 A: Effectively year round. The heavy season is April through October, and the upstate lakes stay usable through a mild winter.
 
+## South Dakota Boat Registration Numbers SD
+Source: https://numbermyboat.com/registration-numbers/south-dakota/
+
+Q: How much does it cost to register a boat in South Dakota?
+A: South Dakota charges $30 for a motorboat under 19 feet and $55 at 19 feet and over, a year, for a registration that runs one year, through the county treasurer in your county of residence. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do South Dakota boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in South Dakota like everywhere else. Taller is always legal.
+
+Q: What do South Dakota boat numbers start with?
+A: SD. Your full number runs prefix, digits, then a letter suffix — for example SD 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in South Dakota?
+A: You register through the county treasurer, for South Dakota Game, Fish and Parks. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So SD 1234 AB, not SD1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. South Dakota keeps it simple and tight: the validation stickers are affixed on both sides of the bow, adjacent to and in line with the boat number. No other numbers may be displayed on either side of the bow.
+
+Q: Do I have to register a kayak or canoe in South Dakota?
+A: South Dakota registers all motorized vessels; all other boats over 12 feet in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the county treasurer, for South Dakota Game, Fish and Parks system.
+
+Q: How many registered boats are there in South Dakota?
+A: 59,671, which puts South Dakota 40th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in South Dakota?
+A: Lake Oahe is the one most people name first: 231 miles behind Oahe Dam, shared with North Dakota, and one of the largest reservoirs in the country. Others worth knowing: Lake Sharpe and Lake Francis Case, Lewis and Clark Lake, The Glacial Lakes, Angostura and Pactola.
+
+Q: When is boating season in South Dakota?
+A: Open water May to October; ice fishing takes the rest of the year.
+
 ## Tennessee Boat Registration Numbers TN
 Source: https://numbermyboat.com/registration-numbers/tennessee/
 
@@ -1895,6 +1994,39 @@ A: Puget Sound is the one most people name first: the inland sea, from Olympia t
 Q: When is boating season in Washington?
 A: Year round on the Sound for the hardy; the real season is May through September. East-side lakes freeze.
 
+## West Virginia Boat Registration Numbers WV
+Source: https://numbermyboat.com/registration-numbers/west-virginia/
+
+Q: How much does it cost to register a boat in West Virginia?
+A: West Virginia charges $30 to $75 for a full three-year cycle, and less if you join the cycle part-way through, for a registration that runs three years, through the West Virginia Division of Motor Vehicles. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do West Virginia boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in West Virginia like everywhere else. Taller is always legal.
+
+Q: What do West Virginia boat numbers start with?
+A: WV. Your full number runs prefix, digits, then a letter suffix — for example WV 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in West Virginia?
+A: You register through the West Virginia Division of Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So WV 1234 AB, not WV1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. West Virginia issues two decals bearing the year of expiration, and they are displayed on each side of the motorboat within 6 inches, immediately following the assigned West Virginia number.
+
+Q: Do I have to register a kayak or canoe in West Virginia?
+A: West Virginia registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the West Virginia Division of Motor Vehicles system.
+
+Q: How many registered boats are there in West Virginia?
+A: 47,378, which puts West Virginia 42nd in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in West Virginia?
+A: Summersville Lake is the one most people name first: the largest lake in the state, clear and deep in a sandstone gorge. Others worth knowing: Cheat Lake, The Ohio River, Stonewall Jackson Lake, Bluestone Lake.
+
+Q: When is boating season in West Virginia?
+A: April to October on the lakes; the rivers run all year.
+
 ## Wisconsin Boat Registration Numbers WS
 Source: https://numbermyboat.com/registration-numbers/wisconsin/
 
@@ -1927,6 +2059,39 @@ A: Lake Winnebago is the one most people name first: 137,700 acres, the largest 
 
 Q: When is boating season in Wisconsin?
 A: Roughly May through October inland. Ice-out on the northern lakes can run into late April, and ice fishing takes over the rest.
+
+## Wyoming Boat Registration Numbers WY
+Source: https://numbermyboat.com/registration-numbers/wyoming/
+
+Q: How much does it cost to register a boat in Wyoming?
+A: Wyoming charges $30 for one year or $80 for three - and $40 or $110 with the invasive-species decal bundled in, for a registration that runs one year or three years, through the Wyoming Game and Fish Department. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Wyoming boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Wyoming like everywhere else. Taller is always legal.
+
+Q: What do Wyoming boat numbers start with?
+A: WY. Your full number runs prefix, digits, then a letter suffix — for example WY 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Wyoming?
+A: You register through the Wyoming Game and Fish Department. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So WY 1234 AB, not WY1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Decals indicating the year of registration expiration are displayed on each side of the watercraft behind and directly in line with the number. Only the proper decal may be visible. The separate Aquatic Invasive Species decal goes on the starboard bow, six inches left of and directly in line with the registration decal.
+
+Q: Do I have to register a kayak or canoe in Wyoming?
+A: Wyoming registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Wyoming Game and Fish Department system.
+
+Q: How many registered boats are there in Wyoming?
+A: 24,339, which puts Wyoming 49th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Wyoming?
+A: Flaming Gorge Reservoir is the one most people name first: shared with Utah, 91 miles of it in a red-rock canyon on the Green River. Others worth knowing: Yellowstone Lake, Jackson Lake, Boysen and Glendo Reservoirs, Keyhole Reservoir.
+
+Q: When is boating season in Wyoming?
+A: Short and high. Ice-out is late and the mountain lakes are done by September.
 
 ## Shipping & Returns
 Source: https://numbermyboat.com/shipping-and-returns/

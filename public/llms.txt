@@ -131,4 +131,9 @@ and a state.
 - [Nevada (NV)](https://numbermyboat.com/registration-numbers/nevada/): prefix NV, issued by Nevada Department of Wildlife
 - [Rhode Island (RI)](https://numbermyboat.com/registration-numbers/rhode-island/): prefix RI, issued by Rhode Island Department of Environmental Management
 - [Connecticut (CT)](https://numbermyboat.com/registration-numbers/connecticut/): prefix CT, issued by Connecticut DMV, with rules from DEEP
+- [Hawaii (HA)](https://numbermyboat.com/registration-numbers/hawaii/): prefix HA, issued by Hawaii Division of Boating and Ocean Recreation
+- [South Dakota (SD)](https://numbermyboat.com/registration-numbers/south-dakota/): prefix SD, issued by county treasurer, for South Dakota Game, Fish and Parks
+- [West Virginia (WV)](https://numbermyboat.com/registration-numbers/west-virginia/): prefix WV, issued by West Virginia Division of Motor Vehicles
+- [Wyoming (WY)](https://numbermyboat.com/registration-numbers/wyoming/): prefix WY, issued by Wyoming Game and Fish Department
+- [District of Columbia (DC)](https://numbermyboat.com/registration-numbers/district-of-columbia/): prefix DC, issued by MPD Harbor Patrol
 - [Indiana (IN)](https://numbermyboat.com/registration-numbers/indiana/): prefix IN, issued by Indiana Bureau of Motor Vehicles

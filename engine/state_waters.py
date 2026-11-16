@@ -1061,4 +1061,97 @@ WATERS = {
       "the Housatonic impoundments in the western hills."),
    ],
    season="April to October on the Sound, with the striper fleet out either side."),
+ "hawaii": dict(
+   lede="Hawaii registers everything that floats, charges more for the first "
+        "registration than for the renewal, and has no inland boating worth the "
+        "name - this is all ocean.",
+   waters=[
+     ("The Au'au Channel",
+      "between Maui, Lanai and Molokai - protected, shallow and where the winter "
+      "humpbacks go."),
+     ("Kaneohe Bay",
+      "the largest sheltered body of water in the islands, on O'ahu's windward side."),
+     ("The Kona coast",
+      "lee of the Big Island, calm enough to launch small boats and deep enough for "
+      "blue water within a mile."),
+     ("The Kaiwi and Alenuihaha Channels",
+      "the inter-island crossings, and among the roughest open water anywhere."),
+     ("Pearl Harbor and Honolulu Harbor",
+      "working harbours with the state's largest small-boat fleets beside them."),
+   ],
+   season="All year. Salt, sun and UV are what age lettering here, not frost."),
+ "south-dakota": dict(
+   lede="South Dakota boating is the Missouri River reservoirs - four enormous "
+        "Corps lakes in a chain - plus the glacial lakes in the north-east.",
+   waters=[
+     ("Lake Oahe",
+      "231 miles behind Oahe Dam, shared with North Dakota, and one of the largest "
+      "reservoirs in the country."),
+     ("Lake Sharpe and Lake Francis Case",
+      "the middle links in the Missouri chain, at Pierre and Chamberlain."),
+     ("Lewis and Clark Lake",
+      "the bottom of the chain at Yankton, shared with Nebraska."),
+     ("The Glacial Lakes",
+      "Big Stone, Waubay, Poinsett and their neighbours in the north-east, natural "
+      "rather than impounded."),
+     ("Angostura and Pactola",
+      "the Black Hills water, small, cold and clear."),
+   ],
+   season="Open water May to October; ice fishing takes the rest of the year."),
+ "west-virginia": dict(
+   lede="West Virginia boating is rivers and narrow mountain impoundments, and the "
+        "registration runs on a three-year cycle that everybody joins at the same "
+        "point.",
+   waters=[
+     ("Summersville Lake",
+      "the largest lake in the state, clear and deep in a sandstone gorge."),
+     ("Cheat Lake",
+      "a long narrow Monongahela impoundment outside Morgantown."),
+     ("The Ohio River",
+      "the whole western border, locked and commercially navigable."),
+     ("Stonewall Jackson Lake",
+      "a central-state reservoir on the West Fork."),
+     ("Bluestone Lake",
+      "on the New River, which despite the name is among the oldest rivers in the "
+      "world."),
+     ("Tygart Lake",
+      "a steep-sided reservoir below Grafton."),
+   ],
+   season="April to October on the lakes; the rivers run all year."),
+ "wyoming": dict(
+   lede="Wyoming does not price a boat by its length at all, and every watercraft on "
+        "its water needs an invasive-species decal as well as a registration.",
+   waters=[
+     ("Flaming Gorge Reservoir",
+      "shared with Utah, 91 miles of it in a red-rock canyon on the Green River."),
+     ("Yellowstone Lake",
+      "the largest high-elevation lake in North America, inside the national park "
+      "and with its own rules."),
+     ("Jackson Lake",
+      "under the Tetons in Grand Teton National Park."),
+     ("Boysen and Glendo Reservoirs",
+      "the central and eastern reservoirs, and where most of the state's boats "
+      "actually go."),
+     ("Keyhole Reservoir",
+      "in the north-east near Devils Tower."),
+     ("Bighorn Lake",
+      "shared with Montana, in the Bighorn Canyon."),
+   ],
+   season="Short and high. Ice-out is late and the mountain lakes are done by "
+          "September."),
+ "district-of-columbia": dict(
+   lede="The District is the only place on this site where the police register your "
+        "boat - the MPD Harbor Patrol - and it is all tidal river.",
+   waters=[
+     ("The Potomac River",
+      "tidal through the whole District, from Georgetown down past Hains Point."),
+     ("The Anacostia River",
+      "the eastern river, with the marinas and the boathouses along it."),
+     ("The Washington Channel",
+      "between the Southwest Waterfront and East Potomac Park, and where the "
+      "District's own small-boat fleet lives."),
+     ("The Tidal Basin",
+      "paddle boats and nothing else, but the most photographed water in the city."),
+   ],
+   season="Spring to autumn. The river ices only in a hard winter."),
 }

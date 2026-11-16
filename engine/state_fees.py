@@ -857,6 +857,93 @@ FEES = {
              "days a year in Connecticut needs a Connecticut DECAL &mdash; but not "
              "a Connecticut number.",
  },
+ "hawaii": {
+   "fee_summary": '$25 or $40 to register at the start, then $20 or $35 a year - the split is at twenty feet',
+   "period": "one year",
+   "rows": [("Original certificate, under 20 ft", "$25.00"),
+            ("Original certificate, 20 ft and over", "$40.00"),
+            ("Annual renewal, under 20 ft", "$20.00"),
+            ("Annual renewal, 20 ft and over", "$35.00")],
+   "agency": "the Hawaii Division of Boating and Ocean Recreation",
+   "agency_url": "https://dlnr.hawaii.gov/dobor/boating-in-hawaii/numbering-your-vessel/",
+   "src": "https://dlnr.hawaii.gov/dobor/files/2021/03/210320-HAR-13-241-For-Public.pdf",
+   "src_name": "Hawaii Administrative Rules §13-241-25",
+   "extra": "An amphibious vehicle licensed as a motor vehicle is $30 originally and "
+            "$25 to renew. Re-registering a vessel whose certificate was cancelled "
+            "costs twice the original fee. A registration may be renewed up to 90 "
+            "days before it expires.",
+   "gotcha": "Hawaii is the only state here that charges MORE for the first "
+             "registration than for the renewal &mdash; $25 then $20 under twenty "
+             "feet, $40 then $35 over it. Budget for the higher number once.",
+ },
+ "south-dakota": {
+   "fee_summary": '$30 for a motorboat under 19 feet and $55 at 19 feet and over, a year',
+   "period": "one year",
+   "rows": [("Non-motorised over 12 ft, and electric-motor boats", "$18"),
+            ("Motorboats under 19 ft, jet skis included", "$30"),
+            ("Motorboats 19 ft and over", "$55")],
+   "agency": "the county treasurer in your county of residence",
+   "agency_url": "https://gfp.sd.gov/boat-licensing/",
+   "src": "https://dor.sd.gov/individuals/motor-vehicle/boats/",
+   "src_name": "South Dakota Department of Revenue, Boats",
+   "extra": "A certificate of title for a boat over 12 feet or any motorised boat "
+            "is $10, and duplicate boat decals are $2.",
+   "gotcha": "South Dakota splits at NINETEEN feet, which is a band break no other "
+             "state on this page uses &mdash; and registration goes through the "
+             "county treasurer where you LIVE, not where the boat is kept.",
+ },
+ "west-virginia": {
+   "fee_summary": '$30 to $75 for a full three-year cycle, and less if you join the cycle part-way through',
+   "period": "three years",
+   "rows": [("Less than 16 ft", "$30.00"), ("16 ft to 25 ft", "$45.00"),
+            ("26 ft to 39 ft", "$60.00"), ("40 ft and longer", "$75.00")],
+   "agency": "the West Virginia Division of Motor Vehicles",
+   "agency_url": "https://dmv.wv.gov/motorboats",
+   "src": "https://dmv.wv.gov/motorboats",
+   "src_name": "West Virginia DMV, Motorboats",
+   "extra": "Those are the full three-year figures. Joining part-way through the "
+            "cycle costs less &mdash; $20, $30, $40 and $50 in the second year and "
+            "$10, $15, $20 and $25 in the third. A motorboat under 3 hp or 70 lb of "
+            "thrust registers for no fee at all. A duplicate decal or registration "
+            "card is $10.",
+   "gotcha": "West Virginia prorates by YEAR OF THE CYCLE rather than by month, so "
+             "registering in the third year of a cycle costs a third of the full "
+             "figure. And motorboat registrations cannot be transferred.",
+ },
+ "wyoming": {
+   "fee_summary": '$30 for one year or $80 for three - and $40 or $110 with the invasive-species decal bundled in',
+   "period": "one year or three years, expiring 31 December",
+   "rows": [("One year", "$30.00"), ("Three years", "$80.00"),
+            ("One year, with AIS decal", "$40.00"),
+            ("Three years, with AIS decal", "$110.00")],
+   "agency": "the Wyoming Game and Fish Department",
+   "agency_url": "https://wgfd.wyo.gov/fishing-boating/aquatic-invasive-species-prevention/ais-decal-information",
+   "src": "https://wgfd.wyo.gov/sites/default/files/content/PDF/Regulations/2023-Watercraft-FINAL.pdf",
+   "src_name": "Wyoming Game and Fish, Watercraft Regulation (Chapter 22)",
+   "extra": "Wyoming does not price by length at all. Every watercraft on Wyoming "
+            "water also needs a current Aquatic Invasive Species decal, which is "
+            "why the bundled figures exist.",
+   "gotcha": "Buying the three-year registration with the AIS decal at $110 costs "
+             "less than three single years at $40, and Wyoming is one of the few "
+             "states that will sell you the whole thing in one transaction.",
+ },
+ "district-of-columbia": {
+   "fee_summary": '$15 under 16 feet rising to $60 over 40, a year - and $10 if there is no engine',
+   "period": "one year, expiring 31 December",
+   "rows": [("No propulsion machinery", "$10"), ("Under 16 ft", "$15"),
+            ("16 ft to less than 26 ft", "$25"),
+            ("26 ft to less than 40 ft", "$35"), ("Over 40 ft", "$60")],
+   "agency": "the Metropolitan Police Department Harbor Patrol",
+   "agency_url": "https://mpdc.dc.gov/page/harbor-legal-requirements",
+   "src": "https://mpdc.dc.gov/page/harbor-legal-requirements",
+   "src_name": "DC Metropolitan Police, Harbor Legal Requirements",
+   "extra": "A title is $2 plus a 6% titling tax on the purchase price; a documented "
+            "vessel is exempt from the title tax. A lost decal is $5 to replace.",
+   "gotcha": "The District is the only jurisdiction on this site where your boat is "
+             "registered by the POLICE &mdash; the MPD Harbor Patrol, not a wildlife "
+             "agency or a DMV. Everything expires on 31 December whatever month you "
+             "registered.",
+ },
 }
 
 
