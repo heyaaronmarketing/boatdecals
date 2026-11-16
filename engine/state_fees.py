@@ -480,6 +480,78 @@ FEES = {
              "feet becomes $250 at 65. It is also one of the few states where the "
              "SELLER is required to remove the decals when the boat changes hands.",
  },
+ "oregon": {
+   "fee_summary": 'a formula rather than a table - $8 plus $5.95 per foot, for two years',
+   "period": "two years, issued on a calendar basis",
+   # Oregon has no fee table - it charges a formula. Marked so the gate knows
+   # this row is deliberate rather than a sloppy "about $30".
+   "formula": True,
+   "rows": [("Every motorboat", "$8 plus $5.95 per foot")],
+   "agency": "the Oregon State Marine Board",
+   "agency_url": "https://www.oregon.gov/osmb/title-registration/pages/default.aspx",
+   "src": "https://www.oregon.gov/osmb/pages/boat-fees.aspx",
+   "src_name": "Oregon State Marine Board, Agency Fees",
+   "extra": "A title is $75, and a replacement Certificate of Number with decals is "
+            "$15. Oregon also wants the boat registered whenever it is on the water "
+            "at all &mdash; including moored at the dock.",
+   "gotcha": "Oregon is the only state on this page that prices by the FOOT rather "
+             "than by a length band, so there is no step to fall the wrong side of. "
+             "A 19-footer pays $121.05 for two years; a 20-footer pays $127.",
+ },
+ "nebraska": {
+   "fee_summary": '$51 for the common 16-to-26-foot band, from $28 for a small boat to $120 for a 40-footer, each plus a $4 issuing fee',
+   "period": "three years, expiring 31 December of the third year",
+   "rows": [("Shorter than 16 ft", "$28"), ("16 ft to less than 26 ft", "$51"),
+            ("26 ft to less than 40 ft", "$72.50"), ("40 ft and over", "$120")],
+   "agency": "the county treasurer in your county of residence",
+   "agency_url": "https://outdoornebraska.gov/parks/go-boating/boating-regulations/",
+   "src": "https://govdocs.nebraska.gov/epubs/G1000/H006-2026.pdf",
+   "src_name": "Nebraska Game and Parks 2026 Boating Guide",
+   "extra": "Every figure above excludes the $4 issuing fee. A duplicate certificate "
+            "is $5 plus the same $4. Registering a canoe or kayak is optional.",
+   "gotcha": "A new registration can only be obtained from the county treasurer where "
+             "the boater lives &mdash; not from Game and Parks. Renewals can go "
+             "through the DMV online, but the first one cannot.",
+ },
+ "idaho": {
+   "fee": False,
+   "period": "one calendar year",
+   "rows": [],
+   "agency": "Idaho Department of Parks and Recreation",
+   "agency_url": "https://parksandrecreation.idaho.gov/registration-permits/",
+   "src": "https://legislature.idaho.gov/statutesrules/idstat/title67/t67ch70/sect67-7008/",
+   "src_name": "Idaho Code §67-7008",
+   "fee_note": "Idaho's own published statute is missing its numbers. Section "
+               "67-7008(10) reads &ldquo;the fees for each calendar year shall "
+               "be: (a) Vessels 0-12 feet in length (b) Vessels over 12 feet in "
+               "length plus $2.00 per foot for each additional foot in excess of 12 "
+               "feet&rdquo; &mdash; with the two base dollar amounts simply absent "
+               "from the page. We are not going to supply figures the state has not "
+               "published. The structure is real: a base by length, plus $2.00 a "
+               "foot over 12 feet. For the base, ask Idaho Parks and Recreation, "
+               "linked above &mdash; we are not going to be the site that invents it.",
+   "extra": "Idaho-registered boats do not buy a separate invasive species sticker; "
+            "the registration sticker serves as one.",
+   "gotcha": "Idaho rotates its validation sticker colours through green, red, blue "
+             "and international orange, so an officer reads the year off the colour "
+             "before reading the date.",
+ },
+ "utah": {
+   "fee_summary": 'a flat $40 a year, whatever the boat',
+   "period": "one year",
+   "rows": [("Every motorboat or sailboat", "$40")],
+   "agency": "the Utah Division of Motor Vehicles, for the Division of Outdoor Recreation",
+   "agency_url": "https://dmv.utah.gov/register/boats",
+   "src": "https://recreation.utah.gov/wp-content/uploads/Boating-Code-and-Rules-2022-Online.pdf",
+   "src_name": "Utah Administrative Code R651-207-1",
+   "extra": "A duplicate registration card is $4 and a duplicate decal $3. Utah also "
+            "runs a separate aquatic-invasive-species programme with its own "
+            "sticker; the figures for that are not in the rule we read, so we are "
+            "not quoting them.",
+   "gotcha": "Utah is the flat-fee state: &ldquo;the registration fee shall be $40 "
+             "per year&rdquo;, with no length bands at all. A 10-foot dinghy and a "
+             "40-foot cruiser pay the same.",
+ },
 }
 
 

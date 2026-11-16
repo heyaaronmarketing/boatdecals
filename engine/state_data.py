@@ -73,6 +73,14 @@ USCG_FLEET = {
    'All motorized vessels'),
  'new-jersey'      : ( 153292, 26,
    'All watercraft - excludes non-motorized boats under 12 feet, canoes and kayaks'),
+ 'oregon'          : ( 150115, 27,
+   'All motorized vessels; sailboats 12 feet or more in length'),
+ 'nebraska'        : (  76931, 36,
+   'All motorized vessels'),
+ 'idaho'           : (  92501, 33,
+   'All motorized vessels and sailboats'),
+ 'utah'            : (  67852, 38,
+   'All motorized vessels and sailboats'),
 }
 
 OUTLINE = {
@@ -206,6 +214,10 @@ STATE_ACCENT = {
  'arkansas'        : ('#3d4a28', '#d7a13b', 'Ozark green and river clay'),
  'massachusetts'   : ('#13395c', '#c9a227', 'harbour navy and brass'),
  'new-jersey'      : ('#1a3e6b', '#e8734a', 'bay blue and boardwalk'),
+ 'oregon'          : ('#1f4330', '#4fb3a4', 'douglas fir and coast'),
+ 'nebraska'        : ('#4a4526', '#e3b24b', 'sandhills and wheat'),
+ 'idaho'           : ('#2e4a3c', '#9ecf5a', 'panhandle pine and river'),
+ 'utah'            : ('#7a3b22', '#e8c45c', 'red rock and desert sun'),
 }
 
 

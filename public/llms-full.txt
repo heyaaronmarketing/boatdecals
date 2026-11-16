@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 394 questions across 54 pages, with the page each one came from.
+> 434 questions across 58 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -563,6 +563,39 @@ A: Lake Lanier is the one most people name first: 38,000 acres north-east of Atl
 Q: When is boating season in Georgia?
 A: Year round in the south of the state. The lake season runs hard from April through October.
 
+## Idaho Boat Registration Numbers ID
+Source: https://numbermyboat.com/registration-numbers/idaho/
+
+Q: How much does it cost to register a boat in Idaho?
+A: Idaho does not publish its registration fee where a boat owner can read it, so we will not print a figure we cannot source from the state - the amount shows at checkout on the state's own portal. Our $28 is separate: it is the vinyl, not the registration.
+
+Q: How tall do Idaho boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Idaho like everywhere else. Taller is always legal.
+
+Q: What do Idaho boat numbers start with?
+A: ID. Your full number runs prefix, digits, then a letter suffix — for example ID 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Idaho?
+A: You register through the Idaho Department of Parks and Recreation. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So ID 1234 AB, not ID1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Idaho sizes the sticker as well as placing it: approximately three inches square, displayed within six inches of and directly in line with the vessel number, on each side of the bow. Only the number and the validation stickers may appear there.
+
+Q: Do I have to register a kayak or canoe in Idaho?
+A: Idaho registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Idaho Department of Parks and Recreation system.
+
+Q: How many registered boats are there in Idaho?
+A: 92,501, which puts Idaho 33rd in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Idaho?
+A: Lake Coeur d'Alene is the one most people name first: the panhandle's centrepiece, 25 miles long with the city at the top of it. Others worth knowing: Lake Pend Oreille, Priest Lake, Lake Cascade and Payette Lake, The Snake River and Hells Canyon.
+
+Q: When is boating season in Idaho?
+A: Short in the mountains, longer on the Snake. The panhandle lakes stay cold enough to matter all year.
+
 ## Illinois Boat Registration Numbers IL
 Source: https://numbermyboat.com/registration-numbers/illinois/
 
@@ -905,6 +938,39 @@ A: Lake of the Ozarks is the one most people name first: roughly 1,150 miles of 
 Q: When is boating season in Missouri?
 A: March through November at the Ozarks, with the hard season April through October.
 
+## Nebraska Boat Registration Numbers NB
+Source: https://numbermyboat.com/registration-numbers/nebraska/
+
+Q: How much does it cost to register a boat in Nebraska?
+A: Nebraska charges $51 for the common 16-to-26-foot band, from $28 for a small boat to $120 for a 40-footer, each plus a $4 issuing fee, for a registration that runs three years, through the county treasurer in your county of residence. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Nebraska boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Nebraska like everywhere else. Taller is always legal.
+
+Q: What do Nebraska boat numbers start with?
+A: NB. Your full number runs prefix, digits, then a letter suffix — for example NB 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Nebraska?
+A: You register through the county treasurer, for Nebraska Game and Parks. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NB 1234 AB, not NB1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Nebraska puts the validation sticker at the front of the number, before the NB, on each side of the forward half. Nothing but the registration letters, numbers and validation stickers may appear on either forward side.
+
+Q: Do I have to register a kayak or canoe in Nebraska?
+A: Nebraska registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the county treasurer, for Nebraska Game and Parks system.
+
+Q: How many registered boats are there in Nebraska?
+A: 76,931, which puts Nebraska 36th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Nebraska?
+A: Lake McConaughy is the one most people name first: "Big Mac" on the North Platte near Ogallala - the largest reservoir in the state and the one with the sand beaches. Others worth knowing: The Missouri River, Harlan County Lake, Branched Oak and Pawnee, Lake Minatare and the North Platte lakes.
+
+Q: When is boating season in Nebraska?
+A: Ice in and out. The season is effectively April through October.
+
 ## New Jersey Boat Registration Numbers NJ
 Source: https://numbermyboat.com/registration-numbers/new-jersey/
 
@@ -1037,6 +1103,39 @@ A: Lake Erie is the one most people name first: the shallowest and warmest Great
 Q: When is boating season in Ohio?
 A: Roughly late April through October. Lake Erie's walleye run pulls boats out early, often before the weather deserves it.
 
+## Oregon Boat Registration Numbers OR
+Source: https://numbermyboat.com/registration-numbers/oregon/
+
+Q: How much does it cost to register a boat in Oregon?
+A: Oregon charges a formula rather than a table - $8 plus $5.95 per foot, for two years, for a registration that runs two years, through the Oregon State Marine Board. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Oregon boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Oregon like everywhere else. Taller is always legal.
+
+Q: What do Oregon boat numbers start with?
+A: OR. Your full number runs prefix, digits, then a letter suffix — for example OR 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Oregon?
+A: You register through the Oregon State Marine Board. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So OR 1234 AB, not OR1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Oregon shows the decal position in a placement diagram rather than describing it in words, so we will not put inches in its mouth. What the Marine Board does state in words is the penalty — failing to display the numbers and a current decal properly is a Class D violation, $110 — and the rule for Coast Guard documented boats, which register in Oregon too and put the expiration stickers on the port and starboard sides at the stern.
+
+Q: Do I have to register a kayak or canoe in Oregon?
+A: Oregon registers all motorized vessels; sailboats 12 feet or more in length. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Oregon State Marine Board system.
+
+Q: How many registered boats are there in Oregon?
+A: 150,115, which puts Oregon 27th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Oregon?
+A: The Columbia River is the one most people name first: the whole northern border, and the biggest boating water in the state. Registration is reciprocal with Washington on it, but the fish rules are not. Others worth knowing: The Willamette River, Detroit Lake and Green Peter, Crane Prairie and Wickiup, The Oregon Coast.
+
+Q: When is boating season in Oregon?
+A: Coastal and Columbia boating runs all year. The Cascade reservoirs are drawn down over winter and some ramps go dry.
+
 ## Pennsylvania Boat Registration Numbers PA
 Source: https://numbermyboat.com/registration-numbers/pennsylvania/
 
@@ -1168,6 +1267,39 @@ A: Sam Rayburn Reservoir is the one most people name first: 114,500 acres, the l
 
 Q: When is boating season in Texas?
 A: Year round in practice. Summer heat moves traffic to early morning and evening, and lake levels in a drought year decide which ramps are usable.
+
+## Utah Boat Registration Numbers UT
+Source: https://numbermyboat.com/registration-numbers/utah/
+
+Q: How much does it cost to register a boat in Utah?
+A: Utah charges a flat $40 a year, whatever the boat, for a registration that runs one year, through the Utah Division of Motor Vehicles, for the Division of Outdoor Recreation. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Utah boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Utah like everywhere else. Taller is always legal.
+
+Q: What do Utah boat numbers start with?
+A: UT. Your full number runs prefix, digits, then a letter suffix — for example UT 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Utah?
+A: You register through the Utah Division of Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So UT 1234 AB, not UT1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Utah is the two-decal state, and the order matters. The yearly registration decal goes three inches aft of the number on each side — and the month-of-expiration decal goes immediately aft of the yearly decal. Only current-year decals may be displayed. On a documented vessel the yearly decal goes on each side of the forward half instead.
+
+Q: Do I have to register a kayak or canoe in Utah?
+A: Utah registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Utah Division of Motor Vehicles system.
+
+Q: How many registered boats are there in Utah?
+A: 67,852, which puts Utah 38th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Utah?
+A: Lake Powell is the one most people name first: shared with Arizona, and nearly 2,000 miles of shoreline at full pool. The water level has moved so much in the last decade that ramps open and close with it. Others worth knowing: Bear Lake, Flaming Gorge Reservoir, Utah Lake, Jordanelle and Deer Creek.
+
+Q: When is boating season in Utah?
+A: The low-desert water runs all year. The mountain reservoirs ice over.
 
 ## Virginia Boat Registration Numbers VA
 Source: https://numbermyboat.com/registration-numbers/virginia/

@@ -654,12 +654,21 @@ for _f in OUT.rglob("*"):
             fails.append("PII: %s in %s" % (_what, _rel))
     # ONE phone number, one spelling of it. A second spelling is not a
     # cosmetic problem: Google matches a citation to a listing on the string.
-    for _hit in sorted(set(_PHONEISH.findall(_t))):
-        if _hit != _PH:
-            fails.append("NAP: %s carries the phone number as %r - it is "
-                         "written once in content.SITE as %r and citations "
-                         "match character-for-character"
-                         % (_rel, _hit, _PH))
+    #
+    # State administrative-rule citations are phone-shaped and are not phone
+    # numbers: "OAR 250-010-0040" is Oregon's boat-numbering rule. They are
+    # excused only when a citation marker sits immediately in front, so a real
+    # second number cannot hide behind the exemption.
+    _CITE = re.compile(r"(?:OAR|IDAPA|CMR|CFR|R\d{3}|Rule|Section|Chapter|§)\s*$",
+                       re.I)
+    for _m in _PHONEISH.finditer(_t):
+        _hit = _m.group(0)
+        if _hit == _PH or _CITE.search(_t[max(0, _m.start() - 14):_m.start()]):
+            continue
+        fails.append("NAP: %s carries the phone number as %r - it is "
+                     "written once in content.SITE as %r and citations "
+                     "match character-for-character"
+                     % (_rel, _hit, _PH))
     for _hit in sorted(set(re.findall(r'tel:([^"\'\s>]+)', _t))):
         if _hit != _PT:
             fails.append("NAP: %s has a tel: link to %r, not %r"
@@ -3456,6 +3465,17 @@ for _slug, _d in sorted(_SF.FEES.items()):
             fails.append("%s publishes a fee table but no written summary, "
                          "which is what the FAQ answer reads from" % _where)
         for _lbl, _amt in _d["rows"]:
+            # A state that publishes a FORMULA rather than a table says so
+            # with formula=True, and then every dollar amount inside it still
+            # has to be plain - Oregon's "$8 plus $5.95 per foot" passes,
+            # "about $8 a foot" does not. The flag is per-state and explicit,
+            # so this can never become a general escape from the rule.
+            if _d.get("formula"):
+                if not re.fullmatch(r"\$\d[\d,]*(?:\.\d\d)? plus \$\d[\d,]*"
+                                    r"(?:\.\d\d)? per foot", _amt.strip()):
+                    fails.append("%s is marked formula=True but %r is not one "
+                                 "of the published forms we allow" % (_where, _amt))
+                continue
             if not re.fullmatch(r"\$[\d,]+(?:\.\d\d)?", _amt.strip()):
                 fails.append("%s fee %r is not a plain dollar figure - no "
                              "ranges, no 'about', no 'from'" % (_where, _amt))

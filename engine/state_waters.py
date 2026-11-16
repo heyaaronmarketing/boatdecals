@@ -651,4 +651,91 @@ WATERS = {
    ],
    season="Shore season runs Memorial Day to Columbus Day, with the serious fishing "
           "fleet out either side of it."),
+ "oregon": dict(
+   lede="Oregon wants a boat registered whenever it is on the water at all, moored "
+        "at the dock included - which is worth knowing before you leave one on a "
+        "slip over the winter.",
+   waters=[
+     ("The Columbia River",
+      "the whole northern border, and the biggest boating water in the state. "
+      "Registration is reciprocal with Washington on it, but the fish rules are not."),
+     ("The Willamette River",
+      "navigable from Portland up past Salem, and the weekday water for most of the "
+      "state's population."),
+     ("Detroit Lake and Green Peter",
+      "the Santiam reservoirs in the Cascade foothills."),
+     ("Crane Prairie and Wickiup",
+      "the high Deschutes reservoirs south-west of Bend, with a short season and "
+      "cold water."),
+     ("The Oregon Coast",
+      "Tillamook, Yaquina and Coos Bays, plus the bar crossings that make Oregon "
+      "coastal boating its own discipline."),
+     ("Lake Billy Chinook",
+      "three arms of three rivers in a canyon near Culver."),
+   ],
+   season="Coastal and Columbia boating runs all year. The Cascade reservoirs are "
+          "drawn down over winter and some ramps go dry."),
+ "nebraska": dict(
+   lede="Nebraska is reservoir and river country, and registration goes through the "
+        "county treasurer rather than through Game and Parks.",
+   waters=[
+     ("Lake McConaughy",
+      "\"Big Mac\" on the North Platte near Ogallala - the largest reservoir in the "
+      "state and the one with the sand beaches."),
+     ("The Missouri River",
+      "the entire eastern border, with the Gavins Point and Lewis and Clark stretch "
+      "at the top shared with South Dakota."),
+     ("Harlan County Lake",
+      "a Corps reservoir in the south-central counties, big enough for weather to "
+      "build on it."),
+     ("Branched Oak and Pawnee",
+      "the Lincoln-area Salt Valley lakes, close in and busy."),
+     ("Lake Minatare and the North Platte lakes",
+      "panhandle water, with the lighthouse at Minatare that has no business being "
+      "in Nebraska."),
+   ],
+   season="Ice in and out. The season is effectively April through October."),
+ "idaho": dict(
+   lede="Idaho boating divides at the Salmon River: big deep glacial lakes in the "
+        "panhandle, reservoirs and the Snake in the south.",
+   waters=[
+     ("Lake Coeur d'Alene",
+      "the panhandle's centrepiece, 25 miles long with the city at the top of it."),
+     ("Lake Pend Oreille",
+      "the largest lake in Idaho and one of the deepest in the country - the Navy "
+      "tests submarine models in it."),
+     ("Priest Lake",
+      "the quieter northern lake, with the Thorofare running up to the Upper Lake."),
+     ("Lake Cascade and Payette Lake",
+      "the mountain lakes above Boise, and where the valley goes in summer."),
+     ("The Snake River and Hells Canyon",
+      "the western border, with jet-boat water in the deepest river gorge in North "
+      "America."),
+     ("American Falls Reservoir",
+      "the big flat-water reservoir on the Snake in the south-east."),
+   ],
+   season="Short in the mountains, longer on the Snake. The panhandle lakes stay "
+          "cold enough to matter all year."),
+ "utah": dict(
+   lede="Utah charges one flat registration fee whatever you own, which is unusual - "
+        "and its two decals go in a specific order on the hull, which is more "
+        "unusual still.",
+   waters=[
+     ("Lake Powell",
+      "shared with Arizona, and nearly 2,000 miles of shoreline at full pool. The "
+      "water level has moved so much in the last decade that ramps open and close "
+      "with it."),
+     ("Bear Lake",
+      "on the Idaho line, and turquoise from suspended carbonate rather than from "
+      "anything in the sky."),
+     ("Flaming Gorge Reservoir",
+      "shared with Wyoming, deep and cold on the Green River."),
+     ("Utah Lake",
+      "big, shallow and warm, right beside the Provo population."),
+     ("Jordanelle and Deer Creek",
+      "the Wasatch Back reservoirs, half an hour from Park City."),
+     ("The Great Salt Lake",
+      "boatable in parts, and hard on everything metal you take onto it."),
+   ],
+   season="The low-desert water runs all year. The mountain reservoirs ice over."),
 }

@@ -1828,6 +1828,19 @@ def fee_term(period):
     return m.group(0) if m else period
 
 
+def fee_amount(b):
+    """A row's amount as a float, or None when the state publishes a formula.
+
+    Oregon does not have a fee table at all - it charges "$8 plus $5.95 per
+    foot" - and Maine prices off horsepower. Those are real published figures
+    and they belong on the page, but they cannot go into a min/max. Anything
+    that is not a plain dollar amount returns None and is left out of the
+    derived span rather than crashing it or, worse, being coerced to 8.
+    """
+    m = re.fullmatch(r"\$(\d{1,3}(?:,\d{3})*(?:\.\d\d)?)", b.strip())
+    return float(m.group(1).replace(",", "")) if m else None
+
+
 def fee_span(f):
     """The published span of a state's fee table, as the state printed it.
 
@@ -1838,9 +1851,12 @@ def fee_span(f):
     rows = f.get("rows") or []
     if not rows:
         return ""
-    amts = [b for _, b in rows]
-    lo = min(amts, key=lambda a: float(a.strip("$").replace(",", "")))
-    hi = max(amts, key=lambda a: float(a.strip("$").replace(",", "")))
+    amts = [b for _, b in rows if fee_amount(b) is not None]
+    if not amts:
+        # A formula rather than a table: print what the state printed.
+        return rows[0][1]
+    lo = min(amts, key=fee_amount)
+    hi = max(amts, key=fee_amount)
     return lo if lo == hi else "%s&ndash;%s" % (lo, hi)
 
 
@@ -1852,8 +1868,9 @@ def fee_headline():
     for three years. A sentence like this is exactly what an answer engine
     lifts, so it cannot be a round-number guess that nothing checks.
     """
-    priced = [(float(b.strip("$").replace(",", "")), b, slug)
-              for slug, f in STATE_FEES.items() for _, b in (f.get("rows") or [])]
+    priced = [(fee_amount(b), b, slug)
+              for slug, f in STATE_FEES.items() for _, b in (f.get("rows") or [])
+              if fee_amount(b) is not None]
     lo, hi = min(priced), max(priced)
     nm = lambda slug: next((x["name"] for x in STATES if x["slug"] == slug), slug)
     three = sum(1 for f in STATE_FEES.values()

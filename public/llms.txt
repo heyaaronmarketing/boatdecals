@@ -111,4 +111,8 @@ and a state.
 - [Arkansas (AR)](https://numbermyboat.com/registration-numbers/arkansas/): prefix AR, issued by Arkansas Department of Finance and Administration
 - [Massachusetts (MS)](https://numbermyboat.com/registration-numbers/massachusetts/): prefix MS, issued by Massachusetts Environmental Police
 - [New Jersey (NJ)](https://numbermyboat.com/registration-numbers/new-jersey/): prefix NJ, issued by New Jersey Motor Vehicle Commission
+- [Oregon (OR)](https://numbermyboat.com/registration-numbers/oregon/): prefix OR, issued by Oregon State Marine Board
+- [Nebraska (NB)](https://numbermyboat.com/registration-numbers/nebraska/): prefix NB, issued by county treasurer, for Nebraska Game and Parks
+- [Idaho (ID)](https://numbermyboat.com/registration-numbers/idaho/): prefix ID, issued by Idaho Department of Parks and Recreation
+- [Utah (UT)](https://numbermyboat.com/registration-numbers/utah/): prefix UT, issued by Utah Division of Motor Vehicles
 - [Indiana (IN)](https://numbermyboat.com/registration-numbers/indiana/): prefix IN, issued by Indiana Bureau of Motor Vehicles

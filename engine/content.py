@@ -761,6 +761,84 @@ STATES = [
               "decal offset is stated in the State Police&rsquo;s own 2024 Boating "
               "Safety Manual, which is the publication an officer on Barnegat Bay is "
               "working from."),
+    dict(slug="oregon", name="Oregon", ab="OR", vol=20,
+         agency="Oregon State Marine Board", tier=3,
+         fmt="Oregon publishes one spacing rule in words and the rest in a diagram. "
+             "The rule it writes out is for the long numbers: <strong>if your OR "
+             "number has three letters, group them next to each other</strong> "
+             "(OAR 250-010-0040)",
+         decal="Oregon shows the decal position in a placement diagram rather than "
+               "describing it in words, so we will not put inches in its mouth. What "
+               "the Marine Board does state in words is the penalty &mdash; failing "
+               "to display the numbers and a current decal properly is a "
+               "<strong>Class D violation, $110</strong> &mdash; and the rule for "
+               "Coast Guard documented boats, which register in Oregon too and "
+               "<strong>put the expiration stickers on the port and starboard sides "
+               "at the stern</strong>.",
+         rules_src="https://www.oregon.gov/osmb/title-registration/pages/or-numbers.aspx",
+         rules_src_name="Oregon State Marine Board, OR Number Placement and Spacing",
+         note="One Oregon rule catches people who leave a boat in the water: a boat "
+              "must be currently registered <strong>whenever it is on the water, "
+              "even when docked or moored</strong>. Not just under way."),
+    dict(slug="nebraska", name="Nebraska", ab="NB", vol=20,
+         agency="county treasurer, for Nebraska Game and Parks", tier=3,
+         fmt="Nebraska writes the whole line out in order, and the sticker is part of "
+             "it: <strong>validation sticker first, then NB, then a 2-inch space, "
+             "then four digits, then a 2-inch space, then two or three capital block "
+             "letters</strong>. Block figures at least 3 inches high, contrasting, "
+             "and <strong>visible for 100 feet</strong> &mdash; Nebraska is the only "
+             "state here that states the distance it has to read from",
+         decal="Nebraska puts the validation sticker at the <strong>front of the "
+               "number, before the NB</strong>, on each side of the forward half. "
+               "Nothing but the registration letters, numbers and validation "
+               "stickers may appear on either forward side.",
+         rules_src="https://govdocs.nebraska.gov/epubs/G1000/H006-2026.pdf",
+         rules_src_name="Nebraska Game and Parks 2026 Boating Guide",
+         note="Two Nebraska-only things. <strong>Nebraska boat numbers start with "
+              "NB, not NE</strong> &mdash; the Coast Guard set the vessel prefixes "
+              "in 1958, before the Post Office picked its codes, and the two never "
+              "got reconciled. And <strong>all registrations are "
+              "nontransferable</strong>: a boat you just bought may be wearing a "
+              "current sticker, and you still have 30 days to register it in your "
+              "own name."),
+    dict(slug="idaho", name="Idaho", ab="ID", vol=20,
+         agency="Idaho Department of Parks and Recreation", tier=3,
+         fmt="Plain vertical block characters not less than three inches high, "
+             "contrasting with the background, read left to right, with spaces or "
+             "hyphens <strong>equal to the width of a letter other than "
+             "&ldquo;I&rdquo; or a number other than &ldquo;1&rdquo;</strong> "
+             "between the groups, and set <strong>as high above the waterline as "
+             "practicable without decreasing the visibility of the number</strong>",
+         decal="Idaho sizes the sticker as well as placing it: approximately "
+               "<strong>three inches square</strong>, displayed <strong>within six "
+               "inches of and directly in line with the vessel number</strong>, on "
+               "each side of the bow. Only the number and the validation stickers may "
+               "appear there.",
+         rules_src="https://legislature.idaho.gov/statutesrules/idstat/title67/t67ch70/sect67-7008/",
+         rules_src_name="Idaho Code §67-7008",
+         note="Idaho rotates the sticker colour by expiry year &mdash; "
+              "<strong>green, red, blue, international orange</strong>, and round "
+              "again &mdash; so an officer reads the year off the colour at a "
+              "distance before ever reading the date."),
+    dict(slug="utah", name="Utah", ab="UT", vol=20,
+         agency="Utah Division of Motor Vehicles", tier=3,
+         fmt="Plain vertical block characters not less than three inches in height, "
+             "contrasting and distinctly legible, read left to right, with spaces or "
+             "hyphens <strong>equal to the width of a letter</strong> between the "
+             "letter and numeral groups, painted or permanently attached to each "
+             "side of the forward half",
+         decal="Utah is the two-decal state, and the order matters. The "
+               "<strong>yearly registration decal goes three inches aft of the "
+               "number</strong> on each side &mdash; and the <strong>month-of-"
+               "expiration decal goes immediately aft of the yearly decal</strong>. "
+               "Only current-year decals may be displayed. On a documented vessel "
+               "the yearly decal goes on each side of the forward half instead.",
+         rules_src="https://recreation.utah.gov/wp-content/uploads/Boating-Code-and-Rules-2022-Online.pdf",
+         rules_src_name="Utah Code §73-18-7 and Utah Administrative Code R651-212",
+         note="A boat carrying a valid U.S. Coast Guard marine document is "
+              "<strong>exempt from the Utah number display requirement</strong> "
+              "entirely &mdash; it still registers and still shows decals, but it "
+              "does not carry UT numbers on the bow."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "
