@@ -247,8 +247,18 @@ function shell(inner) {
   return `<div style="font:15px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;` +
     `color:#0e2430;max-width:560px;margin:0 auto;padding:4px 2px">${inner}` +
     `<p style="font-size:12.5px;color:#5b7383;border-top:1px solid #dde7ed;` +
-    `margin-top:26px;padding-top:14px">Number My Boat &middot; cut in ` +
-    `Evansdale, Iowa. Reply to this email and it reaches us.</p></div>`;
+    // A postal address in the footer, now that there is one to print. Every
+    // one of these emails is transactional, so CAN-SPAM's address requirement
+    // does not strictly bite - but a reminder chasing a silent customer is
+    // close enough to the line that the address is cheaper than the argument,
+    // and a real address in a real email is a deliverability signal too.
+    //
+    // Typed here rather than imported because the worker has no access to
+    // content.py. verify.py pins it to SITE: these two strings cannot drift.
+    `margin-top:26px;padding-top:14px">Number My Boat &middot; ` +
+    `475 River Forest Road, Evansdale, IA 50707 &middot; (319) 239-3793` +
+    `<br>Cut by hand in Evansdale, Iowa. Reply to this email and it ` +
+    `reaches us.</p></div>`;
 }
 
 /**

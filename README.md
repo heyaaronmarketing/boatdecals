@@ -871,26 +871,45 @@ document's premises with nobody deciding to. Research is
 
 See the "Before this takes a real order" checklist in `STRATEGY.md`.
 
-## No personal information on this site
+## The NAP: one spelling, pinned
 
-The shop runs out of a private home, so **there is no street address, no phone
-number and no coordinates anywhere** — site, schema, `llms.txt` or otherwise.
-Town and state stay: "cut in Evansdale, Iowa" is a real differentiator and
-gives nothing away. Contact is email only; local pickup is arranged by email
-and the address is sent privately.
+The real name, address and phone **are published** — Aaron's call 2026-11-15,
+reversing his own 2026-10-30 removal. They live in exactly one place,
+`content.py: SITE` (`street`, `postal`, `phone_display`, `phone_tel`), and
+`build.py` reads them as `PH` / `PT`. **Never type either into a template, a
+citation or a directory listing from a page** — retype it from `SITE`.
 
-Two consequences worth knowing before you "helpfully" add a NAP block back:
+This has moved twice, so before you "helpfully" change it in either
+direction: read `SITE`, not a comment, a commit message or a note.
 
-* The schema is **`OnlineStore` + `Organization`, never `LocalBusiness`**. A
-  LocalBusiness entity with no street address is a half-filled listing, and
-  this site ships to all 50 states rather than wanting walk-ins.
-* `SITE` no longer carries `street`, `postal`, `phone_display`, `phone_tel`,
-  `lat` or `lng`. They were deleted rather than blanked, so a NAP block cannot
-  be reassembled by reaching for a key that is still sitting there.
+Three things are deliberately still absent, each a separate decision:
 
-`verify.py` fails the build on the old phone number, the old street, a `tel:`
-link, `streetAddress`, `GeoCoordinates`, a `LocalBusiness` entity, a Google
-Maps link, or the owner's name.
+* **No coordinates, and no `GeoCoordinates` in schema.** Once the Google
+  Business Profile is claimed, Google's own pin is authoritative and a
+  lat/lng here only competes with it.
+* **No Google Maps link or embed.** The address in text does the SEO work; an
+  iframe is third-party JavaScript on the contact page.
+* **No About page, no owner photograph, and the owner's name stays out of
+  visible text** — it is approved for an `Article` author node only.
+
+`verify.py`'s gate flipped rather than disappearing. It used to prove the
+phone and the street were *absent*; it now proves there is exactly **one
+spelling of each**. It fails the build on:
+
+* any phone-shaped string that is not `SITE["phone_display"]`, or any `tel:`
+  that is not `SITE["phone_tel"]` — a swept site has 188 matches and every
+  one must be the same string;
+* any spelling of the street that is not `SITE["street"]`, so abbreviating
+  "Road" to "Rd" on one page is a build failure;
+* a footer `.nap` on any page missing the street, ZIP, phone or `tel:` link,
+  or fewer than 50 pages carrying one at all;
+* an org node that is not a `LocalBusiness`, or whose `telephone` or four
+  address fields disagree with `SITE`;
+* `GeoCoordinates`, a Maps link, or the owner's name in visible text.
+
+The failure mode this guards is not a leak any more. It is a **second
+spelling** — which breaks a citation match, is invisible on the page, and is
+the one thing that actually costs local-pack ranking.
 
 ## Writing background waiters: two traps
 

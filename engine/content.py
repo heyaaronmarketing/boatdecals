@@ -15,18 +15,32 @@ SITE = {
     "tagline": None,   # set from PRICE below - SITE is defined first
     "email": "orders@numbermyboat.com",
     "hours": "Mon-Fri 8-5 CT",
-    # NO PHONE, NO STREET ADDRESS, NO COORDINATES - Aaron's call 2026-10-30.
-    # The shop runs out of a private home, so the address and the landline are
-    # personal information, not business information. Town and state stay:
-    # "cut in Evansdale, Iowa" is a real differentiator and gives away nothing.
+    # REAL NAP, PUBLISHED - Aaron's call 2026-11-15, reversing his own
+    # 2026-10-30 call that took it off the site. The reasoning for taking it
+    # down (the shop runs out of a private home) has not changed; he has
+    # decided the local-pack and E-E-A-T upside is worth it. A real shop, a
+    # real address and a real phone is the one thing alphabetsigns, signs.com
+    # and vinyldisorder cannot answer.
     #
-    # This is also why the schema is OnlineStore + Organization and NOT
-    # LocalBusiness. A LocalBusiness entity without a street address is a
-    # half-filled listing that Google treats as low quality, and the site does
-    # not want walk-ins anyway - it ships to all 50 states.
+    # Written ONCE, here. Never typed into a template, and never retyped into
+    # a citation by hand from a page: NAP consistency character-for-character
+    # is the whole game in local ranking, and the live risk is now a typo
+    # rather than an omission. The gate pins all four of these strings.
+    #
+    # Still off the site, deliberately, and these are separate decisions:
+    #   coordinates   no rooftop pin. Once the GBP is claimed Google's own
+    #                 pin is authoritative and a lat/lng here is only a hint.
+    #   Maps links    the address in text does the work; an iframe is
+    #                 third-party JS on the contact page.
+    #   the owner     name stays schema-only (Article author), his
+    #                 photograph and the About page stay gone.
+    "phone_display": "(319) 239-3793",
+    "phone_tel": "+13192393793",
+    "street": "475 River Forest Road",
     "city": "Evansdale",
     "region": "IA",
     "region_name": "Iowa",
+    "postal": "50707",
     "county": "Black Hawk County",
     "metro": "the Cedar Valley",
 }

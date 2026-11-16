@@ -29,6 +29,10 @@ OUT = ROOT / "public"
 URL = os.environ.get("SITE_URL", SITE["url"]).rstrip("/")
 TODAY = os.environ.get("BUILD_DATE", datetime.date.today().isoformat())
 B = SITE["brand"]
+# The NAP, read from SITE and never retyped. PH is what a reader sees, PT is
+# what a tel: link dials. Both are gated: the only phone number allowed to
+# appear anywhere on this site is this one.
+PH, PT = SITE["phone_display"], SITE["phone_tel"]
 e = html.escape
 PAGES = []
 # Paths that asked not to be indexed; kept out of sitemap.xml. Populated by
@@ -551,13 +555,15 @@ def topbar():
     return ('<div class=top><div class=w>'
             '<span><strong>$%d a pair</strong> &middot; both sides '
             '&middot; free shipping proof in 12 hours</span>'
-            # The link is hidden on a phone: the header button sits directly
-            # under it saying the same thing, and the point of this pass was to
-            # stop offering the same action four times on one screen.
+            # The number is hidden on a phone, which looks backwards and is
+            # not: the header's "Start your order" button sits directly under
+            # this strip, and the point of that pass was to stop offering the
+            # same action four times on one screen. A phone still gets a
+            # tappable number in the footer and on /contact/.
             '<span>Cut in %s, %s<span class=topcta> &middot; '
-            '<a href="/design/" style="color:#fff">Start your order</a></span></span>'
+            '<a href="tel:%s" data-call style="color:#fff">%s</a></span></span>'
             '</div></div>'
-            % (PRICE["numbers"], SITE["city"], SITE["region"]))
+            % (PRICE["numbers"], SITE["city"], SITE["region"], PT, PH))
 
 def header():
     """Header nav.
@@ -737,16 +743,17 @@ def footer():
             '<li><a href="/shipping-and-returns/">Shipping &amp; returns</a></li>'
             '</ul></div></div>'
             '<div class=nap><strong>%s</strong><br>'
-            'Cut and shipped from %s, %s<br>'
-            '<a href="mailto:%s">%s</a> &middot; %s</div>'
+            '%s<br>%s, %s %s<br>'
+            '<a href="tel:%s" data-call>%s</a> &middot; '
+            '<a href="mailto:%s">%s</a><br>%s</div>'
             '<div class=fbot><span>&copy; %s %s. Cut by hand in %s, Iowa and shipped '
             'to all 50 states.</span>'
             '<span><a href="/privacy/">Privacy</a> &middot; <a href="/terms/">Terms</a>'
             ' &middot; <a href="/sitemap.xml">Sitemap</a></span></div>'
             '</div></footer>'
             % (pl, tl, bl, gl,
-               e(B), SITE["city"], SITE["region_name"],
-               SITE["email"], SITE["email"], SITE["hours"],
+               e(B), SITE["street"], SITE["city"], SITE["region"], SITE["postal"],
+               PT, PH, SITE["email"], SITE["email"], SITE["hours"],
                datetime.date.today().year, e(B), SITE["city"]))
 
 def bc(trail):
@@ -763,19 +770,28 @@ def org_node():
     it as a single @id (rather than two nodes) means every Product, FAQ and
     Article on the site resolves to the same entity.
     """
-    return {"@type": ["OnlineStore", "Organization"], "@id": U("/#org"),
+    return {"@type": ["OnlineStore", "LocalBusiness"], "@id": U("/#org"),
             "name": B, "url": U("/"),
-            "email": SITE["email"],
+            "email": SITE["email"], "telephone": PH,
             "description": "Custom boat registration numbers, boat names and marine "
                            "vinyl decals cut to order in %s, %s and shipped "
                            "nationwide." % (SITE["city"], SITE["region_name"]),
-            # Locality and region only. No streetAddress, no geo, no
-            # openingHours - this is a mail-order shop run from a private
-            # home, and none of that is public information.
+            # A full PostalAddress, because a LocalBusiness without a street
+            # is a half-filled listing Google treats as low quality - the
+            # reason this node was an Organization while the address was off
+            # the site. No "geo": once the GBP is claimed Google's own pin is
+            # authoritative, and a guessed lat/lng only competes with it.
             "address": {"@type": "PostalAddress",
+                        "streetAddress": SITE["street"],
                         "addressLocality": SITE["city"],
                         "addressRegion": SITE["region"],
+                        "postalCode": SITE["postal"],
                         "addressCountry": "US"},
+            "openingHoursSpecification": [{
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday",
+                              "Friday"],
+                "opens": "08:00", "closes": "17:00"}],
             "areaServed": [{"@type": "Country", "name": "United States"},
                            {"@type": "AdministrativeArea", "name": SITE["county"]}],
             "priceRange": "$15-$120",
@@ -2742,11 +2758,11 @@ def build_local():
     waters = ", ".join(LOCAL_WATERS[:-1]) + " and " + LOCAL_WATERS[-1]
     faqs = [
       ("Can I pick up instead of having it shipped?",
-       "Yes, in %s. Email %s before you order and we will set a time and tell you "
-       "where to come - usually same day on registration numbers. It is a private "
-       "workshop rather than a storefront, so the address is not published and we "
-       "cannot take walk-ins."
-       % (SITE["city"], SITE["email"])),
+       "Yes. We are at %s in %s, %s %s. Choose local pickup in the notes box on "
+       "the order form and we will have it ready - usually same day on "
+       "registration numbers. Call %s first so somebody is here: it is a working "
+       "one-person shop, not a storefront with a counter."
+       % (SITE["street"], SITE["city"], SITE["region"], SITE["postal"], PH)),
       ("Do you do Iowa registration numbers?",
        "That is our home state. Iowa numbers run IA, four digits, two letters - "
        "IA 3717 ZW. Iowa registers through your county recorder rather than the DNR "
@@ -2766,17 +2782,18 @@ def build_local():
             "We cut every order right here in %s. Order online and we ship it free, "
             "or pick it up at the shop - usually the same day on registration numbers."
             % SITE["city"],
-            trust=[PRICE_CHIP, "Local pickup by arrangement",
-                   "Iowa IA numbers", "Free shipping"],
+            trust=[PRICE_CHIP, "Local pickup available",
+                   "Iowa IA numbers", "Call %s" % PH],
             right=O.form())
       + '<section><div class=w><div class=prose>'
-        '<h2>Picking up instead of shipping</h2>'
-        '<p><strong>%s</strong> cuts everything in <strong>%s, %s</strong>, in %s. '
-        'It is a private workshop rather than a storefront, so there is no counter '
-        'to walk up to and no address published here &mdash; but if you are local '
-        'and would rather collect than wait on the post, email '
-        '<a href="mailto:%s">%s</a> before you order. We will set a time and tell '
-        'you where to come. Hours are %s.</p>'
+        '<h2>Where we are</h2>'
+        '<p><strong>%s</strong><br>%s<br>%s, %s %s<br>'
+        '<a href="tel:%s" data-call>%s</a> &middot; %s</p>'
+        '<p>That is a working one-person shop rather than a storefront with a '
+        'counter, so if you are collecting, <strong>call first</strong> and we '
+        'will have it on the bench ready for you. Shipping is free and arrives in '
+        'a few days, so pickup is for people already passing or who need it '
+        'today.</p>'
         '</div>'
         '<div class=prose>'
         '<h2>Towns we see most</h2></div>'
@@ -2804,8 +2821,8 @@ def build_local():
         'and why a mistake gets re-cut instead of argued about.</p>'
         '</div><a class="btn lg" href="/design/">Start your order &middot; $28 a pair</a>'
         '</div></section>'
-        % (e(B), SITE["city"], SITE["region_name"], SITE["county"],
-           SITE["email"], SITE["email"], SITE["hours"],
+        % (e(B), SITE["street"], SITE["city"], SITE["region"], SITE["postal"],
+           PT, PH, SITE["hours"],
            towns, waters, SITE["county"], LOCAL_WATERS[0])
       + lead_figure(path, band=Band(1))
       + '<section class=soft><div class=w><h2>What we cut</h2>'
@@ -2842,10 +2859,10 @@ def build_contact():
        "Same working day in almost every case. Proofs usually go out within a few hours "
        "of the order during the week."),
       ("Where are you based?",
-       "Evansdale, Iowa, in Black Hawk County - on the Cedar River between Waterloo "
-       "and Cedar Falls. It is a private workshop rather than a storefront, so the "
-       "address is not published. We ship to all 50 states and arrange local pickup "
-       "by email."),
+       "%s, %s, %s %s - in Black Hawk County, on the Cedar River between Waterloo "
+       "and Cedar Falls. We ship to all 50 states, and local pickup is available "
+       "if you call ahead on %s."
+       % (SITE["street"], SITE["city"], SITE["region"], SITE["postal"], PH)),
       ("Can I change my order after sending it?",
        "Yes. Your proof arrives within twelve hours and nothing is cut until "
        "it is approved, so there is a built-in window to change anything. "
@@ -2866,17 +2883,21 @@ def build_contact():
       "about whether your hull needs high-tack.</p>"
       "<p>Hours: " + SITE["hours"] + ". Orders placed outside those hours go into the "
       "queue and are cut the next working morning.</p>"
-      "<h2>Is there a phone number?</h2>"
-      "<p>No, and that is deliberate. This is a one-person workshop &mdash; if the "
-      "plotter is running, nobody is answering a phone, and a missed call helps "
-      "neither of us. Email gets a reply the same working day from the person who "
-      "will cut your order, with your exact wording in writing where it cannot be "
-      "misheard.</p>"
-      "<h2>Local pickup</h2>"
-      "<p>Available in " + SITE["city"] + " by arrangement &mdash; see the "
+      "<h2>Phone</h2>"
+      "<p><a href=\"tel:" + PT + "\" data-call><strong>" + PH + "</strong></a> "
+      "&mdash; " + SITE["hours"] + ". It is one person and a plotter, so if the "
+      "machine is running you may get the voicemail; leave a number and it gets "
+      "called back the same working day. For anything with exact wording in it, "
+      "email is better than a phone call: it puts the spelling in writing where "
+      "it cannot be misheard, and your proof is built from what you typed.</p>"
+      "<h2>Where we are</h2>"
+      "<p><strong>" + e(B) + "</strong><br>" + SITE["street"] + "<br>"
+      + SITE["city"] + ", " + SITE["region"] + " " + SITE["postal"] + "</p>"
+      "<p>Local pickup is available &mdash; choose it in the notes box on the "
+      "<a href=\"/design/\">order form</a>, and see the "
       "<a href=\"/boat-lettering-waterloo-cedar-falls/\">Cedar Valley page</a>. "
-      "It is a private workshop rather than a storefront, so email first and we "
-      "will set a time and tell you where to come.</p>"
+      "Call before you drive over: it is a working shop rather than a storefront "
+      "with a counter, and there is no point in you arriving while nobody is in.</p>"
       "<h2>Ordering</h2>"
       "<p>You do not need to email to order. The <a href=\"/design/\">order form</a> "
       "takes about a minute, prices itself as you go, and previews your exact "
@@ -3610,10 +3631,11 @@ def build_static():
 - No free re-cut for a botched install: every set is pre-spaced on one sheet with
   application tape so it goes on in one pass, and a replacement is a new order.
 - The order form **previews the customer's exact lettering** before payment; that is what gets cut.
-- **%s cuts in Evansdale, Black Hawk County, Iowa**, Mon-Fri 8-5 CT.
-  It is a private workshop, not a storefront: there is no published street address and
-  no phone line. Contact is by email, answered the same working day. Ships to all 50
-  states; local pickup around Waterloo / Cedar Falls is arranged by email.
+- **%s**, %s, %s, %s %s.
+  Phone %s, %s. A one-person shop in Black Hawk County, on the Cedar River
+  between Waterloo and Cedar Falls - a working shop rather than a storefront
+  with a counter, so call ahead if you are collecting. Ships to all 50 states;
+  local pickup available around Waterloo / Cedar Falls.
 - Email: %s
 
 ## The federal rule for boat registration numbers (33 CFR 173.27)
@@ -3664,7 +3686,8 @@ and a state.
        PRICE["name_bands"][0]["price"], PRICE["name_bands"][1]["price"],
        PRICE["name_bands"][2]["price"], PRICE["name_bands"][3]["price"],
        PRICE["bundle_off"], PRICE["bundle_from"], PRICE["outline"],
-       B, SITE["email"], pr, tl, gd, st), encoding="utf-8")
+       B, SITE["street"], SITE["city"], SITE["region"], SITE["postal"],
+       PH, SITE["hours"], SITE["email"], pr, tl, gd, st), encoding="utf-8")
 
     # Workers Builds: serve /public with no build step needed.
     (OUT / "_headers").write_text(

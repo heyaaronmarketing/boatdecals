@@ -181,6 +181,25 @@ written once in `content.py: SITE` — change it there, never in a template.
 home-based business hide the street address and show a service area instead. Worth
 deciding with your brother *before* claiming the GBP — it is awkward to change after.
 
+**History of this decision, because it has moved twice.** The NAP went live
+2026-10-22, came off the whole site 2026-10-30 (`07f415f`, Aaron's call: the shop
+runs out of a private home, so the address and the landline were personal
+information), and went back on 2026-11-15 (Aaron's call again, after the local-pack
+and E-E-A-T upside was put against it). What came back is the **phone and the
+address only**. Three things did *not* come back, and each is a separate decision:
+
+| Still off the site | Why |
+|---|---|
+| Coordinates | No rooftop pin. Once the GBP is claimed Google's own pin is authoritative and a lat/lng here only competes with it. |
+| Maps links and the embed | The address in text does the SEO work; an iframe is third-party JS on the contact page. |
+| The About page, the owner's photo, his name in visible text | The name is approved for the `Article` author node only — Aaron's 2026-11-14 call, untouched by this. |
+
+⚠️ The gate **flipped rather than disappeared**. It used to prove the phone and
+street were absent; it now proves there is exactly **one spelling of each**, present
+in the footer of every page and in the org node. The failure mode is no longer a
+leak — it is a second spelling, which breaks a citation match and is invisible on
+the page.
+
 ---
 
 ## 4. AI engine (AEO) gaps — the strongest signal in the whole analysis

@@ -436,28 +436,134 @@ for _f in OUT.rglob("index.html"):
         fails.append("brand appears twice in the title of %s: %r"
                      % (_f.relative_to(OUT), _t))
 
-# No personal information, anywhere. The shop runs out of a private home, so
-# the street address, the landline and a rooftop coordinate are personal
-# details rather than business ones - Aaron's call, 2026-10-30. Town and state
-# stay. This gate exists because that kind of thing creeps back in one
-# well-meaning edit at a time.
-_PII = [
-    (r"\b\(?319\)?[\s.-]?239[\s.-]?3793\b", "the old phone number"),
-    (r"\btel:\+?1?319", "a tel: link"),
-    (r"475\s+River\s+Forest", "the street address"),
-    (r'"streetAddress"', "a streetAddress in schema"),
-    (r"GeoCoordinates", "geo coordinates in schema"),
-    (r'"LocalBusiness"', "a LocalBusiness entity (no public address to back it)"),
-    (r"maps\.google|google\.com/maps", "a Google Maps link"),
+# ---- the NAP -------------------------------------------------------------
+# The real name, address and phone are PUBLISHED - Aaron's call 2026-11-15,
+# reversing his own 2026-10-30 call that took them off the site. The reason
+# for taking them down has not changed (the shop runs out of a private
+# home); he decided the local-pack and E-E-A-T upside is worth it.
+#
+# So this gate has flipped its job rather than disappearing. It used to prove
+# the phone and the street were ABSENT. It now proves there is exactly ONE of
+# each, spelled one way, present everywhere it should be. The failure mode it
+# guards is no longer a leak - it is a second spelling of the number, which
+# is what breaks a citation match and is invisible on the page.
+_PH, _PT, _ST = _SITE["phone_display"], _SITE["phone_tel"], _SITE["street"]
+# A phone number in 3-3-4 with separators. Swept across the built site before
+# this gate was written: 188 matches, every one of them our own number, no
+# false positives from registration-number examples, prices or dates.
+_PHONEISH = re.compile(r"\(?\b\d{3}\)?[-. ]\d{3}[-. ]\d{4}\b")
+
+# Still forbidden, each for its own reason, and all three are decisions that
+# were NOT reversed on 2026-11-15:
+_FORBID = [
+    (r"GeoCoordinates", "geo coordinates in schema - no rooftop pin, and "
+                        "once the GBP is claimed Google's own pin is "
+                        "authoritative anyway"),
+    (r"maps\.google|google\.com/maps", "a Google Maps link - the address in "
+                                       "text does the work without an iframe"),
     (r"\bfire chief\b", "the owner's other job"),
 ]
 for _f in OUT.rglob("*"):
     if _f.suffix not in (".html", ".xml", ".txt") or not _f.is_file():
         continue
     _t = _f.read_text(errors="ignore")
-    for _pat, _what in _PII:
+    _rel = _f.relative_to(OUT)
+    for _pat, _what in _FORBID:
         if re.search(_pat, _t, re.I):
-            fails.append("PII: %s in %s" % (_what, _f.relative_to(OUT)))
+            fails.append("PII: %s in %s" % (_what, _rel))
+    # ONE phone number, one spelling of it. A second spelling is not a
+    # cosmetic problem: Google matches a citation to a listing on the string.
+    for _hit in sorted(set(_PHONEISH.findall(_t))):
+        if _hit != _PH:
+            fails.append("NAP: %s carries the phone number as %r - it is "
+                         "written once in content.SITE as %r and citations "
+                         "match character-for-character"
+                         % (_rel, _hit, _PH))
+    for _hit in sorted(set(re.findall(r'tel:([^"\'\s>]+)', _t))):
+        if _hit != _PT:
+            fails.append("NAP: %s has a tel: link to %r, not %r"
+                         % (_rel, _hit, _PT))
+    # The street, if it appears at all, appears exactly as SITE spells it -
+    # this is what catches "River Forest Rd" or a dropped house number.
+    for _hit in sorted(set(re.findall(r"[\w#.]*\s*River\s+Forest[\w.]*(?:\s+\w+)?",
+                                      _t))):
+        if _hit.strip() != _ST:
+            fails.append("NAP: %s spells the street %r, not %r"
+                         % (_rel, _hit.strip(), _ST))
+
+# And it has to BE there. The footer carries the NAP on every page, so a
+# template edit that drops it is caught here rather than noticed in a month
+# of flat local rankings.
+_nap_pages = 0
+for _f in sorted(OUT.rglob("*.html")):
+    _t = _f.read_text(errors="ignore")
+    if "<footer" not in _t:
+        continue
+    _nap_pages += 1
+    _rel = _f.relative_to(OUT)
+    _nap = re.search(r'<div class=nap>(.*?)</div>', _t, re.S)
+    if not _nap:
+        fails.append("NAP: %s has a footer with no .nap block" % _rel)
+        continue
+    _n = _nap.group(1)
+    for _want, _what in ((_ST, "the street"), (_SITE["postal"], "the ZIP"),
+                         (_PH, "the phone number"), ("tel:" + _PT, "a tel: link")):
+        if _want not in _n:
+            fails.append("NAP: the footer of %s is missing %s" % (_rel, _what))
+if _nap_pages < 50:
+    fails.append("only %d pages carry a footer NAP - it belongs on every page"
+                 % _nap_pages)
+
+# The email footer carries it too, and the worker cannot import content.py -
+# so those strings are typed by hand in proof.js and this is the only thing
+# standing between them and a slow drift away from SITE. An address in an
+# email is also what keeps a reminder chasing a silent customer on the right
+# side of CAN-SPAM.
+_pfj = (ROOT / "worker" / "proof.js").read_text()
+_shell = re.search(r"function shell\(inner\)\s*\{(.*?)\n\}", _pfj, re.S)
+if not _shell:
+    fails.append("worker/proof.js has no shell() - that is the email footer")
+else:
+    for _want in (_ST, _SITE["city"], _SITE["region"], _SITE["postal"], _PH):
+        if _want not in _shell.group(1):
+            fails.append("the email footer in worker/proof.js is missing %r - "
+                         "it is typed there by hand because the worker cannot "
+                         "import content.py, so this gate is the only thing "
+                         "keeping it equal to SITE" % _want)
+
+# The org node is what Google reads. A LocalBusiness without a street is a
+# half-filled listing it treats as low quality, which is exactly why this
+# node was an Organization while the address was off the site.
+for _f in sorted(OUT.rglob("*.html")):
+    _t = _f.read_text(errors="ignore")
+    for _b in re.findall(r'<script type="application/ld\+json">(.*?)</script>',
+                         _t, re.S):
+        if '"#org"' not in _b and "/#org" not in _b:
+            continue
+        try:
+            _g = json.loads(_b)
+        except Exception:
+            continue
+        for _c in (_g if isinstance(_g, list) else [_g]):
+            for _n in ((_c.get("@graph") or [_c]) if isinstance(_c, dict) else []):
+                if not isinstance(_n, dict) or not str(_n.get("@id", "")).endswith("/#org"):
+                    continue
+                _rel = _f.relative_to(OUT)
+                if "LocalBusiness" not in (_n.get("@type") or []):
+                    fails.append("NAP: the org node in %s is not a "
+                                 "LocalBusiness - with a real street address "
+                                 "published it should be" % _rel)
+                if _n.get("telephone") != _PH:
+                    fails.append("NAP: the org node in %s has telephone %r, "
+                                 "not %r" % (_rel, _n.get("telephone"), _PH))
+                _a = _n.get("address") or {}
+                for _k, _want in (("streetAddress", _ST),
+                                  ("addressLocality", _SITE["city"]),
+                                  ("addressRegion", _SITE["region"]),
+                                  ("postalCode", _SITE["postal"])):
+                    if _a.get(_k) != _want:
+                        fails.append("NAP: the org node in %s has %s %r, not "
+                                     "%r" % (_rel, _k, _a.get(_k), _want))
 
 # The owner's NAME is a separate case from the rest of the list above, and it
 # changed on 2026-11-14: Aaron decided the guides should carry a real,
