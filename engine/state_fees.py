@@ -710,6 +710,74 @@ FEES = {
              "every registration expires at the end of June regardless of when you "
              "bought it.",
  },
+ "alaska": {
+   "fee_summary": '$24 for a powered boat and $10 for a non-powered one, for three years - the cheapest registration on this page',
+   "period": "three years",
+   "rows": [("Powered boat", "$24"), ("Non-powered boat", "$10")],
+   "agency": "the Alaska Division of Motor Vehicles",
+   "agency_url": "https://dmv.alaska.gov/boats/",
+   "src": "https://dmv.alaska.gov/boats/",
+   "src_name": "Alaska DMV, Boats",
+   "extra": "A barge is $75, and a replacement registration or lost decal is $5. A "
+            "boat over 24 feet must also be titled, at $20.",
+   "gotcha": "Alaska does not price by length at all &mdash; it asks one question, "
+             "does it have a motor. Add auxiliary power to a non-powered boat and "
+             "the powered class and fee apply immediately.",
+ },
+ "new-mexico": {
+   "fee_summary": '$75 for the common 16-to-26-foot class, from $60 under 16 feet to $180 at 65 feet and over - all for three years',
+   "period": "three years, expiring 31 December of the third calendar year",
+   "rows": [("Class A, less than 16 ft", "$60.00"),
+            ("Class 1, 16 ft to less than 26 ft", "$75.00"),
+            ("Class 2, 26 ft to less than 40 ft", "$120.00"),
+            ("Class 3, 40 ft to less than 65 ft", "$150.00"),
+            ("Class 4, 65 ft and over", "$180.00")],
+   "agency": "the New Mexico Motor Vehicle Division, for State Parks",
+   "agency_url": "https://www.emnrd.nm.gov/spd/activities/boating-2/registrations/",
+   "src": "https://www.emnrd.nm.gov/spd/wp-content/uploads/sites/7/18.17.2-NMAC-replaced-7.26.24.pdf",
+   "src_name": "New Mexico Administrative Code 18.17.2",
+   "extra": "A duplicate registration is $25. The rule is explicit that "
+            "&ldquo;refunds shall not be made for any unused period of a "
+            "certificate of number due to non-use of a vessel or change in "
+            "ownership&rdquo;.",
+   "gotcha": "New Mexico roughly doubled these figures in its 2024 rule rewrite "
+             "&mdash; the superseded amounts, still shown struck through in the "
+             "regulation, were $28.50 to $81. Anything quoting the old numbers is "
+             "out of date.",
+ },
+ "north-dakota": {
+   "fee_summary": '$30 under 16 feet, $45 to 20 feet and $60 above it, for three years - plus a $15 invasive-species fee',
+   "period": "three years, 1 January 2026 through 31 December 2028",
+   "rows": [("Under 16 ft, and any motorised canoe", "$30"),
+            ("16 ft to less than 20 ft", "$45"), ("20 ft and over", "$60")],
+   "agency": "the North Dakota Game and Fish Department",
+   "agency_url": "https://gf.nd.gov/watercraft/registration",
+   "src": "https://gf.nd.gov/watercraft/registration",
+   "src_name": "North Dakota Game and Fish, Watercraft Registration and Renewal",
+   "extra": "Every motorised watercraft registered in North Dakota also pays a $15 "
+            "aquatic nuisance species fee running with the three-year registration. "
+            "A boat registered elsewhere pays $15 a year instead and displays an ANS "
+            "sticker. Replacement decals are $10. Fees are prorated.",
+   "gotcha": "North Dakota bands at 16 and 20 feet &mdash; a 21-footer is already in "
+             "the top band here, where most states would still call it mid-size.",
+ },
+ "vermont": {
+   "fee_summary": '$49 a year for a Class 1 boat, or $93 for two years - every class is cheaper taken two years at a time',
+   "period": "one year or two years, owner's choice",
+   "rows": [("Class A", "$31.00"), ("Class 1", "$49.00"),
+            ("Class 2", "$80.00"), ("Class 3", "$153.00")],
+   "agency": "the Vermont Department of Motor Vehicles",
+   "agency_url": "https://dmv.vermont.gov/registrations/fees",
+   "src": "https://dmv.vermont.gov/registrations/fees",
+   "src_name": "Vermont DMV, Registration Fees",
+   "extra": "Those are the one-year figures. Taken two years at a time they are $57, "
+            "$93, $155 and $303 &mdash; cheaper than two single years in every "
+            "class. The DMV&rsquo;s fee page lists the classes without stating the "
+            "lengths that define them; form VD-037 does.",
+   "gotcha": "Vermont is the only state here that gives you a two-year option at a "
+             "discount rather than a fixed term. Class 1 costs $98 bought as two "
+             "single years and $93 bought as one two-year registration.",
+ },
 }
 
 

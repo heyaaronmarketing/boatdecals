@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 514 questions across 66 pages, with the page each one came from.
+> 554 questions across 70 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -430,6 +430,39 @@ A: Lake Guntersville is the one most people name first: 69,000 acres, the larges
 
 Q: When is boating season in Alabama?
 A: Effectively year round, with the hard season March through November.
+
+## Alaska Boat Registration Numbers AK
+Source: https://numbermyboat.com/registration-numbers/alaska/
+
+Q: How much does it cost to register a boat in Alaska?
+A: Alaska charges $24 for a powered boat and $10 for a non-powered one, for three years - the cheapest registration on this page, for a registration that runs three years, through the Alaska Division of Motor Vehicles. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Alaska boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Alaska like everywhere else. Taller is always legal.
+
+Q: What do Alaska boat numbers start with?
+A: AK. Your full number runs prefix, digits, then a letter suffix — for example AK 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Alaska?
+A: You register through the Alaska Division of Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So AK 1234 AB, not AK1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decals must be visible when the boat is in operation and displayed within six inches of the registration number on each side. Only a current decal may be shown; expired ones must be covered or removed.
+
+Q: Do I have to register a kayak or canoe in Alaska?
+A: Alaska registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Alaska Division of Motor Vehicles system.
+
+Q: How many registered boats are there in Alaska?
+A: 43,440, which puts Alaska 43rd in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Alaska?
+A: Prince William Sound is the one most people name first: protected water out of Whittier and Valdez, with glaciers calving into it. Others worth knowing: Kachemak Bay and Cook Inlet, The Kenai River, Southeast and the Inside Passage, Lake Iliamna.
+
+Q: When is boating season in Alaska?
+A: Short and weather-bound everywhere, and in much of the state the boat is transport rather than recreation.
 
 ## Arkansas Boat Registration Numbers AR
 Source: https://numbermyboat.com/registration-numbers/arkansas/
@@ -1235,6 +1268,39 @@ A: Barnegat Bay is the one most people name first: the long shallow bay behind L
 Q: When is boating season in New Jersey?
 A: Shore season runs Memorial Day to Columbus Day, with the serious fishing fleet out either side of it.
 
+## New Mexico Boat Registration Numbers NM
+Source: https://numbermyboat.com/registration-numbers/new-mexico/
+
+Q: How much does it cost to register a boat in New Mexico?
+A: New Mexico charges $75 for the common 16-to-26-foot class, from $60 under 16 feet to $180 at 65 feet and over - all for three years, for a registration that runs three years, through the New Mexico Motor Vehicle Division, for State Parks. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do New Mexico boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in New Mexico like everywhere else. Taller is always legal.
+
+Q: What do New Mexico boat numbers start with?
+A: NM. Your full number runs prefix, digits, then a letter suffix — for example NM 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in New Mexico?
+A: You register through the New Mexico Motor Vehicle Division. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NM 1234 AB, not NM1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. New Mexico is precise about the side and the direction: the validation sticker shall be affixed within six inches to the right of the registration number on the port side of the vessel. Port side, to the right of the number — which on the port side is aft. No other number may be displayed on the forward half.
+
+Q: Do I have to register a kayak or canoe in New Mexico?
+A: New Mexico registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the New Mexico Motor Vehicle Division system.
+
+Q: How many registered boats are there in New Mexico?
+A: 27,956, which puts New Mexico 47th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in New Mexico?
+A: Elephant Butte Lake is the one most people name first: the largest body of water in the state, on the Rio Grande, and the centre of New Mexico boating. Others worth knowing: Navajo Lake, Conchas and Ute Lakes, Heron and El Vado, Cochiti Lake.
+
+Q: When is boating season in New Mexico?
+A: Long at low elevation, shorter in the north. The sun is the thing that ages lettering here, not the cold.
+
 ## New York Boat Registration Numbers NY
 Source: https://numbermyboat.com/registration-numbers/new-york/
 
@@ -1300,6 +1366,39 @@ A: Lake Norman is the one most people name first: over 32,000 acres and 520 mile
 
 Q: When is boating season in North Carolina?
 A: Roughly April through October inland, and the coastal fleet runs most of the year with the offshore season peaking in summer.
+
+## North Dakota Boat Registration Numbers ND
+Source: https://numbermyboat.com/registration-numbers/north-dakota/
+
+Q: How much does it cost to register a boat in North Dakota?
+A: North Dakota charges $30 under 16 feet, $45 to 20 feet and $60 above it, for three years - plus a $15 invasive-species fee, for a registration that runs three years, through the North Dakota Game and Fish Department. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do North Dakota boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in North Dakota like everywhere else. Taller is always legal.
+
+Q: What do North Dakota boat numbers start with?
+A: ND. Your full number runs prefix, digits, then a letter suffix — for example ND 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in North Dakota?
+A: You register through the North Dakota Game and Fish Department. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So ND 1234 AB, not ND1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The validation decal is displayed within 6 inches of the number, toward the rear of the boat. No other numbers are to be displayed in that area.
+
+Q: Do I have to register a kayak or canoe in North Dakota?
+A: North Dakota registers all motorized vessels; non-motorized is voluntary. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the North Dakota Game and Fish Department system.
+
+Q: How many registered boats are there in North Dakota?
+A: 61,981, which puts North Dakota 39th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in North Dakota?
+A: Lake Sakakawea is the one most people name first: the Missouri impounded behind Garrison Dam - 178 miles long and the third largest man-made lake in the United States by area. Others worth knowing: Devils Lake, Lake Oahe, The Red River of the North, Lake Audubon.
+
+Q: When is boating season in North Dakota?
+A: Hard ice. Open water is roughly May through October, and ice fishing takes the rest.
 
 ## Ohio Boat Registration Numbers OH
 Source: https://numbermyboat.com/registration-numbers/ohio/
@@ -1564,6 +1663,39 @@ A: Lake Powell is the one most people name first: shared with Arizona, and nearl
 
 Q: When is boating season in Utah?
 A: The low-desert water runs all year. The mountain reservoirs ice over.
+
+## Vermont Boat Registration Numbers VT
+Source: https://numbermyboat.com/registration-numbers/vermont/
+
+Q: How much does it cost to register a boat in Vermont?
+A: Vermont charges $49 a year for a Class 1 boat, or $93 for two years - every class is cheaper taken two years at a time, for a registration that runs one year or two years, through the Vermont Department of Motor Vehicles. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Vermont boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Vermont like everywhere else. Taller is always legal.
+
+Q: What do Vermont boat numbers start with?
+A: VT. Your full number runs prefix, digits, then a letter suffix — for example VT 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Vermont?
+A: You register through the Vermont Department of Motor Vehicles. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So VT 1234 AB, not VT1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Vermont’s statute sets the position and leaves the specification to the Commissioner’s rules: the owner shall paint on or attach to each side of the bow the identification number so that it is clearly visible, and the number shall be maintained in legible condition. No number other than the one awarded to the motorboat may be displayed on either side of the bow. For the height and spacing, the federal rule quoted above is what governs.
+
+Q: Do I have to register a kayak or canoe in Vermont?
+A: Vermont registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Vermont Department of Motor Vehicles system.
+
+Q: How many registered boats are there in Vermont?
+A: 27,029, which puts Vermont 48th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Vermont?
+A: Lake Champlain is the one most people name first: 120 miles of it, shared with New York and Quebec, and the sixth largest lake in the United States. Others worth knowing: Lake Memphremagog, Lake Bomoseen, Lake Willoughby, The Connecticut River.
+
+Q: When is boating season in Vermont?
+A: Ice-out is April. Champlain carries boats into November; the smaller lakes do not.
 
 ## Virginia Boat Registration Numbers VA
 Source: https://numbermyboat.com/registration-numbers/virginia/

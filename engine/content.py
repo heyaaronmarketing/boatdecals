@@ -991,6 +991,80 @@ STATES = [
               "than how long it is, depreciates the fee by 10% a year for nine "
               "years, and expires everything <strong>at the end of June</strong> "
               "whatever month you bought in."),
+    dict(slug="alaska", name="Alaska", ab="AK", vol=10,
+         agency="Alaska Division of Motor Vehicles", tier=3,
+         fmt="AK 5678 AA or AK&ndash;5678&ndash;AA &mdash; the handbook&rsquo;s own "
+             "example. Plain vertical block letters no less than three inches high, "
+             "contrasting with the background, distinctly visible and legible, read "
+             "left to right, with a space or hyphen <strong>the width of a letter or "
+             "number (but not the width of an I or a 1)</strong> between each group",
+         decal="The validation decals must be <strong>visible when the boat is in "
+               "operation and displayed within six inches of the registration number "
+               "on each side</strong>. Only a current decal may be shown; expired "
+               "ones must be covered or removed.",
+         rules_src="https://www.commerce.alaska.gov/web/Portals/5/pub/Archive26/2021_AlaskaBoatersHandbook.pdf",
+         rules_src_name="Alaska Boater&rsquo;s Handbook (2021)",
+         note="Alaska expressly allows a <strong>backing plate of plastic or other "
+              "suitable material</strong> for an inflatable, or any boat shaped so "
+              "the number would not easily be seen on the hull &mdash; and the "
+              "decals may go on the plate too. On this coast that is a common "
+              "answer, not an edge case."),
+    dict(slug="new-mexico", name="New Mexico", ab="NM", vol=10,
+         agency="New Mexico Motor Vehicle Division", tier=3,
+         fmt="NM 0000 AA or NM&ndash;&ndash;0000&ndash;&ndash;AA &mdash; the "
+             "rule&rsquo;s own examples. Read left to right, plain vertical block "
+             "characters, contrasting with the background, distinctly visible and "
+             "legible, not less than three inches in height, with spaces or hyphens "
+             "<strong>equal to the width of a letter</strong> between the letter and "
+             "number groupings",
+         decal="New Mexico is precise about the side and the direction: the "
+               "validation sticker <strong>shall be affixed within six inches to the "
+               "right of the registration number on the port side of the "
+               "vessel</strong>. Port side, to the right of the number &mdash; which "
+               "on the port side is aft. No other number may be displayed on the "
+               "forward half.",
+         rules_src="https://www.emnrd.nm.gov/spd/wp-content/uploads/sites/7/18.17.2-NMAC-replaced-7.26.24.pdf",
+         rules_src_name="New Mexico Administrative Code 18.17.2",
+         note="The rule also forbids something people try: <strong>no person shall "
+              "transfer or authorise the transfer of a registration validation decal "
+              "from one vessel to another</strong>. The sticker belongs to the boat "
+              "it was issued for."),
+    dict(slug="north-dakota", name="North Dakota", ab="ND", vol=10,
+         agency="North Dakota Game and Fish Department", tier=3,
+         fmt="Plain vertical block letters <strong>at least 3 inches in height "
+             "excluding any border, trim, outlining or shading</strong>, in a colour "
+             "contrasting with the hull, painted or permanently attached to each side "
+             "of the forward half near the bow, and maintained legible so it is "
+             "clearly visible in daylight hours",
+         decal="The validation decal is displayed <strong>within 6 inches of the "
+               "number, toward the rear of the boat</strong>. No other numbers are "
+               "to be displayed in that area.",
+         rules_src="https://gf.nd.gov/regulations/boating",
+         rules_src_name="North Dakota Game and Fish, Boating Safety Guide 2026&ndash;2028",
+         note="North Dakota is one of the states that says the quiet part out loud: "
+              "the 3-inch minimum is measured <strong>excluding any border, trim, "
+              "outlining or shading</strong>. If you order an outlined set, the "
+              "letter inside the outline has to be the full 3 inches &mdash; so "
+              "order 3-inch letters, not a 3-inch outlined block."),
+    dict(slug="vermont", name="Vermont", ab="VT", vol=10,
+         agency="Vermont Department of Motor Vehicles", tier=3,
+         decal="Vermont&rsquo;s statute sets the position and leaves the "
+               "specification to the Commissioner&rsquo;s rules: the owner "
+               "<strong>shall paint on or attach to each side of the bow the "
+               "identification number</strong> so that it is clearly visible, and "
+               "<strong>the number shall be maintained in legible condition</strong>. "
+               "No number other than the one awarded to the motorboat may be "
+               "displayed on either side of the bow. For the height and spacing, the "
+               "federal rule quoted above is what governs.",
+         rules_src="https://legislature.vermont.gov/statutes/section/23/029/03305",
+         rules_src_name="23 V.S.A. §3305",
+         note="One Vermont rule exists almost nowhere else and is worth knowing "
+              "before you order. A motorboat of <strong>less than 10 horsepower used "
+              "as a tender</strong> to a registered motorboat is deemed registered at "
+              "no extra cost &mdash; and it carries <strong>the same registration "
+              "number with a &ldquo;1&rdquo; added after it</strong>, on both sides "
+              "of its bow. One registration, two sets of lettering, and the second "
+              "set is not quite the same as the first."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "

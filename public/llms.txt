@@ -123,4 +123,8 @@ and a state.
 - [New Hampshire (NH)](https://numbermyboat.com/registration-numbers/new-hampshire/): prefix NH, issued by New Hampshire Division of Motor Vehicles
 - [Delaware (DL)](https://numbermyboat.com/registration-numbers/delaware/): prefix DL, issued by DNREC Division of Fish and Wildlife
 - [Oklahoma (OK)](https://numbermyboat.com/registration-numbers/oklahoma/): prefix OK, issued by Service Oklahoma
+- [Alaska (AK)](https://numbermyboat.com/registration-numbers/alaska/): prefix AK, issued by Alaska Division of Motor Vehicles
+- [New Mexico (NM)](https://numbermyboat.com/registration-numbers/new-mexico/): prefix NM, issued by New Mexico Motor Vehicle Division
+- [North Dakota (ND)](https://numbermyboat.com/registration-numbers/north-dakota/): prefix ND, issued by North Dakota Game and Fish Department
+- [Vermont (VT)](https://numbermyboat.com/registration-numbers/vermont/): prefix VT, issued by Vermont Department of Motor Vehicles
 - [Indiana (IN)](https://numbermyboat.com/registration-numbers/indiana/): prefix IN, issued by Indiana Bureau of Motor Vehicles

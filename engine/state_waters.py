@@ -902,4 +902,84 @@ WATERS = {
    ],
    season="Long. The southern lakes run most of the year and the season starts in "
           "March."),
+ "alaska": dict(
+   lede="Alaska registers on one question - does it have a motor - and charges less "
+        "for three years than most states charge for one. The water is the reason "
+        "the rest of the rules are strict.",
+   waters=[
+     ("Prince William Sound",
+      "protected water out of Whittier and Valdez, with glaciers calving into it."),
+     ("Kachemak Bay and Cook Inlet",
+      "Homer, Seldovia and some of the largest tides in the world - over 25 feet on "
+      "a big one."),
+     ("The Kenai River",
+      "the most heavily fished river in the state, and powerboat traffic to match."),
+     ("Southeast and the Inside Passage",
+      "Sitka, Juneau, Ketchikan and the protected runs between them."),
+     ("Lake Iliamna",
+      "the largest lake in Alaska and the eighth largest in the country."),
+     ("The Yukon and the Kuskokwim",
+      "working rivers, and in much of western Alaska the road network."),
+   ],
+   season="Short and weather-bound everywhere, and in much of the state the boat is "
+          "transport rather than recreation."),
+ "new-mexico": dict(
+   lede="New Mexico is desert boating: a handful of big reservoirs at altitude, with "
+        "sun that is hard on vinyl and water that moves a long way up and down the "
+        "bank.",
+   waters=[
+     ("Elephant Butte Lake",
+      "the largest body of water in the state, on the Rio Grande, and the centre of "
+      "New Mexico boating."),
+     ("Navajo Lake",
+      "in the north-west, shared with Colorado."),
+     ("Conchas and Ute Lakes",
+      "the eastern plains reservoirs, with Ute among the longest in the south-west."),
+     ("Heron and El Vado",
+      "the cool high-country lakes in Rio Arriba County, with Heron a no-wake "
+      "\"quiet waters\" lake."),
+     ("Cochiti Lake",
+      "close to Albuquerque and Santa Fe, and no-wake by rule."),
+   ],
+   season="Long at low elevation, shorter in the north. The sun is the thing that "
+          "ages lettering here, not the cold."),
+ "north-dakota": dict(
+   lede="North Dakota has one enormous reservoir and a great many prairie lakes, and "
+        "it has priced the invasive-species problem into every registration.",
+   waters=[
+     ("Lake Sakakawea",
+      "the Missouri impounded behind Garrison Dam - 178 miles long and the third "
+      "largest man-made lake in the United States by area."),
+     ("Devils Lake",
+      "a closed basin that has risen dramatically since the 1990s, drowning roads "
+      "and trees, and now some of the best perch water in the country."),
+     ("Lake Oahe",
+      "the upper end of it, shared with South Dakota."),
+     ("The Red River of the North",
+      "the eastern border, flowing north to Canada."),
+     ("Lake Audubon",
+      "separated from Sakakawea by a dike, and quieter for it."),
+   ],
+   season="Hard ice. Open water is roughly May through October, and ice fishing "
+          "takes the rest."),
+ "vermont": dict(
+   lede="Vermont boating is Lake Champlain and then everything else, and the state "
+        "lets you buy one year or two.",
+   waters=[
+     ("Lake Champlain",
+      "120 miles of it, shared with New York and Quebec, and the sixth largest lake "
+      "in the United States."),
+     ("Lake Memphremagog",
+      "shared with Quebec, with most of its length over the border."),
+     ("Lake Bomoseen",
+      "the largest lake entirely inside Vermont."),
+     ("Lake Willoughby",
+      "a glacial trench between two cliffs in the Northeast Kingdom, and very deep "
+      "for its size."),
+     ("The Connecticut River",
+      "the whole eastern border, with a series of dams and long flat pools behind "
+      "them."),
+   ],
+   season="Ice-out is April. Champlain carries boats into November; the smaller "
+          "lakes do not."),
 }

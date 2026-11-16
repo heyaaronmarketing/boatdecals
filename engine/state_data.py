@@ -97,6 +97,14 @@ USCG_FLEET = {
    'All motorized vessels; non-motorized is voluntary'),
  'oklahoma'        : ( 165771, 24,
    'All watercraft - excludes kiteboards; canoes, kayaks and paddleboats optional'),
+ 'alaska'          : (  43440, 43,
+   'All motorized vessels; non-motorized is voluntary'),
+ 'new-mexico'      : (  27956, 47,
+   'All motorized vessels and sailboats'),
+ 'north-dakota'    : (  61981, 39,
+   'All motorized vessels; non-motorized is voluntary'),
+ 'vermont'         : (  27029, 48,
+   'All motorized vessels'),
 }
 
 OUTLINE = {
@@ -242,6 +250,10 @@ STATE_ACCENT = {
  'new-hampshire'   : ('#24404a', '#8fc4d6', 'granite and lake water'),
  'delaware'        : ('#1c4a3a', '#7fc49a', 'tidal marsh and bay'),
  'oklahoma'        : ('#7a4420', '#e5b057', 'red dirt and sandstone'),
+ 'alaska'          : ('#1b3f52', '#7fd4e8', 'glacier blue and deep water'),
+ 'new-mexico'      : ('#8a3d1c', '#e8b44a', 'adobe red and high desert sun'),
+ 'north-dakota'    : ('#3a4a2a', '#d8c65c', 'prairie and wheat'),
+ 'vermont'         : ('#1f4a2e', '#8fd18f', 'green mountain and maple'),
 }
 
 
