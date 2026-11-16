@@ -552,6 +552,78 @@ FEES = {
              "per year&rdquo;, with no length bands at all. A 10-foot dinghy and a "
              "40-foot cruiser pay the same.",
  },
+ "montana": {
+   "fee_summary": 'paid ONCE, not yearly - $65.50 under 16 feet, $125.50 to 19 feet, $295.50 above it',
+   "period": "the life of your ownership - Montana registration is permanent",
+   "rows": [("Under 16 ft (and sailboats 12 to 16 ft)", "$65.50"),
+            ("16 ft to less than 19 ft", "$125.50"),
+            ("19 ft and over", "$295.50")],
+   "agency": "the county treasurer where you live",
+   "agency_url": "https://fwp.mt.gov/activities/boating/rules-regulations",
+   "src": "https://fwp.mt.gov/binaries/content/assets/fwp/fish/regulations/2026-boating-laws-final-for-print.pdf",
+   "src_name": "2026 Montana Boating Laws (FWP)",
+   "extra": "A certificate of ownership (title) is $10 on top. When a boat changes "
+            "hands the new owner has 40 days to apply, and a temporary permit from "
+            "the county treasurer covers the boat in the meantime.",
+   "gotcha": "Montana is the one-and-done state. The fee is a ONE-TIME fee in lieu "
+             "of tax, the white permanent decal is valid until you sell the boat, "
+             "and Montana no longer requires validation stickers at all. Comparing "
+             "its $295.50 against another state's annual figure is comparing a "
+             "lifetime to a year.",
+ },
+ "colorado": {
+   "fee_summary": '$36.25 under 20 feet, $46.25 to 30 feet, $76.25 above it - every year',
+   "period": "one year, valid 1 January through 31 December",
+   "rows": [("Under 20 ft", "$36.25"), ("20 ft to less than 30 ft", "$46.25"),
+            ("30 ft and over", "$76.25")],
+   "agency": "Colorado Parks and Wildlife",
+   "agency_url": "https://cpw.state.co.us/register-boat",
+   "src": "https://cpw.state.co.us/register-boat",
+   "src_name": "Colorado Parks and Wildlife, Register a Boat",
+   "extra": "Each figure includes a $1.25 Search and Rescue surcharge. An Aquatic "
+            "Nuisance Species stamp is charged separately &mdash; $25 for a "
+            "resident, $50 for a non-resident. The fees are flat: not prorated for "
+            "a part year, and not refunded if the boat is sold or stolen.",
+   "gotcha": "Colorado bands at 20 and 30 feet rather than the usual 16 and 26, so a "
+             "22-footer that would sit in the middle band almost anywhere else is in "
+             "Colorado's second band too &mdash; but a 19-footer is in the cheapest "
+             "one, which it would not be in Florida.",
+ },
+ "maryland": {
+   "fee_summary": 'one flat $70, whatever the boat, and it covers two years',
+   "period": "two years, expiring 31 December",
+   "rows": [("Every vessel, any length or horsepower", "$70")],
+   "agency": "the Maryland Department of Natural Resources",
+   "agency_url": "https://dnr.maryland.gov/boating/pages/registration.aspx",
+   "src": "https://dnr.maryland.gov/boating/pages/registration.aspx",
+   "src_name": "Maryland DNR, Boat Registration",
+   "extra": "A title is $20. A Coast Guard documented vessel used principally in "
+            "Maryland pays the same $70 for a documented use decal instead of "
+            "registering, and is not exempt from the vessel excise tax.",
+   "gotcha": "Maryland does not care how big the boat is: &ldquo;$70 registration "
+             "fee (all vessels, regardless of vessel length or engine "
+             "horsepower)&rdquo;. A kayak with a trolling motor and a 45-foot "
+             "cruiser pay exactly the same.",
+ },
+ "kentucky": {
+   "fee_summary": '$42.28 for the common 16-to-26-foot band, from $22.20 for a small boat to $68.71 over 40 feet',
+   "period": "one year, expiring 30 April",
+   "rows": [("Class A, less than 16 ft", "$22.20"),
+            ("Class 1, 16 ft to less than 26 ft", "$42.28"),
+            ("Class 2, 26 ft to less than 40 ft", "$52.85"),
+            ("Class 3, over 40 ft", "$68.71")],
+   "agency": "your county clerk, for Kentucky Fish and Wildlife",
+   "agency_url": "https://fw.ky.gov/FishBoatGuide/pages/boating.aspx",
+   "src": "https://fw.ky.gov/FishBoatGuide/pages/boating.aspx",
+   "src_name": "Kentucky Fish and Wildlife, Boating",
+   "extra": "Fish and Wildlife says plainly that those costs &ldquo;do not include "
+            "property taxes, clerk's fees, titling fees, or any other applicable "
+            "charges&rdquo; &mdash; Kentucky assesses boats for property tax, so the "
+            "bill at the county clerk is usually larger than the registration fee.",
+   "gotcha": "Every Kentucky boat registration expires on the SAME DAY &mdash; 30 "
+             "April &mdash; rather than on the anniversary of the day you "
+             "registered. Buy in March and you are renewing six weeks later.",
+ },
 }
 
 

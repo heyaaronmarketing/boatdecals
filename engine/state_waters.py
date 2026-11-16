@@ -738,4 +738,89 @@ WATERS = {
       "boatable in parts, and hard on everything metal you take onto it."),
    ],
    season="The low-desert water runs all year. The mountain reservoirs ice over."),
+ "montana": dict(
+   lede="Montana charges once and never again, which is why its fleet number looks "
+        "small for a state with this much water - nothing drops off the roll.",
+   waters=[
+     ("Flathead Lake",
+      "the largest natural freshwater lake west of the Mississippi, and the centre "
+      "of Montana boating."),
+     ("Fort Peck Lake",
+      "134 miles of reservoir on the Missouri in the eastern prairie, with more "
+      "shoreline than California's coast."),
+     ("Canyon Ferry Lake",
+      "the Helena lake, and the busiest water in the central part of the state."),
+     ("Lake Koocanusa",
+      "90 miles on the Kootenai, shared with British Columbia."),
+     ("The Missouri and the Yellowstone",
+      "float and jet-boat water rather than ski water, and the Yellowstone is the "
+      "longest undammed river in the lower 48."),
+   ],
+   season="Short. Ice-out on the big lakes runs into April, and the high country is "
+          "done by late September."),
+ "colorado": dict(
+   lede="Colorado boating happens at altitude, which changes the water, the weather "
+        "and how an outboard behaves - and the state bands its fees at 20 and 30 "
+        "feet rather than the usual 16 and 26.",
+   waters=[
+     ("Lake Granby and Grand Lake",
+      "the headwaters lakes on the west side of Rocky Mountain National Park. Grand "
+      "Lake is the largest natural lake in the state."),
+     ("Blue Mesa Reservoir",
+      "the largest body of water in Colorado, on the Gunnison in the Curecanti "
+      "recreation area."),
+     ("Chatfield, Cherry Creek and Aurora",
+      "the Denver metro reservoirs, close enough for a weekday evening."),
+     ("Navajo Reservoir",
+      "in the south-west, shared with New Mexico."),
+     ("Horsetooth Reservoir",
+      "the long narrow reservoir on the hogback above Fort Collins."),
+     ("Lake Pueblo",
+      "the big warm-water reservoir on the Arkansas, and the longest season in the "
+      "state."),
+   ],
+   season="Short and altitude-dependent. The high reservoirs ice over; Pueblo and "
+          "the plains lakes run most of the year."),
+ "maryland": dict(
+   lede="The Chesapeake is the largest estuary in the United States and the reason "
+        "Maryland's fleet is what it is - most of this boating is brackish, tidal "
+        "and in sight of a working waterman.",
+   waters=[
+     ("The Chesapeake Bay",
+      "200 miles of it, with Maryland holding the upper two thirds. Everything else "
+      "on this list is a tributary of it."),
+     ("The Eastern Shore rivers",
+      "the Choptank, the Chester, the Wye and the Miles - deep, protected and the "
+      "reason Maryland has so many small marinas."),
+     ("The Potomac River",
+      "the southern border, tidal up to Washington."),
+     ("Deep Creek Lake",
+      "the one big freshwater lake, up in Garrett County in the Alleghenies, and a "
+      "completely different kind of boating."),
+     ("The Atlantic at Ocean City",
+      "the inlet, the back bays and the offshore canyons beyond them."),
+   ],
+   season="Year-round on the Bay for the hardy; the main season runs April to "
+          "November. Deep Creek freezes."),
+ "kentucky": dict(
+   lede="Kentucky has more navigable miles than any state but Alaska, and the two "
+        "big western lakes are among the largest man-made bodies of water in the "
+        "country.",
+   waters=[
+     ("Kentucky Lake and Lake Barkley",
+      "the Tennessee and the Cumberland impounded side by side, joined by a canal, "
+      "with Land Between the Lakes down the middle. Kentucky Lake is the larger of "
+      "the two and runs well into Tennessee."),
+     ("Lake Cumberland",
+      "101 miles of reservoir in the south-central counties, and the houseboat "
+      "capital of the country by most counts."),
+     ("Dale Hollow Lake",
+      "shared with Tennessee, and clear enough to see the bottom in 20 feet."),
+     ("The Ohio River",
+      "the entire northern border, locked and commercially navigable the whole way."),
+     ("Laurel River Lake and Cave Run",
+      "the clear-water eastern lakes in the Daniel Boone National Forest."),
+   ],
+   season="Long. The western lakes run most of the year and the houseboat season "
+          "starts early."),
 }

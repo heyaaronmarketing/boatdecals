@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 434 questions across 58 pages, with the page each one came from.
+> 474 questions across 62 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -497,6 +497,39 @@ A: Lake Tahoe is the one most people name first: 1,645 feet deep, straddling the
 Q: When is boating season in California?
 A: Year round on the coast and in the south. The Sierra reservoirs run roughly April to October and the level depends entirely on snowpack.
 
+## Colorado Boat Registration Numbers CL
+Source: https://numbermyboat.com/registration-numbers/colorado/
+
+Q: How much does it cost to register a boat in Colorado?
+A: Colorado charges $36.25 under 20 feet, $46.25 to 30 feet, $76.25 above it - every year, for a registration that runs one year, through Colorado Parks and Wildlife. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Colorado boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Colorado like everywhere else. Taller is always legal.
+
+Q: What do Colorado boat numbers start with?
+A: CL. Your full number runs prefix, digits, then a letter suffix — for example CL 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Colorado?
+A: You register through the Colorado Parks and Wildlife. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So CL 1234 AB, not CL1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Colorado runs forward, not aft: the yearly decals are placed to the left of the registration number on both sides of the boat. No other number may be carried on the bow — and if another state’s number is still showing, it has to come off.
+
+Q: Do I have to register a kayak or canoe in Colorado?
+A: Colorado registers all watercraft powered by motor or sail; sailboards exempt. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Colorado Parks and Wildlife system.
+
+Q: How many registered boats are there in Colorado?
+A: 71,617, which puts Colorado 37th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Colorado?
+A: Lake Granby and Grand Lake is the one most people name first: the headwaters lakes on the west side of Rocky Mountain National Park. Grand Lake is the largest natural lake in the state. Others worth knowing: Blue Mesa Reservoir, Chatfield, Cherry Creek and Aurora, Navajo Reservoir, Horsetooth Reservoir.
+
+Q: When is boating season in Colorado?
+A: Short and altitude-dependent. The high reservoirs ice over; Pueblo and the plains lakes run most of the year.
+
 ## Florida Boat Registration Numbers FL
 Source: https://numbermyboat.com/registration-numbers/florida/
 
@@ -707,6 +740,39 @@ A: Lake Okoboji and Spirit Lake is the one most people name first: the Iowa Grea
 Q: When is boating season in Iowa?
 A: Ice-out is usually late March to mid-April and most boats are out of the water by the end of October. The practical season is about six months, which is why spring re-lettering is such a rush here.
 
+## Kentucky Boat Registration Numbers KY
+Source: https://numbermyboat.com/registration-numbers/kentucky/
+
+Q: How much does it cost to register a boat in Kentucky?
+A: Kentucky charges $42.28 for the common 16-to-26-foot band, from $22.20 for a small boat to $68.71 over 40 feet, for a registration that runs one year, through your county clerk, for Kentucky Fish and Wildlife. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Kentucky boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Kentucky like everywhere else. Taller is always legal.
+
+Q: What do Kentucky boat numbers start with?
+A: KY. Your full number runs prefix, digits, then a letter suffix — for example KY 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Kentucky?
+A: You register through the county clerk, for Kentucky Fish and Wildlife. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So KY 1234 AB, not KY1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Kentucky gives both a distance and a direction: the registration decals go within six inches behind (aft) and in line with the registration number. Each year the old ones come off and the current ones go on.
+
+Q: Do I have to register a kayak or canoe in Kentucky?
+A: Kentucky registers all motorized vessels, except electric motors 1 hp or less. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the county clerk, for Kentucky Fish and Wildlife system.
+
+Q: How many registered boats are there in Kentucky?
+A: 141,751, which puts Kentucky 28th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Kentucky?
+A: Kentucky Lake and Lake Barkley is the one most people name first: the Tennessee and the Cumberland impounded side by side, joined by a canal, with Land Between the Lakes down the middle. Kentucky Lake is the larger of the two and runs well into Tennessee. Others worth knowing: Lake Cumberland, Dale Hollow Lake, The Ohio River, Laurel River Lake and Cave Run.
+
+Q: When is boating season in Kentucky?
+A: Long. The western lakes run most of the year and the houseboat season starts early.
+
 ## Louisiana Boat Registration Numbers LA
 Source: https://numbermyboat.com/registration-numbers/louisiana/
 
@@ -772,6 +838,39 @@ A: Sebago Lake is the one most people name first: the deepest lake in the state 
 
 Q: When is boating season in Maine?
 A: Short and intense. Ice-out on the big inland lakes is usually late April into May, and the inland season is effectively over by October.
+
+## Maryland Boat Registration Numbers MD
+Source: https://numbermyboat.com/registration-numbers/maryland/
+
+Q: How much does it cost to register a boat in Maryland?
+A: Maryland charges one flat $70, whatever the boat, and it covers two years, for a registration that runs two years, through the Maryland Department of Natural Resources. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Maryland boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Maryland like everywhere else. Taller is always legal.
+
+Q: What do Maryland boat numbers start with?
+A: MD. Your full number runs prefix, digits, then a letter suffix — for example MD 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Maryland?
+A: You register through the Maryland Department of Natural Resources. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MD 1234 AB, not MD1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Maryland sizes the decals and then pins them close: the set is two 3″ × 3″ decals, displayed within 3 inches of the vessel number. The same 3-inch rule applies to a dealer’s round temporary decal.
+
+Q: Do I have to register a kayak or canoe in Maryland?
+A: Maryland registers all motorized vessels; vessels that may become motorized. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Maryland Department of Natural Resources system.
+
+Q: How many registered boats are there in Maryland?
+A: 168,202, which puts Maryland 23rd in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Maryland?
+A: The Chesapeake Bay is the one most people name first: 200 miles of it, with Maryland holding the upper two thirds. Everything else on this list is a tributary of it. Others worth knowing: The Eastern Shore rivers, The Potomac River, Deep Creek Lake, The Atlantic at Ocean City.
+
+Q: When is boating season in Maryland?
+A: Year-round on the Bay for the hardy; the main season runs April to November. Deep Creek freezes.
 
 ## Massachusetts Boat Registration Numbers MS
 Source: https://numbermyboat.com/registration-numbers/massachusetts/
@@ -937,6 +1036,39 @@ A: Lake of the Ozarks is the one most people name first: roughly 1,150 miles of 
 
 Q: When is boating season in Missouri?
 A: March through November at the Ozarks, with the hard season April through October.
+
+## Montana Boat Registration Numbers MT
+Source: https://numbermyboat.com/registration-numbers/montana/
+
+Q: How much does it cost to register a boat in Montana?
+A: Montana charges paid ONCE, not yearly - $65.50 under 16 feet, $125.50 to 19 feet, $295.50 above it, for a registration that runs the life of your ownership - Montana registration is permanent, through the county treasurer where you live. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Montana boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Montana like everywhere else. Taller is always legal.
+
+Q: What do Montana boat numbers start with?
+A: MT. Your full number runs prefix, digits, then a letter suffix — for example MT 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Montana?
+A: You register through the county treasurer, for Montana Fish, Wildlife and Parks. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MT 1234 AB, not MT1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Montana is unlike every other state on this site. Validation stickers are no longer required. You get one permanent white decal, and it goes on the left or port side only, three inches aft of and directly in line with the number. It stays valid until you sell the boat. No other numbers or letters may be displayed on the bow.
+
+Q: Do I have to register a kayak or canoe in Montana?
+A: Montana registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the county treasurer, for Montana Fish, Wildlife and Parks system.
+
+Q: How many registered boats are there in Montana?
+A: 53,525, which puts Montana 41st in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Montana?
+A: Flathead Lake is the one most people name first: the largest natural freshwater lake west of the Mississippi, and the centre of Montana boating. Others worth knowing: Fort Peck Lake, Canyon Ferry Lake, Lake Koocanusa, The Missouri and the Yellowstone.
+
+Q: When is boating season in Montana?
+A: Short. Ice-out on the big lakes runs into April, and the high country is done by late September.
 
 ## Nebraska Boat Registration Numbers NB
 Source: https://numbermyboat.com/registration-numbers/nebraska/

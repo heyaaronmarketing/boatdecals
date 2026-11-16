@@ -81,6 +81,14 @@ USCG_FLEET = {
    'All motorized vessels and sailboats'),
  'utah'            : (  67852, 38,
    'All motorized vessels and sailboats'),
+ 'montana'         : (  53525, 41,
+   'All motorized vessels'),
+ 'colorado'        : (  71617, 37,
+   'All watercraft powered by motor or sail; sailboards exempt'),
+ 'maryland'        : ( 168202, 23,
+   'All motorized vessels; vessels that may become motorized'),
+ 'kentucky'        : ( 141751, 28,
+   'All motorized vessels, except electric motors 1 hp or less'),
 }
 
 OUTLINE = {
@@ -218,6 +226,10 @@ STATE_ACCENT = {
  'nebraska'        : ('#4a4526', '#e3b24b', 'sandhills and wheat'),
  'idaho'           : ('#2e4a3c', '#9ecf5a', 'panhandle pine and river'),
  'utah'            : ('#7a3b22', '#e8c45c', 'red rock and desert sun'),
+ 'montana'         : ('#2b4257', '#8fb8d6', 'big sky and cold water'),
+ 'colorado'        : ('#6b3a1f', '#e5a04a', 'red rock and aspen gold'),
+ 'maryland'        : ('#13304d', '#d4a537', 'Chesapeake navy and gold'),
+ 'kentucky'        : ('#2f4b33', '#9ec96a', 'bluegrass and limestone water'),
 }
 
 

@@ -839,6 +839,80 @@ STATES = [
               "<strong>exempt from the Utah number display requirement</strong> "
               "entirely &mdash; it still registers and still shows decals, but it "
               "does not carry UT numbers on the bow."),
+    dict(slug="montana", name="Montana", ab="MT", vol=20,
+         agency="county treasurer, for Montana Fish, Wildlife and Parks", tier=3,
+         fmt="MT 234 ABC or MT-234-ABC &mdash; a space or hyphen separating the MT "
+             "from the number and letter suffix. Vertical block letters at least 3 "
+             "inches high, contrasting with the hull, read left to right, "
+             "<strong>as high above the water line as practical and still "
+             "visible</strong>, on each outboard side of the forward half",
+         decal="Montana is unlike every other state on this site. "
+               "<strong>Validation stickers are no longer required</strong>. You get "
+               "<strong>one permanent white decal</strong>, and it goes on the "
+               "<strong>left or port side only, three inches aft of and directly in "
+               "line with the number</strong>. It stays valid until you sell the "
+               "boat. No other numbers or letters may be displayed on the bow.",
+         rules_src="https://fwp.mt.gov/binaries/content/assets/fwp/fish/regulations/2026-boating-laws-final-for-print.pdf",
+         rules_src_name="2026 Montana Boating Laws (FWP)",
+         note="Because the decal is permanent and the fee is one-time, a Montana "
+              "boat&rsquo;s lettering is the part that ages, not the sticker. If "
+              "your numbers have gone chalky or started lifting, replacing them is "
+              "the whole job &mdash; there is no annual renewal to do it alongside."),
+    dict(slug="colorado", name="Colorado", ab="CL", vol=10,
+         agency="Colorado Parks and Wildlife", tier=3,
+         fmt="Read left to right in block characters of good proportion, at least 3 "
+             "inches tall <strong>not counting any border or trim</strong>, "
+             "contrasting with the background, kept clearly visible and legible, "
+             "painted or attached to each side of the bow on the forward half. If "
+             "the boat has no such sides, a matching spot on both sides of the "
+             "foredeck is acceptable",
+         decal="Colorado runs forward, not aft: the yearly decals are placed "
+               "<strong>to the left of the registration number on both sides of the "
+               "boat</strong>. No other number may be carried on the bow &mdash; and "
+               "if another state&rsquo;s number is still showing, it has to come off.",
+         rules_src="https://cpw.state.co.us/register-boat",
+         rules_src_name="Colorado Parks and Wildlife, Register a Boat",
+         note="<strong>Colorado boat numbers start with CL, not CO.</strong> The "
+              "Coast Guard set the vessel prefixes in 1958, five years before the "
+              "Post Office picked its own two-letter codes, and the two were never "
+              "reconciled. Also worth knowing: the 3-inch minimum is measured on the "
+              "character itself, <em>not counting border or trim</em> &mdash; so an "
+              "outlined set has to have 3-inch letters inside the outline."),
+    dict(slug="maryland", name="Maryland", ab="MD", vol=10,
+         agency="Maryland Department of Natural Resources", tier=3,
+         fmt="Plain vertical block characters of good proportion, not less than 3 "
+             "inches high, contrasting with the hull, read left to right, "
+             "<strong>placed as high above the waterline as practical</strong>, with "
+             "the letters separated from the numbers by hyphens or spaces &mdash; "
+             "and the number must read exactly as it appears on the Vessel "
+             "Registration Card",
+         decal="Maryland sizes the decals and then pins them close: the set is "
+               "<strong>two 3&Prime; &times; 3&Prime; decals, displayed within 3 "
+               "inches of the vessel number</strong>. The same 3-inch rule applies "
+               "to a dealer&rsquo;s round temporary decal.",
+         rules_src="https://dnr.maryland.gov/Documents/BoatDealersManual.pdf",
+         rules_src_name="Maryland DNR Boat Dealer Manual, Appendix D (rev. 3/2026)",
+         note="Maryland charges one flat fee for every vessel regardless of length "
+              "or horsepower, so unlike most states there is nothing to gain from "
+              "where your boat falls in a length band."),
+    dict(slug="kentucky", name="Kentucky", ab="KY", vol=10,
+         agency="county clerk, for Kentucky Fish and Wildlife", tier=3,
+         fmt="KY 1234 A &mdash; the statute&rsquo;s own example. Block letters of "
+             "good proportion not less than three inches in height, read left to "
+             "right, in a position giving <strong>maximum visibility</strong>, with "
+             "spaces <strong>equal to the width of a letter other than "
+             "&ldquo;I&rdquo; or a number other than &ldquo;1&rdquo;</strong> "
+             "between the groups, dark on a light background or the reverse",
+         decal="Kentucky gives both a distance and a direction: the registration "
+               "decals go <strong>within six inches behind (aft) and in line with "
+               "the registration number</strong>. Each year the old ones come off "
+               "and the current ones go on.",
+         rules_src="https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=11055",
+         rules_src_name="Kentucky Revised Statutes §235.110",
+         note="Kentucky registrations all expire on the <strong>same date, 30 "
+              "April</strong>, not on the anniversary of the day you registered. "
+              "Register a boat in March and the renewal notice follows almost "
+              "immediately."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "
