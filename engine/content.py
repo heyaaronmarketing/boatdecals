@@ -672,6 +672,95 @@ STATES = [
                "sailboat, both sides of the bottom of the main mast.",
          rules_src="https://www.tn.gov/content/dam/tn/twra/documents/boating/TWRA-TN-Boating-Handbook.pdf",
          rules_src_name="2025 Tennessee Boating Laws and Responsibilities (TWRA)"),
+    dict(slug="mississippi", name="Mississippi", ab="MI", vol=70,
+         agency="Mississippi Department of Wildlife, Fisheries and Parks", tier=3,
+         fmt="MI, then up to four digits, then up to two letters &mdash; &ldquo;each "
+             "part shall be separated by hyphens or equivalent spaces when placed on "
+             "the boat.&rdquo; Block characters of good proportion, not less than 3 "
+             "inches, read left to right, dark on a light hull and light on a dark one",
+         decal="MDWFP puts it in one line: &ldquo;the decals should be displayed "
+               "<strong>within six (6&Prime;) inches of the numbers</strong>.&rdquo; "
+               "Each side of the forward half, in a position that gives clear "
+               "legibility, and no other numbers on the bow.",
+         rules_src="https://www.mdwfp.com/fishing-boating/boat-registration-renewal",
+         rules_src_name="MDWFP, Boat Registration &amp; Renewal",
+         note="This is the prefix that catches people more than any other. "
+              "<strong>Mississippi boat numbers start with MI</strong> &mdash; and "
+              "<strong>Michigan&rsquo;s start with MC</strong>. The two are swapped "
+              "relative to the postal abbreviations everybody knows, because the "
+              "Coast Guard set the vessel prefixes in 1958, five years before the "
+              "Post Office picked its own codes. Our order form checks it for you."),
+    dict(slug="maine", name="Maine", ab="ME", vol=50,
+         agency="Maine Department of Inland Fisheries and Wildlife", tier=3,
+         fmt="ME-123-A &mdash; the statute&rsquo;s own example. Three parts, with the "
+             "ME separated from the numerals by a hyphen or a space <strong>equal to "
+             "the width of a letter other than &ldquo;I&rdquo;</strong>, and the "
+             "suffix separated the same way. Vertical block capital letters and "
+             "Arabic numerals, not less than 3 inches, of good proportion, kept "
+             "legible at all times",
+         decal="Maine measures from the end of the number: the validation sticker is "
+               "displayed <strong>approximately 3 inches behind the last letter of "
+               "the identification number, and on a level with it</strong>, on both "
+               "sides of the bow.",
+         rules_src="https://legislature.maine.gov/statutes/12/title12sec13056.pdf",
+         rules_src_name="Maine Revised Statutes Title 12 §13056",
+         note="Two Maine-only things. The registration is priced off the "
+              "<strong>engine</strong> rather than the boat, and it is cheaper if "
+              "you operate only on tidal water. And the validation stickers are "
+              "<strong>nontransferable</strong> &mdash; they do not go with a sold "
+              "boat, so a used hull arrives needing its own."),
+    dict(slug="arkansas", name="Arkansas", ab="AR", vol=30,
+         agency="Arkansas Department of Finance and Administration", tier=3,
+         fmt="AR 3717 ZW or AR-3717-ZW &mdash; and Arkansas also issues the three-"
+             "digit form, AR 123 ABC. At least 3 inches high, bold BLOCK letters, "
+             "contrasting with the background, read left to right on both sides, "
+             "with the letters separated from the numbers by a space or hyphen",
+         decal="The decals go on each side <strong>toward the stern of the "
+               "registration number, three inches from it and in line with "
+               "it</strong>. No other numbers on either side of the bow.",
+         rules_src="https://www.dfa.arkansas.gov/office/motor-vehicle/motor-boat-registration/",
+         rules_src_name="Arkansas DFA, Motor Boat Registration",
+         note="You register an Arkansas boat through the <strong>Department of "
+              "Finance and Administration</strong> &mdash; the car-tag office &mdash; "
+              "not through Game and Fish. Game and Fish writes the boating handbook "
+              "and works the water; DFA takes the money and issues the number."),
+    dict(slug="massachusetts", name="Massachusetts", ab="MS", vol=20,
+         agency="Massachusetts Environmental Police", tier=3,
+         fmt="MS followed by no more than four numbers and two capital letters, with "
+             "a <strong>two-inch space or hyphen</strong> separating the letters from "
+             "the numbers. Block letters not less than three inches high, read left "
+             "to right, contrasting with the hull, on each side of the forward half",
+         decal="Massachusetts is the second port-side state. The decal is placed "
+               "<strong>in line with and three inches to the stern of the number, on "
+               "the port side of the boat</strong> &mdash; not one on each side.",
+         rules_src="https://www.mass.gov/info-details/boat-registration-faqs",
+         rules_src_name="Massachusetts Environmental Police, Boat Registration FAQs",
+         note="Two things that are true almost nowhere else. "
+              "<strong>Massachusetts numbers start with MS</strong>, which is "
+              "Mississippi&rsquo;s postal code &mdash; and Mississippi&rsquo;s boats "
+              "start with MI. And the Massachusetts number is issued "
+              "<strong>to the owner, not to the vessel</strong>: it can move to a "
+              "different boat you own, but it can never transfer to a new owner. If "
+              "you are selling, the number comes off."),
+    dict(slug="new-jersey", name="New Jersey", ab="NJ", vol=30,
+         agency="New Jersey Motor Vehicle Commission", tier=3,
+         fmt="NJ-1234-AA or NJ 9999 ZZ &mdash; the code&rsquo;s own examples. Three "
+             "parts: NJ, not more than four Arabic numerals, not more than two "
+             "letters, separated by a hyphen or an equivalent space. <strong>I, O and "
+             "Q may not be used in the suffix</strong> because they read as numerals. "
+             "Block characters of good proportion, not less than three inches, "
+             "contrasting, on each side of the bow",
+         decal="New Jersey states it flatly: <strong>the validation decal shall be "
+               "placed on each side of the vessel, three inches aft of the "
+               "registration number</strong>. Expired decals must not be visible &mdash; "
+               "and when the vessel is sold, removing them is the "
+               "<strong>seller&rsquo;s</strong> job.",
+         rules_src="https://www.nj.gov/njsp/marine-services/pdf/Title_13_82_20220127.pdf",
+         rules_src_name="New Jersey Administrative Code Title 13:82-8.2 and 8.3",
+         note="The display rules above are the administrative code; the three-inch "
+              "decal offset is stated in the State Police&rsquo;s own 2024 Boating "
+              "Safety Manual, which is the publication an officer on Barnegat Bay is "
+              "working from."),
     dict(slug="indiana", name="Indiana", ab="IN", vol=10,
          agency="Indiana Bureau of Motor Vehicles", tier=2,
          decal="Indiana gives a direction as well as a distance: the decals go on the "

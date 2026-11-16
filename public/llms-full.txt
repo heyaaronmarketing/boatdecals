@@ -1,6 +1,6 @@
 # Number My Boat - every question this site answers
 
-> 344 questions across 49 pages, with the page each one came from.
+> 394 questions across 54 pages, with the page each one came from.
 > Generated on 2026-11-16 from the FAQ schema actually published on those
 > pages, so this file cannot claim an answer the site does not give.
 > The short index is at https://numbermyboat.com/llms.txt.
@@ -431,6 +431,39 @@ A: Lake Guntersville is the one most people name first: 69,000 acres, the larges
 Q: When is boating season in Alabama?
 A: Effectively year round, with the hard season March through November.
 
+## Arkansas Boat Registration Numbers AR
+Source: https://numbermyboat.com/registration-numbers/arkansas/
+
+Q: How much does it cost to register a boat in Arkansas?
+A: Arkansas charges $15 for the common 16-to-26-foot band, from $7.50 for a small boat to $105 for a 40-footer, for a registration that runs three years, through the Arkansas Department of Finance and Administration. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Arkansas boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Arkansas like everywhere else. Taller is always legal.
+
+Q: What do Arkansas boat numbers start with?
+A: AR. Your full number runs prefix, digits, then a letter suffix — for example AR 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Arkansas?
+A: You register through the Arkansas Department of Finance and Administration. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So AR 1234 AB, not AR1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. The decals go on each side toward the stern of the registration number, three inches from it and in line with it. No other numbers on either side of the bow.
+
+Q: Do I have to register a kayak or canoe in Arkansas?
+A: Arkansas registers all watercraft. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Arkansas Department of Finance and Administration system.
+
+Q: How many registered boats are there in Arkansas?
+A: 217,397, which puts Arkansas 19th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Arkansas?
+A: Lake Ouachita is the one most people name first: the largest lake wholly inside Arkansas, and undeveloped enough around its shoreline that it stays clear. Others worth knowing: Beaver Lake and Bull Shoals, Greers Ferry Lake, Lake Dardanelle, DeGray Lake.
+
+Q: When is boating season in Arkansas?
+A: Long. The reservoirs stay open all year and the spring tournament season starts early.
+
 ## California Boat Registration Numbers CF
 Source: https://numbermyboat.com/registration-numbers/california/
 
@@ -674,6 +707,72 @@ A: Lake Pontchartrain is the one most people name first: 630 square miles of bra
 Q: When is boating season in Louisiana?
 A: Year round. Hurricane season from June to November is what actually governs when boats come out of the water.
 
+## Maine Boat Registration Numbers ME
+Source: https://numbermyboat.com/registration-numbers/maine/
+
+Q: How much does it cost to register a boat in Maine?
+A: Maine charges by HORSEPOWER rather than length, $40 to $59 inland and $15 to $34 for tidal-only use, for a registration that runs one year, through the Maine Department of Inland Fisheries and Wildlife. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Maine boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Maine like everywhere else. Taller is always legal.
+
+Q: What do Maine boat numbers start with?
+A: ME. Your full number runs prefix, digits, then a letter suffix — for example ME 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Maine?
+A: You register through the Maine Department of Inland Fisheries and Wildlife. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So ME 1234 AB, not ME1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Maine measures from the end of the number: the validation sticker is displayed approximately 3 inches behind the last letter of the identification number, and on a level with it, on both sides of the bow.
+
+Q: Do I have to register a kayak or canoe in Maine?
+A: Maine registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Maine Department of Inland Fisheries and Wildlife system.
+
+Q: How many registered boats are there in Maine?
+A: 114,772, which puts Maine 31st in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Maine?
+A: Sebago Lake is the one most people name first: the deepest lake in the state and the closest big water to Portland, which makes it the busiest. Others worth knowing: Moosehead Lake, The Belgrade Lakes, The Rangeley Lakes, Casco Bay and Penobscot Bay.
+
+Q: When is boating season in Maine?
+A: Short and intense. Ice-out on the big inland lakes is usually late April into May, and the inland season is effectively over by October.
+
+## Massachusetts Boat Registration Numbers MS
+Source: https://numbermyboat.com/registration-numbers/massachusetts/
+
+Q: How much does it cost to register a boat in Massachusetts?
+A: Massachusetts charges $66 for the common 16-to-26-foot band, from $44 for a small boat to $110 for a 40-footer - and all of it buys TWO years, for a registration that runs two years, through the Massachusetts Environmental Police. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Massachusetts boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Massachusetts like everywhere else. Taller is always legal.
+
+Q: What do Massachusetts boat numbers start with?
+A: MS. Your full number runs prefix, digits, then a letter suffix — for example MS 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Massachusetts?
+A: You register through the Massachusetts Environmental Police. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MS 1234 AB, not MS1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. Massachusetts is the second port-side state. The decal is placed in line with and three inches to the stern of the number, on the port side of the boat — not one on each side.
+
+Q: Do I have to register a kayak or canoe in Massachusetts?
+A: Massachusetts registers all motorized vessels. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Massachusetts Environmental Police system.
+
+Q: How many registered boats are there in Massachusetts?
+A: 125,670, which puts Massachusetts 30th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Massachusetts?
+A: Cape Cod Bay and Buzzards Bay is the one most people name first: the two bodies either side of the Cape, and between them the bulk of the state's salt-water boating. Others worth knowing: Boston Harbor and the Harbor Islands, Nantucket Sound, Lake Quinsigamond, The Merrimack River.
+
+Q: When is boating season in Massachusetts?
+A: Salt-water season runs from the spring haul-out through to October. Inland lakes freeze.
+
 ## Michigan Boat Registration Numbers MC
 Source: https://numbermyboat.com/registration-numbers/michigan/
 
@@ -740,6 +839,39 @@ A: Lake Minnetonka is the one most people name first: 14,000 acres west of Minne
 Q: When is boating season in Minnesota?
 A: Ice-out runs from early April in the south to early May up north, and the Minnesota fishing opener in mid-May is the real start. Most boats are out by the end of October.
 
+## Mississippi Boat Registration Numbers MI
+Source: https://numbermyboat.com/registration-numbers/mississippi/
+
+Q: How much does it cost to register a boat in Mississippi?
+A: Mississippi charges $25.99 for the common 16-to-26-foot band, from $10.99 for a small boat to $48.49 at the top, for a registration that runs three consecutive years, through the Mississippi Department of Wildlife, Fisheries and Parks. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do Mississippi boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in Mississippi like everywhere else. Taller is always legal.
+
+Q: What do Mississippi boat numbers start with?
+A: MI. Your full number runs prefix, digits, then a letter suffix — for example MI 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in Mississippi?
+A: You register through the Mississippi Department of Wildlife, Fisheries and Parks. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So MI 1234 AB, not MI1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. MDWFP puts it in one line: “the decals should be displayed within six (6″) inches of the numbers.” Each side of the forward half, in a position that gives clear legibility, and no other numbers on the bow.
+
+Q: Do I have to register a kayak or canoe in Mississippi?
+A: Mississippi registers all motorized vessels and sailboats. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the Mississippi Department of Wildlife, Fisheries and Parks system.
+
+Q: How many registered boats are there in Mississippi?
+A: 131,643, which puts Mississippi 29th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in Mississippi?
+A: Ross Barnett Reservoir is the one most people name first: the Jackson lake, impounded on the Pearl River and the busiest recreational water in the state - it is where most of the central-Mississippi fleet lives. Others worth knowing: Sardis, Enid, Grenada and Arkabutla, Pickwick Lake, The Mississippi Sound and the barrier islands, The Mississippi River.
+
+Q: When is boating season in Mississippi?
+A: Year-round on the coast. The reservoirs quieten from December through February but never freeze.
+
 ## Missouri Boat Registration Numbers MO
 Source: https://numbermyboat.com/registration-numbers/missouri/
 
@@ -772,6 +904,39 @@ A: Lake of the Ozarks is the one most people name first: roughly 1,150 miles of 
 
 Q: When is boating season in Missouri?
 A: March through November at the Ozarks, with the hard season April through October.
+
+## New Jersey Boat Registration Numbers NJ
+Source: https://numbermyboat.com/registration-numbers/new-jersey/
+
+Q: How much does it cost to register a boat in New Jersey?
+A: New Jersey charges $28 a year for the common 16-to-26-foot band, from $12 for a small boat to $250 for anything 65 feet and over, for a registration that runs one year, through the New Jersey Motor Vehicle Commission. That is the state's fee for the registration itself. Our $28 is the vinyl: the pair of numbers for the hull, cut and posted free.
+
+Q: How tall do New Jersey boat registration numbers have to be?
+A: Not less than 3 inches, in plain vertical block characters. That is the federal minimum under 33 CFR 173.27 and it applies in New Jersey like everywhere else. Taller is always legal.
+
+Q: What do New Jersey boat numbers start with?
+A: NJ. Your full number runs prefix, digits, then a letter suffix — for example NJ 1234 AB. Copy it off your registration card exactly rather than guessing the spacing.
+
+Q: Who issues boat registration in New Jersey?
+A: You register through the New Jersey Motor Vehicle Commission. We only make the decals — you get the number from them first, then we cut it.
+
+Q: Do the numbers need a space or a hyphen?
+A: Yes. The rule requires a space or hyphen between the letter and number groups, about as wide as one character. So NJ 1234 AB, not NJ1234AB. Ours arrive pre-spaced correctly, so you cannot get this wrong.
+
+Q: Where do they go on the boat?
+A: Each side of the forward half of the hull, reading left to right, in a color that contrasts with the hull. New Jersey states it flatly: the validation decal shall be placed on each side of the vessel, three inches aft of the registration number. Expired decals must not be visible — and when the vessel is sold, removing them is the seller’s job.
+
+Q: Do I have to register a kayak or canoe in New Jersey?
+A: New Jersey registers all watercraft - excludes non-motorized boats under 12 feet, canoes and kayaks. If your boat falls outside that, it does not need a registration number on the bow — and it does not need a set from us either. This is the Coast Guard's own summary of the New Jersey Motor Vehicle Commission system.
+
+Q: How many registered boats are there in New Jersey?
+A: 153,292, which puts New Jersey 26th in the country. That is the Coast Guard's 2024 count, from Recreational Boating Statistics, Table 38.
+
+Q: Where are the best places to boat in New Jersey?
+A: Barnegat Bay is the one most people name first: the long shallow bay behind Long Beach Island, and the centre of gravity for Jersey Shore boating. Others worth knowing: Raritan Bay and Sandy Hook, Lake Hopatcong, The Delaware River, Greenwood Lake.
+
+Q: When is boating season in New Jersey?
+A: Shore season runs Memorial Day to Columbus Day, with the serious fishing fleet out either side of it.
 
 ## New York Boat Registration Numbers NY
 Source: https://numbermyboat.com/registration-numbers/new-york/

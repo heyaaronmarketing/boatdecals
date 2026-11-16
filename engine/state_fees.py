@@ -399,6 +399,87 @@ FEES = {
              "you registered, so a boat bought in May gets about six weeks "
              "before its first renewal.",
  },
+ "mississippi": {
+   "fee_summary": '$25.99 for the common 16-to-26-foot band, from $10.99 for a small boat to $48.49 at the top',
+   "period": "three consecutive years, beginning the day the boat is registered",
+   "rows": [("Less than 16 ft", "$10.99"), ("16 ft to less than 26 ft", "$25.99"),
+            ("26 ft to less than 40 ft", "$48.49"), ("40 ft and over", "$48.49")],
+   "agency": "the Mississippi Department of Wildlife, Fisheries and Parks",
+   "agency_url": "https://www.mdwfp.com/fishing-boating/boat-registration-renewal",
+   "src": "https://www.mdwfp.com/fishing-boating/boat-registration-renewal",
+   "src_name": "MDWFP Boat Registration & Renewal",
+   "extra": "A dealer number is $40.99 and a duplicate registration $8.49.",
+   "gotcha": "Mississippi's top two bands are the same money: a 40-footer pays the "
+             "same $48.49 as a 26-footer, so there is no fee reason to round a "
+             "length down once you are past 26 feet.",
+ },
+ "maine": {
+   "fee_summary": 'by HORSEPOWER rather than length, $40 to $59 inland and $15 to $34 for tidal-only use',
+   "period": "one year",
+   "rows": [("10 hp or less", "$40"), ("11 to 50 hp", "$45"),
+            ("51 to 115 hp", "$51"), ("Over 115 hp, and PWC", "$59")],
+   "agency": "the Maine Department of Inland Fisheries and Wildlife",
+   "agency_url": "https://www.maine.gov/ifw/fishing-boating/boating/index.html",
+   "src": "https://legislature.maine.gov/statutes/12/title12sec13056.pdf",
+   "src_name": "Maine Revised Statutes Title 12 §13056",
+   "extra": "Those are the inland-water figures. A boat operated only on tidal "
+            "waters pays less at every step &mdash; $15, $20, $26 and $34 "
+            "respectively. A duplicate certificate or a duplicate sticker set is "
+            "$1 each, and a transfer is $2. The statute schedules another rise on "
+            "1 January 2028.",
+   "gotcha": "Maine is the state on this list that prices the registration off the "
+             "ENGINE, not the boat. A 14-foot skiff with a 150 on the back pays "
+             "more than a 24-footer with a 40. And the validation stickers are "
+             "nontransferable, so they do not move with a sold boat.",
+ },
+ "arkansas": {
+   "fee_summary": '$15 for the common 16-to-26-foot band, from $7.50 for a small boat to $105 for a 40-footer',
+   "period": "three years",
+   "rows": [("Less than 16 ft", "$7.50"), ("16 ft to less than 26 ft", "$15.00"),
+            ("26 ft to less than 40 ft", "$51.00"), ("40 ft and over", "$105.00")],
+   "agency": "the Arkansas Department of Finance and Administration",
+   "agency_url": "https://www.dfa.arkansas.gov/office/motor-vehicle/motor-boat-registration/",
+   "src": "https://www.dfa.arkansas.gov/office/motor-vehicle/motor-boat-registration/",
+   "src_name": "Arkansas DFA, Motor Boat Registration",
+   "extra": "A replacement registration is $1.00.",
+   "gotcha": "Arkansas registers the boat through the DEPARTMENT OF FINANCE AND "
+             "ADMINISTRATION, not Game and Fish &mdash; the same office that does "
+             "car tags. Game and Fish writes the boating handbook and enforces on "
+             "the water, but it is not who you pay.",
+ },
+ "massachusetts": {
+   "fee_summary": '$66 for the common 16-to-26-foot band, from $44 for a small boat to $110 for a 40-footer - and all of it buys TWO years',
+   "period": "two years",
+   "rows": [("Under 16 ft", "$44"), ("16 ft to less than 26 ft", "$66"),
+            ("26 ft to less than 40 ft", "$88"), ("40 ft and over", "$110")],
+   "agency": "the Massachusetts Environmental Police",
+   "agency_url": "https://www.mass.gov/boat-registration",
+   "src": "https://www.mass.gov/how-to/first-time-boat-registration",
+   "src_name": "Massachusetts Environmental Police, First-time boat registration",
+   "extra": "A boat title is $27.50 once, a duplicate title $16.50, and adding a "
+            "lien holder $16.50.",
+   "gotcha": "Massachusetts is the only state here on a TWO-year cycle &mdash; "
+             "everywhere else is one year or three. Comparing its $66 against "
+             "another state's annual figure makes it look twice as expensive as it "
+             "is.",
+ },
+ "new-jersey": {
+   "fee_summary": '$28 a year for the common 16-to-26-foot band, from $12 for a small boat to $250 for anything 65 feet and over',
+   "period": "one year",
+   "rows": [("Less than 16 ft", "$12.00"), ("16 ft to less than 26 ft", "$28.00"),
+            ("26 ft to less than 40 ft", "$52.00"),
+            ("40 ft to less than 65 ft", "$80.00"), ("65 ft or more", "$250.00")],
+   "agency": "the New Jersey Motor Vehicle Commission",
+   "agency_url": "https://www.nj.gov/mvc/vehicles/boating.htm",
+   "src": "https://www.nj.gov/mvc/vehicles/regfees.htm",
+   "src_name": "NJ MVC registration fees",
+   "extra": "Those are the non-commercial figures. A commercial vessel pays $1 more "
+            "in every band. The statute, N.J.S.A. 12:7-34.47, states each of them "
+            "&ldquo;per year&rdquo;, which is where the one-year term comes from.",
+   "gotcha": "New Jersey's top band is the steepest jump on this page: $80 at 64 "
+             "feet becomes $250 at 65. It is also one of the few states where the "
+             "SELLER is required to remove the decals when the boat changes hands.",
+ },
 }
 
 

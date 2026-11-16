@@ -539,4 +539,116 @@ WATERS = {
     "the southern border, locked and navigable."),
   ],
   season="Roughly late April through October, with ice on the northern lakes."),
+ "mississippi": dict(
+   lede="Mississippi boating is three different sports: the flood-control lakes in "
+        "the hills, one big reservoir in the middle of the state, and salt water on "
+        "the Sound.",
+   waters=[
+     ("Ross Barnett Reservoir",
+      "the Jackson lake, impounded on the Pearl River and the busiest recreational "
+      "water in the state - it is where most of the central-Mississippi fleet lives."),
+     ("Sardis, Enid, Grenada and Arkabutla",
+      "the four Corps of Engineers flood-control lakes along the hill country. Their "
+      "levels swing hard with the season, which is why the ramps move."),
+     ("Pickwick Lake",
+      "shared with Tennessee and Alabama in the north-east corner, and the deepest "
+      "water in the state."),
+     ("The Mississippi Sound and the barrier islands",
+      "Biloxi, Gulfport, Pass Christian and the run out to Ship and Horn Islands. "
+      "Salt, tide and commercial traffic - a different kind of boating entirely."),
+     ("The Mississippi River",
+      "the whole western border, and working water rather than recreational for most "
+      "of its length."),
+   ],
+   season="Year-round on the coast. The reservoirs quieten from December through "
+          "February but never freeze."),
+ "maine": dict(
+   lede="Maine registers boats for inland OR tidal water and charges differently for "
+        "each, which tells you how the state thinks about its own geography.",
+   waters=[
+     ("Sebago Lake",
+      "the deepest lake in the state and the closest big water to Portland, which "
+      "makes it the busiest."),
+     ("Moosehead Lake",
+      "the largest lake wholly inside Maine, and remote enough that the boating "
+      "season is genuinely short."),
+     ("The Belgrade Lakes",
+      "Great Pond, Long Pond and their neighbours in Kennebec County - camp country, "
+      "and a lot of small outboards."),
+     ("The Rangeley Lakes",
+      "the western mountains chain, cold and deep."),
+     ("Casco Bay and Penobscot Bay",
+      "the two great island-studded bays. This is where the tidal-only registration "
+      "rate earns its keep."),
+   ],
+   season="Short and intense. Ice-out on the big inland lakes is usually late April "
+          "into May, and the inland season is effectively over by October."),
+ "arkansas": dict(
+   lede="Arkansas is reservoir country - the Corps and the power companies dammed "
+        "the Ozark and Ouachita rivers, and the results are some of the clearest "
+        "water in the South.",
+   waters=[
+     ("Lake Ouachita",
+      "the largest lake wholly inside Arkansas, and undeveloped enough around its "
+      "shoreline that it stays clear."),
+     ("Beaver Lake and Bull Shoals",
+      "the White River impoundments in the north-west, with Bull Shoals shared with "
+      "Missouri."),
+     ("Greers Ferry Lake",
+      "two basins joined by a narrow neck near Heber Springs, and a long-standing "
+      "clear-water reputation."),
+     ("Lake Dardanelle",
+      "the Arkansas River navigation pool at Russellville, and a regular tournament "
+      "stop."),
+     ("DeGray Lake",
+      "a Caddo River impoundment south-west of Hot Springs."),
+     ("The White River",
+      "tailwater below Bull Shoals - cold, fast and a trout fishery rather than a "
+      "ski run."),
+   ],
+   season="Long. The reservoirs stay open all year and the spring tournament season "
+          "starts early."),
+ "massachusetts": dict(
+   lede="Massachusetts registers only boats with a motor, which is why its fleet "
+        "number looks small next to its coastline - the whole sailing and paddling "
+        "world is outside the count.",
+   waters=[
+     ("Cape Cod Bay and Buzzards Bay",
+      "the two bodies either side of the Cape, and between them the bulk of the "
+      "state's salt-water boating."),
+     ("Boston Harbor and the Harbor Islands",
+      "a working harbour with a national park inside it."),
+     ("Nantucket Sound",
+      "the water between the Cape, Martha's Vineyard and Nantucket, and some of the "
+      "busiest ferry traffic in New England."),
+     ("Lake Quinsigamond",
+      "the long narrow lake on the Worcester line, and a rowing course since the "
+      "19th century."),
+     ("The Merrimack River",
+      "tidal from Haverhill down to Newburyport, and busy both ways."),
+   ],
+   season="Salt-water season runs from the spring haul-out through to October. "
+          "Inland lakes freeze."),
+ "new-jersey": dict(
+   lede="New Jersey packs a lot of boating into a small state: barrier-island bays "
+        "down the whole shore, two tidal rivers, and the glacial lakes up in the "
+        "north-west.",
+   waters=[
+     ("Barnegat Bay",
+      "the long shallow bay behind Long Beach Island, and the centre of gravity for "
+      "Jersey Shore boating."),
+     ("Raritan Bay and Sandy Hook",
+      "the northern salt water, with New York Harbor traffic on the far side."),
+     ("Lake Hopatcong",
+      "the largest lake in New Jersey, up in Morris and Sussex Counties."),
+     ("The Delaware River",
+      "the entire western border, tidal from Trenton south and non-tidal above it."),
+     ("Greenwood Lake",
+      "straddling the New York state line, which means two sets of rules on one "
+      "body of water."),
+     ("Round Valley Reservoir",
+      "the deepest water in the state, and cold enough to stay clear."),
+   ],
+   season="Shore season runs Memorial Day to Columbus Day, with the serious fishing "
+          "fleet out either side of it."),
 }

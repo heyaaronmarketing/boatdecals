@@ -63,6 +63,16 @@ USCG_FLEET = {
    'All motorized vessels and sailboats'),
  'indiana'         : ( 193554, 21,
    'All motorized vessels on public waterways'),
+ 'mississippi'     : ( 131643, 29,
+   'All motorized vessels and sailboats'),
+ 'maine'           : ( 114772, 31,
+   'All motorized vessels'),
+ 'arkansas'        : ( 217397, 19,
+   'All watercraft'),
+ 'massachusetts'   : ( 125670, 30,
+   'All motorized vessels'),
+ 'new-jersey'      : ( 153292, 26,
+   'All watercraft - excludes non-motorized boats under 12 feet, canoes and kayaks'),
 }
 
 OUTLINE = {
@@ -191,6 +201,11 @@ STATE_ACCENT = {
  "alabama":        ("#2b3036", "#c96a24", "Birmingham iron and molten ore"),
  "tennessee":      ("#2d241b", "#c98b2e", "charred barrel and whiskey amber"),
  "indiana":        ("#343a3c", "#cfc3a8", "quarry stone and limestone"),
+ 'mississippi'     : ('#5a3a22', '#e0b64a', 'delta mud and cotton gold'),
+ 'maine'           : ('#1d3f3a', '#d9542b', 'spruce green and buoy orange'),
+ 'arkansas'        : ('#3d4a28', '#d7a13b', 'Ozark green and river clay'),
+ 'massachusetts'   : ('#13395c', '#c9a227', 'harbour navy and brass'),
+ 'new-jersey'      : ('#1a3e6b', '#e8734a', 'bay blue and boardwalk'),
 }
 
 

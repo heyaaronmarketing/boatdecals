@@ -418,18 +418,32 @@ for _s in _ST:
 # a state moves its rule they do not move with it.
 from content import RULES_VERIFIED as _RV
 # Official state sources are overwhelmingly .gov, with state .us domains for
-# administrative-code servers. gadnrle.org is the one named exception: it is
-# Georgia DNR's own Law Enforcement Division site, which Georgia runs on .org.
-# Add to this list only after checking WHO operates the domain - the point of
-# the list is that a plausible-looking .com can never slip in silently.
-_SRC_OK_HOSTS = {"gadnrle.org"}
+# administrative-code servers. A handful of agencies run their own non-.gov
+# domain, and each exception below is named with WHO operates it, because the
+# point of the list is that a plausible-looking .com can never slip in
+# silently. The fee gate further down uses the same set.
+_STATE_RUN_HOSTS = {
+    "gadnrle.org",          # Georgia DNR, Law Enforcement Division
+    "georgiawildlife.com",  # Georgia DNR, Wildlife Resources Division
+    "gadnr.org",            # Georgia Department of Natural Resources
+    "mdwfp.com",            # Mississippi Dept of Wildlife, Fisheries and Parks
+}
+_SRC_OK_HOSTS = _STATE_RUN_HOSTS
 
 
 def _gov_host(url):
-    _h = re.sub(r"^https://", "", url).split("/")[0].lower()
-    return (_h in _SRC_OK_HOSTS or _h.endswith(".gov")
-            or re.search(r"\.state\.[a-z]{2}\.us$", _h) is not None
-            or _h.endswith(".us"))
+    """True only for a host a state government actually runs.
+
+    Matched on label boundaries, not substrings: "mdwfp.com.example.net" must
+    not pass because "mdwfp.com" appears in it, and a bare "www." is stripped
+    so the allow-list holds registrable domains rather than one entry per
+    subdomain.
+    """
+    _h = re.sub(r"^https?://", "", url).split("/")[0].lower().split(":")[0]
+    _h = re.sub(r"^www\.", "", _h)
+    if _h.endswith(".gov") or _h.endswith(".us"):
+        return True
+    return any(_h == _o or _h.endswith("." + _o) for _o in _STATE_RUN_HOSTS)
 
 
 for _s in _ST:
@@ -3419,7 +3433,10 @@ elif not _shape:
 # worse than no fee: it looks researched.
 if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", _SF.VERIFIED):
     fails.append("state_fees.VERIFIED is not an ISO date")
-_OFFICIAL = (".gov", ".us", "georgiawildlife.com", "gadnr.org")
+# Reuses _gov_host from the display-rules gate above, so there is one rule for
+# "is this the state's own site" rather than two that can drift apart. It also
+# tightens this check: the old substring test would have accepted
+# "gadnr.org.example.com".
 for _slug, _d in sorted(_SF.FEES.items()):
     _where = "state_fees.py[%s]" % _slug
     if not any(s for s in (_d.get("slug"),)) and _slug not in {
@@ -3430,7 +3447,7 @@ for _slug, _d in sorted(_SF.FEES.items()):
             fails.append("%s is missing %s" % (_where, _k))
     for _k in ("agency_url", "src"):
         _u = _d.get(_k) or ""
-        if _u and not any(_o in _u.split("/")[2] for _o in _OFFICIAL):
+        if _u and not _gov_host(_u):
             fails.append("%s %s points at %r, which is not an official state "
                          "source - these figures may only come from the state"
                          % (_where, _k, _u.split("/")[2]))

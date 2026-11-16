@@ -233,13 +233,15 @@ def build_all(verbose=True):
     from content import STATES
     og_lines_register(STATES)
 
-    POSTAL = {"iowa": "IA", "florida": "FL", "michigan": "MI", "new-york": "NY",
-              "california": "CA", "south-carolina": "SC", "wisconsin": "WI",
-              "minnesota": "MN", "texas": "TX", "pennsylvania": "PA",
-              "north-carolina": "NC", "georgia": "GA", "virginia": "VA",
-              "ohio": "OH", "illinois": "IL", "missouri": "MO",
-              "washington": "WA", "louisiana": "LA", "alabama": "AL",
-              "tennessee": "TN", "indiana": "IN"}
+    # Derived, not listed. This used to be a hand-typed slug -> postal map and
+    # it silently went stale the moment a state was added: the card build died
+    # on a KeyError halfway through, after build.py had already wiped public/.
+    # content.SHIP_STATES is the same data and is maintained for the order
+    # form, so take it from there and there is nothing to keep in step.
+    import re as _re
+    from content import SHIP_STATES
+    POSTAL = {_re.sub(r"[^a-z]+", "-", _n.lower()).strip("-"): _ab
+              for _ab, _n in SHIP_STATES}
 
     cards = dict(LINES)
     for i, st in enumerate(STATES):

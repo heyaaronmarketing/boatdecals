@@ -106,4 +106,9 @@ and a state.
 - [Louisiana (LA)](https://numbermyboat.com/registration-numbers/louisiana/): prefix LA, issued by Louisiana Department of Wildlife and Fisheries
 - [Alabama (AL)](https://numbermyboat.com/registration-numbers/alabama/): prefix AL, issued by Alabama Law Enforcement Agency, Marine Patrol
 - [Tennessee (TN)](https://numbermyboat.com/registration-numbers/tennessee/): prefix TN, issued by Tennessee Wildlife Resources Agency
+- [Mississippi (MI)](https://numbermyboat.com/registration-numbers/mississippi/): prefix MI, issued by Mississippi Department of Wildlife, Fisheries and Parks
+- [Maine (ME)](https://numbermyboat.com/registration-numbers/maine/): prefix ME, issued by Maine Department of Inland Fisheries and Wildlife
+- [Arkansas (AR)](https://numbermyboat.com/registration-numbers/arkansas/): prefix AR, issued by Arkansas Department of Finance and Administration
+- [Massachusetts (MS)](https://numbermyboat.com/registration-numbers/massachusetts/): prefix MS, issued by Massachusetts Environmental Police
+- [New Jersey (NJ)](https://numbermyboat.com/registration-numbers/new-jersey/): prefix NJ, issued by New Jersey Motor Vehicle Commission
 - [Indiana (IN)](https://numbermyboat.com/registration-numbers/indiana/): prefix IN, issued by Indiana Bureau of Motor Vehicles
